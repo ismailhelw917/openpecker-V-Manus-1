@@ -1,367 +1,357 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Plus, Play } from "lucide-react";
+import { ArrowLeft, Search, Lock } from "lucide-react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 
-interface CreateSetDialogProps {
-  onClose: () => void;
-  onSuccess: () => void;
-  deviceId: string | null;
-}
+const OPENER_THEMES = [
+  "Caro-Kann Defense",
+  "French Defense",
+  "Sicilian Defense",
+  "Italian Game",
+  "Ruy Lopez",
+  "Grob's Attack",
+];
 
-function CreateSetDialog({ onClose, onSuccess, deviceId }: CreateSetDialogProps) {
-  const [step, setStep] = useState<"opening" | "themes" | "settings" | "loading">("opening");
-  const [selectedOpening, setSelectedOpening] = useState("");
+const TACTICAL_THEMES = [
+  "Pin",
+  "Fork",
+  "Skewer",
+  "Discovered Attack",
+  "Double Attack",
+  "Back Rank Mate",
+  "Promotion",
+  "Sacrifice",
+];
+
+const PREMIUM_THEMES = [
+  "Advance Variation",
+  "Bronstein-Larsen Variation",
+];
+
+export default function Train() {
+  const [, setLocation] = useLocation();
+  const { user } = useAuth();
+  const [step, setStep] = useState<"theme-selection" | "configuration">("theme-selection");
   const [selectedThemes, setSelectedThemes] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [themeType, setThemeType] = useState<"opener" | "tactical">("opener");
+  
+  // Configuration state
   const [minRating, setMinRating] = useState(1000);
   const [maxRating, setMaxRating] = useState(2000);
-  const [puzzleCount, setPuzzleCount] = useState(20);
+  const [puzzlesPerCycle, setPuzzlesPerCycle] = useState(20);
   const [targetCycles, setTargetCycles] = useState(3);
-  const [colorFilter, setColorFilter] = useState("both");
+  const [colorFilter, setColorFilter] = useState("white");
 
-  // Fetch openings
-  const openingsQuery = trpc.openings.list.useQuery();
+  const openerThemes = OPENER_THEMES.filter((t) =>
+    t.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  // Create training set mutation
-  const createSetMutation = trpc.trainingSets.create.useMutation({
-    onSuccess: () => {
-      onSuccess();
-    },
-  });
+  const tacticalThemes = TACTICAL_THEMES.filter((t) =>
+    t.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const openings = openingsQuery.data?.openings || [];
+  const allThemes = themeType === "opener" ? openerThemes : tacticalThemes;
 
-  const commonThemes = [
-    "opening",
-    "endgame",
-    "middlegame",
-    "tactical",
-    "sacrifice",
-    "pin",
-    "fork",
-    "skewer",
-    "discovered-attack",
-    "double-attack",
-    "back-rank",
-    "promotion",
-  ];
-
-  const handleCreateSet = async () => {
-    if (!selectedThemes.length) {
-      alert("Please select at least one theme");
-      return;
-    }
-
-    setStep("loading");
-
-    try {
-      // Fetch puzzles using tRPC client
-      const utils = trpc.useUtils();
-      const puzzlesResponse = await utils.puzzles.fetchByTheme.fetch({
-        theme: selectedThemes[0],
-        minRating,
-        maxRating,
-        count: puzzleCount,
-        color: colorFilter as "white" | "black" | "both",
-      });
-
-      if (!puzzlesResponse?.success || !puzzlesResponse?.puzzles?.length) {
-        alert("No puzzles found for the selected criteria");
-        setStep("settings");
-        return;
-      }
-
-      // Create training set
-      await createSetMutation.mutateAsync({
-        deviceId: deviceId || undefined,
-        openingName: selectedOpening || undefined,
-        themes: selectedThemes,
-        minRating,
-        maxRating,
-        puzzleCount,
-        targetCycles,
-        colorFilter: colorFilter as "white" | "black" | "both",
-        puzzles: puzzlesResponse.puzzles || [],
-      });
-    } catch (error: any) {
-      console.error("Error creating training set:", error);
-      alert(error?.message || "Failed to create training set");
-      setStep("settings");
+  const handleSelectTheme = (theme: string) => {
+    if (selectedThemes.includes(theme)) {
+      setSelectedThemes(selectedThemes.filter((t) => t !== theme));
+    } else {
+      setSelectedThemes([...selectedThemes, theme]);
     }
   };
 
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <Card className="bg-slate-800 border-slate-700 w-full max-w-md max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-700 sticky top-0 bg-slate-800">
-          <h2 className="text-xl font-bold text-white">Create Training Set</h2>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-white transition-colors"
-          >
-            ✕
-          </button>
-        </div>
+  const handleStartSession = () => {
+    // In a real app, this would create a training session
+    console.log("Starting session with:", {
+      themes: selectedThemes,
+      minRating,
+      maxRating,
+      puzzlesPerCycle,
+      targetCycles,
+      colorFilter,
+    });
+    // Navigate to puzzle solving interface
+    // setLocation("/puzzle");
+  };
 
-        <div className="p-6">
-          {step === "opening" && (
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">
-                  Opening (Optional)
-                </label>
-                <select
-                  value={selectedOpening}
-                  onChange={(e) => setSelectedOpening(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white"
-                >
-                  <option value="">No specific opening</option>
-                  {openings.map((opening: any) => (
-                    <option key={opening.id} value={opening.name}>
-                      {opening.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <Button
-                className="w-full bg-amber-600 hover:bg-amber-700"
-                onClick={() => setStep("themes")}
-              >
-                Next
-              </Button>
-            </div>
-          )}
-
-          {step === "themes" && (
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-white mb-3">
-                  Select Themes
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  {commonThemes.map((theme) => (
-                    <button
-                      key={theme}
-                      onClick={() => {
-                        if (selectedThemes.includes(theme)) {
-                          setSelectedThemes(selectedThemes.filter((t) => t !== theme));
-                        } else {
-                          setSelectedThemes([...selectedThemes, theme]);
-                        }
-                      }}
-                      className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-                        selectedThemes.includes(theme)
-                          ? "bg-amber-600 text-white"
-                          : "bg-slate-700 text-slate-300 hover:bg-slate-600"
-                      }`}
-                    >
-                      {theme}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => setStep("opening")}
-                >
-                  Back
-                </Button>
-                <Button
-                  className="flex-1 bg-amber-600 hover:bg-amber-700"
-                  onClick={() => setStep("settings")}
-                  disabled={!selectedThemes.length}
-                >
-                  Next
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {step === "settings" && (
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">
-                  Rating Range
-                </label>
-                <div className="flex gap-2 items-center">
-                  <input
-                    type="number"
-                    value={minRating}
-                    onChange={(e) => setMinRating(Number(e.target.value))}
-                    className="flex-1 px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white"
-                  />
-                  <span className="text-slate-400">to</span>
-                  <input
-                    type="number"
-                    value={maxRating}
-                    onChange={(e) => setMaxRating(Number(e.target.value))}
-                    className="flex-1 px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">
-                  Puzzles per Cycle: {puzzleCount}
-                </label>
-                <input
-                  type="range"
-                  min="5"
-                  max="100"
-                  value={puzzleCount}
-                  onChange={(e) => setPuzzleCount(Number(e.target.value))}
-                  className="w-full"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">
-                  Target Cycles: {targetCycles}
-                </label>
-                <input
-                  type="range"
-                  min="1"
-                  max="10"
-                  value={targetCycles}
-                  onChange={(e) => setTargetCycles(Number(e.target.value))}
-                  className="w-full"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">
-                  Color Filter
-                </label>
-                <select
-                  value={colorFilter}
-                  onChange={(e) => setColorFilter(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white"
-                >
-                  <option value="both">Both</option>
-                  <option value="white">White</option>
-                  <option value="black">Black</option>
-                </select>
-              </div>
-
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => setStep("themes")}
-                >
-                  Back
-                </Button>
-                <Button
-                  className="flex-1 bg-amber-600 hover:bg-amber-700"
-                  onClick={handleCreateSet}
-                  disabled={createSetMutation.isPending}
-                >
-                  Create
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {step === "loading" && (
-            <div className="flex flex-col items-center justify-center py-8">
-              <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-              <p className="text-slate-300">Creating training set...</p>
-            </div>
-          )}
-        </div>
-      </Card>
-    </div>
-  );
-}
-
-export default function Train() {
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [, setLocation] = useLocation();
-  const [deviceId, setDeviceId] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Get or create device ID
-    let id = localStorage.getItem("openpecker-device-id");
-    if (!id) {
-      id = `device-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      localStorage.setItem("openpecker-device-id", id);
-    }
-    setDeviceId(id);
-  }, []);
-
-  // Fetch training sets
-  const trainingSetsQuery = trpc.trainingSets.list.useQuery({
-    deviceId: deviceId || undefined,
-  });
-
-  const trainingSets = trainingSetsQuery.data || [];
+  const estimatedTime = Math.ceil((puzzlesPerCycle * 2) / 60); // ~2 min per puzzle
 
   return (
-    <div className="min-h-screen bg-slate-950 pb-24 px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-white">Training</h1>
-          <button
-            onClick={() => setShowCreateDialog(true)}
-            className="flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg transition-colors"
-          >
-            <Plus className="w-5 h-5" />
-            New Set
-          </button>
-        </div>
-
-        {trainingSets.length === 0 ? (
-          <Card className="bg-slate-800/50 border-slate-700 p-12 text-center">
-            <p className="text-slate-400 mb-4">No training sets yet</p>
-            <Button
-              onClick={() => setShowCreateDialog(true)}
-              className="bg-amber-600 hover:bg-amber-700"
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-24">
+      {/* Header */}
+      <div className="bg-slate-900/50 backdrop-blur border-b border-teal-900/30 sticky top-0 z-10">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setLocation("/")}
+              className="text-slate-400 hover:text-white transition-colors"
             >
-              Create Your First Set
-            </Button>
-          </Card>
-        ) : (
-          <div className="grid gap-4">
-            {trainingSets.map((set: any) => (
-              <Card
-                key={set.id}
-                className="bg-slate-800/50 border-slate-700 p-6 hover:bg-slate-800 transition-colors cursor-pointer"
-                onClick={() => setLocation(`/train/${set.id}`)}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-2">
-                      {set.openingName || "Custom Set"}
-                    </h3>
-                    <div className="flex gap-4 text-sm text-slate-400">
-                      <span>{set.puzzleCount} puzzles</span>
-                      <span>{set.targetCycles} cycles</span>
-                      <span>Status: {set.status}</span>
-                    </div>
-                  </div>
-                  <Play className="w-6 h-6 text-amber-400" />
-                </div>
-              </Card>
-            ))}
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <h1 className="text-2xl font-bold text-amber-400">Configure Training</h1>
           </div>
-        )}
+          <p className="text-slate-400 text-sm">Set up your spaced repetition cycle.</p>
+        </div>
       </div>
 
-      {showCreateDialog && (
-        <CreateSetDialog
-          onClose={() => setShowCreateDialog(false)}
-          onSuccess={() => {
-            setShowCreateDialog(false);
-            trainingSetsQuery.refetch();
-          }}
-          deviceId={deviceId}
-        />
-      )}
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        {step === "theme-selection" && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left: Theme Selection */}
+            <div className="lg:col-span-2">
+              <Card className="bg-slate-900/50 border-teal-900/30 p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-amber-400/20 flex items-center justify-center">
+                      <span className="text-amber-400 text-sm">⊙</span>
+                    </div>
+                    <h2 className="text-xl font-semibold text-white">Select Theme</h2>
+                  </div>
+                  <button
+                    onClick={() => setSelectedThemes([])}
+                    className="text-amber-400 text-sm font-semibold hover:text-amber-300 transition-colors"
+                  >
+                    RESET
+                  </button>
+                </div>
+
+                <p className="text-slate-400 mb-6">Choose an opening or tactical theme</p>
+
+                {/* Theme Type Tabs */}
+                <div className="flex gap-3 mb-6">
+                  <button
+                    onClick={() => {
+                      setThemeType("opener");
+                      setSearchQuery("");
+                    }}
+                    className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
+                      themeType === "opener"
+                        ? "bg-amber-400 text-slate-900"
+                        : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                    }`}
+                  >
+                    OPENER THEMES
+                  </button>
+                  <button
+                    onClick={() => {
+                      setThemeType("tactical");
+                      setSearchQuery("");
+                    }}
+                    className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
+                      themeType === "tactical"
+                        ? "bg-amber-400 text-slate-900"
+                        : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                    }`}
+                  >
+                    TACTICAL THEMES
+                  </button>
+                </div>
+
+                {/* Search */}
+                <div className="relative mb-6">
+                  <Search className="absolute left-3 top-3 w-5 h-5 text-slate-500" />
+                  <input
+                    type="text"
+                    placeholder="Search themes..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg pl-10 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-teal-500"
+                  />
+                </div>
+
+                {/* Theme Grid */}
+                <div className="grid grid-cols-2 gap-3">
+                  {allThemes.map((theme) => {
+                    const isPremium = PREMIUM_THEMES.includes(theme);
+                    const isSelected = selectedThemes.includes(theme);
+
+                    return (
+                      <button
+                        key={theme}
+                        onClick={() => {
+                          if (!isPremium || user) {
+                            handleSelectTheme(theme);
+                          }
+                        }}
+                        disabled={isPremium && !user}
+                        className={`p-4 rounded-lg border-2 transition-all text-left ${
+                          isSelected
+                            ? "border-amber-400 bg-amber-400/10"
+                            : "border-slate-700 bg-slate-800/30 hover:border-slate-600"
+                        } ${isPremium && !user ? "opacity-50 cursor-not-allowed" : ""}`}
+                      >
+                        <div className="flex items-start justify-between">
+                          <span className="font-medium text-white">{theme}</span>
+                          {isPremium && !user && (
+                            <Lock className="w-4 h-4 text-amber-400" />
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </Card>
+            </div>
+
+            {/* Right: Configuration */}
+            <div className="lg:col-span-1">
+              <Card className="bg-slate-900/50 border-teal-900/30 p-6 sticky top-24">
+                <h3 className="text-lg font-semibold text-white mb-6">
+                  Rating Range
+                  <span className="text-amber-400 ml-2">{minRating} – {maxRating}</span>
+                </h3>
+
+                <div className="space-y-6">
+                  {/* Rating Range */}
+                  <div>
+                    <div className="flex gap-2 mb-3">
+                      <input
+                        type="number"
+                        value={minRating}
+                        onChange={(e) => setMinRating(Number(e.target.value))}
+                        className="flex-1 bg-slate-800 border border-slate-700 rounded px-3 py-2 text-white text-sm"
+                      />
+                      <span className="text-slate-500">–</span>
+                      <input
+                        type="number"
+                        value={maxRating}
+                        onChange={(e) => setMaxRating(Number(e.target.value))}
+                        className="flex-1 bg-slate-800 border border-slate-700 rounded px-3 py-2 text-white text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Puzzles per Cycle */}
+                  <div>
+                    <div className="flex justify-between items-center mb-3">
+                      <label className="text-slate-300 text-sm font-medium">Puzzles per Cycle</label>
+                      <span className="text-amber-400 font-semibold">{puzzlesPerCycle}</span>
+                    </div>
+                    <div className="grid grid-cols-4 gap-2">
+                      {[10, 20, 50, 100].map((num) => (
+                        <button
+                          key={num}
+                          onClick={() => setPuzzlesPerCycle(num)}
+                          className={`py-2 rounded font-semibold text-sm transition-colors ${
+                            puzzlesPerCycle === num
+                              ? "bg-amber-400 text-slate-900"
+                              : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                          }`}
+                        >
+                          {num}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="grid grid-cols-4 gap-2 mt-2">
+                      {[150, 200, 400].map((num) => (
+                        <button
+                          key={num}
+                          onClick={() => setPuzzlesPerCycle(num)}
+                          className={`py-2 rounded font-semibold text-sm transition-colors ${
+                            puzzlesPerCycle === num
+                              ? "bg-amber-400 text-slate-900"
+                              : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                          }`}
+                        >
+                          {num}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Target Cycles */}
+                  <div>
+                    <div className="flex justify-between items-center mb-3">
+                      <label className="text-slate-300 text-sm font-medium">Target Cycles</label>
+                      <span className="text-amber-400 font-semibold">{targetCycles}</span>
+                    </div>
+                    <div className="grid grid-cols-5 gap-2">
+                      {[1, 3, 5, 7, "∞"].map((num) => (
+                        <button
+                          key={num}
+                          onClick={() => setTargetCycles(num === "∞" ? 999 : Number(num))}
+                          className={`py-2 rounded font-semibold text-sm transition-colors ${
+                            targetCycles === (num === "∞" ? 999 : Number(num))
+                              ? "bg-amber-400 text-slate-900"
+                              : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                          }`}
+                        >
+                          {num}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Color Filter */}
+                  <div>
+                    <label className="text-slate-300 text-sm font-medium block mb-3">
+                      Color Filter
+                      <span className="text-amber-400 ml-2">{colorFilter}</span>
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {["Both", "White", "Black"].map((color) => (
+                        <button
+                          key={color}
+                          onClick={() => setColorFilter(color.toLowerCase())}
+                          className={`py-2 rounded font-semibold text-sm transition-colors ${
+                            colorFilter === color.toLowerCase()
+                              ? "bg-amber-400 text-slate-900"
+                              : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                          }`}
+                        >
+                          {color}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </div>
+        )}
+
+        {/* Session Summary */}
+        {selectedThemes.length > 0 && (
+          <Card className="bg-slate-900/50 border-teal-900/30 p-6 mt-6">
+            <h3 className="text-teal-400 font-semibold text-sm uppercase mb-4">Session Summary</h3>
+            <div className="grid grid-cols-3 gap-6 mb-6">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">⊙</span>
+                <div>
+                  <p className="text-slate-400 text-sm">Theme:</p>
+                  <p className="text-white font-semibold">{selectedThemes.length} themes selected</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">↻</span>
+                <div>
+                  <p className="text-slate-400 text-sm">Total Puzzles:</p>
+                  <p className="text-white font-semibold">{puzzlesPerCycle * targetCycles}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">⏱</span>
+                <div>
+                  <p className="text-slate-400 text-sm">Est. Time:</p>
+                  <p className="text-white font-semibold">~{estimatedTime} min</p>
+                </div>
+              </div>
+            </div>
+
+            <Button
+              onClick={handleStartSession}
+              disabled={selectedThemes.length === 0}
+              className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-3 rounded-lg transition-colors"
+            >
+              ▶ START SESSION
+            </Button>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }

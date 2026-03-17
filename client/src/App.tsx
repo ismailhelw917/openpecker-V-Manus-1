@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import Train from "./pages/Train";
 import SavedSets from "./pages/SavedSets";
 import Stats from "./pages/Stats";
+import Settings from "./pages/Settings";
 
 function Router() {
   return (
@@ -17,6 +18,7 @@ function Router() {
       <Route path={"/train"} component={Train} />
       <Route path={"/sets"} component={SavedSets} />
       <Route path={"/stats"} component={Stats} />
+      <Route path={"/settings"} component={Settings} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
