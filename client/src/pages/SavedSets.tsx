@@ -3,13 +3,13 @@ import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ChevronLeft, Play, Trash2, Plus, Loader2 } from "lucide-react";
-import CreateSetDialog from "@/components/CreateSetDialog";
+import { ChevronLeft, Play, Trash2, Loader2 } from "lucide-react";
+
 
 export default function SavedSets() {
   const [, setLocation] = useLocation();
   const [deviceId, setDeviceId] = useState<string | null>(null);
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
+
 
   useEffect(() => {
     const storedDeviceId = localStorage.getItem("openpecker-device-id");
@@ -65,15 +65,9 @@ export default function SavedSets() {
             >
               <ChevronLeft className="w-5 h-5" />
             </Button>
-            <h1 className="text-2xl font-bold text-white">Training Sets</h1>
+            <h1 className="text-2xl font-bold text-white">Saved Sets</h1>
           </div>
-          <Button
-            className="bg-amber-600 hover:bg-amber-700"
-            onClick={() => setShowCreateDialog(true)}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            New Set
-          </Button>
+
         </div>
       </header>
 
@@ -84,7 +78,7 @@ export default function SavedSets() {
             <p className="text-slate-300 mb-6">No training sets yet</p>
             <Button
               className="bg-amber-600 hover:bg-amber-700"
-              onClick={() => setShowCreateDialog(true)}
+              onClick={() => setLocation("/train")}
             >
               Create Your First Set
             </Button>
@@ -153,17 +147,7 @@ export default function SavedSets() {
         )}
       </main>
 
-      {/* Create Set Dialog */}
-      {showCreateDialog && (
-        <CreateSetDialog
-          onClose={() => setShowCreateDialog(false)}
-          onSuccess={() => {
-            setShowCreateDialog(false);
-            setsQuery.refetch();
-          }}
-          deviceId={deviceId}
-        />
-      )}
+
     </div>
   );
 }

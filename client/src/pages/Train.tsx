@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Plus, Play } from "lucide-react";
+import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
-import { Button } from "./ui/button";
-import { Card } from "./ui/card";
-import { X, Loader2 } from "lucide-react";
 
 interface CreateSetDialogProps {
   onClose: () => void;
@@ -10,7 +11,7 @@ interface CreateSetDialogProps {
   deviceId: string | null;
 }
 
-export default function CreateSetDialog({ onClose, onSuccess, deviceId }: CreateSetDialogProps) {
+function CreateSetDialog({ onClose, onSuccess, deviceId }: CreateSetDialogProps) {
   const [step, setStep] = useState<"opening" | "themes" | "settings" | "loading">("opening");
   const [selectedOpening, setSelectedOpening] = useState("");
   const [selectedThemes, setSelectedThemes] = useState<string[]>([]);
@@ -101,7 +102,7 @@ export default function CreateSetDialog({ onClose, onSuccess, deviceId }: Create
             onClick={onClose}
             className="text-slate-400 hover:text-white transition-colors"
           >
-            <X className="w-5 h-5" />
+            ✕
           </button>
         </div>
 
@@ -268,12 +269,99 @@ export default function CreateSetDialog({ onClose, onSuccess, deviceId }: Create
 
           {step === "loading" && (
             <div className="flex flex-col items-center justify-center py-8">
-              <Loader2 className="w-8 h-8 animate-spin text-amber-500 mb-4" />
+              <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
               <p className="text-slate-300">Creating training set...</p>
             </div>
           )}
         </div>
       </Card>
+    </div>
+  );
+}
+
+export default function Train() {
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [, setLocation] = useLocation();
+  const [deviceId, setDeviceId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Get or create device ID
+    let id = localStorage.getItem("openpecker-device-id");
+    if (!id) {
+      id = `device-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem("openpecker-device-id", id);
+    }
+    setDeviceId(id);
+  }, []);
+
+  // Fetch training sets
+  const trainingSetsQuery = trpc.trainingSets.list.useQuery({
+    deviceId: deviceId || undefined,
+  });
+
+  const trainingSets = trainingSetsQuery.data || [];
+
+  return (
+    <div className="min-h-screen bg-slate-950 pb-24 px-4 py-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-white">Training</h1>
+          <button
+            onClick={() => setShowCreateDialog(true)}
+            className="flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+            New Set
+          </button>
+        </div>
+
+        {trainingSets.length === 0 ? (
+          <Card className="bg-slate-800/50 border-slate-700 p-12 text-center">
+            <p className="text-slate-400 mb-4">No training sets yet</p>
+            <Button
+              onClick={() => setShowCreateDialog(true)}
+              className="bg-amber-600 hover:bg-amber-700"
+            >
+              Create Your First Set
+            </Button>
+          </Card>
+        ) : (
+          <div className="grid gap-4">
+            {trainingSets.map((set: any) => (
+              <Card
+                key={set.id}
+                className="bg-slate-800/50 border-slate-700 p-6 hover:bg-slate-800 transition-colors cursor-pointer"
+                onClick={() => setLocation(`/train/${set.id}`)}
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-white mb-2">
+                      {set.openingName || "Custom Set"}
+                    </h3>
+                    <div className="flex gap-4 text-sm text-slate-400">
+                      <span>{set.puzzleCount} puzzles</span>
+                      <span>{set.targetCycles} cycles</span>
+                      <span>Status: {set.status}</span>
+                    </div>
+                  </div>
+                  <Play className="w-6 h-6 text-amber-400" />
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {showCreateDialog && (
+        <CreateSetDialog
+          onClose={() => setShowCreateDialog(false)}
+          onSuccess={() => {
+            setShowCreateDialog(false);
+            trainingSetsQuery.refetch();
+          }}
+          deviceId={deviceId}
+        />
+      )}
     </div>
   );
 }
