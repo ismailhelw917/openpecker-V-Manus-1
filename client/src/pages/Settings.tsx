@@ -208,7 +208,7 @@ export default function Settings() {
       {/* Premium Modal */}
       {showPremiumModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <Card className="bg-gradient-to-b from-slate-900 to-slate-950 border-teal-900/30 max-w-lg w-full max-h-[90vh] overflow-y-auto relative">
+          <Card className="bg-gradient-to-b from-amber-950 via-slate-900 to-slate-950 border-amber-400/30 max-w-lg w-full max-h-[90vh] overflow-y-auto relative">
             {/* Close Button */}
             <button
               onClick={() => setShowPremiumModal(false)}
@@ -218,14 +218,14 @@ export default function Settings() {
             </button>
 
             {/* Header */}
-            <div className="text-center pt-12 pb-8 px-6">
+            <div className="text-center pt-12 pb-8 px-6 bg-gradient-to-b from-amber-900/20 to-transparent">
               <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/openpecker-premium-logo-LPhYmaC6iM2uaYuZkpHQpR.webp" alt="OpenPecker Premium" className="w-24 h-24 mx-auto mb-4 object-contain" />
-              <h2 className="text-3xl font-bold text-white mb-2">OpenPecker Premium</h2>
-              <p className="text-slate-400">Master every opening. No limits.</p>
+              <h2 className="text-3xl font-bold text-amber-100 mb-2">OpenPecker Premium</h2>
+              <p className="text-amber-200/70">Master every opening. No limits.</p>
             </div>
 
             {/* Features */}
-            <div className="px-6 py-8 border-t border-b border-slate-800">
+            <div className="px-6 py-8 border-t border-b border-amber-400/20">
               <div className="space-y-4">
                 {PREMIUM_FEATURES.map((feature, idx) => (
                   <div key={idx} className="flex items-start gap-3">
@@ -270,8 +270,8 @@ export default function Settings() {
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-6 bg-slate-900/50">
-              <p className="text-slate-400 text-xs text-center">
+            <div className="px-6 py-6 bg-amber-900/10">
+              <p className="text-amber-200/60 text-xs text-center">
                 Secure payments powered by Stripe. Cancel anytime.
               </p>
             </div>
