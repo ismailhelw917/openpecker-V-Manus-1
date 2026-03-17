@@ -220,4 +220,10 @@
 - [x] Verify move validation logic against correct FEN
 - [x] Fix FEN state management in Session page
 - [x] Test move validation
+- [x] Save checkpoint
+
+## Bug Fix (Round 17 - Illegal Move Handling)
+- [x] Add better error handling for illegal moves
+- [x] Add legal moves calculation and display
+- [x] Test move validation with legal move indicators
 - [ ] Save checkpoint

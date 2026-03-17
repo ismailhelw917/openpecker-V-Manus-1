@@ -135,7 +135,11 @@ export default function Session() {
         return false;
       }
 
-      if (!result) return false;
+      // If move is illegal, return false silently (no error toast)
+      if (!result) {
+        console.log('Illegal move attempted:', { from: sourceSquare, to: targetSquare, fen: currentPuzzle.fen });
+        return false;
+      }
 
       // Update the displayed FEN after successful move
       setFen(game.fen());
@@ -265,12 +269,22 @@ export default function Session() {
       {/* Board Container - Centered */}
       <div className="flex-1 flex items-center justify-center p-4 overflow-hidden">
         <div style={{ width: boardSize, height: boardSize }}>
-          <CustomChessboard
-            game={new Chess(fen)}
-            onPieceDrop={handleMove}
-            boardColors={{ light: '#f0d9b5', dark: '#b58863' }}
-            captureSquare={captureSquare}
-          />
+          {(() => {
+            // Calculate legal moves for visual feedback
+            const gameForMoves = new Chess(currentPuzzle?.fen || fen);
+            const moves = gameForMoves.moves({ verbose: true });
+            const legalSquares = moves.map((m: any) => m.to);
+            
+            return (
+              <CustomChessboard
+                game={new Chess(fen)}
+                onPieceDrop={handleMove}
+                boardColors={{ light: '#f0d9b5', dark: '#b58863' }}
+                captureSquare={captureSquare}
+                legalMoves={legalSquares}
+              />
+            );
+          })()}
         </div>
       </div>
 
