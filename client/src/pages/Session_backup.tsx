@@ -217,26 +217,34 @@ export default function Session() {
           setFen(currentPuzzle.fen);
           setCaptureSquare(null);
           
-          // Auto-solve after 2 seconds - play entire solution sequence
+          // Auto-solve after 3 seconds
           setTimeout(() => {
+            // Play the correct move automatically
             const game = new Chess(currentPuzzle.fen);
             const movesString = typeof currentPuzzle.moves === 'string' ? currentPuzzle.moves : '';
             const movesList = movesString.split(' ').filter((m: string) => m.length > 0);
-            
-            if (movesList.length === 0) return;
-            
-            try {
-              setIsAutoSolving(true);
-              let moveIndex = 0;
+            const expectedMove = movesList[0];
+            if (expectedMove) {
+              const from = expectedMove.substring(0, 2);
+              const to = expectedMove.substring(2, 4);
+              const promotion = expectedMove.length > 4 ? expectedMove[4] : undefined;
               
-              // Function to play moves sequentially with animation
-              const playNextMove = () => {
-                if (moveIndex >= movesList.length) {
-                  // All moves played
-                  setIsAutoSolving(false);
-                  setAutoSolveMove(null);
-                  setCorrectCount((prev) => prev + movesList.length);
-                  toast.success(`Auto-solved: ${movesList.join(' ')}`);
+              try {
+                setIsAutoSolving(true);
+                const moveResult = game.move({ from, to, promotion: promotion || 'q' });
+                if (moveResult) {
+                  // Set auto-solve move for animation
+                  setAutoSolveMove({ from, to });
+                  
+                  // Delay FEN update to show animation
+                  setTimeout(() => {
+                    setFen(game.fen());
+                    setAutoSolveMove(null);
+                    setIsAutoSolving(false);
+                  }, 600);
+                  
+                  setCorrectCount((prev) => prev + 1);
+                  toast.info("Auto-solved: " + expectedMove);
                   setSolved(true);
                   
                   // Start countdown for auto-next
@@ -272,46 +280,13 @@ export default function Session() {
                       setTimeout(() => setLocation("/sets"), 1000);
                     }
                   }, 1500);
-                  return;
                 }
-                
-                const expectedMove = movesList[moveIndex];
-                const from = expectedMove.substring(0, 2);
-                const to = expectedMove.substring(2, 4);
-                const promotion = expectedMove.length > 4 ? expectedMove[4] : undefined;
-                
-                try {
-                  const moveResult = game.move({ from, to, promotion: promotion || 'q' });
-                  if (moveResult) {
-                    // Show animation for this move
-                    setAutoSolveMove({ from, to });
-                    
-                    // Play move after animation
-                    setTimeout(() => {
-                      setFen(game.fen());
-                      setAutoSolveMove(null);
-                      moveIndex++;
-                      
-                      // Play next move after 400ms delay
-                      setTimeout(playNextMove, 400);
-                    }, 300);
-                  } else {
-                    console.error("Failed to play move:", expectedMove);
-                    setIsAutoSolving(false);
-                  }
-                } catch (e) {
-                  console.error("Error playing move:", e);
-                  setIsAutoSolving(false);
-                }
-              };
-              
-              // Start playing moves
-              playNextMove();
-            } catch (e) {
-              console.error("Error auto-solving:", e);
-              setIsAutoSolving(false);
+              } catch (e) {
+                console.error("Error auto-solving:", e);
+                setIsAutoSolving(false);
+              }
             }
-          }, 2000);
+          }, 3000);
         }, 600);
       }
 
