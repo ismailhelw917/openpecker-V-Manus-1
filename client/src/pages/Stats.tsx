@@ -88,6 +88,7 @@ export default function Stats() {
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const { user } = useAuth();
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
 
   if (!user?.isPremium) {
     return (
@@ -97,7 +98,7 @@ export default function Stats() {
           <h2 className="text-3xl font-bold text-amber-400 mb-4">Premium Feature</h2>
           <p className="text-slate-400 mb-8">Advanced statistics and performance analytics are available for premium members only.</p>
           <Button
-            onClick={() => setLocation("/settings")}
+            onClick={() => setShowPremiumModal(true)}
             className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-3 rounded-lg"
           >
             Upgrade to Premium
