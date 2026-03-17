@@ -1,6 +1,20 @@
-import { eq } from "drizzle-orm";
+import { eq, and, gte, lte, desc, asc, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { 
+  InsertUser, 
+  users,
+  puzzles,
+  InsertPuzzle,
+  trainingSets,
+  TrainingSet,
+  InsertTrainingSet,
+  cycleHistory,
+  InsertCycleRecord,
+  openings,
+  InsertOpening,
+  puzzleAttempts,
+  InsertPuzzleAttempt,
+} from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +103,175 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// Puzzle queries
+export async function getPuzzlesByThemeAndRating(
+  theme: string,
+  minRating: number,
+  maxRating: number,
+  limit: number = 20,
+  color?: string
+) {
+  const db = await getDb();
+  if (!db) return [];
+
+  let whereConditions = and(
+    sql`JSON_CONTAINS(${puzzles.themes}, JSON_QUOTE(${theme}))`,
+    gte(puzzles.rating, minRating),
+    lte(puzzles.rating, maxRating)
+  );
+
+  if (color && color !== 'both') {
+    whereConditions = and(whereConditions, eq(puzzles.color, color));
+  }
+
+  return db
+    .select()
+    .from(puzzles)
+    .where(whereConditions)
+    .limit(limit);
+}
+
+export async function getPuzzleById(id: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(puzzles).where(eq(puzzles.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function insertPuzzles(puzzleList: InsertPuzzle[]) {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(puzzles).values(puzzleList).onDuplicateKeyUpdate({
+    set: {
+      fen: sql`VALUES(fen)`,
+      moves: sql`VALUES(moves)`,
+      rating: sql`VALUES(rating)`,
+      themes: sql`VALUES(themes)`,
+      color: sql`VALUES(color)`,
+    },
+  });
+}
+
+// Training set queries
+export async function createTrainingSet(set: InsertTrainingSet) {
+  const db = await getDb();
+  if (!db) return undefined;
+  await db.insert(trainingSets).values(set);
+  return set.id;
+}
+
+export async function getTrainingSet(id: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(trainingSets).where(eq(trainingSets.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getTrainingSetsByUser(userId: number | null, deviceId: string | null) {
+  const db = await getDb();
+  if (!db) return [];
+
+  if (userId) {
+    return db
+      .select()
+      .from(trainingSets)
+      .where(eq(trainingSets.userId, userId))
+      .orderBy(desc(trainingSets.updatedAt));
+  } else if (deviceId) {
+    return db
+      .select()
+      .from(trainingSets)
+      .where(eq(trainingSets.deviceId, deviceId))
+      .orderBy(desc(trainingSets.updatedAt));
+  }
+
+  return [];
+}
+
+export async function updateTrainingSet(id: string, updates: any) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(trainingSets).set(updates).where(eq(trainingSets.id, id));
+}
+
+export async function deleteTrainingSet(id: string) {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(trainingSets).where(eq(trainingSets.id, id));
+}
+
+// Cycle history queries
+export async function createCycleRecord(record: InsertCycleRecord) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.insert(cycleHistory).values(record);
+  return result;
+}
+
+export async function getCycleHistoryByUser(userId: number | null, deviceId: string | null) {
+  const db = await getDb();
+  if (!db) return [];
+
+  if (userId) {
+    return db
+      .select()
+      .from(cycleHistory)
+      .where(eq(cycleHistory.userId, userId))
+      .orderBy(desc(cycleHistory.completedAt));
+  } else if (deviceId) {
+    return db
+      .select()
+      .from(cycleHistory)
+      .where(eq(cycleHistory.deviceId, deviceId))
+      .orderBy(desc(cycleHistory.completedAt));
+  }
+
+  return [];
+}
+
+export async function getCycleHistoryByTrainingSet(trainingSetId: string) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(cycleHistory)
+    .where(eq(cycleHistory.trainingSetId, trainingSetId))
+    .orderBy(asc(cycleHistory.cycleNumber));
+}
+
+// Opening queries
+export async function getAllOpenings() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(openings).orderBy(asc(openings.name));
+}
+
+export async function insertOpenings(openingList: InsertOpening[]) {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(openings).values(openingList).onDuplicateKeyUpdate({
+    set: {
+      name: sql`VALUES(name)`,
+      fen: sql`VALUES(fen)`,
+      ecoCode: sql`VALUES(ecoCode)`,
+    },
+  });
+}
+
+// Puzzle attempt queries
+export async function recordPuzzleAttempt(attempt: InsertPuzzleAttempt) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.insert(puzzleAttempts).values(attempt);
+  return result;
+}
+
+export async function getPuzzleAttemptsByTrainingSet(trainingSetId: string) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(puzzleAttempts)
+    .where(eq(puzzleAttempts.trainingSetId, trainingSetId))
+    .orderBy(asc(puzzleAttempts.completedAt));
+}
