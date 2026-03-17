@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ChevronLeft, Lock, Zap, Shield, CreditCard } from "lucide-react";
+import { ChevronLeft, Lock, Zap, Shield, CreditCard, Loader } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { toast } from "sonner";
 
 interface BoardTheme {
   name: string;
@@ -45,6 +46,41 @@ export default function Settings() {
   const { user, logout } = useAuth();
   const [selectedTheme, setSelectedTheme] = useState("Classic Wood");
   const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleCheckout = async (priceId: string, planName: string) => {
+    if (!user) {
+      toast.error("Please sign in to upgrade");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          priceId,
+          planName,
+          userId: user.id,
+          email: user.email,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to create checkout session");
+
+      const { url } = await response.json();
+      if (url) {
+        window.open(url, "_blank");
+        toast.success("Opening Stripe checkout...");
+      }
+    } catch (error) {
+      toast.error("Failed to start checkout");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogout = async () => {
     await logout();
@@ -175,24 +211,32 @@ export default function Settings() {
             {/* Pricing */}
             <div className="px-6 py-8 space-y-4">
               {/* Monthly */}
-              <button className="w-full p-4 rounded-lg border-2 border-slate-700 bg-slate-800/50 hover:border-amber-400 hover:bg-amber-400/5 transition-all text-left">
+              <button
+                onClick={() => handleCheckout("price_monthly", "Monthly")}
+                disabled={loading}
+                className="w-full p-4 rounded-lg border-2 border-slate-700 bg-slate-800/50 hover:border-amber-400 hover:bg-amber-400/5 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-slate-400 text-sm">MONTHLY</p>
                     <p className="text-white font-bold text-xl">€4.99 <span className="text-sm text-slate-400">/month</span></p>
                   </div>
-                  <Zap className="w-6 h-6 text-amber-400" />
+                  {loading ? <Loader className="w-6 h-6 text-amber-400 animate-spin" /> : <Zap className="w-6 h-6 text-amber-400" />}
                 </div>
               </button>
 
               {/* Lifetime */}
-              <button className="w-full p-4 rounded-lg border-2 border-amber-400/40 bg-amber-400/10 hover:border-amber-400 transition-all text-left">
+              <button
+                onClick={() => handleCheckout("price_lifetime", "Lifetime")}
+                disabled={loading}
+                className="w-full p-4 rounded-lg border-2 border-amber-400/40 bg-amber-400/10 hover:border-amber-400 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-amber-400 font-semibold text-sm">LIFETIME ACCESS</p>
                     <p className="text-white font-bold text-xl">€49 <span className="text-sm text-slate-400">/once</span></p>
                   </div>
-                  <Shield className="w-6 h-6 text-amber-400" />
+                  {loading ? <Loader className="w-6 h-6 text-amber-400 animate-spin" /> : <Shield className="w-6 h-6 text-amber-400" />}
                 </div>
               </button>
             </div>

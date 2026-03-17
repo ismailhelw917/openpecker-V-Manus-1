@@ -429,3 +429,145 @@ export async function getPuzzleAttemptsByTrainingSet(trainingSetId: string) {
     .where(eq(puzzleAttempts.trainingSetId, trainingSetId))
     .orderBy(asc(puzzleAttempts.completedAt));
 }
+
+
+/**
+ * Get random puzzles from puzzles_raw table
+ * Queries directly from CSV-loaded data
+ */
+export async function getRandomPuzzlesFromRaw(
+  count: number = 25,
+  minRating: number = 1000,
+  maxRating: number = 2000
+): Promise<any[]> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot fetch puzzles: database not available");
+    return [];
+  }
+
+  try {
+    const result = await (db as any).query(`
+      SELECT 
+        PuzzleId,
+        FEN,
+        Moves,
+        Rating,
+        Themes,
+        OpeningTags
+      FROM puzzles_raw
+      WHERE Rating >= ? AND Rating <= ?
+      ORDER BY RAND()
+      LIMIT ?
+    `, [minRating, maxRating, count]);
+
+    if (!Array.isArray(result)) return [];
+
+    return result.map((row: any) => ({
+      id: row.PuzzleId,
+      fen: row.FEN,
+      moves: row.Moves ? row.Moves.split(' ') : [],
+      rating: row.Rating,
+      themes: row.Themes ? row.Themes.split(' ') : [],
+      opening: row.OpeningTags || '',
+    }));
+  } catch (error) {
+    console.error("[Database] Error fetching puzzles from raw:", error);
+    return [];
+  }
+}
+
+/**
+ * Get unique opening tags from puzzles_raw
+ */
+export async function getUniqueOpeningsFromRaw(): Promise<string[]> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot fetch openings: database not available");
+    return [];
+  }
+
+  try {
+    const result = await (db as any).query(`
+      SELECT DISTINCT OpeningTags
+      FROM puzzles_raw
+      WHERE OpeningTags IS NOT NULL AND OpeningTags != ''
+      ORDER BY OpeningTags ASC
+    `);
+
+    if (!Array.isArray(result)) return [];
+
+    return result
+      .map((row: any) => row.OpeningTags)
+      .filter((tag: string) => tag && tag.trim())
+      .sort();
+  } catch (error) {
+    console.error("[Database] Error fetching openings:", error);
+    return [];
+  }
+}
+
+/**
+ * Get puzzles by opening tag from puzzles_raw
+ */
+export async function getPuzzlesByOpeningFromRaw(
+  opening: string,
+  count: number = 25,
+  minRating: number = 1000,
+  maxRating: number = 2000
+): Promise<any[]> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot fetch puzzles: database not available");
+    return [];
+  }
+
+  try {
+    // First try exact match
+    let result = await (db as any).query(`
+      SELECT 
+        PuzzleId,
+        FEN,
+        Moves,
+        Rating,
+        Themes,
+        OpeningTags
+      FROM puzzles_raw
+      WHERE OpeningTags LIKE ?
+        AND Rating >= ? AND Rating <= ?
+      ORDER BY RAND()
+      LIMIT ?
+    `, [`%${opening}%`, minRating, maxRating, count]);
+
+    // If no results, try without rating filter
+    if (!Array.isArray(result) || (result as any).length === 0) {
+      result = await (db as any).query(`
+        SELECT 
+          PuzzleId,
+          FEN,
+          Moves,
+          Rating,
+          Themes,
+          OpeningTags
+        FROM puzzles_raw
+        WHERE OpeningTags LIKE ?
+        ORDER BY RAND()
+        LIMIT ?
+      `, [`%${opening}%`, count]);
+    }
+
+    if (!Array.isArray(result)) return [];
+
+    return result.map((row: any) => ({
+      id: row.PuzzleId,
+      fen: row.FEN,
+      moves: row.Moves ? row.Moves.split(' ') : [],
+      rating: row.Rating,
+      themes: row.Themes ? row.Themes.split(' ') : [],
+      opening: row.OpeningTags || '',
+    }));
+  } catch (error) {
+    console.error("[Database] Error fetching puzzles by opening:", error);
+    return [];
+  }
+}

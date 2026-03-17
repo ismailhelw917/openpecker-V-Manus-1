@@ -35,8 +35,8 @@ export default function Home() {
       {/* Hero Section */}
       <div className="text-center max-w-2xl mx-auto mb-12">
         {/* Bird Logo */}
-        <div className="w-24 h-24 mx-auto mb-8">
-          <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/Gemini_Generated_Image_y7cfpwy7cfpwy7cf_c06e8b05.png" alt="OpenPecker" className="w-full h-full object-contain" />
+        <div className="w-24 h-24 mx-auto mb-8 drop-shadow-lg">
+          <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/Gemini_Generated_Image_y7cfpwy7cfpwy7cf_c06e8b05.png" alt="OpenPecker" className="w-full h-full object-contain filter brightness-110 contrast-125" />
         </div>
 
         {/* Title */}
@@ -108,9 +108,9 @@ export default function Home() {
           </p>
         </Card>
         <Card className="bg-slate-900/50 border-teal-900/30 p-4">
-          <h3 className="text-amber-400 font-bold mb-2">🔄 Spaced Repetition</h3>
+          <h3 className="text-amber-400 font-bold mb-2">🪶 Woodpecker Method</h3>
           <p className="text-slate-400 text-sm">
-            Intelligent puzzle scheduling for optimal learning
+            Deliberate repetition of opening tactics until mastery
           </p>
         </Card>
       </div>

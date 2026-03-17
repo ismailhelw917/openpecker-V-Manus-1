@@ -18,11 +18,29 @@ export default function Session() {
   const [isLoading, setIsLoading] = useState(true);
   const [correctCount, setCorrectCount] = useState(0);
   const [solved, setSolved] = useState(false);
+  const [boardSize, setBoardSize] = useState(400);
 
   const getTrainingSet = trpc.trainingSets.getById.useQuery(
     { id: sessionId },
     { enabled: !!sessionId }
   );
+
+  // Calculate board size on mount and resize
+  useEffect(() => {
+    const calculateBoardSize = () => {
+      const headerHeight = 80;
+      const footerHeight = 80;
+      const padding = 16;
+      const availableHeight = window.innerHeight - headerHeight - footerHeight - padding;
+      const availableWidth = window.innerWidth - padding;
+      const size = Math.min(availableHeight, availableWidth, 600);
+      setBoardSize(Math.max(300, size));
+    };
+
+    calculateBoardSize();
+    window.addEventListener("resize", calculateBoardSize);
+    return () => window.removeEventListener("resize", calculateBoardSize);
+  }, []);
 
   // Load puzzles from training set
   useEffect(() => {
@@ -69,7 +87,7 @@ export default function Session() {
 
   if (isLoading || getTrainingSet.isLoading) {
     return (
-      <div className="w-screen h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center">
+      <div className="w-screen h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center pb-20">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400 mx-auto mb-4"></div>
           <p className="text-slate-400">Loading puzzles...</p>
@@ -80,7 +98,7 @@ export default function Session() {
 
   if (!puzzles || puzzles.length === 0) {
     return (
-      <div className="w-screen h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center">
+      <div className="w-screen h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center pb-20">
         <div className="bg-red-900/30 border border-red-900/50 p-6 text-center rounded-lg max-w-md">
           <p className="text-red-400 font-bold mb-4">No puzzles found</p>
           <button
@@ -157,9 +175,9 @@ export default function Session() {
   };
 
   return (
-    <div className="w-screen h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex flex-col">
+    <div className="w-screen h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between p-3 border-b border-teal-900/30 flex-shrink-0 bg-slate-900/50">
+      <div className="flex items-center justify-between p-3 border-b border-teal-900/30 flex-shrink-0 bg-slate-900/50 h-20">
         <button
           onClick={() => setLocation("/sets")}
           className="flex items-center gap-2 text-amber-400 hover:text-amber-300 font-bold text-sm"
@@ -184,17 +202,20 @@ export default function Session() {
         </div>
       </div>
 
-      {/* Board Container - Full Screen */}
-      <div className="flex-1 flex items-center justify-center p-2 overflow-hidden">
-        <div style={{ width: "100%", height: "100%", maxWidth: "100vw", maxHeight: "calc(100vh - 80px)" }}>
+      {/* Board Container - Centered */}
+      <div className="flex-1 flex items-center justify-center p-4 overflow-hidden">
+        <div style={{ width: boardSize, height: boardSize }}>
           <Chessboard
             position={fen}
             onPieceDrop={handleMove}
-            boardWidth={Math.min(window.innerWidth - 16, window.innerHeight - 96)}
+            boardWidth={boardSize}
             arePiecesDraggable={!solved}
           />
         </div>
       </div>
+
+      {/* Footer Navigation */}
+      <div className="h-20 border-t border-teal-900/30 bg-slate-900/50 flex-shrink-0" />
 
       {/* Status Message */}
       {solved && (

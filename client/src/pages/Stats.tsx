@@ -75,6 +75,11 @@ const STATS_METRICS = [
   { label: "CYCLES TODAY", value: "0" },
   { label: "AVG PUZ/DAY", value: "0" },
   { label: "AVG CYC/DAY", value: "0" },
+  { label: "RATING GAIN", value: "+55" },
+  { label: "BEST OPENING", value: "Sicilian" },
+  { label: "WEAKEST OPENING", value: "Ruy Lopez" },
+  { label: "STUDY TIME", value: "2h 14m" },
+  { label: "CONSISTENCY", value: "78%" },
 ];
 
 export default function Stats() {
