@@ -14,6 +14,8 @@ interface CustomChessboardProps {
   legalMoves?: string[];
   captureSquare?: string | null;
   autoSolveMove?: { from: string; to: string } | null;
+  autoNextCountdown?: number | null;
+  isAutoSolving?: boolean;
 }
 
 const DraggablePiece = ({ piece, squareName }: { piece: any; squareName: string }) => {
@@ -70,6 +72,8 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
   legalMoves: propLegalMoves,
   captureSquare,
   autoSolveMove,
+  autoNextCountdown,
+  isAutoSolving,
 }) => {
   const sensors = useSensors(
     useSensor(MouseSensor),
@@ -183,7 +187,12 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
               {selectedSquare === squareName && <div className="absolute inset-0 bg-yellow-400/50" />}
               {activeSquare === squareName && <div className="absolute inset-0 bg-yellow-400/50" />}
               {autoSolveMove && (autoSolveMove.from === squareName || autoSolveMove.to === squareName) && (
-                <motion.div className="absolute inset-0 bg-green-400/40 rounded" initial={{ opacity: 0.3 }} animate={{ opacity: [0.3, 0.7, 0.3], scale: [1, 1.05, 1] }} transition={{ duration: 0.6 }} />
+                <motion.div 
+                  className="absolute inset-0 bg-green-400/50 rounded" 
+                  initial={{ opacity: 0.3, scale: 0.8 }} 
+                  animate={{ opacity: [0.3, 0.8, 0.3], scale: [0.8, 1.1, 0.8] }} 
+                  transition={{ duration: 0.6, ease: "easeInOut" }} 
+                />
               )}
               {legalMoves.includes(squareName) && (
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -194,6 +203,47 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
           );
         })}
       </div>
+
+      {/* Auto-solve indicator overlay */}
+      <AnimatePresence>
+        {isAutoSolving && (
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="bg-blue-600/90 text-white px-6 py-3 rounded-lg font-bold text-center shadow-lg">
+              <div className="text-sm mb-1">Auto-solving...</div>
+              <div className="text-xs text-blue-200">Correct move playing</div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Auto-next countdown overlay */}
+      <AnimatePresence>
+        {autoNextCountdown !== null && autoNextCountdown !== undefined && autoNextCountdown > 0 && (
+          <motion.div
+            className="absolute inset-0 flex items-end justify-center pointer-events-none pb-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="flex flex-col items-center">
+              <div className="text-white font-bold mb-2">Next puzzle in...</div>
+              <motion.div
+                className="w-16 h-16 rounded-full border-4 border-amber-400 flex items-center justify-center bg-slate-900/80"
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 0.5, repeat: Infinity }}
+              >
+                <span className="text-2xl font-bold text-amber-400">{autoNextCountdown || 0}</span>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <DragOverlay>
         {activePiece ? (
           <img

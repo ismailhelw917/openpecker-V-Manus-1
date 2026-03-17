@@ -257,3 +257,16 @@
 - [x] Fix move validation logic: Only add promotion for moves to rank 8 or 1
 - [x] Test with sample puzzles
 - [ ] Save checkpoint
+
+## Auto-Solve and Auto-Next UI Implementation (Round 22 - User Request)
+- [x] Enhance CustomChessboard with auto-solve animation indicator
+- [x] Add auto-next countdown display on board
+- [x] Update Session.tsx to track isAutoSolving and autoNextCountdown states
+- [x] Pass countdown and auto-solve states to CustomChessboard component
+- [x] Implement countdown interval logic (decrement every 500ms)
+- [x] Add visual feedback: blue indicator for auto-solving
+- [x] Add visual feedback: amber countdown circle for auto-next
+- [x] Enhance auto-solve move animation with green pulsing effect
+- [x] Write and run unit tests for move validation and countdown logic
+- [x] Verify all tests pass
+- [ ] Save checkpoint

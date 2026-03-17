@@ -20,6 +20,8 @@ export default function Session() {
   const [boardSize, setBoardSize] = useState(400);
   const [captureSquare, setCaptureSquare] = useState<string | null>(null);
   const [autoSolveMove, setAutoSolveMove] = useState<{ from: string; to: string } | null>(null);
+  const [isAutoSolving, setIsAutoSolving] = useState(false);
+  const [autoNextCountdown, setAutoNextCountdown] = useState<number | null>(null);
 
   const getTrainingSet = trpc.trainingSets.getById.useQuery(
     { id: sessionId },
@@ -171,9 +173,25 @@ export default function Session() {
         setCorrectCount((prev) => prev + 1);
         toast.success("Correct!");
         setSolved(true);
+        
+        // Start countdown for auto-next
+        let countdown = 1;
+        setAutoNextCountdown(countdown);
+        const countdownInterval = setInterval(() => {
+          countdown -= 1;
+          if (countdown > 0) {
+            setAutoNextCountdown(countdown);
+          } else {
+            setAutoNextCountdown(null);
+            clearInterval(countdownInterval);
+          }
+        }, 500);
 
         // Auto-advance after 1.5 seconds
         setTimeout(() => {
+          clearInterval(countdownInterval);
+          setAutoNextCountdown(null);
+          
           if (currentPuzzleIndex < puzzles.length - 1) {
             const nextIndex = currentPuzzleIndex + 1;
             setCurrentPuzzleIndex(nextIndex);
@@ -212,6 +230,7 @@ export default function Session() {
               const promotion = expectedMove.length > 4 ? expectedMove[4] : undefined;
               
               try {
+                setIsAutoSolving(true);
                 const moveResult = game.move({ from, to, promotion: promotion || 'q' });
                 if (moveResult) {
                   // Set auto-solve move for animation
@@ -221,14 +240,31 @@ export default function Session() {
                   setTimeout(() => {
                     setFen(game.fen());
                     setAutoSolveMove(null);
+                    setIsAutoSolving(false);
                   }, 600);
                   
                   setCorrectCount((prev) => prev + 1);
                   toast.info("Auto-solved: " + expectedMove);
                   setSolved(true);
                   
+                  // Start countdown for auto-next
+                  let countdown = 1;
+                  setAutoNextCountdown(countdown);
+                  const countdownInterval = setInterval(() => {
+                    countdown -= 1;
+                    if (countdown > 0) {
+                      setAutoNextCountdown(countdown);
+                    } else {
+                      setAutoNextCountdown(null);
+                      clearInterval(countdownInterval);
+                    }
+                  }, 500);
+                  
                   // Auto-advance after 1.5 seconds
                   setTimeout(() => {
+                    clearInterval(countdownInterval);
+                    setAutoNextCountdown(null);
+                    
                     if (currentPuzzleIndex < puzzles.length - 1) {
                       const nextIndex = currentPuzzleIndex + 1;
                       setCurrentPuzzleIndex(nextIndex);
@@ -247,6 +283,7 @@ export default function Session() {
                 }
               } catch (e) {
                 console.error("Error auto-solving:", e);
+                setIsAutoSolving(false);
               }
             }
           }, 3000);
@@ -298,6 +335,8 @@ export default function Session() {
             captureSquare={captureSquare}
             orientation={boardOrientation}
             autoSolveMove={autoSolveMove}
+            autoNextCountdown={autoNextCountdown}
+            isAutoSolving={isAutoSolving}
           />
         </div>
       </div>
