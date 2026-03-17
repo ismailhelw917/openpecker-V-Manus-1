@@ -99,9 +99,47 @@ export default function Train() {
     }
   };
 
-  const filteredOpenings = openings.filter((opening) =>
-    opening.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Group openings by parent name and extract variations
+  const groupedOpenings = openings.reduce((acc, opening) => {
+    const parts = opening.split(' ');
+    let parentName = opening;
+    
+    // Check if this is a variation (contains keywords like Accepted, Declined, etc.)
+    const variationKeywords = ['Accepted', 'Declined', 'Variation', 'System', 'Line'];
+    const isVariation = variationKeywords.some(keyword => opening.endsWith(keyword));
+    
+    if (isVariation && parts.length > 1) {
+      // Remove the last word (variation keyword)
+      parentName = parts.slice(0, -1).join(' ');
+    }
+    
+    // Find or create parent group
+    let parent = acc.find(g => g.name === parentName);
+    if (!parent) {
+      parent = { name: parentName, variations: [] };
+      acc.push(parent);
+    }
+    
+    // Add this opening as a variation if it's different from parent
+    if (opening !== parentName) {
+      parent.variations.push(opening);
+    }
+    
+    return acc;
+  }, [] as Array<{ name: string; variations: string[] }>);
+  
+  // Filter grouped openings
+  const filteredGroupedOpenings = groupedOpenings
+    .map(group => ({
+      ...group,
+      variations: group.variations.filter(v =>
+        v.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    }))
+    .filter(group =>
+      group.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      group.variations.length > 0
+    );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 pb-24">
@@ -148,40 +186,79 @@ export default function Train() {
                 <Loader2 className="w-8 h-8 text-amber-400 animate-spin" />
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {filteredOpenings.length > 0 ? (
-                  filteredOpenings.map((opening, index) => {
-                    const isLocked = index % 10 >= 3;
+              <div className="space-y-4">
+                {filteredGroupedOpenings.length > 0 ? (
+                  filteredGroupedOpenings.map((group, groupIndex) => {
+                    const isLocked = groupIndex % 10 >= 3;
                     const canAccess = !isLocked || user?.isPremium;
                     return (
-                    <Card
-                      key={opening}
-                      onClick={() => {
-                        if (!canAccess) {
-                          toast.error("Unlock this opening with a premium account");
-                          return;
-                        }
-                        setSelectedOpening(opening);
-                        setStep("configuration");
-                      }}
-                      className={`p-4 cursor-pointer transition border-2 relative ${
-                        selectedOpening === opening
-                          ? "border-amber-400 bg-amber-400/10"
-                          : "border-slate-700 hover:border-amber-400 bg-slate-800/50"
-                      } ${!canAccess ? "opacity-60" : ""}`}
-                    >
-                      <h3 className="font-semibold text-white">{opening}</h3>
-                      <p className="text-sm text-slate-400 mt-1">{isLocked && !user?.isPremium ? "Premium Only" : "Click to select"}</p>
-                      {isLocked && !user?.isPremium && (
-                        <div className="absolute top-2 right-2">
-                          <Lock className="w-5 h-5 text-amber-400" />
-                        </div>
-                      )}
-                    </Card>
+                      <div key={group.name}>
+                        {/* Parent Opening */}
+                        <Card
+                          onClick={() => {
+                            if (!canAccess) {
+                              toast.error("Unlock this opening with a premium account");
+                              return;
+                            }
+                            setSelectedOpening(group.name);
+                            setStep("configuration");
+                          }}
+                          className={`p-4 cursor-pointer transition border-2 relative ${
+                            selectedOpening === group.name
+                              ? "border-amber-400 bg-amber-400/10"
+                              : "border-slate-700 hover:border-amber-400 bg-slate-800/50"
+                          } ${!canAccess ? "opacity-60" : ""}`}
+                        >
+                          <h3 className="font-semibold text-white text-lg">{group.name}</h3>
+                          <p className="text-sm text-slate-400 mt-1">
+                            {group.variations.length > 0 ? `${group.variations.length} variations` : "Click to select"}
+                          </p>
+                          {isLocked && !user?.isPremium && (
+                            <div className="absolute top-2 right-2">
+                              <Lock className="w-5 h-5 text-amber-400" />
+                            </div>
+                          )}
+                        </Card>
+
+                        {/* Subvariations */}
+                        {group.variations.length > 0 && (
+                          <div className="ml-4 mt-2 space-y-2 border-l-2 border-slate-700 pl-4">
+                            {group.variations.map((variation, varIndex) => {
+                              const varIsLocked = (groupIndex * 10 + varIndex) % 10 >= 3;
+                              const varCanAccess = !varIsLocked || user?.isPremium;
+                              return (
+                                <Card
+                                  key={variation}
+                                  onClick={() => {
+                                    if (!varCanAccess) {
+                                      toast.error("Unlock this variation with a premium account");
+                                      return;
+                                    }
+                                    setSelectedOpening(variation);
+                                    setStep("configuration");
+                                  }}
+                                  className={`p-3 cursor-pointer transition border-2 relative ${
+                                    selectedOpening === variation
+                                      ? "border-amber-400 bg-amber-400/10"
+                                      : "border-slate-700 hover:border-amber-400 bg-slate-800/30"
+                                  } ${!varCanAccess ? "opacity-60" : ""}`}
+                                >
+                                  <h4 className="font-medium text-slate-200 text-sm">{variation}</h4>
+                                  {varIsLocked && !user?.isPremium && (
+                                    <div className="absolute top-2 right-2">
+                                      <Lock className="w-4 h-4 text-amber-400" />
+                                    </div>
+                                  )}
+                                </Card>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
                     );
                   })
                 ) : (
-                  <div className="col-span-full text-center py-12">
+                  <div className="text-center py-12">
                     <p className="text-slate-400">No openings found</p>
                   </div>
                 )}

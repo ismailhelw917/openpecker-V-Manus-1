@@ -1,0 +1,70 @@
+{
+  "query": "SELECT DISTINCT openingName FROM puzzles WHERE openingName IS NOT NULL AND openingName != '' LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT DISTINCT openingName FROM puzzles WHERE openingName IS NOT NULL AND openingName != '' LIMIT 20;",
+  "rows": [
+    {
+      "openingName": "Advanced Openings"
+    },
+    {
+      "openingName": "Alekhine Defense"
+    },
+    {
+      "openingName": "Amar Opening"
+    },
+    {
+      "openingName": "Amazon Attack"
+    },
+    {
+      "openingName": "Anderssens Opening"
+    },
+    {
+      "openingName": "Barnes Defense"
+    },
+    {
+      "openingName": "Barnes Opening"
+    },
+    {
+      "openingName": "Beginner Openings"
+    },
+    {
+      "openingName": "Benko Gambit"
+    },
+    {
+      "openingName": "Benko Gambit Accepted"
+    },
+    {
+      "openingName": "Benko Gambit Declined"
+    },
+    {
+      "openingName": "Benoni Defense"
+    },
+    {
+      "openingName": "Bird Opening"
+    },
+    {
+      "openingName": "Bishops Opening"
+    },
+    {
+      "openingName": "Blackmar-Diemer Gambit"
+    },
+    {
+      "openingName": "Blackmar-Diemer Gambit Accepted"
+    },
+    {
+      "openingName": "Blackmar-Diemer Gambit Declined"
+    },
+    {
+      "openingName": "Blumenfeld Countergambit"
+    },
+    {
+      "openingName": "Blumenfeld Countergambit Accepted"
+    },
+    {
+      "openingName": "Bogo-Indian Defense"
+    }
+  ],
+  "messages": [],
+  "stdout": "openingName\nAdvanced Openings\nAlekhine Defense\nAmar Opening\nAmazon Attack\nAnderssens Opening\nBarnes Defense\nBarnes Opening\nBeginner Openings\nBenko Gambit\nBenko Gambit Accepted\nBenko Gambit Declined\nBenoni Defense\nBird Opening\nBishops Opening\nBlackmar-Diemer Gambit\nBlackmar-Diemer Gambit Accepted\nBlackmar-Diemer Gambit Declined\nBlumenfeld Countergambit\nBlumenfeld Countergambit Accepted\nBogo-Indian Defense\n",
+  "stderr": "",
+  "execution_time_ms": 2016
+}

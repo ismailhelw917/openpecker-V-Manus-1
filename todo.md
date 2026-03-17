@@ -193,3 +193,9 @@
 - [x] Test all three features
 - [x] Change home page background to white
 - [ ] Save checkpoint
+
+## Train Tab Opening Names (Round 13 - User Request)
+- [x] Check database for opening names and variations
+- [x] Update Train page to display opening hierarchy (name + subvariation)
+- [x] Test opening selection with real opening names
+- [ ] Save checkpoint
