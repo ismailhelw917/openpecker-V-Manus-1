@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useRoute, useLocation } from "wouter";
-import { Card } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Chessboard as ChessboardComponent } from "react-chessboard";
@@ -14,7 +13,7 @@ export default function Session() {
   const sessionId = params?.id as string;
 
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
-  const [game, setGame] = useState(new Chess());
+  const [game, setGame] = useState<Chess | null>(null);
   const [puzzles, setPuzzles] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [correctCount, setCorrectCount] = useState(0);
@@ -25,45 +24,50 @@ export default function Session() {
     { enabled: !!sessionId }
   );
 
+  // Load puzzles from training set
   useEffect(() => {
-    if (getTrainingSet.data) {
-      try {
-        let puzzleList = [];
+    if (!getTrainingSet.data) return;
 
-        if (getTrainingSet.data.puzzlesJson) {
-          const jsonData = typeof getTrainingSet.data.puzzlesJson === "string"
-            ? JSON.parse(getTrainingSet.data.puzzlesJson)
-            : getTrainingSet.data.puzzlesJson;
-          puzzleList = Array.isArray(jsonData) ? jsonData : [];
-        }
+    try {
+      let puzzleList = [];
 
-        if (!Array.isArray(puzzleList) || puzzleList.length === 0) {
-          toast.error("No puzzles loaded");
-          setIsLoading(false);
-          setPuzzles([]);
-          return;
-        }
-
-        setPuzzles(puzzleList);
-        setIsLoading(false);
-
-        // Load first puzzle
-        const firstPuzzle = puzzleList[0];
-        if (firstPuzzle && firstPuzzle.fen) {
-          try {
-            const chess = new Chess(firstPuzzle.fen);
-            setGame(chess);
-          } catch (e) {
-            console.error("Invalid FEN:", firstPuzzle.fen, e);
-            toast.error("Invalid puzzle format");
-          }
-        }
-      } catch (error) {
-        console.error("Error parsing puzzles:", error);
-        toast.error("Failed to load puzzles");
-        setIsLoading(false);
-        setPuzzles([]);
+      if (getTrainingSet.data.puzzlesJson) {
+        const jsonData = typeof getTrainingSet.data.puzzlesJson === "string"
+          ? JSON.parse(getTrainingSet.data.puzzlesJson)
+          : getTrainingSet.data.puzzlesJson;
+        puzzleList = Array.isArray(jsonData) ? jsonData : [];
       }
+
+      if (!Array.isArray(puzzleList) || puzzleList.length === 0) {
+        console.error("No puzzles in training set");
+        toast.error("No puzzles loaded");
+        setIsLoading(false);
+        return;
+      }
+
+      setPuzzles(puzzleList);
+      setCurrentPuzzleIndex(0);
+      setCorrectCount(0);
+      setSolved(false);
+      
+      // Load first puzzle
+      const firstPuzzle = puzzleList[0];
+      if (firstPuzzle?.fen) {
+        try {
+          const chess = new Chess(firstPuzzle.fen);
+          setGame(chess);
+          console.log("Loaded first puzzle FEN:", firstPuzzle.fen);
+        } catch (e) {
+          console.error("Invalid FEN:", firstPuzzle.fen, e);
+          toast.error("Invalid puzzle FEN");
+        }
+      }
+      
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error loading puzzles:", error);
+      toast.error("Failed to load puzzles");
+      setIsLoading(false);
     }
   }, [getTrainingSet.data]);
 
@@ -83,7 +87,7 @@ export default function Session() {
   if (!puzzles || puzzles.length === 0) {
     return (
       <div className="w-screen h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center">
-        <Card className="bg-red-900/30 border-red-900/50 p-6 text-center max-w-md">
+        <div className="bg-red-900/30 border border-red-900/50 p-6 text-center rounded-lg max-w-md">
           <AlertCircle className="w-8 h-8 text-red-400 mx-auto mb-2" />
           <p className="text-red-400 font-bold">No puzzles found</p>
           <button
@@ -92,7 +96,7 @@ export default function Session() {
           >
             Back to Training
           </button>
-        </Card>
+        </div>
       </div>
     );
   }
@@ -101,7 +105,7 @@ export default function Session() {
   const progress = ((currentPuzzleIndex + 1) / puzzles.length) * 100;
 
   const handleMove = (sourceSquare: string, targetSquare: string) => {
-    if (solved) return false;
+    if (solved || !game) return false;
 
     try {
       const gameCopy = new Chess(game.fen());
@@ -112,7 +116,7 @@ export default function Session() {
         result = gameCopy.move({
           from: sourceSquare,
           to: targetSquare,
-          promotion: "q", // Default to queen promotion
+          promotion: "q",
         });
       } catch (e) {
         console.error("Move error:", e);
@@ -123,33 +127,33 @@ export default function Session() {
 
       setGame(gameCopy);
 
-      // Check if this is the correct move
+      // Check if move is correct
       const expectedMove = currentPuzzle.moves?.[0];
       const moveUCI = `${result.from}${result.to}${result.promotion || ""}`;
-      const moveSAN = result.san;
 
-      if (expectedMove === moveUCI || expectedMove === moveSAN || expectedMove === result.lan) {
+      if (expectedMove === moveUCI) {
         setCorrectCount((prev) => prev + 1);
-        toast.success("Correct move!");
+        toast.success("Correct!");
         setSolved(true);
 
-        // Auto-load next puzzle after 1.5 seconds
+        // Auto-advance after 1 second
         setTimeout(() => {
           if (currentPuzzleIndex < puzzles.length - 1) {
-            setCurrentPuzzleIndex((prev) => prev + 1);
+            const nextIndex = currentPuzzleIndex + 1;
+            setCurrentPuzzleIndex(nextIndex);
             setSolved(false);
-            // Reset game to next puzzle FEN
-            const nextPuzzle = puzzles[currentPuzzleIndex + 1];
-            if (nextPuzzle && nextPuzzle.fen) {
+            
+            const nextPuzzle = puzzles[nextIndex];
+            if (nextPuzzle?.fen) {
               setGame(new Chess(nextPuzzle.fen));
             }
           } else {
-            toast.success("Cycle completed!");
+            toast.success("All puzzles completed!");
             setTimeout(() => setLocation("/sets"), 1000);
           }
-        }, 1500);
+        }, 1000);
       } else {
-        toast.error("Incorrect move");
+        toast.error("Wrong move");
         setGame(new Chess(currentPuzzle.fen));
       }
 
@@ -161,12 +165,12 @@ export default function Session() {
   };
 
   return (
-    <div className="w-screen h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex flex-col">
+    <div className="w-screen h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex flex-col pb-20">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-teal-900/30">
+      <div className="flex items-center justify-between p-4 border-b border-teal-900/30 flex-shrink-0">
         <button
           onClick={() => setLocation("/sets")}
-          className="flex items-center gap-2 text-amber-400 hover:text-amber-300"
+          className="flex items-center gap-2 text-amber-400 hover:text-amber-300 font-bold"
         >
           <ChevronLeft className="w-5 h-5" />
           Back
@@ -188,26 +192,26 @@ export default function Session() {
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Board Container */}
       <div className="flex-1 flex items-center justify-center p-4 overflow-hidden">
-        <div className="w-full h-full flex items-center justify-center">
-          <div style={{ width: "min(100%, 100vh - 120px)", aspectRatio: "1" }}>
+        {game && (
+          <div style={{ width: "min(100%, 90vh)", aspectRatio: "1" }}>
             <Chessboard
               position={game.fen()}
               onPieceDrop={handleMove}
-              boardWidth={Math.min(500, typeof window !== "undefined" ? window.innerWidth - 32 : 500)}
+              boardWidth={Math.min(600, typeof window !== "undefined" ? window.innerWidth - 32 : 600)}
               arePiecesDraggable={!solved}
             />
           </div>
-        </div>
+        )}
       </div>
 
       {/* Status Message */}
       {solved && (
-        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2">
-          <Card className="bg-green-900/30 border-green-900/50 p-4">
-            <p className="text-green-400 font-bold">✓ Correct! Loading next...</p>
-          </Card>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <div className="bg-green-900/90 border border-green-900 p-6 rounded-lg">
+            <p className="text-green-400 font-bold text-lg">✓ Correct!</p>
+          </div>
         </div>
       )}
     </div>
