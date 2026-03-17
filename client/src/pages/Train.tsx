@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Search, Lock, Check } from "lucide-react";
+import { ArrowLeft, Search, Lock } from "lucide-react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
 
-// Sample opening data structure
 const OPENINGS_DATA = {
   "French Defence": {
     variations: [
@@ -49,7 +48,9 @@ const OPENINGS_DATA = {
   },
 };
 
-type Step = "opening-selection" | "variation-selection" | "puzzle-selection" | "configuration";
+type Step = "opening-selection" | "variation-selection" | "configuration";
+
+const PUZZLE_COUNT_OPTIONS = [10, 25, 50, 100];
 
 export default function Train() {
   const [, setLocation] = useLocation();
@@ -57,7 +58,6 @@ export default function Train() {
   const [step, setStep] = useState<Step>("opening-selection");
   const [selectedOpening, setSelectedOpening] = useState<string | null>(null);
   const [selectedVariation, setSelectedVariation] = useState<string | null>(null);
-  const [selectedPuzzles, setSelectedPuzzles] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -66,6 +66,7 @@ export default function Train() {
   const [maxRating, setMaxRating] = useState(2000);
   const [targetCycles, setTargetCycles] = useState(3);
   const [colorFilter, setColorFilter] = useState("both");
+  const [puzzleCount, setPuzzleCount] = useState(25);
 
   const createTrainingSet = trpc.trainingSets.create.useMutation();
 
@@ -77,50 +78,46 @@ export default function Train() {
     ? OPENINGS_DATA[selectedOpening as keyof typeof OPENINGS_DATA]?.variations || []
     : [];
 
+  const currentVariationData = currentVariations.find(
+    (v) => v.name === selectedVariation
+  );
+  const totalAvailablePuzzles = currentVariationData?.puzzles || 0;
+  const maxPuzzleCount = Math.min(100, totalAvailablePuzzles);
+
   const handleOpeningSelect = (opening: string) => {
     setSelectedOpening(opening);
     setSelectedVariation(null);
-    setSelectedPuzzles([]);
     setStep("variation-selection");
   };
 
-  const handleVariationSelect = (variationName: string) => {
-    setSelectedVariation(variationName);
-    setSelectedPuzzles([]);
-    setStep("puzzle-selection");
-  };
-
-  const handlePuzzleToggle = (puzzleId: string) => {
-    setSelectedPuzzles((prev) =>
-      prev.includes(puzzleId)
-        ? prev.filter((p) => p !== puzzleId)
-        : [...prev, puzzleId]
-    );
+  const handleVariationSelect = (variation: string) => {
+    setSelectedVariation(variation);
+    setStep("configuration");
   };
 
   const handleStartSession = async () => {
-    if (selectedPuzzles.length === 0) {
-      toast.error("Please select at least one puzzle");
+    if (!selectedVariation) {
+      toast.error("Please select a variation");
       return;
     }
 
     setIsLoading(true);
     try {
-      // Create mock puzzle objects for now
-      const puzzles = selectedPuzzles.map((id) => ({
-        id,
+      // Generate random puzzles for the selected variation
+      const puzzles = Array.from({ length: puzzleCount }, (_, i) => ({
+        id: `puzzle_${Math.random().toString(36).substr(2, 9)}`,
         fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
         moves: ["e2e4"],
-        rating: Math.floor(Math.random() * 1000) + 1000,
-        themes: ["opening"],
-        color: "white",
+        rating: Math.floor(Math.random() * (maxRating - minRating + 1)) + minRating,
+        themes: [selectedVariation],
+        color: colorFilter === "both" ? (Math.random() > 0.5 ? "white" : "black") : colorFilter,
       }));
 
       const result = await createTrainingSet.mutateAsync({
-        themes: [selectedVariation || ""],
+        themes: [selectedVariation],
         minRating,
         maxRating,
-        puzzleCount: selectedPuzzles.length,
+        puzzleCount,
         targetCycles,
         colorFilter: colorFilter as "white" | "black" | "both",
         puzzles,
@@ -232,20 +229,8 @@ export default function Train() {
     );
   }
 
-  // Step 3: Puzzle Selection
-  if (step === "puzzle-selection") {
-    const currentVariationData = currentVariations.find(
-      (v) => v.name === selectedVariation
-    );
-    const totalPuzzles = currentVariationData?.puzzles || 0;
-
-    // Generate mock puzzle list
-    const puzzleList = Array.from({ length: Math.min(totalPuzzles, 50) }, (_, i) => ({
-      id: `puzzle_${i + 1}`,
-      name: `Puzzle ${i + 1}`,
-      rating: Math.floor(Math.random() * 1000) + 1000,
-    }));
-
+  // Step 3: Configuration
+  if (step === "configuration") {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-24">
         <div className="max-w-4xl mx-auto px-4 py-8">
@@ -259,98 +244,99 @@ export default function Train() {
           </Button>
 
           <h1 className="text-4xl font-bold text-amber-400 mb-2">{selectedVariation}</h1>
-          <p className="text-amber-300 mb-2">Select puzzles to train ({selectedPuzzles.length} selected)</p>
-          <p className="text-slate-400 mb-8">Total available: {totalPuzzles} puzzles</p>
+          <p className="text-amber-300 mb-8">Configure your training session</p>
 
-          {/* Puzzle Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
-            {puzzleList.map((puzzle) => (
-              <Card
-                key={puzzle.id}
-                onClick={() => handlePuzzleToggle(puzzle.id)}
-                className={`bg-slate-900/50 border-teal-900/30 p-4 cursor-pointer transition-all ${
-                  selectedPuzzles.includes(puzzle.id)
-                    ? "border-amber-400 bg-amber-400/10"
-                    : "hover:border-amber-400/50"
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-white font-semibold text-sm">{puzzle.name}</p>
-                  {selectedPuzzles.includes(puzzle.id) && (
-                    <Check className="w-4 h-4 text-amber-400" />
-                  )}
-                </div>
-                <p className="text-slate-400 text-xs">Rating: {puzzle.rating}</p>
-              </Card>
-            ))}
-          </div>
-
-          {/* Configuration */}
-          <Card className="bg-slate-900/50 border-teal-900/30 p-6 mb-8">
-            <h3 className="text-amber-400 font-bold mb-6">Session Configuration</h3>
-
-            <div className="grid grid-cols-2 gap-6 mb-6">
+          {/* Configuration Card */}
+          <Card className="bg-slate-900/50 border-teal-900/30 p-8">
+            <div className="space-y-8">
               {/* Rating Range */}
               <div>
-                <label className="text-slate-400 text-sm mb-2 block">Rating Range</label>
-                <div className="flex gap-2 items-center">
+                <label className="text-amber-400 font-bold mb-4 block">Rating Range</label>
+                <div className="flex gap-4 items-center">
                   <input
                     type="number"
                     value={minRating}
                     onChange={(e) => setMinRating(Number(e.target.value))}
-                    className="flex-1 px-3 py-2 bg-slate-800 border border-teal-900/30 rounded text-white text-sm"
+                    className="flex-1 px-4 py-3 bg-slate-800 border border-teal-900/30 rounded text-white text-lg"
                   />
-                  <span className="text-slate-400">-</span>
+                  <span className="text-slate-400 text-lg">-</span>
                   <input
                     type="number"
                     value={maxRating}
                     onChange={(e) => setMaxRating(Number(e.target.value))}
-                    className="flex-1 px-3 py-2 bg-slate-800 border border-teal-900/30 rounded text-white text-sm"
+                    className="flex-1 px-4 py-3 bg-slate-800 border border-teal-900/30 rounded text-white text-lg"
                   />
                 </div>
               </div>
 
-              {/* Target Cycles */}
+              {/* Puzzle Count */}
               <div>
-                <label className="text-slate-400 text-sm mb-2 block">Target Cycles</label>
-                <input
-                  type="number"
-                  value={targetCycles}
-                  onChange={(e) => setTargetCycles(Number(e.target.value))}
-                  className="w-full px-3 py-2 bg-slate-800 border border-teal-900/30 rounded text-white text-sm"
-                />
+                <label className="text-amber-400 font-bold mb-4 block">
+                  Puzzles per Cycle (Max: {maxPuzzleCount})
+                </label>
+                <div className="flex gap-3 flex-wrap">
+                  {PUZZLE_COUNT_OPTIONS.map((count) => (
+                    <Button
+                      key={count}
+                      onClick={() => setPuzzleCount(Math.min(count, maxPuzzleCount))}
+                      disabled={count > maxPuzzleCount}
+                      className={`px-6 py-3 text-lg font-semibold ${
+                        puzzleCount === Math.min(count, maxPuzzleCount)
+                          ? "bg-amber-400 hover:bg-amber-500 text-slate-900"
+                          : "bg-slate-800 hover:bg-slate-700 text-white disabled:opacity-50"
+                      }`}
+                    >
+                      {count}
+                    </Button>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* Color Filter */}
-            <div>
-              <label className="text-slate-400 text-sm mb-3 block">Color Filter</label>
-              <div className="flex gap-3">
-                {["both", "white", "black"].map((color) => (
-                  <Button
-                    key={color}
-                    onClick={() => setColorFilter(color)}
-                    className={`flex-1 capitalize ${
-                      colorFilter === color
-                        ? "bg-amber-400 hover:bg-amber-500 text-slate-900"
-                        : "bg-slate-800 hover:bg-slate-700 text-white"
-                    }`}
-                  >
-                    {color}
-                  </Button>
-                ))}
+              {/* Target Cycles - Centered */}
+              <div className="flex justify-center">
+                <div className="w-48">
+                  <label className="text-amber-400 font-bold mb-4 block text-center">
+                    Target Cycles
+                  </label>
+                  <input
+                    type="number"
+                    value={targetCycles}
+                    onChange={(e) => setTargetCycles(Math.max(1, Number(e.target.value)))}
+                    className="w-full px-4 py-3 bg-slate-800 border border-teal-900/30 rounded text-white text-lg text-center"
+                  />
+                </div>
               </div>
+
+              {/* Color Filter */}
+              <div>
+                <label className="text-amber-400 font-bold mb-4 block">Color Filter</label>
+                <div className="flex gap-3">
+                  {["both", "white", "black"].map((color) => (
+                    <Button
+                      key={color}
+                      onClick={() => setColorFilter(color)}
+                      className={`flex-1 capitalize py-3 text-lg font-semibold ${
+                        colorFilter === color
+                          ? "bg-amber-400 hover:bg-amber-500 text-slate-900"
+                          : "bg-slate-800 hover:bg-slate-700 text-white"
+                      }`}
+                    >
+                      {color}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Start Button */}
+              <Button
+                onClick={handleStartSession}
+                disabled={isLoading}
+                className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-4 text-xl mt-8"
+              >
+                {isLoading ? "Creating Session..." : "Start Session"}
+              </Button>
             </div>
           </Card>
-
-          {/* Start Button */}
-          <Button
-            onClick={handleStartSession}
-            disabled={isLoading || selectedPuzzles.length === 0}
-            className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-3 text-lg"
-          >
-            {isLoading ? "Creating Session..." : "Start Session"}
-          </Button>
         </div>
       </div>
     );

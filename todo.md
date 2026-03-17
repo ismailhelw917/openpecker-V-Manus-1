@@ -103,3 +103,13 @@
 - [ ] Format puzzle names with proper spacing (e.g., "French Defence")
 - [ ] Order puzzles by opening name, variation, set, and subset
 - [ ] Run CSV import script to populate database with real puzzles
+
+
+## User Requested Updates (Round 2)
+- [ ] Remove puzzle selection UI - use random selection instead
+- [ ] Center target cycles input field
+- [ ] Add puzzle count selector (25, 50, 100, etc.) with cap based on available puzzles
+- [ ] Fix FEN/UCI parsing for proper chessboard loading (handle promotion, en passant)
+- [ ] Remove all buttons from Session screen
+- [ ] Fit app to screen with proper viewport scaling
+- [ ] Implement auto-next puzzle loading after solving
