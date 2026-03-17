@@ -18,14 +18,19 @@ export function registerStripeRoutes(app: express.Express) {
         });
       }
 
-      // Validate price ID
-      if (!Object.values(STRIPE_PRICES).includes(priceId)) {
+      // Map price key to actual Stripe price ID
+      let actualPriceId = priceId;
+      if (priceId in STRIPE_PRICES) {
+        actualPriceId = STRIPE_PRICES[priceId as keyof typeof STRIPE_PRICES];
+      } else if (!Object.values(STRIPE_PRICES).includes(priceId)) {
         return res.status(400).json({ error: "Invalid price ID" });
       }
 
       // For now, return a placeholder response
       // In production, this would create an actual Stripe session
       const checkoutUrl = `https://checkout.stripe.com/pay/cs_test_${Date.now()}`;
+
+      console.log(`Creating checkout session for user ${userId} with price ${actualPriceId}`);
 
       return res.json({
         url: checkoutUrl,
