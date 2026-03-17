@@ -58,6 +58,9 @@ export default function Train() {
 
     setIsFetchingPuzzles(true);
     try {
+      // Get device ID from localStorage
+      const deviceId = localStorage.getItem("openpecker-device-id") || "";
+
       // Fetch puzzles for the selected opening using tRPC mutation
       const puzzlesResponse = await fetchPuzzlesMutation.mutateAsync({
         opening: selectedOpening,
@@ -76,6 +79,10 @@ export default function Train() {
 
       // Create training set with fetched puzzles
       const result = await createTrainingSet.mutateAsync({
+        userId: user?.id,
+        deviceId,
+        openingName: selectedOpening,
+        openingFen: "",
         themes: [selectedOpening],
         minRating,
         maxRating,
