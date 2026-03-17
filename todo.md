@@ -199,3 +199,10 @@
 - [x] Update Train page to display opening hierarchy (name + subvariation)
 - [x] Test opening selection with real opening names
 - [ ] Save checkpoint
+
+## Session Improvements (Round 14 - User Request)
+- [x] Add capture effect animation on board
+- [x] Implement auto next puzzle functionality
+- [x] Add auto solve for 3 seconds after mistake then auto next
+- [x] Test all features
+- [ ] Save checkpoint

@@ -168,10 +168,52 @@ export default function Session() {
         setCaptureSquare(targetSquare);
         toast.error("Wrong move");
         
-        // Reset board after animation
+        // Reset board after animation and show auto-solve
         setTimeout(() => {
           setFen(currentPuzzle.fen);
           setCaptureSquare(null);
+          
+          // Auto-solve after 3 seconds
+          setTimeout(() => {
+            // Play the correct move automatically
+            const game = new Chess(currentPuzzle.fen);
+            const expectedMove = currentPuzzle.moves?.[0];
+            if (expectedMove) {
+              const from = expectedMove.substring(0, 2);
+              const to = expectedMove.substring(2, 4);
+              const promotion = expectedMove.length > 4 ? expectedMove[4] : undefined;
+              
+              try {
+                const moveResult = game.move({ from, to, promotion: promotion || 'q' });
+                if (moveResult) {
+                  setFen(game.fen());
+                  setCorrectCount((prev) => prev + 1);
+                  toast.info("Auto-solved: " + expectedMove);
+                  setSolved(true);
+                  
+                  // Auto-advance after 1.5 seconds
+                  setTimeout(() => {
+                    if (currentPuzzleIndex < puzzles.length - 1) {
+                      const nextIndex = currentPuzzleIndex + 1;
+                      setCurrentPuzzleIndex(nextIndex);
+                      setSolved(false);
+                      setCaptureSquare(null);
+                      
+                      const nextPuzzle = puzzles[nextIndex];
+                      if (nextPuzzle?.fen) {
+                        setFen(nextPuzzle.fen);
+                      }
+                    } else {
+                      toast.success("All puzzles completed!");
+                      setTimeout(() => setLocation("/sets"), 1000);
+                    }
+                  }, 1500);
+                }
+              } catch (e) {
+                console.error("Error auto-solving:", e);
+              }
+            }
+          }, 3000);
         }, 600);
       }
 
