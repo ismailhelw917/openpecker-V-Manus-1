@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Chessboard as ChessboardComponent } from "react-chessboard";
 const Chessboard = ChessboardComponent as any;
 import { Chess } from "chess.js";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2, ChevronLeft } from "lucide-react";
 
 export default function Session() {
   const [match, params] = useRoute("/session/:id");
@@ -37,23 +37,25 @@ export default function Session() {
           puzzleList = Array.isArray(jsonData) ? jsonData : [];
         }
 
-        if (!Array.isArray(puzzleList)) {
-          puzzleList = [];
+        if (!Array.isArray(puzzleList) || puzzleList.length === 0) {
+          toast.error("No puzzles loaded");
+          setIsLoading(false);
+          setPuzzles([]);
+          return;
         }
 
         setPuzzles(puzzleList);
         setIsLoading(false);
 
-        if (puzzleList.length > 0) {
-          const firstPuzzle = puzzleList[0];
-          if (firstPuzzle && firstPuzzle.fen) {
-            try {
-              const chess = new Chess(firstPuzzle.fen);
-              setGame(chess);
-            } catch (e) {
-              console.error("Invalid FEN:", firstPuzzle.fen);
-              toast.error("Invalid puzzle format");
-            }
+        // Load first puzzle
+        const firstPuzzle = puzzleList[0];
+        if (firstPuzzle && firstPuzzle.fen) {
+          try {
+            const chess = new Chess(firstPuzzle.fen);
+            setGame(chess);
+          } catch (e) {
+            console.error("Invalid FEN:", firstPuzzle.fen, e);
+            toast.error("Invalid puzzle format");
           }
         }
       } catch (error) {
@@ -69,7 +71,7 @@ export default function Session() {
 
   if (isLoading || getTrainingSet.isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center pb-24">
+      <div className="w-screen h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-12 h-12 text-amber-400 animate-spin mx-auto mb-4" />
           <p className="text-slate-400">Loading puzzles...</p>
@@ -78,33 +80,18 @@ export default function Session() {
     );
   }
 
-  if (getTrainingSet.isError) {
+  if (!puzzles || puzzles.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center pb-24">
-        <Card className="bg-slate-900/50 border-teal-900/30 p-8 text-center max-w-md">
-          <div className="flex items-center justify-center mb-4">
-            <AlertCircle className="w-8 h-8 text-red-400" />
-          </div>
-          <h2 className="text-2xl font-bold text-white mb-4">Error Loading Training Set</h2>
-          <p className="text-slate-400">
-            Failed to load the training set. Please try again.
-          </p>
-        </Card>
-      </div>
-    );
-  }
-
-  if (puzzles.length === 0) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center pb-24">
-        <Card className="bg-slate-900/50 border-teal-900/30 p-8 text-center max-w-md">
-          <div className="flex items-center justify-center mb-4">
-            <AlertCircle className="w-8 h-8 text-amber-400" />
-          </div>
-          <h2 className="text-2xl font-bold text-white mb-4">No Puzzles Found</h2>
-          <p className="text-slate-400">
-            No puzzles available for the selected configuration. Try adjusting your filters.
-          </p>
+      <div className="w-screen h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center">
+        <Card className="bg-red-900/30 border-red-900/50 p-6 text-center max-w-md">
+          <AlertCircle className="w-8 h-8 text-red-400 mx-auto mb-2" />
+          <p className="text-red-400 font-bold">No puzzles found</p>
+          <button
+            onClick={() => setLocation("/train")}
+            className="mt-4 px-4 py-2 bg-amber-500 text-slate-900 rounded font-bold hover:bg-amber-400"
+          >
+            Back to Training
+          </button>
         </Card>
       </div>
     );
@@ -151,6 +138,11 @@ export default function Session() {
           if (currentPuzzleIndex < puzzles.length - 1) {
             setCurrentPuzzleIndex((prev) => prev + 1);
             setSolved(false);
+            // Reset game to next puzzle FEN
+            const nextPuzzle = puzzles[currentPuzzleIndex + 1];
+            if (nextPuzzle && nextPuzzle.fen) {
+              setGame(new Chess(nextPuzzle.fen));
+            }
           } else {
             toast.success("Cycle completed!");
             setTimeout(() => setLocation("/sets"), 1000);
@@ -169,42 +161,37 @@ export default function Session() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-24 px-4">
-      <div className="max-w-4xl mx-auto py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="text-center mb-4">
-            <h1 className="text-3xl font-bold text-amber-400">
-              Puzzle {currentPuzzleIndex + 1} of {puzzles.length}
-            </h1>
-            <div className="w-full h-2 bg-slate-800 rounded-full mt-4 overflow-hidden">
-              <div
-                className="h-full bg-amber-400 transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              ></div>
-            </div>
-          </div>
-          <div className="flex justify-center gap-8 text-center">
-            <div>
-              <p className="text-slate-400 text-sm">Correct</p>
-              <p className="text-amber-400 font-bold text-2xl">{correctCount}</p>
-            </div>
-            <div>
-              <p className="text-slate-400 text-sm">Accuracy</p>
-              <p className="text-amber-400 font-bold text-2xl">
-                {currentPuzzleIndex > 0 ? Math.round((correctCount / (currentPuzzleIndex + 1)) * 100) : 0}%
-              </p>
-            </div>
-            <div>
-              <p className="text-slate-400 text-sm">Rating</p>
-              <p className="text-amber-400 font-bold text-2xl">{currentPuzzle?.rating || "—"}</p>
-            </div>
+    <div className="w-screen h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex flex-col">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b border-teal-900/30">
+        <button
+          onClick={() => setLocation("/sets")}
+          className="flex items-center gap-2 text-amber-400 hover:text-amber-300"
+        >
+          <ChevronLeft className="w-5 h-5" />
+          Back
+        </button>
+        <div className="text-center flex-1">
+          <h1 className="text-xl font-bold text-amber-400">
+            Puzzle {currentPuzzleIndex + 1} of {puzzles.length}
+          </h1>
+          <div className="w-48 h-1 bg-slate-800 rounded-full mt-2 mx-auto overflow-hidden">
+            <div
+              className="h-full bg-amber-400 transition-all"
+              style={{ width: `${progress}%` }}
+            />
           </div>
         </div>
+        <div className="text-right">
+          <p className="text-amber-400 font-bold text-lg">{correctCount}/{puzzles.length}</p>
+          <p className="text-slate-400 text-xs">Correct</p>
+        </div>
+      </div>
 
-        {/* Chessboard */}
-        <div className="bg-slate-900/50 border border-teal-900/30 rounded-lg p-4 mb-8 flex justify-center">
-          <div style={{ width: "min(100%, 500px)", aspectRatio: "1" }}>
+      {/* Main Content */}
+      <div className="flex-1 flex items-center justify-center p-4 overflow-hidden">
+        <div className="w-full h-full flex items-center justify-center">
+          <div style={{ width: "min(100%, 100vh - 120px)", aspectRatio: "1" }}>
             <Chessboard
               position={game.fen()}
               onPieceDrop={handleMove}
@@ -213,37 +200,16 @@ export default function Session() {
             />
           </div>
         </div>
-
-        {/* Status Message */}
-        {solved && (
-          <Card className="bg-green-900/30 border-green-900/50 p-6 text-center mb-8">
-            <p className="text-green-400 font-bold text-lg">✓ Correct! Loading next puzzle...</p>
-          </Card>
-        )}
-
-        {/* Puzzle Info */}
-        <Card className="bg-slate-900/50 border-teal-900/30 p-6">
-          <h3 className="text-amber-400 font-bold mb-4">Puzzle Information</h3>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <p className="text-slate-400">FEN Position</p>
-              <p className="text-white font-mono text-xs break-all">{currentPuzzle?.fen}</p>
-            </div>
-            <div>
-              <p className="text-slate-400">Themes</p>
-              <p className="text-white">{currentPuzzle?.themes?.join(", ") || "—"}</p>
-            </div>
-            <div>
-              <p className="text-slate-400">Color to Move</p>
-              <p className="text-white">{currentPuzzle?.color === "white" ? "White" : "Black"}</p>
-            </div>
-            <div>
-              <p className="text-slate-400">Solution Moves</p>
-              <p className="text-white font-mono text-xs">{currentPuzzle?.moves?.join(" ") || "—"}</p>
-            </div>
-          </div>
-        </Card>
       </div>
+
+      {/* Status Message */}
+      {solved && (
+        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2">
+          <Card className="bg-green-900/30 border-green-900/50 p-4">
+            <p className="text-green-400 font-bold">✓ Correct! Loading next...</p>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
