@@ -191,4 +191,5 @@
 - [x] Implement auto-next puzzle functionality
 - [x] Add capture animation before wrong move
 - [x] Test all three features
+- [x] Change home page background to white
 - [ ] Save checkpoint

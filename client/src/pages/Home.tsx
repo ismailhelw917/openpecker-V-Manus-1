@@ -21,17 +21,17 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center pb-24">
+      <div className="min-h-screen bg-white flex items-center justify-center pb-24">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400 mx-auto mb-4"></div>
-          <p className="text-slate-400">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
+          <p className="text-slate-600">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex flex-col items-center justify-center pb-24 px-4">
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center pb-24 px-4">
       {/* Hero Section */}
       <div className="text-center max-w-2xl mx-auto mb-12">
         {/* Logo */}
@@ -44,10 +44,10 @@ export default function Home() {
         </div>
         
         {/* Title */}
-        <h1 className="text-6xl font-black text-amber-400 mb-4">OpenPecker</h1>
+        <h1 className="text-6xl font-black text-teal-700 mb-4">OpenPecker</h1>
 
         {/* Subtitle */}
-        <p className="text-xl text-amber-200 mb-8">
+        <p className="text-xl text-slate-700 mb-8">
           Master opening tactics through deliberate repetition.
         </p>
 
@@ -55,7 +55,7 @@ export default function Home() {
         <div className="space-y-3 mb-12">
           <Button
             onClick={() => setLocation("/train")}
-            className="w-full max-w-sm bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold text-lg py-6 rounded-lg"
+            className="w-full max-w-sm bg-teal-600 hover:bg-teal-700 text-white font-bold text-lg py-6 rounded-lg"
           >
             START TRAINING →
           </Button>
@@ -63,13 +63,13 @@ export default function Home() {
           {!isAuthenticated ? (
             <Button
               onClick={() => setLocation("/auth")}
-              className="w-full max-w-sm bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 font-semibold py-6 rounded-lg"
+              className="w-full max-w-sm bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-semibold py-6 rounded-lg"
             >
               Sign In / Register
             </Button>
           ) : (
-            <div className="text-slate-300 text-sm">
-              Welcome, <span className="text-amber-400 font-semibold">{user?.name || user?.email}</span>
+            <div className="text-slate-700 text-sm">
+              Welcome, <span className="text-teal-600 font-semibold">{user?.name || user?.email}</span>
             </div>
           )}
         </div>
@@ -77,43 +77,43 @@ export default function Home() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-3 gap-4 w-full max-w-md">
-        <Card className="bg-slate-900/50 border-teal-900/30 p-4 text-center">
-          <p className="text-amber-400 font-bold text-2xl">{stats.cycles}</p>
-          <p className="text-slate-400 text-xs uppercase tracking-wider">Cycles</p>
+        <Card className="bg-teal-50 border-teal-200 p-4 text-center">
+          <p className="text-teal-600 font-bold text-2xl">{stats.cycles}</p>
+          <p className="text-slate-600 text-xs uppercase tracking-wider">Cycles</p>
         </Card>
-        <Card className="bg-slate-900/50 border-teal-900/30 p-4 text-center">
-          <p className="text-amber-400 font-bold text-2xl">{stats.solved}</p>
-          <p className="text-slate-400 text-xs uppercase tracking-wider">Solved</p>
+        <Card className="bg-teal-50 border-teal-200 p-4 text-center">
+          <p className="text-teal-600 font-bold text-2xl">{stats.solved}</p>
+          <p className="text-slate-600 text-xs uppercase tracking-wider">Solved</p>
         </Card>
-        <Card className="bg-slate-900/50 border-teal-900/30 p-4 text-center">
-          <p className="text-amber-400 font-bold text-2xl">{stats.accuracy}%</p>
-          <p className="text-slate-400 text-xs uppercase tracking-wider">Acc%</p>
+        <Card className="bg-teal-50 border-teal-200 p-4 text-center">
+          <p className="text-teal-600 font-bold text-2xl">{stats.accuracy}%</p>
+          <p className="text-slate-600 text-xs uppercase tracking-wider">Acc%</p>
         </Card>
       </div>
 
       {/* Feature Highlights */}
       <div className="mt-16 max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-        <Card className="bg-slate-900/50 border-teal-900/30 p-4">
-          <h3 className="text-amber-400 font-bold mb-2">📚 5.8M Puzzles</h3>
-          <p className="text-slate-400 text-sm">
+        <Card className="bg-teal-50 border-teal-200 p-4">
+          <h3 className="text-teal-700 font-bold mb-2">📚 5.8M Puzzles</h3>
+          <p className="text-slate-700 text-sm">
             Train with thousands of opening variations from Lichess
           </p>
         </Card>
-        <Card className="bg-slate-900/50 border-teal-900/30 p-4">
-          <h3 className="text-amber-400 font-bold mb-2">📊 Advanced Stats</h3>
-          <p className="text-slate-400 text-sm">
+        <Card className="bg-teal-50 border-teal-200 p-4">
+          <h3 className="text-teal-700 font-bold mb-2">📊 Advanced Stats</h3>
+          <p className="text-slate-700 text-sm">
             Track accuracy, rating trends, and opening mastery
           </p>
         </Card>
-        <Card className="bg-slate-900/50 border-teal-900/30 p-4">
-          <h3 className="text-amber-400 font-bold mb-2">⚙️ Customizable</h3>
-          <p className="text-slate-400 text-sm">
+        <Card className="bg-teal-50 border-teal-200 p-4">
+          <h3 className="text-teal-700 font-bold mb-2">⚙️ Customizable</h3>
+          <p className="text-slate-700 text-sm">
             Choose rating range, themes, and difficulty levels
           </p>
         </Card>
-        <Card className="bg-slate-900/50 border-teal-900/30 p-4">
-          <h3 className="text-amber-400 font-bold mb-2">🪶 Woodpecker Method</h3>
-          <p className="text-slate-400 text-sm">
+        <Card className="bg-teal-50 border-teal-200 p-4">
+          <h3 className="text-teal-700 font-bold mb-2">🪶 Woodpecker Method</h3>
+          <p className="text-slate-700 text-sm">
             Deliberate repetition of opening tactics until mastery
           </p>
         </Card>
