@@ -1,0 +1,14 @@
+{
+  "query": "SELECT COUNT(*) as total_puzzles, COUNT(DISTINCT id) as unique_ids FROM puzzles LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT COUNT(*) as total_puzzles, COUNT(DISTINCT id) as unique_ids FROM puzzles LIMIT 1;",
+  "rows": [
+    {
+      "total_puzzles": "5415000",
+      "unique_ids": "5415000"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_puzzles\tunique_ids\n5415000\t5415000\n",
+  "stderr": "",
+  "execution_time_ms": 7772
+}

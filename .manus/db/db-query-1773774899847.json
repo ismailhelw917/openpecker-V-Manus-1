@@ -1,0 +1,34 @@
+{
+  "query": "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE() ORDER BY table_name;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE() ORDER BY table_name;",
+  "rows": [
+    {
+      "table_name": "__drizzle_migrations"
+    },
+    {
+      "table_name": "cycle_history"
+    },
+    {
+      "table_name": "openings"
+    },
+    {
+      "table_name": "puzzle_attempts"
+    },
+    {
+      "table_name": "puzzles"
+    },
+    {
+      "table_name": "puzzles_raw"
+    },
+    {
+      "table_name": "training_sets"
+    },
+    {
+      "table_name": "users"
+    }
+  ],
+  "messages": [],
+  "stdout": "table_name\n__drizzle_migrations\ncycle_history\nopenings\npuzzle_attempts\npuzzles\npuzzles_raw\ntraining_sets\nusers\n",
+  "stderr": "",
+  "execution_time_ms": 1682
+}
