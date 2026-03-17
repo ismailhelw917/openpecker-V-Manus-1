@@ -80,15 +80,26 @@ export default function Settings() {
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to create checkout session");
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to create checkout session: ${response.status} ${errorText}`);
+      }
 
-      const { url } = await response.json();
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Invalid response format from server");
+      }
+
+      const data = await response.json();
+      const url = data?.url;
       if (url) {
         window.open(url, "_blank");
         toast.success("Opening Stripe checkout...");
+      } else {
+        throw new Error("No checkout URL received");
       }
     } catch (error) {
-      toast.error("Failed to start checkout");
+      toast.error(error instanceof Error ? error.message : "Failed to start checkout");
       console.error(error);
     } finally {
       setLoading(false);

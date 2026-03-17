@@ -253,12 +253,11 @@ export default function Session() {
               // Function to play moves sequentially with animation
               const playNextMove = () => {
                 if (moveIndex >= movesList.length) {
-                  // All moves played
+                  // All moves played - don't count as correct or solved
                   setIsAutoSolving(false);
                   setAutoSolveMove(null);
-                  setCorrectCount((prev) => prev + movesList.length);
-                  toast.success(`Auto-solved: ${movesList.join(' ')}`);
-                  setSolved(true);
+                  toast.info(`Solution: ${movesList.join(' ')}`);
+                  // Don't set setSolved(true) - user didn't solve it correctly
                   
                   // Start countdown for auto-next
                   let countdown = 1;
