@@ -1,12 +1,15 @@
-import { useState } from "react";
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Search, Lock } from "lucide-react";
+import { ArrowLeft, Search, Lock, Loader2 } from "lucide-react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
+import { useState, useEffect } from "react";
 
+// Mock opening data for now - will be replaced with database queries
 const OPENINGS_DATA = {
   "French Defence": {
     variations: [
@@ -60,6 +63,7 @@ export default function Train() {
   const [selectedVariation, setSelectedVariation] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetchingPuzzles, setIsFetchingPuzzles] = useState(false);
 
   // Configuration state
   const [minRating, setMinRating] = useState(1000);
@@ -69,6 +73,16 @@ export default function Train() {
   const [puzzleCount, setPuzzleCount] = useState(25);
 
   const createTrainingSet = trpc.trainingSets.create.useMutation();
+  const fetchPuzzles = trpc.trainingSets.fetchPuzzles.useQuery(
+    {
+      theme: selectedVariation || "",
+      minRating,
+      maxRating,
+      count: puzzleCount,
+      colorFilter: colorFilter as "white" | "black" | "both",
+    },
+    { enabled: false }
+  );
 
   const filteredOpenings = Object.keys(OPENINGS_DATA).filter((o) =>
     o.toLowerCase().includes(searchQuery.toLowerCase())
@@ -102,36 +116,51 @@ export default function Train() {
     }
 
     setIsLoading(true);
-    try {
-      // Generate random puzzles for the selected variation
-      const puzzles = Array.from({ length: puzzleCount }, (_, i) => ({
-        id: `puzzle_${Math.random().toString(36).substr(2, 9)}`,
-        fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-        moves: ["e2e4"],
-        rating: Math.floor(Math.random() * (maxRating - minRating + 1)) + minRating,
-        themes: [selectedVariation],
-        color: colorFilter === "both" ? (Math.random() > 0.5 ? "white" : "black") : colorFilter,
-      }));
+    setIsFetchingPuzzles(true);
 
-      const result = await createTrainingSet.mutateAsync({
+    try {
+      // Fetch real puzzles from database
+      const result = await fetchPuzzles.refetch();
+
+      if (!result.data?.success || !result.data?.puzzles) {
+        toast.error("Failed to fetch puzzles from database");
+        setIsLoading(false);
+        setIsFetchingPuzzles(false);
+        return;
+      }
+
+      const puzzles = result.data.puzzles;
+
+      if (puzzles.length === 0) {
+        toast.error("No puzzles found for this variation");
+        setIsLoading(false);
+        setIsFetchingPuzzles(false);
+        return;
+      }
+
+      // Create training set with real puzzles
+      const createResult = await createTrainingSet.mutateAsync({
         themes: [selectedVariation],
         minRating,
         maxRating,
-        puzzleCount,
+        puzzleCount: Math.min(puzzleCount, puzzles.length),
         targetCycles,
         colorFilter: colorFilter as "white" | "black" | "both",
-        puzzles,
+        puzzles: puzzles.slice(0, puzzleCount),
       });
 
-      if (result.setId) {
+      if (createResult.success && createResult.setId) {
         toast.success("Training set created!");
-        setLocation(`/session/${result.setId}`);
+        setLocation(`/session/${createResult.setId}`);
+      } else {
+        toast.error("Failed to create training set");
       }
     } catch (error) {
       console.error("Error creating training set:", error);
       toast.error("Failed to create training set");
     } finally {
       setIsLoading(false);
+      setIsFetchingPuzzles(false);
     }
   };
 
@@ -330,10 +359,22 @@ export default function Train() {
               {/* Start Button */}
               <Button
                 onClick={handleStartSession}
-                disabled={isLoading}
+                disabled={isLoading || isFetchingPuzzles}
                 className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-4 text-xl mt-8"
               >
-                {isLoading ? "Creating Session..." : "Start Session"}
+                {isFetchingPuzzles ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Fetching Puzzles...
+                  </>
+                ) : isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Creating Session...
+                  </>
+                ) : (
+                  "Start Session"
+                )}
               </Button>
             </div>
           </Card>

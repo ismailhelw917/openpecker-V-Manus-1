@@ -131,6 +131,35 @@ export async function getPuzzlesByThemeAndRating(
     .limit(limit);
 }
 
+// Get random puzzles by theme and rating (for training sessions)
+export async function getRandomPuzzlesByThemeAndRating(
+  theme: string,
+  minRating: number,
+  maxRating: number,
+  limit: number = 20,
+  color?: string
+) {
+  const db = await getDb();
+  if (!db) return [];
+
+  let whereConditions = and(
+    sql`JSON_CONTAINS(${puzzles.themes}, JSON_QUOTE(${theme}))`,
+    gte(puzzles.rating, minRating),
+    lte(puzzles.rating, maxRating)
+  );
+
+  if (color && color !== 'both') {
+    whereConditions = and(whereConditions, eq(puzzles.color, color));
+  }
+
+  return db
+    .select()
+    .from(puzzles)
+    .where(whereConditions)
+    .orderBy(sql`RAND()`)
+    .limit(limit);
+}
+
 export async function getPuzzleById(id: string) {
   const db = await getDb();
   if (!db) return undefined;

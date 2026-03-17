@@ -106,10 +106,21 @@
 
 
 ## User Requested Updates (Round 2)
-- [ ] Remove puzzle selection UI - use random selection instead
-- [ ] Center target cycles input field
-- [ ] Add puzzle count selector (25, 50, 100, etc.) with cap based on available puzzles
-- [ ] Fix FEN/UCI parsing for proper chessboard loading (handle promotion, en passant)
-- [ ] Remove all buttons from Session screen
-- [ ] Fit app to screen with proper viewport scaling
-- [ ] Implement auto-next puzzle loading after solving
+- [x] Remove puzzle selection UI - use random selection instead
+- [x] Center target cycles input field
+- [x] Add puzzle count selector (25, 50, 100, etc.) with cap based on available puzzles
+- [x] Fix FEN/UCI parsing for proper chessboard loading (handle promotion, en passant)
+- [x] Remove all buttons from Session screen
+- [x] Fit app to screen with proper viewport scaling
+- [x] Implement auto-next puzzle loading after solving
+
+## Database & Puzzle Loading (Round 3)
+- [x] Run CSV import script to populate database with 50k real Lichess puzzles
+- [x] Create getRandomPuzzlesByThemeAndRating function for random puzzle selection
+- [x] Add tRPC trainingSets.fetchPuzzles procedure for frontend puzzle fetching
+- [x] Update Train page to fetch real puzzles from database instead of mock data
+- [x] Fix moves parsing to handle space-separated UCI strings
+- [x] Fix themes parsing to handle JSON arrays properly
+- [x] Write 12 comprehensive tests for puzzle fetching functionality
+- [x] Write 7 tests for tRPC fetchPuzzles integration
+- [x] All 43 tests passing
