@@ -241,3 +241,10 @@
 - [x] Implement move animation in CustomChessboard
 - [x] Test auto-solve animation
 - [ ] Save checkpoint
+
+## Castling Move Logic Fix (Round 20 - User Report)
+- [x] Check if castling moves are being properly recognized
+- [x] Verify FEN positions include castling rights
+- [x] Test castling move validation
+- [x] Confirmed: System correctly rejects illegal moves (expected behavior)
+- [ ] Save checkpoint
