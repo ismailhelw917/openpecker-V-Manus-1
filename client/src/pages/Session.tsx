@@ -22,6 +22,15 @@ export default function Session() {
   const [autoSolveMove, setAutoSolveMove] = useState<{ from: string; to: string } | null>(null);
   const [isAutoSolving, setIsAutoSolving] = useState(false);
   const [autoNextCountdown, setAutoNextCountdown] = useState<number | null>(null);
+  const [boardTheme, setBoardTheme] = useState<'classic' | 'green' | 'blue' | 'purple'>('classic');
+
+  // Board theme definitions
+  const themeColors = {
+    classic: { light: '#f0d9b5', dark: '#b58863' },
+    green: { light: '#ffffcc', dark: '#7cb342' },
+    blue: { light: '#e8f4f8', dark: '#2c5aa0' },
+    purple: { light: '#f0e6ff', dark: '#6b4c9a' },
+  };
 
   const getTrainingSet = trpc.trainingSets.getById.useQuery(
     { id: sessionId },
@@ -353,9 +362,28 @@ export default function Session() {
             />
           </div>
         </div>
-        <div className="text-right text-sm">
-          <p className="text-amber-400 font-bold">{correctCount}/{puzzles.length}</p>
-          <p className="text-slate-400 text-xs">Correct</p>
+        <div className="flex items-center gap-2">
+          {/* Theme Selector */}
+          <div className="flex gap-1 bg-slate-800/50 rounded-lg p-1">
+            {(['classic', 'green', 'blue', 'purple'] as const).map((theme) => (
+              <button
+                key={theme}
+                onClick={() => setBoardTheme(theme)}
+                className={`w-6 h-6 rounded transition-all ${
+                  boardTheme === theme ? 'ring-2 ring-amber-400' : 'opacity-60 hover:opacity-100'
+                }`}
+                style={{
+                  backgroundColor: themeColors[theme].light,
+                  border: `2px solid ${themeColors[theme].dark}`,
+                }}
+                title={theme.charAt(0).toUpperCase() + theme.slice(1)}
+              />
+            ))}
+          </div>
+          <div className="text-right text-sm ml-2">
+            <p className="text-amber-400 font-bold">{correctCount}/{puzzles.length}</p>
+            <p className="text-slate-400 text-xs">Correct</p>
+          </div>
         </div>
       </div>
 
@@ -365,7 +393,7 @@ export default function Session() {
           <CustomChessboard
             game={new Chess(fen)}
             onPieceDrop={handleMove}
-            boardColors={{ light: '#f0d9b5', dark: '#b58863' }}
+            boardColors={themeColors[boardTheme]}
             captureSquare={captureSquare}
             orientation={boardOrientation}
             autoSolveMove={autoSolveMove}

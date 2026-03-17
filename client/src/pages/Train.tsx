@@ -224,7 +224,8 @@ export default function Train() {
                         {group.variations.length > 0 && (
                           <div className="ml-4 mt-2 space-y-2 border-l-2 border-slate-700 pl-4">
                             {group.variations.map((variation, varIndex) => {
-                              const varIsLocked = (groupIndex * 10 + varIndex) % 10 >= 3;
+                              // If parent is locked, all subsets are also locked
+                              const varIsLocked = isLocked || ((groupIndex * 10 + varIndex) % 10 >= 3);
                               const varCanAccess = !varIsLocked || user?.isPremium;
                               return (
                                 <Card
