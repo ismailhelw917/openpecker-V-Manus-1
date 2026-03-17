@@ -219,9 +219,7 @@ export default function Settings() {
 
             {/* Header */}
             <div className="text-center pt-12 pb-8 px-6">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full border-2 border-amber-400/40 flex items-center justify-center">
-                <span className="text-3xl">♟</span>
-              </div>
+              <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/openpecker-premium-logo-LPhYmaC6iM2uaYuZkpHQpR.webp" alt="OpenPecker Premium" className="w-24 h-24 mx-auto mb-4 object-contain" />
               <h2 className="text-3xl font-bold text-white mb-2">OpenPecker Premium</h2>
               <p className="text-slate-400">Master every opening. No limits.</p>
             </div>
