@@ -150,23 +150,36 @@ export default function Train() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {filteredOpenings.length > 0 ? (
-                  filteredOpenings.map((opening) => (
+                  filteredOpenings.map((opening, index) => {
+                    const isLocked = index % 10 >= 3;
+                    const canAccess = !isLocked || user?.isPremium;
+                    return (
                     <Card
                       key={opening}
                       onClick={() => {
+                        if (!canAccess) {
+                          toast.error("Unlock this opening with a premium account");
+                          return;
+                        }
                         setSelectedOpening(opening);
                         setStep("configuration");
                       }}
-                      className={`p-4 cursor-pointer transition border-2 ${
+                      className={`p-4 cursor-pointer transition border-2 relative ${
                         selectedOpening === opening
                           ? "border-amber-400 bg-amber-400/10"
                           : "border-slate-700 hover:border-amber-400 bg-slate-800/50"
-                      }`}
+                      } ${!canAccess ? "opacity-60" : ""}`}
                     >
                       <h3 className="font-semibold text-white">{opening}</h3>
-                      <p className="text-sm text-slate-400 mt-1">Click to select</p>
+                      <p className="text-sm text-slate-400 mt-1">{isLocked && !user?.isPremium ? "Premium Only" : "Click to select"}</p>
+                      {isLocked && !user?.isPremium && (
+                        <div className="absolute top-2 right-2">
+                          <Lock className="w-5 h-5 text-amber-400" />
+                        </div>
+                      )}
                     </Card>
-                  ))
+                    );
+                  })
                 ) : (
                   <div className="col-span-full text-center py-12">
                     <p className="text-slate-400">No openings found</p>

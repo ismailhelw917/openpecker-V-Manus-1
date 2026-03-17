@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 type Tab = "overview" | "trends" | "openings";
@@ -85,6 +87,25 @@ const STATS_METRICS = [
 export default function Stats() {
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
+  const { user } = useAuth();
+
+  if (!user?.isPremium) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center pb-24 px-4">
+        <div className="text-center max-w-md">
+          <div className="text-6xl mb-6">🔒</div>
+          <h2 className="text-3xl font-bold text-amber-400 mb-4">Premium Feature</h2>
+          <p className="text-slate-400 mb-8">Advanced statistics and performance analytics are available for premium members only.</p>
+          <Button
+            onClick={() => setLocation("/settings")}
+            className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-3 rounded-lg"
+          >
+            Upgrade to Premium
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-24">

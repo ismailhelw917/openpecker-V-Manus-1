@@ -36,7 +36,7 @@ export default function Home() {
       <div className="text-center max-w-2xl mx-auto mb-12">
         {/* Bird Logo */}
         <div className="w-24 h-24 mx-auto mb-8 drop-shadow-lg">
-          <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/Gemini_Generated_Image_y7cfpwy7cfpwy7cf_c06e8b05.png" alt="OpenPecker" className="w-full h-full object-contain filter brightness-110 contrast-125" />
+          <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/Gemini_Generated_Image_oie9g3oie9g3oie9_9981cecb.webp" alt="OpenPecker" className="w-full h-full object-contain" />
         </div>
 
         {/* Title */}
