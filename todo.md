@@ -270,3 +270,12 @@
 - [x] Write and run unit tests for move validation and countdown logic
 - [x] Verify all tests pass
 - [ ] Save checkpoint
+
+## Critical Bug Fixes (Round 23 - User Report)
+- [x] Prevent duplicate puzzles in training sessions using selectDistinct()
+- [x] Redesign Sets tab to display only open/active sessions
+- [x] Hide paused and completed sessions from main view
+- [x] Update empty state message to guide users to create new sessions
+- [x] Add pulsing indicator to "Open Sessions" header
+- [ ] Test duplicate prevention and session display
+- [ ] Save checkpoint

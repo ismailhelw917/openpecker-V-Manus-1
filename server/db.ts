@@ -277,8 +277,10 @@ export async function getRandomPuzzlesByOpeningAndRating(
     whereConditions = and(whereConditions, eq(puzzles.color, color));
   }
 
+  // Use selectDistinct to prevent duplicate puzzle IDs
+  // This ensures each puzzle appears only once in the result set
   return db
-    .select()
+    .selectDistinct()
     .from(puzzles)
     .where(whereConditions)
     .orderBy(sql`RAND()`)

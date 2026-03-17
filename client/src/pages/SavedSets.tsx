@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -78,12 +78,12 @@ export default function SavedSets() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Active Training Section */}
+        {/* Open Sessions Section */}
         {activeSets.length > 0 && (
           <div className="mb-12">
             <h2 className="text-amber-400 font-bold text-sm uppercase mb-6 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-amber-400"></span>
-              Active Training
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+              Open Sessions
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {activeSets.map((set: any) => (
@@ -148,81 +148,12 @@ export default function SavedSets() {
           </div>
         )}
 
-        {/* Paused Sets Section */}
-        {pausedSets.length > 0 && (
-          <div className="mb-12">
-            <h2 className="text-slate-400 font-bold text-sm uppercase mb-6">Paused</h2>
-            <div className="space-y-3">
-              {pausedSets.map((set: any) => (
-                <Card
-                  key={set.id}
-                  className="bg-slate-800/30 border-slate-700 p-4 flex items-center justify-between hover:bg-slate-800/50 transition-colors"
-                >
-                  <div>
-                    <h3 className="text-white font-semibold">{set.openingName || "Custom Set"}</h3>
-                    <p className="text-slate-400 text-sm">
-                      {set.puzzleCount} puzzles • {set.cyclesCompleted || 0} / {set.targetCycles}{" "}
-                      cycles
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      className="bg-amber-600 hover:bg-amber-700"
-                      onClick={() => handlePlaySet(set.id)}
-                    >
-                      <Play className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => handleDeleteSet(set.id)}
-                      disabled={deleteSetMutation.isPending}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Note: Paused and Completed sessions are archived and not shown in Open Sessions view */}
 
-        {/* Completed Sets Section */}
-        {completedSets.length > 0 && (
-          <div className="mb-12">
-            <h2 className="text-slate-400 font-bold text-sm uppercase mb-6">Completed</h2>
-            <div className="space-y-3">
-              {completedSets.map((set: any) => (
-                <Card
-                  key={set.id}
-                  className="bg-slate-800/30 border-slate-700 p-4 flex items-center justify-between hover:bg-slate-800/50 transition-colors"
-                >
-                  <div>
-                    <h3 className="text-white font-semibold">{set.openingName || "Custom Set"}</h3>
-                    <p className="text-slate-400 text-sm">
-                      {set.puzzleCount} puzzles • Final accuracy:{" "}
-                      {set.bestAccuracy ? `${Math.round(Number(set.bestAccuracy))}%` : "—"}
-                    </p>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => handleDeleteSet(set.id)}
-                    disabled={deleteSetMutation.isPending}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Empty State */}
-        {sets.length === 0 && (
+        {/* Empty State - Only show if no active sessions */}
+        {activeSets.length === 0 && (
           <Card className="bg-slate-800/50 border-slate-700 p-12 text-center">
-            <p className="text-slate-300 mb-6">No training sets yet</p>
+            <p className="text-slate-300 mb-6">No open sessions. Start a new training session to begin!</p>
             <Button
               className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold"
               onClick={() => setLocation("/train")}
