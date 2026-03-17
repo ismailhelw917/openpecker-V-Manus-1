@@ -48,6 +48,7 @@ export default function Train() {
   }, [getOpeningsQuery.error]);
 
   const createTrainingSet = trpc.trainingSets.create.useMutation();
+  const fetchPuzzlesMutation = trpc.trainingSets.fetchPuzzlesByOpening.useMutation();
 
   const handleStartSession = async () => {
     if (!selectedOpening) {
@@ -57,20 +58,16 @@ export default function Train() {
 
     setIsFetchingPuzzles(true);
     try {
-      // Fetch puzzles for the selected opening using tRPC
-      const puzzlesResponse = await fetch("/api/trpc/trainingSets.fetchPuzzlesByOpening", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          opening: selectedOpening,
-          minRating,
-          maxRating,
-          count: puzzleCount,
-          colorFilter,
-        }),
-      }).then(res => res.json());
+      // Fetch puzzles for the selected opening using tRPC mutation
+      const puzzlesResponse = await fetchPuzzlesMutation.mutateAsync({
+        opening: selectedOpening,
+        minRating,
+        maxRating,
+        count: puzzleCount,
+        colorFilter,
+      });
 
-      const puzzles = puzzlesResponse.result?.data?.puzzles || [];
+      const puzzles = puzzlesResponse.puzzles || [];
       if (!puzzles || puzzles.length === 0) {
         toast.error(`No puzzles found for ${selectedOpening} with selected filters`);
         setIsFetchingPuzzles(false);
