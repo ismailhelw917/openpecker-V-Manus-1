@@ -25,102 +25,25 @@ import {
 } from "./db";
 
 /**
- * Fetch puzzles from BigQuery or fallback to local database
+ * Fetch puzzles from local database only
  * Supports filtering by theme, rating range, and color
  */
-async function fetchPuzzlesFromBigQuery(
+async function fetchPuzzlesFromDatabase(
   theme: string,
   minRating: number,
   maxRating: number,
   count: number,
   color?: string
 ) {
-  // Try BigQuery first if configured
-  const bigQueryUrl = process.env.BUILT_IN_FORGE_API_URL;
-  const bigQueryKey = process.env.BUILT_IN_FORGE_API_KEY;
-
-  if (bigQueryUrl && bigQueryKey) {
-    try {
-      const params = new URLSearchParams({
-        theme,
-        minRating: String(minRating),
-        maxRating: String(maxRating),
-        count: String(count),
-      });
-
-      if (color && color !== "both") {
-        params.append("color", color);
-      }
-
-      const response = await fetch(`${bigQueryUrl}/api/puzzles?${params}`, {
-        headers: {
-          Authorization: `Bearer ${bigQueryKey}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.data && Array.isArray(data.data)) {
-          // Cache puzzles in local database for fallback
-          const puzzlesToInsert = data.data.map((p: any) => ({
-            id: p.puzzle_id || p.id,
-            fen: p.fen,
-            moves: JSON.stringify(p.moves || []),
-            rating: p.rating,
-            themes: JSON.stringify(p.themes || [theme]),
-            color: p.color,
-            puzzleData: JSON.stringify(p),
-          }));
-          await insertPuzzles(puzzlesToInsert);
-          return data.data;
-        }
-      }
-    } catch (error) {
-      console.error("[PUZZLE FETCH] BigQuery error:", error);
-      // Fall through to local database
-    }
-  }
-
-  // Fallback to local database
-  console.log("[PUZZLE FETCH] Using local database fallback");
+  console.log("[PUZZLE FETCH] Using local database");
   return getPuzzlesByThemeAndRating(theme, minRating, maxRating, count, color);
 }
 
 /**
- * Fetch openings from BigQuery or fallback to local database
+ * Fetch openings from local database only
  */
 async function fetchOpeningsData() {
-  const bigQueryUrl = process.env.BUILT_IN_FORGE_API_URL;
-  const bigQueryKey = process.env.BUILT_IN_FORGE_API_KEY;
-
-  if (bigQueryUrl && bigQueryKey) {
-    try {
-      const response = await fetch(`${bigQueryUrl}/api/openings`, {
-        headers: {
-          Authorization: `Bearer ${bigQueryKey}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.data && Array.isArray(data.data)) {
-          // Cache openings in local database
-          const openingsToInsert = data.data.map((o: any) => ({
-            id: o.id || nanoid(),
-            name: o.name,
-            fen: o.fen,
-            ecoCode: o.ecoCode,
-          }));
-          await insertOpenings(openingsToInsert);
-          return data.data;
-        }
-      }
-    } catch (error) {
-      console.error("[OPENINGS FETCH] BigQuery error:", error);
-    }
-  }
-
-  // Fallback to local database
+  console.log("[OPENINGS FETCH] Using local database");
   return getAllOpenings();
 }
 
@@ -141,8 +64,7 @@ export const appRouter = router({
   // Puzzle-related procedures
   puzzles: router({
     /**
-     * Fetch puzzles by theme and rating range
-     * Supports BigQuery with local database fallback
+     * Fetch puzzles by theme and rating range from local database
      */
     fetchByTheme: publicProcedure
       .input(
@@ -156,7 +78,7 @@ export const appRouter = router({
       )
       .query(async ({ input }) => {
         try {
-          const puzzles = await fetchPuzzlesFromBigQuery(
+          const puzzles = await fetchPuzzlesFromDatabase(
             input.theme,
             input.minRating,
             input.maxRating,

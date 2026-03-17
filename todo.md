@@ -277,5 +277,13 @@
 - [x] Hide paused and completed sessions from main view
 - [x] Update empty state message to guide users to create new sessions
 - [x] Add pulsing indicator to "Open Sessions" header
-- [ ] Test duplicate prevention and session display
+- [x] Test duplicate prevention and session display
+
+## Database-Only Puzzle Sourcing (Round 24 - User Request)
+- [x] Remove BigQuery integration completely from routers.ts
+- [x] Update fetchPuzzlesFromBigQuery to fetchPuzzlesFromDatabase
+- [x] Remove BigQuery from openings fetching
+- [x] Update all puzzle procedures to use local database only
+- [x] Restore paused sessions display in Sets tab
+- [x] Verify no BigQuery references remain in code
 - [ ] Save checkpoint

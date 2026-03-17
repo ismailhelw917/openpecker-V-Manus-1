@@ -148,7 +148,76 @@ export default function SavedSets() {
           </div>
         )}
 
-        {/* Note: Paused and Completed sessions are archived and not shown in Open Sessions view */}
+        {/* Paused Training Section */}
+        {pausedSets.length > 0 && (
+          <div className="mb-12">
+            <h2 className="text-slate-400 font-bold text-sm uppercase mb-6">Paused</h2>
+            <div className="space-y-3">
+              {pausedSets.map((set: any) => (
+                <Card
+                  key={set.id}
+                  className="bg-slate-800/30 border-slate-700 p-4 flex items-center justify-between hover:bg-slate-800/50 transition-colors"
+                >
+                  <div>
+                    <h3 className="text-white font-semibold">{set.openingName || "Custom Set"}</h3>
+                    <p className="text-slate-400 text-sm">
+                      {set.puzzleCount} puzzles • {set.cyclesCompleted || 0} / {set.targetCycles}{" "}
+                      cycles
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      className="bg-amber-600 hover:bg-amber-700"
+                      onClick={() => handlePlaySet(set.id)}
+                    >
+                      <Play className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => handleDeleteSet(set.id)}
+                      disabled={deleteSetMutation.isPending}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Completed Sets Section */}
+        {completedSets.length > 0 && (
+          <div className="mb-12">
+            <h2 className="text-slate-400 font-bold text-sm uppercase mb-6">Completed</h2>
+            <div className="space-y-3">
+              {completedSets.map((set: any) => (
+                <Card
+                  key={set.id}
+                  className="bg-slate-800/30 border-slate-700 p-4 flex items-center justify-between hover:bg-slate-800/50 transition-colors"
+                >
+                  <div>
+                    <h3 className="text-white font-semibold">{set.openingName || "Custom Set"}</h3>
+                    <p className="text-slate-400 text-sm">
+                      {set.puzzleCount} puzzles • Final accuracy:{" "}
+                      {set.bestAccuracy ? `${Math.round(Number(set.bestAccuracy))}%` : "—"}
+                    </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => handleDeleteSet(set.id)}
+                    disabled={deleteSetMutation.isPending}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Empty State - Only show if no active sessions */}
         {activeSets.length === 0 && (
