@@ -34,9 +34,9 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex flex-col items-center justify-center pb-24 px-4">
       {/* Hero Section */}
       <div className="text-center max-w-2xl mx-auto mb-12">
-        {/* Pawn Icon */}
-        <div className="w-24 h-24 rounded-full border-2 border-amber-400 flex items-center justify-center mx-auto mb-8 shadow-lg shadow-amber-400/20">
-          <span className="text-5xl">♟</span>
+        {/* Bird Logo */}
+        <div className="w-24 h-24 mx-auto mb-8">
+          <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/Gemini_Generated_Image_y7cfpwy7cfpwy7cf_c06e8b05.png" alt="OpenPecker" className="w-full h-full object-contain" />
         </div>
 
         {/* Title */}
