@@ -117,9 +117,11 @@ export default function Session() {
 
   const handleMove = (sourceSquare: string, targetSquare: string) => {
     if (solved) return false;
+    if (!currentPuzzle?.fen) return false;
 
     try {
-      const game = new Chess(fen);
+      // Use the current puzzle's FEN directly to avoid race conditions
+      const game = new Chess(currentPuzzle.fen);
       
       let result = null;
       try {
@@ -135,6 +137,7 @@ export default function Session() {
 
       if (!result) return false;
 
+      // Update the displayed FEN after successful move
       setFen(game.fen());
 
       // Check if move is correct
@@ -144,7 +147,7 @@ export default function Session() {
       const expectedMove = movesList[0];
       const moveUCI = `${result.from}${result.to}${result.promotion || ""}`;
 
-      console.log('Move validation:', { expectedMove, moveUCI, movesString, movesList });
+      console.log('Move validation:', { expectedMove, moveUCI, movesString, movesList, puzzleId: currentPuzzle.id });
 
       if (expectedMove === moveUCI) {
         setCorrectCount((prev) => prev + 1);

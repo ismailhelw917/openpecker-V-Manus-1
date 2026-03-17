@@ -213,3 +213,11 @@
 - [x] Fix move validation logic
 - [x] Test with correct moves
 - [ ] Save checkpoint
+
+## Bug Fix (Round 16 - Invalid Move Error)
+- [x] Debug FEN initialization and board state
+- [x] Check if FEN is being reset properly between puzzles
+- [x] Verify move validation logic against correct FEN
+- [x] Fix FEN state management in Session page
+- [x] Test move validation
+- [ ] Save checkpoint
