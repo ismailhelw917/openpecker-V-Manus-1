@@ -37,7 +37,7 @@ export default function SavedSets() {
   };
 
   const handlePlaySet = (id: string) => {
-    setLocation(`/training/${id}`);
+    setLocation(`/session/${id}`);
   };
 
   if (setsQuery.isLoading) {
