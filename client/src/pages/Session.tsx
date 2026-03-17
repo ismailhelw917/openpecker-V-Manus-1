@@ -352,7 +352,7 @@ export default function Session() {
 
       {/* Board Container - Centered */}
       <div className="flex-1 flex items-center justify-center p-4 overflow-hidden">
-        <div style={{ width: boardSize, height: boardSize }}>
+        <div style={{ width: boardSize, height: boardSize }} className="relative">
           <CustomChessboard
             game={new Chess(fen)}
             onPieceDrop={handleMove}
