@@ -18,6 +18,7 @@ export default function Session() {
   const [correctCount, setCorrectCount] = useState(0);
   const [solved, setSolved] = useState(false);
   const [boardSize, setBoardSize] = useState(400);
+  const [captureSquare, setCaptureSquare] = useState<string | null>(null);
 
   const getTrainingSet = trpc.trainingSets.getById.useQuery(
     { id: sessionId },
@@ -145,12 +146,13 @@ export default function Session() {
         toast.success("Correct!");
         setSolved(true);
 
-        // Auto-advance after 1 second
+        // Auto-advance after 1.5 seconds
         setTimeout(() => {
           if (currentPuzzleIndex < puzzles.length - 1) {
             const nextIndex = currentPuzzleIndex + 1;
             setCurrentPuzzleIndex(nextIndex);
             setSolved(false);
+            setCaptureSquare(null);
             
             const nextPuzzle = puzzles[nextIndex];
             if (nextPuzzle?.fen) {
@@ -160,10 +162,17 @@ export default function Session() {
             toast.success("All puzzles completed!");
             setTimeout(() => setLocation("/sets"), 1000);
           }
-        }, 1000);
+        }, 1500);
       } else {
+        // Show capture animation on wrong move
+        setCaptureSquare(targetSquare);
         toast.error("Wrong move");
-        setFen(currentPuzzle.fen);
+        
+        // Reset board after animation
+        setTimeout(() => {
+          setFen(currentPuzzle.fen);
+          setCaptureSquare(null);
+        }, 600);
       }
 
       return true;
@@ -208,6 +217,7 @@ export default function Session() {
             game={new Chess(fen)}
             onPieceDrop={handleMove}
             boardColors={{ light: '#f0d9b5', dark: '#b58863' }}
+            captureSquare={captureSquare}
           />
         </div>
       </div>

@@ -185,3 +185,10 @@
 - [ ] Integrate logo into app header and favicon
 - [x] Fix chessboard loading issue using CustomChessboard component
 - [ ] Test opening selection with real opening names
+
+## UI Enhancements (Round 12 - User Request)
+- [x] Add logo to home screen
+- [x] Implement auto-next puzzle functionality
+- [x] Add capture animation before wrong move
+- [x] Test all three features
+- [ ] Save checkpoint
