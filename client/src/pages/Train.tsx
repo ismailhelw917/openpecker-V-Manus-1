@@ -57,8 +57,8 @@ export default function Train() {
 
     setIsFetchingPuzzles(true);
     try {
-      // Fetch puzzles for the selected opening
-      const response = await fetch("/api/trpc/trainingSets.fetchPuzzlesByOpening", {
+      // Fetch puzzles for the selected opening using tRPC
+      const puzzlesResponse = await fetch("/api/trpc/trainingSets.fetchPuzzlesByOpening", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -68,11 +68,10 @@ export default function Train() {
           count: puzzleCount,
           colorFilter,
         }),
-      });
+      }).then(res => res.json());
 
-      const data = await response.json();
-      
-      if (!data.result?.data?.puzzles || data.result.data.puzzles.length === 0) {
+      const puzzles = puzzlesResponse.result?.data?.puzzles || [];
+      if (!puzzles || puzzles.length === 0) {
         toast.error(`No puzzles found for ${selectedOpening} with selected filters`);
         setIsFetchingPuzzles(false);
         return;
@@ -83,10 +82,10 @@ export default function Train() {
         themes: [selectedOpening],
         minRating,
         maxRating,
-        puzzleCount: data.result.data.puzzles.length,
+        puzzleCount: puzzles.length,
         targetCycles,
         colorFilter,
-        puzzles: data.result.data.puzzles,
+        puzzles,
       });
 
       if (result.success && result.setId) {
