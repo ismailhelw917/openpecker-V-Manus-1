@@ -1,0 +1,19 @@
+{
+  "query": "SELECT COUNT(*) as total_training_sets FROM training_sets; SELECT COUNT(*) as total_cycles FROM cycle_history;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT COUNT(*) as total_training_sets FROM training_sets; SELECT COUNT(*) as total_cycles FROM cycle_history;",
+  "rows": [
+    {
+      "total_training_sets": "92"
+    },
+    {
+      "total_training_sets": "total_cycles"
+    },
+    {
+      "total_training_sets": "30"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_training_sets\n92\ntotal_cycles\n30\n",
+  "stderr": "",
+  "execution_time_ms": 1760
+}

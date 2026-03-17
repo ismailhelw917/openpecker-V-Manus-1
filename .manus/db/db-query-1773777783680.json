@@ -1,0 +1,18 @@
+{
+  "query": "SELECT id, name, email, isPremium, createdAt, updatedAt FROM users LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT id, name, email, isPremium, createdAt, updatedAt FROM users LIMIT 5;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Ismail",
+      "email": "happychesspenguin@gmail.com",
+      "isPremium": "0",
+      "createdAt": "2026-03-17 09:44:00",
+      "updatedAt": "2026-03-17 20:02:58"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\tisPremium\tcreatedAt\tupdatedAt\n1\tIsmail\thappychesspenguin@gmail.com\t0\t2026-03-17 09:44:00\t2026-03-17 20:02:58\n",
+  "stderr": "",
+  "execution_time_ms": 1692
+}
