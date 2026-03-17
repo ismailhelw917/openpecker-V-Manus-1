@@ -166,13 +166,16 @@ export async function getUniqueOpenings() {
   if (!db) return [];
 
   try {
-    const result = await db.select()
-      .from(puzzles)
-      .where(sql`${puzzles.openingName} IS NOT NULL`)
-      .groupBy(puzzles.openingName)
-      .orderBy(asc(puzzles.openingName));
+    // Use raw SQL to get distinct opening names
+    const result = await db.execute(
+      sql`SELECT DISTINCT openingName FROM puzzles WHERE openingName IS NOT NULL ORDER BY openingName ASC`
+    );
     
-    return result.map((row: any) => row.openingName).filter(Boolean);
+    // Extract opening names from result
+    if (Array.isArray(result) && result.length > 0 && Array.isArray(result[0])) {
+      return result[0].map((row: any) => row.openingName).filter(Boolean);
+    }
+    return [];
   } catch (error) {
     console.error("Error fetching unique openings:", error);
     return [];

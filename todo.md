@@ -135,3 +135,9 @@
 - [x] Add database functions for opening-based queries
 - [x] Test Train page with real opening data
 - [x] All 43 tests passing (including new opening-based tests)
+
+## Bug Fixes (Round 5)
+- [x] Add openings.getNames tRPC procedure to fetch unique openings
+- [x] Update Train page to use tRPC for fetching openings
+- [x] Test Train page opening loading
+- [x] All 43 tests still passing

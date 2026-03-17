@@ -229,6 +229,17 @@ export const appRouter = router({
         };
       }
     }),
+
+    getNames: publicProcedure.query(async () => {
+      try {
+        const { getUniqueOpenings } = await import("./db");
+        const openingNames = await getUniqueOpenings();
+        return openingNames || [];
+      } catch (error) {
+        console.error("[GET OPENING NAMES ERROR]", error);
+        return [];
+      }
+    }),
   }),
 
   // Training set management

@@ -28,25 +28,24 @@ export default function Train() {
   const [colorFilter, setColorFilter] = useState<"white" | "black" | "both">("both");
   const [puzzleCount, setPuzzleCount] = useState(25);
 
-  // Fetch available openings on mount
+  // Fetch available openings using tRPC
+  const getOpeningsQuery = trpc.openings.getNames.useQuery();
+
   useEffect(() => {
-    const fetchOpenings = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch("/api/trpc/openings.list");
-        const data = await response.json();
-        if (data.result?.data) {
-          setOpenings(data.result.data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch openings:", error);
-        toast.error("Failed to load openings");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchOpenings();
-  }, []);
+    if (getOpeningsQuery.data && Array.isArray(getOpeningsQuery.data)) {
+      setOpenings(getOpeningsQuery.data);
+    }
+  }, [getOpeningsQuery.data]);
+
+  useEffect(() => {
+    setIsLoading(getOpeningsQuery.isLoading);
+  }, [getOpeningsQuery.isLoading]);
+
+  useEffect(() => {
+    if (getOpeningsQuery.error) {
+      toast.error("Failed to load openings");
+    }
+  }, [getOpeningsQuery.error]);
 
   const createTrainingSet = trpc.trainingSets.create.useMutation();
 
