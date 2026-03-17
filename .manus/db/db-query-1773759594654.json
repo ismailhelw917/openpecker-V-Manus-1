@@ -1,0 +1,31 @@
+{
+  "query": "SHOW TABLES;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SHOW TABLES;",
+  "rows": [
+    {
+      "Tables_in_EorxrxCPNFVtGo7gjBVrJr": "__drizzle_migrations"
+    },
+    {
+      "Tables_in_EorxrxCPNFVtGo7gjBVrJr": "cycle_history"
+    },
+    {
+      "Tables_in_EorxrxCPNFVtGo7gjBVrJr": "openings"
+    },
+    {
+      "Tables_in_EorxrxCPNFVtGo7gjBVrJr": "puzzle_attempts"
+    },
+    {
+      "Tables_in_EorxrxCPNFVtGo7gjBVrJr": "puzzles_raw"
+    },
+    {
+      "Tables_in_EorxrxCPNFVtGo7gjBVrJr": "training_sets"
+    },
+    {
+      "Tables_in_EorxrxCPNFVtGo7gjBVrJr": "users"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_EorxrxCPNFVtGo7gjBVrJr\n__drizzle_migrations\ncycle_history\nopenings\npuzzle_attempts\npuzzles_raw\ntraining_sets\nusers\n",
+  "stderr": "",
+  "execution_time_ms": 1539
+}
