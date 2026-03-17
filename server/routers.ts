@@ -393,7 +393,7 @@ export const appRouter = router({
           colorFilter: z.enum(["white", "black", "both"]).default("both"),
         })
       )
-      .query(async ({ input }) => {
+      .mutation(async ({ input }) => {
         try {
           const { getRandomPuzzlesByOpeningAndRating } = await import("./db");
           const puzzles = await getRandomPuzzlesByOpeningAndRating(

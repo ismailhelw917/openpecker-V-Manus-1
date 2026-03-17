@@ -157,3 +157,9 @@
 - [x] Fixed Train page to use proper tRPC endpoint for fetching puzzles
 - [x] Verified puzzle data format (FEN and moves arrays are correctly formatted)
 - [x] All 43 tests still passing
+
+## Bug Fixes (Round 8 - 405 Method Not Allowed)
+- [x] Found 405 error: fetchPuzzlesByOpening was a query but Train page sends POST
+- [x] Changed fetchPuzzlesByOpening from .query() to .mutation()
+- [x] Server recompiled successfully
+- [x] All 43 tests still passing
