@@ -1,0 +1,15 @@
+{
+  "query": "SELECT COUNT(*) as total_puzzles, SUM(CASE WHEN fen IS NULL OR fen = '' THEN 1 ELSE 0 END) as null_fen, SUM(CASE WHEN moves IS NULL OR moves = '' THEN 1 ELSE 0 END) as null_moves FROM puzzles;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT COUNT(*) as total_puzzles, SUM(CASE WHEN fen IS NULL OR fen = '' THEN 1 ELSE 0 END) as null_fen, SUM(CASE WHEN moves IS NULL OR moves = '' THEN 1 ELSE 0 END) as null_moves FROM puzzles;",
+  "rows": [
+    {
+      "total_puzzles": "5415000",
+      "null_fen": "0",
+      "null_moves": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_puzzles\tnull_fen\tnull_moves\n5415000\t0\t0\n",
+  "stderr": "",
+  "execution_time_ms": 4251
+}

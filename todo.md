@@ -227,3 +227,11 @@
 - [x] Add legal moves calculation and display
 - [x] Test move validation with legal move indicators
 - [ ] Save checkpoint
+
+## Puzzle & Board Improvements (Round 18 - User Request)
+- [x] Remove legal move indicators from board display
+- [x] Verify move order correctness (white/black turns)
+- [x] Implement board rotation 180° for black's turn
+- [x] Verify all puzzles are correct (5.4M puzzles with valid FEN and moves)
+- [x] Test all changes
+- [ ] Save checkpoint
