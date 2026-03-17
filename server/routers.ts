@@ -370,6 +370,79 @@ export const appRouter = router({
       }),
 
     /**
+     * Fetch random puzzles by opening name and rating
+     */
+    fetchPuzzlesByOpening: publicProcedure
+      .input(
+        z.object({
+          opening: z.string(),
+          minRating: z.number().default(1000),
+          maxRating: z.number().default(2000),
+          count: z.number().default(20),
+          colorFilter: z.enum(["white", "black", "both"]).default("both"),
+        })
+      )
+      .query(async ({ input }) => {
+        try {
+          const { getRandomPuzzlesByOpeningAndRating } = await import("./db");
+          const puzzles = await getRandomPuzzlesByOpeningAndRating(
+            input.opening,
+            input.minRating,
+            input.maxRating,
+            input.count,
+            input.colorFilter === "both" ? undefined : input.colorFilter
+          );
+
+          return {
+            success: true,
+            puzzles: puzzles.map((p: any) => {
+              // Parse moves - could be JSON array or space-separated string
+              let moves = [];
+              if (typeof p.moves === "string") {
+                try {
+                  moves = JSON.parse(p.moves);
+                } catch (e) {
+                  // If not JSON, treat as space-separated moves
+                  moves = p.moves.split(" ").filter((m: string) => m.length > 0);
+                }
+              } else if (Array.isArray(p.moves)) {
+                moves = p.moves;
+              }
+
+              // Parse themes - could be JSON array or string
+              let themes = [];
+              if (typeof p.themes === "string") {
+                try {
+                  themes = JSON.parse(p.themes);
+                } catch (e) {
+                  // If not JSON, treat as single theme
+                  themes = [p.themes];
+                }
+              } else if (Array.isArray(p.themes)) {
+                themes = p.themes;
+              }
+
+              return {
+                id: p.id,
+                fen: p.fen,
+                moves,
+                rating: p.rating,
+                themes,
+                color: p.color,
+              };
+            }),
+          };
+        } catch (error) {
+          console.error("[FETCH PUZZLES BY OPENING ERROR]", error);
+          return {
+            success: false,
+            puzzles: [],
+            error: "Failed to fetch puzzles",
+          };
+        }
+      }),
+
+    /**
      * Get a training set by ID
      */
     getById: publicProcedure

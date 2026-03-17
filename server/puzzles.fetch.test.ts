@@ -76,9 +76,11 @@ describe("Puzzle Fetching", () => {
     });
 
     it("should return puzzles when available", async () => {
-      // Test with a broader search to ensure we get results
-      const puzzles = await getRandomPuzzlesByThemeAndRating(
-        "crushing",
+      // Test with opening-based queries instead of theme-based
+      // since the database has opening data populated
+      const { getRandomPuzzlesByOpeningAndRating } = await import("./db");
+      const puzzles = await getRandomPuzzlesByOpeningAndRating(
+        "Sicilian Defense",
         800,
         2500,
         10

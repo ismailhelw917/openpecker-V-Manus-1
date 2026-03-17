@@ -124,3 +124,14 @@
 - [x] Write 12 comprehensive tests for puzzle fetching functionality
 - [x] Write 7 tests for tRPC fetchPuzzles integration
 - [x] All 43 tests passing
+
+## Database & Puzzle Loading (Round 4 - Opening Data)
+- [x] Update schema to add opening_name and opening_variation columns to puzzles table
+- [x] Clear existing 50k puzzles from database
+- [x] Create improved CSV import script that extracts opening information
+- [x] Run CSV import with opening data (1400+ unique openings)
+- [x] Update Train page to query real openings from database
+- [x] Add tRPC fetchPuzzlesByOpening procedure
+- [x] Add database functions for opening-based queries
+- [x] Test Train page with real opening data
+- [x] All 43 tests passing (including new opening-based tests)

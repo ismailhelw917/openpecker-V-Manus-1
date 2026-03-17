@@ -15,6 +15,13 @@
       "when": 1773740352888,
       "tag": "0001_stormy_dragon_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1773746718817,
+      "tag": "0002_wooden_the_enforcers",
+      "breakpoints": true
     }
   ]
 }

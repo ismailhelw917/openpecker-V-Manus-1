@@ -160,6 +160,82 @@ export async function getRandomPuzzlesByThemeAndRating(
     .limit(limit);
 }
 
+// Get all unique opening names
+export async function getUniqueOpenings() {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    const result = await db.select()
+      .from(puzzles)
+      .where(sql`${puzzles.openingName} IS NOT NULL`)
+      .groupBy(puzzles.openingName)
+      .orderBy(asc(puzzles.openingName));
+    
+    return result.map((row: any) => row.openingName).filter(Boolean);
+  } catch (error) {
+    console.error("Error fetching unique openings:", error);
+    return [];
+  }
+}
+
+// Get puzzles by opening name and rating
+export async function getPuzzlesByOpeningAndRating(
+  openingName: string,
+  minRating: number,
+  maxRating: number,
+  limit: number = 20,
+  color?: string
+) {
+  const db = await getDb();
+  if (!db) return [];
+
+  let whereConditions = and(
+    eq(puzzles.openingName, openingName),
+    gte(puzzles.rating, minRating),
+    lte(puzzles.rating, maxRating)
+  );
+
+  if (color && color !== 'both') {
+    whereConditions = and(whereConditions, eq(puzzles.color, color));
+  }
+
+  return db
+    .select()
+    .from(puzzles)
+    .where(whereConditions)
+    .limit(limit);
+}
+
+// Get random puzzles by opening name and rating
+export async function getRandomPuzzlesByOpeningAndRating(
+  openingName: string,
+  minRating: number,
+  maxRating: number,
+  limit: number = 20,
+  color?: string
+) {
+  const db = await getDb();
+  if (!db) return [];
+
+  let whereConditions = and(
+    eq(puzzles.openingName, openingName),
+    gte(puzzles.rating, minRating),
+    lte(puzzles.rating, maxRating)
+  );
+
+  if (color && color !== 'both') {
+    whereConditions = and(whereConditions, eq(puzzles.color, color));
+  }
+
+  return db
+    .select()
+    .from(puzzles)
+    .where(whereConditions)
+    .orderBy(sql`RAND()`)
+    .limit(limit);
+}
+
 export async function getPuzzleById(id: string) {
   const db = await getDb();
   if (!db) return undefined;
