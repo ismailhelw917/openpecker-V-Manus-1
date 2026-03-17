@@ -204,22 +204,7 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
         })}
       </div>
 
-      {/* Auto-solve indicator overlay */}
-      <AnimatePresence>
-        {isAutoSolving && (
-          <motion.div
-            className="absolute inset-0 flex items-center justify-center pointer-events-none"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <div className="bg-blue-600/90 text-white px-6 py-3 rounded-lg font-bold text-center shadow-lg">
-              <div className="text-sm mb-1">Auto-solving...</div>
-              <div className="text-xs text-blue-200">Correct move playing</div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Auto-solve indicator removed - only show countdown */}
 
       {/* Auto-next countdown overlay */}
       <AnimatePresence>
