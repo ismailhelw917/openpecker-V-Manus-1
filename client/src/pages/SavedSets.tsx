@@ -54,7 +54,7 @@ export default function SavedSets() {
   const completedSets = sets.filter((s: any) => s.status === "completed");
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-24">
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950">
       {/* Header */}
       <div className="bg-slate-900/50 backdrop-blur border-b border-teal-900/30 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">

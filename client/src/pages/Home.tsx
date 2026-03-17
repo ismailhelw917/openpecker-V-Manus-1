@@ -31,7 +31,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center pb-24 px-4">
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 py-8">
       {/* Hero Section */}
       <div className="text-center max-w-2xl mx-auto mb-12">
         {/* Logo */}

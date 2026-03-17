@@ -147,7 +147,7 @@ export default function Stats() {
 
   if (!user?.isPremium) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center pb-24 px-4">
+      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center px-4">
         <div className="text-center max-w-md">
           <div className="text-6xl mb-6">🔒</div>
           <h2 className="text-3xl font-bold text-amber-400 mb-4">Premium Feature</h2>
@@ -231,7 +231,7 @@ export default function Stats() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-24">
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950">
       {/* Header */}
       <div className="bg-slate-900/50 backdrop-blur border-b border-teal-900/30 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-6">

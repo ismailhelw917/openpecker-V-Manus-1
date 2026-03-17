@@ -33,8 +33,10 @@ function App() {
       <ThemeProvider defaultTheme="dark">
         <TooltipProvider>
           <Toaster />
-          <div className="min-h-screen bg-slate-950">
-            <Router />
+          <div className="min-h-screen bg-slate-950 flex flex-col">
+            <div className="flex-1 overflow-y-auto pb-20 sm:pb-24">
+              <Router />
+            </div>
             <BottomNav />
           </div>
         </TooltipProvider>

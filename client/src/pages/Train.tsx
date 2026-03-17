@@ -149,7 +149,7 @@ export default function Train() {
     );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 pb-24">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-slate-900/80 backdrop-blur border-b border-slate-700">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-3">
