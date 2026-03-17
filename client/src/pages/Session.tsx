@@ -138,8 +138,13 @@ export default function Session() {
       setFen(game.fen());
 
       // Check if move is correct
-      const expectedMove = currentPuzzle.moves?.[0];
+      // Parse moves string (space-separated) to get the first move
+      const movesString = typeof currentPuzzle.moves === 'string' ? currentPuzzle.moves : '';
+      const movesList = movesString.split(' ').filter((m: string) => m.length > 0);
+      const expectedMove = movesList[0];
       const moveUCI = `${result.from}${result.to}${result.promotion || ""}`;
+
+      console.log('Move validation:', { expectedMove, moveUCI, movesString, movesList });
 
       if (expectedMove === moveUCI) {
         setCorrectCount((prev) => prev + 1);
@@ -177,7 +182,9 @@ export default function Session() {
           setTimeout(() => {
             // Play the correct move automatically
             const game = new Chess(currentPuzzle.fen);
-            const expectedMove = currentPuzzle.moves?.[0];
+            const movesString = typeof currentPuzzle.moves === 'string' ? currentPuzzle.moves : '';
+            const movesList = movesString.split(' ').filter((m: string) => m.length > 0);
+            const expectedMove = movesList[0];
             if (expectedMove) {
               const from = expectedMove.substring(0, 2);
               const to = expectedMove.substring(2, 4);

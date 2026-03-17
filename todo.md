@@ -206,3 +206,10 @@
 - [x] Add auto solve for 3 seconds after mistake then auto next
 - [x] Test all features
 - [ ] Save checkpoint
+
+## Bug Fix (Round 15 - User Report)
+- [x] Fix all moves being marked as wrong
+- [x] Debug puzzle data structure and moves format
+- [x] Fix move validation logic
+- [x] Test with correct moves
+- [ ] Save checkpoint
