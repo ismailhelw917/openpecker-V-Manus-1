@@ -22,7 +22,10 @@ export default function Session() {
   const [autoSolveMove, setAutoSolveMove] = useState<{ from: string; to: string } | null>(null);
   const [isAutoSolving, setIsAutoSolving] = useState(false);
   const [autoNextCountdown, setAutoNextCountdown] = useState<number | null>(null);
-  const [boardTheme, setBoardTheme] = useState<'classic' | 'green' | 'blue' | 'purple'>('classic');
+  const [boardTheme, setBoardTheme] = useState<'classic' | 'green' | 'blue' | 'purple'>(() => {
+    const saved = localStorage.getItem('board-theme');
+    return (saved as 'classic' | 'green' | 'blue' | 'purple') || 'classic';
+  });
 
   // Board theme definitions
   const themeColors = {
@@ -231,7 +234,7 @@ export default function Session() {
           setFen(currentPuzzle.fen);
           setCaptureSquare(null);
           
-          // Auto-solve after 2 seconds - play entire solution sequence
+          // Auto-solve after 0.5 seconds - play entire solution sequence
           setTimeout(() => {
             const game = new Chess(currentPuzzle.fen);
             let movesList: string[] = [];
@@ -304,15 +307,16 @@ export default function Session() {
                     // Show animation for this move
                     setAutoSolveMove({ from, to });
                     
-                    // Play move after animation
+                    // Play move after animation (total 2s / number of moves)
+                    const delayPerMove = 2000 / movesList.length;
                     setTimeout(() => {
                       setFen(game.fen());
                       setAutoSolveMove(null);
                       moveIndex++;
                       
-                      // Play next move after 400ms delay
-                      setTimeout(playNextMove, 400);
-                    }, 300);
+                      // Play next move
+                      setTimeout(playNextMove, delayPerMove * 0.3);
+                    }, delayPerMove * 0.7);
                   } else {
                     console.error("Failed to play move:", expectedMove);
                     setIsAutoSolving(false);
@@ -329,7 +333,7 @@ export default function Session() {
               console.error("Error auto-solving:", e);
               setIsAutoSolving(false);
             }
-          }, 2000);
+          }, 500);
         }, 600);
       }
 
@@ -362,28 +366,9 @@ export default function Session() {
             />
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          {/* Theme Selector */}
-          <div className="flex gap-1 bg-slate-800/50 rounded-lg p-1">
-            {(['classic', 'green', 'blue', 'purple'] as const).map((theme) => (
-              <button
-                key={theme}
-                onClick={() => setBoardTheme(theme)}
-                className={`w-6 h-6 rounded transition-all ${
-                  boardTheme === theme ? 'ring-2 ring-amber-400' : 'opacity-60 hover:opacity-100'
-                }`}
-                style={{
-                  backgroundColor: themeColors[theme].light,
-                  border: `2px solid ${themeColors[theme].dark}`,
-                }}
-                title={theme.charAt(0).toUpperCase() + theme.slice(1)}
-              />
-            ))}
-          </div>
-          <div className="text-right text-sm ml-2">
-            <p className="text-amber-400 font-bold">{correctCount}/{puzzles.length}</p>
-            <p className="text-slate-400 text-xs">Correct</p>
-          </div>
+        <div className="text-right text-sm">
+          <p className="text-amber-400 font-bold">{correctCount}/{puzzles.length}</p>
+          <p className="text-slate-400 text-xs">Correct</p>
         </div>
       </div>
 

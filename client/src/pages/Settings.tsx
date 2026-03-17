@@ -7,29 +7,34 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
 
 interface BoardTheme {
+  id: 'classic' | 'green' | 'blue' | 'purple';
   name: string;
   colors: {
     light: string;
     dark: string;
   };
-  preview: string;
 }
 
 const BOARD_THEMES: BoardTheme[] = [
   {
-    name: "Classic Wood",
-    colors: { light: "#F0D9B5", dark: "#B58863" },
-    preview: "🟫",
+    id: 'classic',
+    name: "Classic",
+    colors: { light: "#f0d9b5", dark: "#b58863" },
   },
   {
-    name: "Ocean Breeze",
-    colors: { light: "#E8F4F8", dark: "#4A7C7E" },
-    preview: "🟦",
+    id: 'green',
+    name: "Green",
+    colors: { light: "#ffffcc", dark: "#7cb342" },
   },
   {
-    name: "Tournament Green",
-    colors: { light: "#F0F0F0", dark: "#6B8E23" },
-    preview: "🟩",
+    id: 'blue',
+    name: "Blue",
+    colors: { light: "#e8f4f8", dark: "#2c5aa0" },
+  },
+  {
+    id: 'purple',
+    name: "Purple",
+    colors: { light: "#f0e6ff", dark: "#6b4c9a" },
   },
 ];
 
@@ -44,7 +49,15 @@ const PREMIUM_FEATURES = [
 export default function Settings() {
   const [, setLocation] = useLocation();
   const { user, logout } = useAuth();
-  const [selectedTheme, setSelectedTheme] = useState("Classic Wood");
+  const [selectedTheme, setSelectedTheme] = useState<'classic' | 'green' | 'blue' | 'purple'>(() => {
+    const saved = localStorage.getItem('board-theme');
+    return (saved as 'classic' | 'green' | 'blue' | 'purple') || 'classic';
+  });
+
+  const handleThemeChange = (themeId: 'classic' | 'green' | 'blue' | 'purple') => {
+    setSelectedTheme(themeId);
+    localStorage.setItem('board-theme', themeId);
+  };
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -109,15 +122,21 @@ export default function Settings() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {BOARD_THEMES.map((theme) => (
               <button
-                key={theme.name}
-                onClick={() => setSelectedTheme(theme.name)}
+                key={theme.id}
+                onClick={() => handleThemeChange(theme.id)}
                 className={`p-6 rounded-lg border-2 transition-all text-center ${
-                  selectedTheme === theme.name
+                  selectedTheme === theme.id
                     ? "border-amber-400 bg-amber-400/10"
                     : "border-slate-700 bg-slate-800/30 hover:border-slate-600"
                 }`}
               >
-                <div className="text-4xl mb-3">{theme.preview}</div>
+                <div
+                  className="w-16 h-16 rounded mb-3 mx-auto border-2"
+                  style={{
+                    backgroundColor: theme.colors.light,
+                    borderColor: theme.colors.dark,
+                  }}
+                />
                 <p className="font-semibold text-white">{theme.name}</p>
               </button>
             ))}
