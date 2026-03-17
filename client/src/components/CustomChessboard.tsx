@@ -13,6 +13,7 @@ interface CustomChessboardProps {
   lastMove?: { from: string; to: string } | null;
   legalMoves?: string[];
   captureSquare?: string | null;
+  autoSolveMove?: { from: string; to: string } | null;
 }
 
 const DraggablePiece = ({ piece, squareName }: { piece: any; squareName: string }) => {
@@ -68,6 +69,7 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
   optionSquares = {},
   legalMoves: propLegalMoves,
   captureSquare,
+  autoSolveMove,
 }) => {
   const sensors = useSensors(
     useSensor(MouseSensor),
@@ -180,6 +182,9 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
               {optionSquares[squareName] && <div className="absolute inset-0" style={optionSquares[squareName]} />}
               {selectedSquare === squareName && <div className="absolute inset-0 bg-yellow-400/50" />}
               {activeSquare === squareName && <div className="absolute inset-0 bg-yellow-400/50" />}
+              {autoSolveMove && (autoSolveMove.from === squareName || autoSolveMove.to === squareName) && (
+                <motion.div className="absolute inset-0 bg-green-400/40 rounded" initial={{ opacity: 0.3 }} animate={{ opacity: [0.3, 0.7, 0.3], scale: [1, 1.05, 1] }} transition={{ duration: 0.6 }} />
+              )}
               {legalMoves.includes(squareName) && (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className={`w-4 h-4 rounded-full ${piece ? 'bg-red-500/50' : 'bg-black/20'}`} />

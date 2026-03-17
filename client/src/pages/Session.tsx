@@ -19,6 +19,7 @@ export default function Session() {
   const [solved, setSolved] = useState(false);
   const [boardSize, setBoardSize] = useState(400);
   const [captureSquare, setCaptureSquare] = useState<string | null>(null);
+  const [autoSolveMove, setAutoSolveMove] = useState<{ from: string; to: string } | null>(null);
 
   const getTrainingSet = trpc.trainingSets.getById.useQuery(
     { id: sessionId },
@@ -205,7 +206,15 @@ export default function Session() {
               try {
                 const moveResult = game.move({ from, to, promotion: promotion || 'q' });
                 if (moveResult) {
-                  setFen(game.fen());
+                  // Set auto-solve move for animation
+                  setAutoSolveMove({ from, to });
+                  
+                  // Delay FEN update to show animation
+                  setTimeout(() => {
+                    setFen(game.fen());
+                    setAutoSolveMove(null);
+                  }, 600);
+                  
                   setCorrectCount((prev) => prev + 1);
                   toast.info("Auto-solved: " + expectedMove);
                   setSolved(true);
@@ -280,6 +289,7 @@ export default function Session() {
             boardColors={{ light: '#f0d9b5', dark: '#b58863' }}
             captureSquare={captureSquare}
             orientation={boardOrientation}
+            autoSolveMove={autoSolveMove}
           />
         </div>
       </div>
