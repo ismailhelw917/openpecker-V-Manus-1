@@ -91,3 +91,15 @@
 - [x] Implement Stats page with comprehensive metrics and charts
 - [ ] Add Stripe integration for monthly and lifetime subscriptions
 - [ ] Add premium feature gating throughout the app
+
+
+## User Requested Features (Priority)
+- [x] Add Start Session button beneath color filter in Train tab
+- [x] Build interactive puzzle-solving session interface with chessboard
+- [x] Create CSV streaming parser for Lichess puzzle data (5.8M puzzles)
+- [x] Add registration/login system with Remember Me checkbox
+- [x] Redesign Stats page with extensive analytics and charts
+- [x] Implement comprehensive SEO optimization with meta tags and JSON-LD
+- [ ] Format puzzle names with proper spacing (e.g., "French Defence")
+- [ ] Order puzzles by opening name, variation, set, and subset
+- [ ] Run CSV import script to populate database with real puzzles

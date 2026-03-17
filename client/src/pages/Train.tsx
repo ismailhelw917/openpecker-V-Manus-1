@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, Search, Lock } from "lucide-react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { toast } from "sonner";
 
 const OPENER_THEMES = [
   "Caro-Kann Defense",
@@ -45,6 +46,9 @@ export default function Train() {
   const [puzzlesPerCycle, setPuzzlesPerCycle] = useState(20);
   const [targetCycles, setTargetCycles] = useState(3);
   const [colorFilter, setColorFilter] = useState("white");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const createTrainingSet = trpc.trainingSets.create.useMutation();
 
   const openerThemes = OPENER_THEMES.filter((t) =>
     t.toLowerCase().includes(searchQuery.toLowerCase())
@@ -54,304 +58,301 @@ export default function Train() {
     t.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const allThemes = themeType === "opener" ? openerThemes : tacticalThemes;
+  const handleThemeSelect = (theme: string) => {
+    setSelectedThemes((prev) =>
+      prev.includes(theme) ? prev.filter((t) => t !== theme) : [...prev, theme]
+    );
+  };
 
-  const handleSelectTheme = (theme: string) => {
-    if (selectedThemes.includes(theme)) {
-      setSelectedThemes(selectedThemes.filter((t) => t !== theme));
-    } else {
-      setSelectedThemes([...selectedThemes, theme]);
+  const handleStartSession = async () => {
+    if (selectedThemes.length === 0) {
+      toast.error("Please select at least one theme");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Fetch puzzles for the selected themes
+      const puzzles = [];
+      for (const theme of selectedThemes) {
+        const puzzleResult = await fetch(`/api/trpc/puzzles.fetchByTheme?input=${JSON.stringify({
+          theme,
+          minRating,
+          maxRating,
+          count: puzzlesPerCycle,
+          color: colorFilter === 'both' ? undefined : colorFilter,
+        })}`);
+        // Note: This is a simplified approach - in production, use proper tRPC client
+      }
+
+      const result = await createTrainingSet.mutateAsync({
+        themes: selectedThemes,
+        minRating,
+        maxRating,
+        puzzleCount: puzzlesPerCycle,
+        targetCycles,
+        colorFilter: colorFilter as 'white' | 'black' | 'both',
+        puzzles: [], // TODO: Fetch actual puzzles
+      });
+
+      if (result.setId) {
+        setLocation(`/session/${result.setId}`);
+      }
+    } catch (error) {
+      toast.error("Failed to create training session");
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleStartSession = () => {
-    // In a real app, this would create a training session
-    console.log("Starting session with:", {
-      themes: selectedThemes,
-      minRating,
-      maxRating,
-      puzzlesPerCycle,
-      targetCycles,
-      colorFilter,
-    });
-    // Navigate to puzzle solving interface
-    // setLocation("/puzzle");
-  };
-
-  const estimatedTime = Math.ceil((puzzlesPerCycle * 2) / 60); // ~2 min per puzzle
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-24">
-      {/* Header */}
-      <div className="bg-slate-900/50 backdrop-blur border-b border-teal-900/30 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setLocation("/")}
-              className="text-slate-400 hover:text-white transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <h1 className="text-2xl font-bold text-amber-400">Configure Training</h1>
+  if (step === "theme-selection") {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-24">
+        {/* Header */}
+        <div className="bg-slate-900/50 backdrop-blur border-b border-teal-900/30 sticky top-0 z-10">
+          <div className="max-w-4xl mx-auto px-4 py-6">
+            <h1 className="text-3xl font-bold text-amber-400 mb-2">Configure Training</h1>
+            <p className="text-slate-400">Set up your spaced repetition cycle.</p>
           </div>
-          <p className="text-slate-400 text-sm">Set up your spaced repetition cycle.</p>
         </div>
-      </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        {step === "theme-selection" && (
+        <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left: Theme Selection */}
-            <div className="lg:col-span-2">
-              <Card className="bg-slate-900/50 border-teal-900/30 p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-amber-400/20 flex items-center justify-center">
-                      <span className="text-amber-400 text-sm">⊙</span>
-                    </div>
-                    <h2 className="text-xl font-semibold text-white">Select Theme</h2>
+            {/* Theme Selection */}
+            <Card className="lg:col-span-2 bg-slate-900/50 border-teal-900/30 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-amber-400/20 flex items-center justify-center">
+                    <span className="text-amber-400">◉</span>
                   </div>
-                  <button
-                    onClick={() => setSelectedThemes([])}
-                    className="text-amber-400 text-sm font-semibold hover:text-amber-300 transition-colors"
-                  >
-                    RESET
-                  </button>
+                  <h2 className="text-white font-bold">Select Theme</h2>
                 </div>
+                <button className="text-amber-400 text-sm font-bold hover:text-amber-300">
+                  RESET
+                </button>
+              </div>
 
-                <p className="text-slate-400 mb-6">Choose an opening or tactical theme</p>
+              {/* Theme Type Tabs */}
+              <div className="flex gap-3 mb-6">
+                <button
+                  onClick={() => setThemeType("opener")}
+                  className={`px-4 py-2 rounded font-semibold transition-all ${
+                    themeType === "opener"
+                      ? "bg-amber-400 text-slate-900"
+                      : "bg-slate-800 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  OPENER THEMES
+                </button>
+                <button
+                  onClick={() => setThemeType("tactical")}
+                  className={`px-4 py-2 rounded font-semibold transition-all ${
+                    themeType === "tactical"
+                      ? "bg-amber-400 text-slate-900"
+                      : "bg-slate-800 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  TACTICAL THEMES
+                </button>
+              </div>
 
-                {/* Theme Type Tabs */}
-                <div className="flex gap-3 mb-6">
-                  <button
-                    onClick={() => {
-                      setThemeType("opener");
-                      setSearchQuery("");
-                    }}
-                    className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
-                      themeType === "opener"
-                        ? "bg-amber-400 text-slate-900"
-                        : "bg-slate-800 text-slate-300 hover:bg-slate-700"
-                    }`}
-                  >
-                    OPENER THEMES
-                  </button>
-                  <button
-                    onClick={() => {
-                      setThemeType("tactical");
-                      setSearchQuery("");
-                    }}
-                    className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
-                      themeType === "tactical"
-                        ? "bg-amber-400 text-slate-900"
-                        : "bg-slate-800 text-slate-300 hover:bg-slate-700"
-                    }`}
-                  >
-                    TACTICAL THEMES
-                  </button>
-                </div>
-
-                {/* Search */}
-                <div className="relative mb-6">
+              {/* Search */}
+              <div className="mb-6">
+                <div className="relative">
                   <Search className="absolute left-3 top-3 w-5 h-5 text-slate-500" />
                   <input
                     type="text"
                     placeholder="Search themes..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg pl-10 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-teal-500"
+                    className="w-full bg-slate-800 border border-slate-700 text-white pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:border-amber-400"
                   />
                 </div>
+              </div>
 
-                {/* Theme Grid */}
-                <div className="grid grid-cols-2 gap-3">
-                  {allThemes.map((theme) => {
-                    const isPremium = PREMIUM_THEMES.includes(theme);
-                    const isSelected = selectedThemes.includes(theme);
-
-                    return (
+              {/* Themes Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                {themeType === "opener"
+                  ? openerThemes.map((theme) => (
                       <button
                         key={theme}
-                        onClick={() => {
-                          if (!isPremium || user) {
-                            handleSelectTheme(theme);
-                          }
-                        }}
-                        disabled={isPremium && !user}
-                        className={`p-4 rounded-lg border-2 transition-all text-left ${
-                          isSelected
-                            ? "border-amber-400 bg-amber-400/10"
-                            : "border-slate-700 bg-slate-800/30 hover:border-slate-600"
-                        } ${isPremium && !user ? "opacity-50 cursor-not-allowed" : ""}`}
+                        onClick={() => handleThemeSelect(theme)}
+                        className={`p-3 rounded border-2 transition-all text-left ${
+                          selectedThemes.includes(theme)
+                            ? "bg-amber-400/10 border-amber-400 text-white"
+                            : "bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-600"
+                        }`}
                       >
-                        <div className="flex items-start justify-between">
-                          <span className="font-medium text-white">{theme}</span>
-                          {isPremium && !user && (
-                            <Lock className="w-4 h-4 text-amber-400" />
-                          )}
-                        </div>
+                        {theme}
                       </button>
-                    );
-                  })}
+                    ))
+                  : tacticalThemes.map((theme) => (
+                      <button
+                        key={theme}
+                        onClick={() => handleThemeSelect(theme)}
+                        className={`p-3 rounded border-2 transition-all text-left ${
+                          selectedThemes.includes(theme)
+                            ? "bg-amber-400/10 border-amber-400 text-white"
+                            : "bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-600"
+                        }`}
+                      >
+                        {theme}
+                      </button>
+                    ))}
+              </div>
+
+              {/* Premium Themes */}
+              <div className="border-t border-slate-700 pt-6">
+                <h3 className="text-amber-400 font-bold mb-3">Premium Themes</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {PREMIUM_THEMES.map((theme) => (
+                    <div
+                      key={theme}
+                      className="p-3 rounded bg-slate-800/50 border border-slate-700 flex items-center justify-between"
+                    >
+                      <span className="text-slate-400">{theme}</span>
+                      <Lock className="w-4 h-4 text-amber-400" />
+                    </div>
+                  ))}
                 </div>
-              </Card>
-            </div>
+              </div>
+            </Card>
 
-            {/* Right: Configuration */}
-            <div className="lg:col-span-1">
-              <Card className="bg-slate-900/50 border-teal-900/30 p-6 sticky top-24">
-                <h3 className="text-lg font-semibold text-white mb-6">
-                  Rating Range
-                  <span className="text-amber-400 ml-2">{minRating} – {maxRating}</span>
-                </h3>
+            {/* Configuration Panel */}
+            <Card className="bg-teal-900/20 border-teal-600/40 p-6">
+              <h3 className="text-amber-400 font-bold mb-6">Configuration</h3>
 
-                <div className="space-y-6">
-                  {/* Rating Range */}
-                  <div>
-                    <div className="flex gap-2 mb-3">
-                      <input
-                        type="number"
-                        value={minRating}
-                        onChange={(e) => setMinRating(Number(e.target.value))}
-                        className="flex-1 bg-slate-800 border border-slate-700 rounded px-3 py-2 text-white text-sm"
-                      />
-                      <span className="text-slate-500">–</span>
-                      <input
-                        type="number"
-                        value={maxRating}
-                        onChange={(e) => setMaxRating(Number(e.target.value))}
-                        className="flex-1 bg-slate-800 border border-slate-700 rounded px-3 py-2 text-white text-sm"
-                      />
-                    </div>
+              {/* Rating Range */}
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-white font-semibold">Rating Range</label>
+                  <span className="text-amber-400 text-sm">
+                    {minRating} – {maxRating}
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    value={minRating}
+                    onChange={(e) => setMinRating(parseInt(e.target.value))}
+                    className="flex-1 bg-slate-800 border border-slate-700 text-white px-3 py-2 rounded"
+                  />
+                  <span className="text-slate-400">–</span>
+                  <input
+                    type="number"
+                    value={maxRating}
+                    onChange={(e) => setMaxRating(parseInt(e.target.value))}
+                    className="flex-1 bg-slate-800 border border-slate-700 text-white px-3 py-2 rounded"
+                  />
+                </div>
+              </div>
+
+              {/* Puzzles per Cycle */}
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-3">
+                  <label className="text-white font-semibold">Puzzles per Cycle</label>
+                  <span className="text-amber-400 font-bold">{puzzlesPerCycle}</span>
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                  {[10, 20, 50, 100].map((num) => (
+                    <button
+                      key={num}
+                      onClick={() => setPuzzlesPerCycle(num)}
+                      className={`py-2 rounded font-semibold transition-all ${
+                        puzzlesPerCycle === num
+                          ? "bg-amber-400 text-slate-900"
+                          : "bg-slate-800 text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      {num}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Target Cycles */}
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-3">
+                  <label className="text-white font-semibold">Target Cycles</label>
+                  <span className="text-amber-400 font-bold">{targetCycles}</span>
+                </div>
+                <div className="grid grid-cols-5 gap-2">
+                  {[1, 3, 5, 7, "∞"].map((num) => (
+                    <button
+                      key={num}
+                      onClick={() => setTargetCycles(typeof num === 'number' ? num : 999)}
+                      className={`py-2 rounded font-semibold transition-all ${
+                        (num === "∞" ? targetCycles === 999 : targetCycles === num)
+                          ? "bg-amber-400 text-slate-900"
+                          : "bg-slate-800 text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      {num}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Color Filter */}
+              <div className="mb-6">
+                <label className="text-white font-semibold block mb-3">Color Filter</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {["both", "white", "black"].map((color) => (
+                    <button
+                      key={color}
+                      onClick={() => setColorFilter(color)}
+                      className={`py-2 rounded font-semibold transition-all capitalize ${
+                        colorFilter === color
+                          ? "bg-amber-400 text-slate-900"
+                          : "bg-slate-800 text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      {color}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Session Summary */}
+              <div className="bg-slate-800/50 rounded-lg p-4 mb-6 border border-slate-700">
+                <h4 className="text-teal-400 font-bold text-sm mb-3 uppercase">Session Summary</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">Theme:</span>
+                    <span className="text-white font-semibold">
+                      {selectedThemes.length} themes selected
+                    </span>
                   </div>
-
-                  {/* Puzzles per Cycle */}
-                  <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <label className="text-slate-300 text-sm font-medium">Puzzles per Cycle</label>
-                      <span className="text-amber-400 font-semibold">{puzzlesPerCycle}</span>
-                    </div>
-                    <div className="grid grid-cols-4 gap-2">
-                      {[10, 20, 50, 100].map((num) => (
-                        <button
-                          key={num}
-                          onClick={() => setPuzzlesPerCycle(num)}
-                          className={`py-2 rounded font-semibold text-sm transition-colors ${
-                            puzzlesPerCycle === num
-                              ? "bg-amber-400 text-slate-900"
-                              : "bg-slate-800 text-slate-300 hover:bg-slate-700"
-                          }`}
-                        >
-                          {num}
-                        </button>
-                      ))}
-                    </div>
-                    <div className="grid grid-cols-4 gap-2 mt-2">
-                      {[150, 200, 400].map((num) => (
-                        <button
-                          key={num}
-                          onClick={() => setPuzzlesPerCycle(num)}
-                          className={`py-2 rounded font-semibold text-sm transition-colors ${
-                            puzzlesPerCycle === num
-                              ? "bg-amber-400 text-slate-900"
-                              : "bg-slate-800 text-slate-300 hover:bg-slate-700"
-                          }`}
-                        >
-                          {num}
-                        </button>
-                      ))}
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">Total Puzzles:</span>
+                    <span className="text-white font-semibold">
+                      {puzzlesPerCycle * targetCycles}
+                    </span>
                   </div>
-
-                  {/* Target Cycles */}
-                  <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <label className="text-slate-300 text-sm font-medium">Target Cycles</label>
-                      <span className="text-amber-400 font-semibold">{targetCycles}</span>
-                    </div>
-                    <div className="grid grid-cols-5 gap-2">
-                      {[1, 3, 5, 7, "∞"].map((num) => (
-                        <button
-                          key={num}
-                          onClick={() => setTargetCycles(num === "∞" ? 999 : Number(num))}
-                          className={`py-2 rounded font-semibold text-sm transition-colors ${
-                            targetCycles === (num === "∞" ? 999 : Number(num))
-                              ? "bg-amber-400 text-slate-900"
-                              : "bg-slate-800 text-slate-300 hover:bg-slate-700"
-                          }`}
-                        >
-                          {num}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Color Filter */}
-                  <div>
-                    <label className="text-slate-300 text-sm font-medium block mb-3">
-                      Color Filter
-                      <span className="text-amber-400 ml-2">{colorFilter}</span>
-                    </label>
-                    <div className="grid grid-cols-3 gap-2">
-                      {["Both", "White", "Black"].map((color) => (
-                        <button
-                          key={color}
-                          onClick={() => setColorFilter(color.toLowerCase())}
-                          className={`py-2 rounded font-semibold text-sm transition-colors ${
-                            colorFilter === color.toLowerCase()
-                              ? "bg-amber-400 text-slate-900"
-                              : "bg-slate-800 text-slate-300 hover:bg-slate-700"
-                          }`}
-                        >
-                          {color}
-                        </button>
-                      ))}
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">Est. Time:</span>
+                    <span className="text-white font-semibold">
+                      ~{Math.round((puzzlesPerCycle * targetCycles * 2) / 60)} min
+                    </span>
                   </div>
                 </div>
-              </Card>
-            </div>
+              </div>
+
+              {/* Start Button */}
+              <Button
+                onClick={handleStartSession}
+                disabled={isLoading || selectedThemes.length === 0}
+                className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-3 rounded-lg transition-all disabled:opacity-50"
+              >
+                {isLoading ? "Starting..." : "▶ START SESSION"}
+              </Button>
+            </Card>
           </div>
-        )}
-
-        {/* Session Summary */}
-        {selectedThemes.length > 0 && (
-          <Card className="bg-slate-900/50 border-teal-900/30 p-6 mt-6">
-            <h3 className="text-teal-400 font-semibold text-sm uppercase mb-4">Session Summary</h3>
-            <div className="grid grid-cols-3 gap-6 mb-6">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">⊙</span>
-                <div>
-                  <p className="text-slate-400 text-sm">Theme:</p>
-                  <p className="text-white font-semibold">{selectedThemes.length} themes selected</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">↻</span>
-                <div>
-                  <p className="text-slate-400 text-sm">Total Puzzles:</p>
-                  <p className="text-white font-semibold">{puzzlesPerCycle * targetCycles}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">⏱</span>
-                <div>
-                  <p className="text-slate-400 text-sm">Est. Time:</p>
-                  <p className="text-white font-semibold">~{estimatedTime} min</p>
-                </div>
-              </div>
-            </div>
-
-            <Button
-              onClick={handleStartSession}
-              disabled={selectedThemes.length === 0}
-              className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-3 rounded-lg transition-colors"
-            >
-              ▶ START SESSION
-            </Button>
-          </Card>
-        )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  return null;
 }
