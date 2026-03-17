@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useRoute, useLocation } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,32 +27,74 @@ export default function Session() {
     { enabled: !!sessionId }
   );
 
-  // TODO: Implement recordAttempt endpoint
-  // const recordAttempt = trpc.puzzles.recordAttempt.useMutation();
-
   useEffect(() => {
     if (getTrainingSet.data) {
-      const puzzleList = JSON.parse(getTrainingSet.data.puzzlesJson || "[]");
-      setPuzzles(puzzleList);
-      setIsLoading(false);
+      try {
+        let puzzleList = [];
 
-      if (puzzleList.length > 0) {
-        const firstPuzzle = puzzleList[0];
-        const chess = new Chess(firstPuzzle.fen);
-        setGame(chess);
+        if (getTrainingSet.data.puzzlesJson) {
+          const jsonData = typeof getTrainingSet.data.puzzlesJson === "string"
+            ? JSON.parse(getTrainingSet.data.puzzlesJson)
+            : getTrainingSet.data.puzzlesJson;
+          puzzleList = Array.isArray(jsonData) ? jsonData : [];
+        }
+
+        if (!Array.isArray(puzzleList)) {
+          puzzleList = [];
+        }
+
+        setPuzzles(puzzleList);
+        setIsLoading(false);
+
+        if (puzzleList.length > 0) {
+          const firstPuzzle = puzzleList[0];
+          if (firstPuzzle && firstPuzzle.fen) {
+            try {
+              const chess = new Chess(firstPuzzle.fen);
+              setGame(chess);
+            } catch (e) {
+              console.error("Invalid FEN:", firstPuzzle.fen);
+              toast.error("Invalid puzzle format");
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error parsing puzzles:", error);
+        toast.error("Failed to load puzzles");
+        setIsLoading(false);
+        setPuzzles([]);
       }
     }
   }, [getTrainingSet.data]);
 
   if (!match) return null;
 
-  if (isLoading) {
+  if (isLoading || getTrainingSet.isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center pb-24">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400 mx-auto mb-4"></div>
           <p className="text-slate-400">Loading puzzles...</p>
         </div>
+      </div>
+    );
+  }
+
+  if (getTrainingSet.isError) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center pb-24">
+        <Card className="bg-slate-900/50 border-teal-900/30 p-8 text-center max-w-md">
+          <h2 className="text-2xl font-bold text-amber-400 mb-4">Error Loading Training Set</h2>
+          <p className="text-slate-400 mb-6">
+            Failed to load the training set. Please try again.
+          </p>
+          <Button
+            onClick={() => setLocation("/sets")}
+            className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold"
+          >
+            Back to Sets
+          </Button>
+        </Card>
       </div>
     );
   }
@@ -79,216 +121,188 @@ export default function Session() {
   const currentPuzzle = puzzles[currentPuzzleIndex];
   const progress = ((currentPuzzleIndex + 1) / puzzles.length) * 100;
 
-  const handleMove = (sourceSquare: string, targetSquare: string) => {
+  const handleMove = (move: any) => {
     try {
-      const move = game.move({
-        from: sourceSquare,
-        to: targetSquare,
-        promotion: "q",
-      });
-
-      if (move === null) return false;
-
-      const newGame = new Chess(game.fen());
-      setGame(newGame);
-
-      // Check if this is the correct move
-      const correctMoves = currentPuzzle.moves || [];
-      const isCorrectMove =
-        correctMoves.length > 0 &&
-        correctMoves[0] === `${sourceSquare}${targetSquare}`;
-
-      if (isCorrectMove) {
-        setCorrectCount((prev) => prev + 1);
-        toast.success("Correct move!");
-
-        // Move to next puzzle after a short delay
-        setTimeout(() => {
-          if (currentPuzzleIndex < puzzles.length - 1) {
-            setCurrentPuzzleIndex((prev) => prev + 1);
-            setShowSolution(false);
-            const nextPuzzle = puzzles[currentPuzzleIndex + 1];
-            const nextGame = new Chess(nextPuzzle.fen);
-            setGame(nextGame);
-          } else {
-            // Session complete
-            handleSessionComplete();
-          }
-        }, 1000);
-      } else {
-        toast.error("Incorrect move. Try again!");
+      const gameCopy = new Chess(game.fen());
+      let result;
+      try {
+        result = gameCopy.move(move);
+      } catch (e) {
+        result = null;
       }
 
-      return true;
+      if (result) {
+        setGame(gameCopy);
+
+        if (currentPuzzle.moves && currentPuzzle.moves[0] === result.san) {
+          setCorrectCount(correctCount + 1);
+          toast.success("Correct move!");
+          setTimeout(() => {
+            if (currentPuzzleIndex < puzzles.length - 1) {
+              setCurrentPuzzleIndex(currentPuzzleIndex + 1);
+              const nextPuzzle = puzzles[currentPuzzleIndex + 1];
+              const newGame = new Chess(nextPuzzle.fen);
+              setGame(newGame);
+              setShowSolution(false);
+            } else {
+              toast.success("Cycle completed!");
+              setLocation("/sets");
+            }
+          }, 1000);
+        } else {
+          toast.error("Incorrect move");
+          setGame(new Chess(currentPuzzle.fen));
+        }
+      }
     } catch (error) {
-      return false;
+      console.error("Move error:", error);
     }
   };
 
-  const handleSessionComplete = async () => {
-    const sessionDuration = Date.now() - sessionStartTime;
-    const accuracy = (correctCount / puzzles.length) * 100;
+  const handleNextPuzzle = () => {
+    if (currentPuzzleIndex < puzzles.length - 1) {
+      setCurrentPuzzleIndex(currentPuzzleIndex + 1);
+      const nextPuzzle = puzzles[currentPuzzleIndex + 1];
+      const newGame = new Chess(nextPuzzle.fen);
+      setGame(newGame);
+      setShowSolution(false);
+    }
+  };
 
-    // TODO: Save attempt to database
-    toast.success("Session completed!");
-    setLocation("/sets");
+  const handlePreviousPuzzle = () => {
+    if (currentPuzzleIndex > 0) {
+      setCurrentPuzzleIndex(currentPuzzleIndex - 1);
+      const prevPuzzle = puzzles[currentPuzzleIndex - 1];
+      const newGame = new Chess(prevPuzzle.fen);
+      setGame(newGame);
+      setShowSolution(false);
+    }
+  };
+
+  const handleReset = () => {
+    const newGame = new Chess(currentPuzzle.fen);
+    setGame(newGame);
+    setShowSolution(false);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-24">
-      {/* Header */}
-      <div className="bg-slate-900/50 backdrop-blur border-b border-teal-900/30 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-4">
-            <button
-              onClick={() => setLocation("/train")}
-              className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
-            >
-              <ChevronLeft className="w-5 h-5" />
-              Back
-            </button>
-            <h1 className="text-2xl font-bold text-amber-400">Puzzle Training</h1>
-            <div className="text-slate-400 text-sm">
-              {currentPuzzleIndex + 1} / {puzzles.length}
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <Button
+            onClick={() => setLocation("/sets")}
+            variant="outline"
+            className="border-teal-900/30 text-slate-400 hover:text-white"
+          >
+            <ChevronLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-amber-400">
+              Puzzle {currentPuzzleIndex + 1} of {puzzles.length}
+            </h1>
+            <div className="w-64 h-2 bg-slate-800 rounded-full mt-2 overflow-hidden">
+              <div
+                className="h-full bg-amber-400 transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              ></div>
             </div>
           </div>
-
-          {/* Progress Bar */}
-          <div className="w-full bg-slate-800 rounded-full h-2">
-            <div
-              className="bg-amber-400 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${progress}%` }}
-            ></div>
+          <div className="text-right">
+            <p className="text-amber-400 font-bold">{correctCount} Correct</p>
+            <p className="text-slate-400 text-sm">
+              {Math.round((correctCount / (currentPuzzleIndex + 1)) * 100)}% Accuracy
+            </p>
           </div>
         </div>
-      </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Chessboard */}
           <div className="lg:col-span-2">
             <Card className="bg-slate-900/50 border-teal-900/30 p-6">
-              <div className="bg-slate-800 rounded-lg p-4 mb-4">
-                <div style={{ maxWidth: "400px", margin: "0 auto" }}>
-                  <Chessboard
-                    position={game.fen()}
-                    onPieceDrop={handleMove}
-                    customBoardStyle={{
-                      borderRadius: "8px",
-                      boxShadow: "0 0 20px rgba(251, 191, 36, 0.2)",
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Puzzle Info */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-slate-800/50 rounded p-3">
-                  <p className="text-slate-400 text-xs mb-1">RATING</p>
-                  <p className="text-white font-bold">{currentPuzzle.rating || "—"}</p>
-                </div>
-                <div className="bg-slate-800/50 rounded p-3">
-                  <p className="text-slate-400 text-xs mb-1">THEME</p>
-                  <p className="text-white font-bold text-sm">
-                    {currentPuzzle.themes?.[0] || "—"}
-                  </p>
-                </div>
+              <div className="aspect-square bg-slate-800 rounded-lg overflow-hidden">
+                <Chessboard
+                  position={game.fen()}
+                  onPieceDrop={handleMove}
+                  boardWidth={400}
+                  arePiecesDraggable={true}
+                />
               </div>
             </Card>
           </div>
 
-          {/* Sidebar */}
+          {/* Info Panel */}
           <div className="space-y-4">
-            {/* Stats */}
-            <Card className="bg-teal-900/20 border-teal-600/40 p-4">
-              <h3 className="text-amber-400 font-bold mb-4">Session Stats</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Correct:</span>
-                  <span className="text-white font-bold">{correctCount}</span>
+            {/* Puzzle Info */}
+            <Card className="bg-slate-900/50 border-teal-900/30 p-6">
+              <h3 className="text-amber-400 font-bold mb-4">Puzzle Info</h3>
+              <div className="space-y-3 text-sm">
+                <div>
+                  <p className="text-slate-400">Rating</p>
+                  <p className="text-white font-semibold">{currentPuzzle.rating || "—"}</p>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Accuracy:</span>
-                  <span className="text-amber-400 font-bold">
-                    {((correctCount / (currentPuzzleIndex + 1)) * 100).toFixed(0)}%
-                  </span>
+                <div>
+                  <p className="text-slate-400">Theme</p>
+                  <p className="text-white font-semibold">{currentPuzzle.themes || "—"}</p>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Remaining:</span>
-                  <span className="text-white font-bold">
-                    {puzzles.length - currentPuzzleIndex - 1}
-                  </span>
+                <div>
+                  <p className="text-slate-400">Moves</p>
+                  <p className="text-white font-semibold">{currentPuzzle.moves?.length || 0}</p>
                 </div>
               </div>
             </Card>
 
-            {/* Actions */}
-            <div className="space-y-2">
-              <Button
-                onClick={() => setShowSolution(!showSolution)}
-                className="w-full bg-slate-800 hover:bg-slate-700 text-white border border-slate-700"
-              >
-                {showSolution ? "Hide Solution" : "Show Solution"}
-              </Button>
-
-              {showSolution && (
-                <Card className="bg-slate-800/50 border-slate-700 p-3">
-                  <p className="text-slate-400 text-xs mb-2">SOLUTION</p>
-                  <p className="text-amber-400 font-mono text-sm">
-                    {currentPuzzle.moves?.[0] || "No solution"}
-                  </p>
-                </Card>
-              )}
-
-              <Button
-                onClick={() => {
-                  const newGame = new Chess(currentPuzzle.fen);
-                  setGame(newGame);
-                  setShowSolution(false);
-                }}
-                className="w-full bg-slate-800 hover:bg-slate-700 text-white border border-slate-700"
-              >
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Reset
-              </Button>
-            </div>
+            {/* Controls */}
+            <Card className="bg-slate-900/50 border-teal-900/30 p-6">
+              <div className="space-y-3">
+                <Button
+                  onClick={handleReset}
+                  className="w-full bg-slate-800 hover:bg-slate-700 text-white"
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Reset
+                </Button>
+                <Button
+                  onClick={() => setShowSolution(!showSolution)}
+                  className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold"
+                >
+                  {showSolution ? "Hide" : "Show"} Solution
+                </Button>
+              </div>
+            </Card>
 
             {/* Navigation */}
-            <div className="flex gap-2">
-              <Button
-                onClick={() => {
-                  if (currentPuzzleIndex > 0) {
-                    setCurrentPuzzleIndex((prev) => prev - 1);
-                    const prevPuzzle = puzzles[currentPuzzleIndex - 1];
-                    const prevGame = new Chess(prevPuzzle.fen);
-                    setGame(prevGame);
-                    setShowSolution(false);
-                  }
-                }}
-                disabled={currentPuzzleIndex === 0}
-                className="flex-1 bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 disabled:opacity-50"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </Button>
+            <Card className="bg-slate-900/50 border-teal-900/30 p-6">
+              <div className="flex gap-2">
+                <Button
+                  onClick={handlePreviousPuzzle}
+                  disabled={currentPuzzleIndex === 0}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                <Button
+                  onClick={handleNextPuzzle}
+                  disabled={currentPuzzleIndex === puzzles.length - 1}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
+            </Card>
 
-              <Button
-                onClick={() => {
-                  if (currentPuzzleIndex < puzzles.length - 1) {
-                    setCurrentPuzzleIndex((prev) => prev + 1);
-                    const nextPuzzle = puzzles[currentPuzzleIndex + 1];
-                    const nextGame = new Chess(nextPuzzle.fen);
-                    setGame(nextGame);
-                    setShowSolution(false);
-                  } else {
-                    handleSessionComplete();
-                  }
-                }}
-                className="flex-1 bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold"
-              >
-                {currentPuzzleIndex === puzzles.length - 1 ? "Finish" : "Next"}
-                <ChevronRight className="w-4 h-4" />
-              </Button>
-            </div>
+            {/* Solution */}
+            {showSolution && (
+              <Card className="bg-slate-900/50 border-teal-900/30 p-6">
+                <h3 className="text-amber-400 font-bold mb-3">Solution</h3>
+                <p className="text-white font-mono text-sm break-words">
+                  {currentPuzzle.moves?.join(" ") || "No solution available"}
+                </p>
+              </Card>
+            )}
           </div>
         </div>
       </div>
