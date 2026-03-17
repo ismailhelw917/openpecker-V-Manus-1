@@ -141,3 +141,11 @@
 - [x] Update Train page to use tRPC for fetching openings
 - [x] Test Train page opening loading
 - [x] All 43 tests still passing
+
+## Bug Fixes (Round 6 - Puzzle Fetching)
+- [x] Debug why puzzle fetching returns empty for some openings
+- [x] Check if rating filters are too restrictive
+- [x] Implement fallback logic to adjust rating range if no puzzles found
+- [x] Added getOpeningRatingRange function to detect actual puzzle rating ranges
+- [x] Updated getPuzzlesByOpeningAndRating with automatic fallback to full range
+- [x] All 43 tests still passing

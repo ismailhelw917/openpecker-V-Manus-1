@@ -183,6 +183,30 @@ export async function getUniqueOpenings() {
 }
 
 // Get puzzles by opening name and rating
+// Get the actual rating range for an opening
+export async function getOpeningRatingRange(openingName: string) {
+  const db = await getDb();
+  if (!db) return { min: 1000, max: 2000 };
+
+  try {
+    const result = await db.execute(
+      sql`SELECT MIN(rating) as minRating, MAX(rating) as maxRating FROM puzzles WHERE openingName = ${openingName}`
+    );
+    
+    if (Array.isArray(result) && result.length > 0 && Array.isArray(result[0]) && result[0].length > 0) {
+      const row = result[0][0];
+      return {
+        min: row.minRating || 1000,
+        max: row.maxRating || 2000,
+      };
+    }
+    return { min: 1000, max: 2000 };
+  } catch (error) {
+    console.error("Error getting opening rating range:", error);
+    return { min: 1000, max: 2000 };
+  }
+}
+
 export async function getPuzzlesByOpeningAndRating(
   openingName: string,
   minRating: number,
@@ -203,11 +227,33 @@ export async function getPuzzlesByOpeningAndRating(
     whereConditions = and(whereConditions, eq(puzzles.color, color));
   }
 
-  return db
+  let result = await db
     .select()
     .from(puzzles)
     .where(whereConditions)
     .limit(limit);
+
+  // If no puzzles found, try with expanded rating range
+  if (result.length === 0) {
+    const ratingRange = await getOpeningRatingRange(openingName);
+    whereConditions = and(
+      eq(puzzles.openingName, openingName),
+      gte(puzzles.rating, ratingRange.min),
+      lte(puzzles.rating, ratingRange.max)
+    );
+
+    if (color && color !== 'both') {
+      whereConditions = and(whereConditions, eq(puzzles.color, color));
+    }
+
+    result = await db
+      .select()
+      .from(puzzles)
+      .where(whereConditions)
+      .limit(limit);
+  }
+
+  return result;
 }
 
 // Get random puzzles by opening name and rating
