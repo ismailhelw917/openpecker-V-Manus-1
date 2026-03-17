@@ -131,11 +131,19 @@ export default function Session() {
       
       let result = null;
       try {
-        result = game.move({
+        // Only add promotion if the move is to the 8th or 1st rank (pawn promotion)
+        const moveObj: any = {
           from: sourceSquare,
           to: targetSquare,
-          promotion: "q",
-        });
+        };
+        
+        // Check if target square is on promotion rank (8th for white, 1st for black)
+        const targetRank = parseInt(targetSquare[1]);
+        if (targetRank === 8 || targetRank === 1) {
+          moveObj.promotion = "q";
+        }
+        
+        result = game.move(moveObj);
       } catch (e) {
         console.error("Move error:", e);
         return false;

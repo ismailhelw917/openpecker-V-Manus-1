@@ -248,3 +248,12 @@
 - [x] Test castling move validation
 - [x] Confirmed: System correctly rejects illegal moves (expected behavior)
 - [ ] Save checkpoint
+
+## Move Validation Investigation (Round 21 - User Report)
+- [x] Analyze move validation logic in Session page
+- [x] Check puzzle moves format in database
+- [x] Compare expected moves with actual moves being made
+- [x] Identify root cause: Always appending "q" promotion to all moves
+- [x] Fix move validation logic: Only add promotion for moves to rank 8 or 1
+- [x] Test with sample puzzles
+- [ ] Save checkpoint
