@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE puzzles SET openingName = 'Advanced Openings' WHERE (openingName IS NULL OR openingName = '' OR openingName = 'Unknown') AND rating >= 1600 AND rating < 2000 LIMIT 100000;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute UPDATE puzzles SET openingName = 'Advanced Openings' WHERE (openingName IS NULL OR openingName = '' OR openingName = 'Unknown') AND rating >= 1600 AND rating < 2000 LIMIT 100000;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 5829
+}

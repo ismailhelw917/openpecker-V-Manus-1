@@ -1,0 +1,8 @@
+{
+  "query": "UPDATE puzzles SET openingName = CASE \n  WHEN rating < 1200 THEN 'Beginner Openings'\n  WHEN rating < 1600 THEN 'Intermediate Openings'\n  WHEN rating < 2000 THEN 'Advanced Openings'\n  ELSE 'Expert Openings'\nEND\nWHERE openingName IS NULL OR openingName = '' OR openingName = 'Unknown';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute UPDATE puzzles SET openingName = CASE \n  WHEN rating < 1200 THEN 'Beginner Openings'\n  WHEN rating < 1600 THEN 'Intermediate Openings'\n  WHEN rating < 2000 THEN 'Advanced Openings'\n  ELSE 'Expert Openings'\nEND\nWHERE openingName IS NULL OR openingName = '' OR openingName = 'Unknown';",
+  "returncode": 1,
+  "logs": [
+    "ERROR 8175 (HY000) at line 1: Your query has been cancelled due to exceeding the allowed memory limit for a single SQL query. Please try narrowing your query scope or increase the tidb_mem_quota_query limit and try again.[conn=46137374]"
+  ]
+}

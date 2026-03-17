@@ -176,3 +176,12 @@
 - [x] Add lock icons to 70% of openings in Train tab
 - [x] All TypeScript errors resolved
 - [x] Dev server running without errors
+
+## Opening Names & Logo (Round 11 - User Request)
+- [x] Extract opening names and subvariations from CSV OpeningTags
+- [x] Update puzzles table with proper opening names and variations
+- [ ] Modify Train page to show opening hierarchy (name + subvariation)
+- [x] Create OpenPecker logo with bird design (similar to provided reference)
+- [ ] Integrate logo into app header and favicon
+- [x] Fix chessboard loading issue using CustomChessboard component
+- [ ] Test opening selection with real opening names

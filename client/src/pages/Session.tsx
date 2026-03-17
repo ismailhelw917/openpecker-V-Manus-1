@@ -2,10 +2,9 @@ import { useState, useEffect } from "react";
 import { useRoute, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { Chessboard as ChessboardComponent } from "react-chessboard";
-const Chessboard = ChessboardComponent as any;
 import { Chess } from "chess.js";
 import { ChevronLeft } from "lucide-react";
+import { CustomChessboard } from "@/components/CustomChessboard";
 
 export default function Session() {
   const [match, params] = useRoute("/session/:id");
@@ -205,11 +204,10 @@ export default function Session() {
       {/* Board Container - Centered */}
       <div className="flex-1 flex items-center justify-center p-4 overflow-hidden">
         <div style={{ width: boardSize, height: boardSize }}>
-          <Chessboard
-            position={fen}
+          <CustomChessboard
+            game={new Chess(fen)}
             onPieceDrop={handleMove}
-            boardWidth={boardSize}
-            arePiecesDraggable={!solved}
+            boardColors={{ light: '#f0d9b5', dark: '#b58863' }}
           />
         </div>
       </div>
