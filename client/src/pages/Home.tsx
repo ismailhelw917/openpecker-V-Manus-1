@@ -36,11 +36,13 @@ export default function Home() {
       <div className="text-center max-w-2xl mx-auto mb-12">
         {/* Logo */}
         <div className="mb-8 flex justify-center">
-          <img
-            src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/openpecker-logo-UbbhKD7VjajRRYYwpnAd2y.webp"
-            alt="OpenPecker Logo"
-            className="w-32 h-32 object-contain"
-          />
+          <div className="bg-teal-700 rounded-lg p-4 shadow-lg">
+            <img
+              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/openpecker-logo-UbbhKD7VjajRRYYwpnAd2y.webp"
+              alt="OpenPecker Logo"
+              className="w-32 h-32 object-contain"
+            />
+          </div>
         </div>
         
         {/* Title */}
