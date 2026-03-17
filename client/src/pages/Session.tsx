@@ -161,13 +161,18 @@ export default function Session() {
       setFen(game.fen());
 
       // Check if move is correct
-      // Parse moves string (space-separated) to get the first move
-      const movesString = typeof currentPuzzle.moves === 'string' ? currentPuzzle.moves : '';
-      const movesList = movesString.split(' ').filter((m: string) => m.length > 0);
+      // Parse moves - could be array or space-separated string
+      let movesList: string[] = [];
+      if (Array.isArray(currentPuzzle.moves)) {
+        movesList = currentPuzzle.moves;
+      } else if (typeof currentPuzzle.moves === 'string') {
+        movesList = currentPuzzle.moves.split(' ').filter((m: string) => m.length > 0);
+      }
+      
       const expectedMove = movesList[0];
       const moveUCI = `${result.from}${result.to}${result.promotion || ""}`;
 
-      console.log('Move validation:', { expectedMove, moveUCI, movesString, movesList, puzzleId: currentPuzzle.id });
+      console.log('Move validation:', { expectedMove, moveUCI, movesList, puzzleId: currentPuzzle.id });
 
       if (expectedMove === moveUCI) {
         setCorrectCount((prev) => prev + 1);
@@ -220,8 +225,12 @@ export default function Session() {
           // Auto-solve after 2 seconds - play entire solution sequence
           setTimeout(() => {
             const game = new Chess(currentPuzzle.fen);
-            const movesString = typeof currentPuzzle.moves === 'string' ? currentPuzzle.moves : '';
-            const movesList = movesString.split(' ').filter((m: string) => m.length > 0);
+            let movesList: string[] = [];
+            if (Array.isArray(currentPuzzle.moves)) {
+              movesList = currentPuzzle.moves;
+            } else if (typeof currentPuzzle.moves === 'string') {
+              movesList = currentPuzzle.moves.split(' ').filter((m: string) => m.length > 0);
+            }
             
             if (movesList.length === 0) return;
             
