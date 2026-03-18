@@ -557,11 +557,31 @@ export const appRouter = router({
       )
       .query(async ({ input }) => {
         const sets = await getTrainingSetsByUser(input.userId || null, input.deviceId || null);
-        return sets.map((set) => ({
-          ...set,
-          themes: JSON.parse(set.themes),
-          puzzlesJson: JSON.parse(set.puzzlesJson),
-        }));
+        return sets.map((set: any) => {
+          const themes = typeof set.themes === 'string' ? JSON.parse(set.themes) : set.themes || [];
+          const puzzlesJson = typeof set.puzzlesJson === 'string' ? JSON.parse(set.puzzlesJson) : set.puzzlesJson || [];
+          return {
+            id: set.id,
+            userId: set.userId,
+            deviceId: set.deviceId,
+            openingName: set.openingName || 'Custom Set',
+            openingFen: set.openingFen,
+            themes: themes,
+            minRating: set.minRating,
+            maxRating: set.maxRating,
+            puzzleCount: set.puzzleCount || puzzlesJson.length,
+            targetCycles: set.targetCycles,
+            colorFilter: set.colorFilter,
+            puzzlesJson: puzzlesJson,
+            status: set.status,
+            cyclesCompleted: set.cyclesCompleted || 0,
+            bestAccuracy: set.bestAccuracy,
+            lastPlayedAt: set.lastPlayedAt,
+            totalAttempts: set.totalAttempts,
+            createdAt: set.createdAt,
+            updatedAt: set.updatedAt,
+          };
+        });
       }),
 
     /**
