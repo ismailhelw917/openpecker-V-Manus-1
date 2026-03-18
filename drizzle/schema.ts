@@ -165,3 +165,96 @@ export const puzzleAttempts = mysqlTable("puzzle_attempts", {
 
 export type PuzzleAttempt = typeof puzzleAttempts.$inferSelect;
 export type InsertPuzzleAttempt = typeof puzzleAttempts.$inferInsert;
+
+/**
+ * Page Views - tracks every page visit
+ */
+export const pageViews = mysqlTable("pageViews", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId"),
+  deviceId: varchar("deviceId", { length: 64 }),
+  page: varchar("page", { length: 255 }).notNull(), // e.g., '/train', '/sets', '/stats'
+  referrer: varchar("referrer", { length: 255 }),
+  userAgent: text("userAgent"),
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  sessionId: varchar("sessionId", { length: 64 }),
+  duration: int("duration"), // milliseconds spent on page
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("idx_pageViews_userId").on(table.userId),
+  deviceIdIdx: index("idx_pageViews_deviceId").on(table.deviceId),
+  pageIdx: index("idx_pageViews_page").on(table.page),
+  timestampIdx: index("idx_pageViews_timestamp").on(table.timestamp),
+}));
+
+export type PageView = typeof pageViews.$inferSelect;
+export type InsertPageView = typeof pageViews.$inferInsert;
+
+/**
+ * Events - tracks user interactions and custom events
+ */
+export const events = mysqlTable("events", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId"),
+  deviceId: varchar("deviceId", { length: 64 }),
+  eventName: varchar("eventName", { length: 255 }).notNull(), // e.g., 'puzzle_solved', 'set_created', 'cycle_completed'
+  eventCategory: varchar("eventCategory", { length: 100 }), // e.g., 'training', 'user', 'engagement'
+  eventValue: varchar("eventValue", { length: 255 }),
+  eventData: text("eventData"), // JSON with additional event properties
+  page: varchar("page", { length: 255 }),
+  sessionId: varchar("sessionId", { length: 64 }),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("idx_events_userId").on(table.userId),
+  deviceIdIdx: index("idx_events_deviceId").on(table.deviceId),
+  eventNameIdx: index("idx_events_eventName").on(table.eventName),
+  timestampIdx: index("idx_events_timestamp").on(table.timestamp),
+}));
+
+export type Event = typeof events.$inferSelect;
+export type InsertEvent = typeof events.$inferInsert;
+
+/**
+ * Sessions - tracks user sessions
+ */
+export const sessions = mysqlTable("sessions", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  userId: int("userId"),
+  deviceId: varchar("deviceId", { length: 64 }),
+  startTime: timestamp("startTime").defaultNow().notNull(),
+  endTime: timestamp("endTime"),
+  duration: int("duration"), // milliseconds
+  pageCount: int("pageCount").default(0),
+  eventCount: int("eventCount").default(0),
+  userAgent: text("userAgent"),
+  ipAddress: varchar("ipAddress", { length: 45 }),
+}, (table) => ({
+  userIdIdx: index("idx_sessions_userId").on(table.userId),
+  deviceIdIdx: index("idx_sessions_deviceId").on(table.deviceId),
+  startTimeIdx: index("idx_sessions_startTime").on(table.startTime),
+}));
+
+export type Session = typeof sessions.$inferSelect;
+export type InsertSession = typeof sessions.$inferInsert;
+
+/**
+ * Daily Stats - aggregated daily statistics
+ */
+export const dailyStats = mysqlTable("dailyStats", {
+  id: int("id").autoincrement().primaryKey(),
+  date: varchar("date", { length: 10 }).notNull(), // YYYY-MM-DD
+  totalUsers: int("totalUsers").default(0),
+  totalSessions: int("totalSessions").default(0),
+  totalPageViews: int("totalPageViews").default(0),
+  totalEvents: int("totalEvents").default(0),
+  avgSessionDuration: int("avgSessionDuration").default(0), // milliseconds
+  bounceRate: decimal("bounceRate", { precision: 5, scale: 2 }).default("0"), // percentage
+  topPages: text("topPages"), // JSON array of {page, views}
+  topEvents: text("topEvents"), // JSON array of {eventName, count}
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  dateIdx: index("idx_dailyStats_date").on(table.date),
+}));
+
+export type DailyStat = typeof dailyStats.$inferSelect;
+export type InsertDailyStat = typeof dailyStats.$inferInsert;
