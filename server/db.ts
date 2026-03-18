@@ -81,6 +81,12 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       updateSet.role = 'admin';
     }
 
+    // Handle isPremium field
+    if (user.isPremium !== undefined) {
+      values.isPremium = user.isPremium;
+      updateSet.isPremium = user.isPremium;
+    }
+
     if (!values.lastSignedIn) {
       values.lastSignedIn = new Date();
     }

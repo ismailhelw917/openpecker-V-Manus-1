@@ -389,3 +389,10 @@
 - [x] Replace hardcoded mock metrics with dynamic generation from real user data
 - [ ] Test stats accuracy against database
 - [ ] Deploy real stats to live site
+
+## Premium Status Bug Fix (Round 37)
+- [x] Identified bug: upsertUser function not handling isPremium field
+- [x] Fixed upsertUser to include isPremium in update set
+- [x] Updated 2 recent users (Ayush, N.Balaji) to have premium status
+- [ ] Test new signups to verify premium status is granted
+- [ ] Deploy fix to live site
