@@ -54,7 +54,7 @@ export default function Home() {
         </p>
 
         {/* CTA Buttons */}
-        <div className="space-y-3 mb-12">
+        <div className="space-y-3 mb-6">
           <Button
             onClick={() => setLocation("/train")}
             className="w-full max-w-sm bg-teal-600 hover:bg-teal-700 text-white font-bold text-lg py-6 rounded-lg"
@@ -78,7 +78,7 @@ export default function Home() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-3 gap-4 w-full max-w-md">
+      <div className="grid grid-cols-3 gap-4 w-full max-w-md -mt-4">
         <Card className="bg-teal-50 border-teal-200 p-4 text-center">
           <p className="text-teal-600 font-bold text-2xl">{stats.cycles}</p>
           <p className="text-slate-600 text-xs uppercase tracking-wider">Cycles</p>
