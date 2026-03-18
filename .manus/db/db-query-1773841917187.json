@@ -1,0 +1,100 @@
+{
+  "query": "SELECT DISTINCT openingName FROM puzzles WHERE openingName IS NOT NULL LIMIT 30;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT DISTINCT openingName FROM puzzles WHERE openingName IS NOT NULL LIMIT 30;",
+  "rows": [
+    {
+      "openingName": "Advanced Openings"
+    },
+    {
+      "openingName": "Alekhine Defense"
+    },
+    {
+      "openingName": "Amar Opening"
+    },
+    {
+      "openingName": "Amazon Attack"
+    },
+    {
+      "openingName": "Anderssens Opening"
+    },
+    {
+      "openingName": "Barnes Defense"
+    },
+    {
+      "openingName": "Barnes Opening"
+    },
+    {
+      "openingName": "Beginner Openings"
+    },
+    {
+      "openingName": "Benko Gambit"
+    },
+    {
+      "openingName": "Benko Gambit Accepted"
+    },
+    {
+      "openingName": "Benko Gambit Declined"
+    },
+    {
+      "openingName": "Benoni Defense"
+    },
+    {
+      "openingName": "Bird Opening"
+    },
+    {
+      "openingName": "Bishops Opening"
+    },
+    {
+      "openingName": "Blackmar-Diemer Gambit"
+    },
+    {
+      "openingName": "Blackmar-Diemer Gambit Accepted"
+    },
+    {
+      "openingName": "Blackmar-Diemer Gambit Declined"
+    },
+    {
+      "openingName": "Blumenfeld Countergambit"
+    },
+    {
+      "openingName": "Blumenfeld Countergambit Accepted"
+    },
+    {
+      "openingName": "Bogo-Indian Defense"
+    },
+    {
+      "openingName": "Borg Defense"
+    },
+    {
+      "openingName": "Bronstein Gambit"
+    },
+    {
+      "openingName": "Canard Opening"
+    },
+    {
+      "openingName": "Caro-Kann Defense"
+    },
+    {
+      "openingName": "Catalan Opening"
+    },
+    {
+      "openingName": "Center Game"
+    },
+    {
+      "openingName": "Center Game Accepted"
+    },
+    {
+      "openingName": "Clemenz Opening"
+    },
+    {
+      "openingName": "Creepy Crawly Formation"
+    },
+    {
+      "openingName": "Czech Defense"
+    }
+  ],
+  "messages": [],
+  "stdout": "openingName\nAdvanced Openings\nAlekhine Defense\nAmar Opening\nAmazon Attack\nAnderssens Opening\nBarnes Defense\nBarnes Opening\nBeginner Openings\nBenko Gambit\nBenko Gambit Accepted\nBenko Gambit Declined\nBenoni Defense\nBird Opening\nBishops Opening\nBlackmar-Diemer Gambit\nBlackmar-Diemer Gambit Accepted\nBlackmar-Diemer Gambit Declined\nBlumenfeld Countergambit\nBlumenfeld Countergambit Accepted\nBogo-Indian Defense\nBorg Defense\nBronstein Gambit\nCanard Opening\nCaro-Kann Defense\nCatalan Opening\nCenter Game\nCenter Game Accepted\nClemenz Opening\nCreepy Crawly Formation\nCzech Defense\n",
+  "stderr": "",
+  "execution_time_ms": 1916
+}

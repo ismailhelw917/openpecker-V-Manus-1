@@ -44,12 +44,14 @@ export const puzzles = mysqlTable("puzzles", {
   color: varchar("color", { length: 10 }), // 'white' or 'black'
   openingName: varchar("openingName", { length: 255 }), // Opening name (e.g., 'Sicilian Defense')
   openingVariation: varchar("openingVariation", { length: 255 }), // Opening variation (e.g., 'Najdorf Variation')
+  ecoCode: varchar("ecoCode", { length: 10 }), // ECO code (e.g., 'C20', 'E94')
   puzzleData: text("puzzleData"), // Full puzzle object as JSON
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table) => ({
   ratingIdx: index("idx_rating").on(table.rating),
   colorIdx: index("idx_color").on(table.color),
   openingIdx: index("idx_opening").on(table.openingName),
+  ecoIdx: index("idx_eco").on(table.ecoCode),
 }));
 
 export type Puzzle = typeof puzzles.$inferSelect;

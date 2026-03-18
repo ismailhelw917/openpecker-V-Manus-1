@@ -1,0 +1,210 @@
+{
+  "query": "SELECT id, openingName FROM puzzles WHERE openingName IS NOT NULL LIMIT 50;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT id, openingName FROM puzzles WHERE openingName IS NOT NULL LIMIT 50;",
+  "rows": [
+    {
+      "id": "I7ZIo",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7ZKx",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7aHv",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7aNN",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7any",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7atx",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7bMG",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7bgM",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7bvL",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7by4",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7c1B",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7cHa",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7cLL",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7cUI",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7ciF",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7cpc",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7cse",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7d06",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7d9G",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7dVl",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7dds",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7ds2",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7eCm",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7eEr",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7eda",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7ehF",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7f74",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7fv3",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7fzY",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7g2C",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7gLC",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7gWb",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7gpo",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7h5I",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7hGb",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7hPa",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7haS",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7hlK",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7hmE",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7hzS",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7i8U",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7iPG",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7icX",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7igp",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7iww",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7j2F",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7jBN",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7jQp",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7jRu",
+      "openingName": "Advanced Openings"
+    },
+    {
+      "id": "I7jpJ",
+      "openingName": "Advanced Openings"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topeningName\nI7ZIo\tAdvanced Openings\nI7ZKx\tAdvanced Openings\nI7aHv\tAdvanced Openings\nI7aNN\tAdvanced Openings\nI7any\tAdvanced Openings\nI7atx\tAdvanced Openings\nI7bMG\tAdvanced Openings\nI7bgM\tAdvanced Openings\nI7bvL\tAdvanced Openings\nI7by4\tAdvanced Openings\nI7c1B\tAdvanced Openings\nI7cHa\tAdvanced Openings\nI7cLL\tAdvanced Openings\nI7cUI\tAdvanced Openings\nI7ciF\tAdvanced Openings\nI7cpc\tAdvanced Openings\nI7cse\tAdvanced Openings\nI7d06\tAdvanced Openings\nI7d9G\tAdvanced Openings\nI7dVl\tAdvanced Openings\nI7dds\tAdvanced Openings\nI7ds2\tAdvanced Openings\nI7eCm\tAdvanced Openings\nI7eEr\tAdvanced Openings\nI7eda\tAdvanced Openings\nI7ehF\tAdvanced Openings\nI7f74\tAdvanced Openings\nI7fv3\tAdvanced Openings\nI7fzY\tAdvanced Openings\nI7g2C\tAdvanced Openings\nI7gLC\tAdvanced Openings\nI7gWb\tAdvanced Openings\nI7gpo\tAdvanced Openings\nI7h5I\tAdvanced Openings\nI7hGb\tAdvanced Openings\nI7hPa\tAdvanced Openings\nI7haS\tAdvanced Openings\nI7hlK\tAdvanced Openings\nI7hmE\tAdvanced Openings\nI7hzS\tAdvanced Openings\nI7i8U\tAdvanced Openings\nI7iPG\tAdvanced Openings\nI7icX\tAdvanced Openings\nI7igp\tAdvanced Openings\nI7iww\tAdvanced Openings\nI7j2F\tAdvanced Openings\nI7jBN\tAdvanced Openings\nI7jQp\tAdvanced Openings\nI7jRu\tAdvanced Openings\nI7jpJ\tAdvanced Openings\n",
+  "stderr": "",
+  "execution_time_ms": 1591
+}
