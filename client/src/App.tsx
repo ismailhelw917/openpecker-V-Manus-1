@@ -12,6 +12,8 @@ import Stats from "./pages/Stats";
 import Settings from "./pages/Settings";
 import Session from "./pages/Session";
 import Auth from "./pages/Auth";
+import { useEffect } from "react";
+import { nanoid } from "nanoid";
 
 function Router() {
   return (
@@ -30,6 +32,15 @@ function Router() {
 }
 
 function App() {
+  useEffect(() => {
+    // Initialize device ID if not already set
+    const existingDeviceId = localStorage.getItem("openpecker-device-id");
+    if (!existingDeviceId) {
+      const newDeviceId = nanoid();
+      localStorage.setItem("openpecker-device-id", newDeviceId);
+    }
+  }, []);
+
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="dark">

@@ -33,6 +33,18 @@ export default function SavedSets() {
     }
   }, [deviceId]);
 
+  // Refetch sets when page becomes visible (returns from session)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && deviceId) {
+        setsQuery.refetch();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [deviceId, setsQuery]);
+
   const deleteSetMutation = trpc.trainingSets.delete.useMutation({
     onSuccess: () => {
       setsQuery.refetch();
