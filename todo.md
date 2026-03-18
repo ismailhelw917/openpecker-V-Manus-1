@@ -308,3 +308,9 @@
 - [ ] Test premium purchase flow end-to-end
 - [ ] Double-check all premium features work
 - [ ] Triple-check all premium features work
+
+## Session Screen Enhancements (Round 27 - User Request)
+- [x] Remove popup notifications from session screen
+- [x] Add green checkmark watermark for correct solutions (exclude auto-solve)
+- [x] Add session timer in header
+- [x] Add cycle progress indicator in header

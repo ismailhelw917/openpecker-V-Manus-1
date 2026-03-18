@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRoute, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
-import { toast } from "sonner";
 import { Chess } from "chess.js";
 import { ChevronLeft } from "lucide-react";
 import { CustomChessboard } from "@/components/CustomChessboard";
@@ -26,6 +25,8 @@ export default function Session() {
     const saved = localStorage.getItem('board-theme');
     return (saved as 'classic' | 'green' | 'blue' | 'purple') || 'classic';
   });
+  const [sessionTime, setSessionTime] = useState(0);
+  const [showCorrectCheckmark, setShowCorrectCheckmark] = useState(false);
 
   // Board theme definitions
   const themeColors = {
@@ -39,6 +40,17 @@ export default function Session() {
     { id: sessionId },
     { enabled: !!sessionId }
   );
+
+  // Session timer
+  useEffect(() => {
+    if (isLoading || !puzzles.length) return;
+    
+    const interval = setInterval(() => {
+      setSessionTime(prev => prev + 1);
+    }, 1000);
+    
+    return () => clearInterval(interval);
+  }, [isLoading, puzzles.length]);
 
   // Calculate board size on mount and resize
   useEffect(() => {
@@ -73,7 +85,6 @@ export default function Session() {
 
       if (!Array.isArray(puzzleList) || puzzleList.length === 0) {
         console.error("No puzzles in training set");
-        toast.error("No puzzles loaded");
         setIsLoading(false);
         return;
       }
@@ -93,7 +104,6 @@ export default function Session() {
       setIsLoading(false);
     } catch (error) {
       console.error("Error loading puzzles:", error);
-      toast.error("Failed to load puzzles");
       setIsLoading(false);
     }
   }, [getTrainingSet.data]);
@@ -134,6 +144,13 @@ export default function Session() {
   const gameForOrientation = new Chess(currentPuzzle?.fen || fen);
   const isWhiteTurn = gameForOrientation.turn() === 'w';
   const boardOrientation = isWhiteTurn ? 'white' : 'black';
+
+  // Format time display
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const handleMove = (sourceSquare: string, targetSquare: string) => {
     if (solved) return false;
@@ -188,8 +205,11 @@ export default function Session() {
 
       if (expectedMove === moveUCI) {
         setCorrectCount((prev) => prev + 1);
-        toast.success("Correct!");
+        setShowCorrectCheckmark(true);
         setSolved(true);
+        
+        // Hide checkmark after 1 second
+        setTimeout(() => setShowCorrectCheckmark(false), 1000);
         
         // Start countdown for auto-next
         let countdown = 1;
@@ -220,14 +240,12 @@ export default function Session() {
               setFen(nextPuzzle.fen);
             }
           } else {
-            toast.success("All puzzles completed!");
             setTimeout(() => setLocation("/sets"), 1000);
           }
         }, 1500);
       } else {
         // Show capture animation on wrong move
         setCaptureSquare(targetSquare);
-        toast.error("Wrong move");
         
         // Reset board after animation and show auto-solve
         setTimeout(() => {
@@ -256,7 +274,6 @@ export default function Session() {
                   // All moves played - don't count as correct or solved
                   setIsAutoSolving(false);
                   setAutoSolveMove(null);
-                  toast.info(`Solution: ${movesList.join(' ')}`);
                   // Don't set setSolved(true) - user didn't solve it correctly
                   
                   // Start countdown for auto-next
@@ -288,7 +305,6 @@ export default function Session() {
                         setFen(nextPuzzle.fen);
                       }
                     } else {
-                      toast.success("All puzzles completed!");
                       setTimeout(() => setLocation("/sets"), 1000);
                     }
                   }, 1500);
@@ -355,10 +371,17 @@ export default function Session() {
           Back
         </button>
         <div className="text-center flex-1 px-4">
-          <h1 className="text-lg font-bold text-amber-400">
-            Puzzle {currentPuzzleIndex + 1} / {puzzles.length}
-          </h1>
-          <div className="w-32 h-0.5 bg-slate-800 rounded-full mt-1 mx-auto overflow-hidden">
+          <div className="flex items-center justify-center gap-4 mb-1">
+            <div>
+              <p className="text-xs text-slate-400">Time</p>
+              <p className="text-sm font-bold text-amber-400">{formatTime(sessionTime)}</p>
+            </div>
+            <div>
+              <p className="text-xs text-slate-400">Cycle</p>
+              <p className="text-sm font-bold text-amber-400">{currentPuzzleIndex + 1}/{puzzles.length}</p>
+            </div>
+          </div>
+          <div className="w-40 h-0.5 bg-slate-800 rounded-full mx-auto overflow-hidden">
             <div
               className="h-full bg-amber-400 transition-all"
               style={{ width: `${progress}%` }}
@@ -384,6 +407,17 @@ export default function Session() {
             autoNextCountdown={autoNextCountdown}
             isAutoSolving={isAutoSolving}
           />
+          
+          {/* Green Checkmark Watermark for Correct Solutions */}
+          {showCorrectCheckmark && !isAutoSolving && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="text-green-400 opacity-80 animate-pulse">
+                <svg className="w-32 h-32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
