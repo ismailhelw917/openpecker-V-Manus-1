@@ -329,3 +329,12 @@
 - [x] Banner now displays for all users unless explicitly dismissed
 - [x] Verified banner shows on dev server
 - [x] Deploy fix to live site
+
+## Gift Premium Banner Global Settings Fix (Round 30 - Bug Fix)
+- [x] Create global_settings database table for app-wide configuration
+- [x] Add getGlobalSettings and updateGlobalSettings helper functions to db.ts
+- [x] Add getGlobalSettings and updateGlobalSettings tRPC procedures to systemRouter
+- [x] Update App.tsx to use global settings instead of localStorage toggle
+- [x] Banner now controlled by database global settings (showGiftPremiumBanner flag)
+- [x] Verified banner displays correctly on dev server with global settings
+- [x] Ready to deploy to live site

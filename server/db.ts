@@ -14,6 +14,7 @@ import {
   InsertOpening,
   puzzleAttempts,
   InsertPuzzleAttempt,
+  globalSettings,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -623,5 +624,53 @@ export async function countTotalUsers() {
   } catch (error) {
     console.error("Error counting users:", error);
     return 0;
+  }
+}
+
+
+/**
+ * Get global settings
+ */
+export async function getGlobalSettings() {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const result = await db.select().from(globalSettings).limit(1);
+    if (result.length > 0) {
+      return result[0];
+    }
+    // Create default settings if not found
+    await db.insert(globalSettings).values({
+      id: 1,
+      showGiftPremiumBanner: 1,
+      giftPremiumMaxUsers: 100,
+    });
+    return {
+      id: 1,
+      showGiftPremiumBanner: 1,
+      giftPremiumMaxUsers: 100,
+    };
+  } catch (error) {
+    console.error("Error getting global settings:", error);
+    return null;
+  }
+}
+
+/**
+ * Update global settings
+ */
+export async function updateGlobalSettings(updates: { showGiftPremiumBanner?: number; giftPremiumMaxUsers?: number }) {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const result = await db.update(globalSettings)
+      .set(updates)
+      .where(eq(globalSettings.id, 1));
+    return result;
+  } catch (error) {
+    console.error("Error updating global settings:", error);
+    return null;
   }
 }

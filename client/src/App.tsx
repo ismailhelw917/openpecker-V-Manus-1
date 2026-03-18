@@ -39,14 +39,11 @@ function App() {
     const stored = localStorage.getItem("openpecker-maintenance");
     return stored === "true";
   });
-  const [showGiftPremium, setShowGiftPremium] = useState(() => {
-    const stored = localStorage.getItem("openpecker-gift-premium");
-    // Default to true if not set (show banner by default on first visit)
-    return stored === null ? true : stored === "true";
-  });
+  const [showGiftPremium, setShowGiftPremium] = useState(true);
   const [giftPremiumDismissed, setGiftPremiumDismissed] = useState(false);
   const { isAuthenticated, loading } = useAuth();
   const { data: giftEligibility } = trpc.auth.checkGiftEligibility.useQuery();
+  const { data: globalSettings } = trpc.system.getGlobalSettings.useQuery();
 
   useEffect(() => {
     // Initialize device ID if not already set
@@ -57,20 +54,20 @@ function App() {
     }
   }, []);
 
-  // Auto-toggle off gift premium when 100 users reached
+  // Auto-toggle off gift premium when 100 users reached or global setting disabled
   useEffect(() => {
-    if (giftEligibility && !giftEligibility.isEligible && showGiftPremium) {
+    if (globalSettings && !globalSettings.showGiftPremiumBanner) {
+      setShowGiftPremium(false);
+    } else if (giftEligibility && !giftEligibility.isEligible && showGiftPremium) {
       setShowGiftPremium(false);
     }
-  }, [giftEligibility, showGiftPremium]);
+  }, [giftEligibility, globalSettings, showGiftPremium]);
 
   useEffect(() => {
     localStorage.setItem("openpecker-maintenance", showMaintenance.toString());
   }, [showMaintenance]);
 
-  useEffect(() => {
-    localStorage.setItem("openpecker-gift-premium", showGiftPremium.toString());
-  }, [showGiftPremium]);
+  // Remove localStorage persistence for gift premium - use global settings instead
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -123,7 +120,7 @@ function App() {
               </div>
             </div>
           )}
-          {showGiftPremium && !giftPremiumDismissed && giftEligibility?.isEligible && (
+          {showGiftPremium && !giftPremiumDismissed && giftEligibility?.isEligible && globalSettings?.showGiftPremiumBanner && (
             <div className="fixed top-0 left-0 right-0 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-900 font-bold text-center py-4 z-40 animate-pulse shadow-lg">
               <div className="flex items-center justify-center gap-2">
                 <span>🎉 First 100 users to sign up get FREE lifetime premium! You're one of them! 🎉</span>
@@ -136,7 +133,7 @@ function App() {
               </div>
             </div>
           )}
-          <div className={`min-h-screen bg-slate-950 flex flex-col ${showGiftPremium && !giftPremiumDismissed && giftEligibility?.isEligible ? 'pt-16' : ''}`}>
+          <div className={`min-h-screen bg-slate-950 flex flex-col ${showGiftPremium && !giftPremiumDismissed && giftEligibility?.isEligible && globalSettings?.showGiftPremiumBanner ? 'pt-16' : ''}`}>
             <div className="flex-1 overflow-y-auto pb-20 sm:pb-24">
               <Router />
             </div>

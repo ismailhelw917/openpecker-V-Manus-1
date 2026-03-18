@@ -69,6 +69,19 @@ export type Opening = typeof openings.$inferSelect;
 export type InsertOpening = typeof openings.$inferInsert;
 
 /**
+ * Global settings table - stores app-wide configuration like feature flags
+ */
+export const globalSettings = mysqlTable("global_settings", {
+  id: int("id").primaryKey().default(1), // Only one row
+  showGiftPremiumBanner: int("showGiftPremiumBanner").default(1).notNull(), // 1 = show, 0 = hide
+  giftPremiumMaxUsers: int("giftPremiumMaxUsers").default(100).notNull(), // Max users for gift premium
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type GlobalSettings = typeof globalSettings.$inferSelect;
+export type InsertGlobalSettings = typeof globalSettings.$inferInsert;
+
+/**
  * Training sets - represents a configured training session
  * Stores parameters and puzzle list for a training session
  */

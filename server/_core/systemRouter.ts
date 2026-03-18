@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { notifyOwner } from "./notification";
 import { adminProcedure, publicProcedure, router } from "./trpc";
+import { getGlobalSettings, updateGlobalSettings } from "../db";
 
 export const systemRouter = router({
   health: publicProcedure
@@ -25,5 +26,24 @@ export const systemRouter = router({
       return {
         success: delivered,
       } as const;
+    }),
+
+  getGlobalSettings: publicProcedure.query(async () => {
+    const settings = await getGlobalSettings();
+    return settings || { id: 1, showGiftPremiumBanner: 1, giftPremiumMaxUsers: 100 };
+  }),
+
+  updateGlobalSettings: adminProcedure
+    .input(
+      z.object({
+        showGiftPremiumBanner: z.number().optional(),
+        giftPremiumMaxUsers: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const result = await updateGlobalSettings(input);
+      return {
+        success: !!result,
+      };
     }),
 });
