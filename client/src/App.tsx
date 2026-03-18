@@ -12,7 +12,7 @@ import Stats from "./pages/Stats";
 import Settings from "./pages/Settings";
 import Session from "./pages/Session";
 import Auth from "./pages/Auth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
 
 function Router() {
@@ -32,6 +32,9 @@ function Router() {
 }
 
 function App() {
+  const [timeLeft, setTimeLeft] = useState(180);
+  const [showMaintenance, setShowMaintenance] = useState(true);
+
   useEffect(() => {
     // Initialize device ID if not already set
     const existingDeviceId = localStorage.getItem("openpecker-device-id");
@@ -41,11 +44,40 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!showMaintenance) return;
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          setShowMaintenance(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [showMaintenance]);
+
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="dark">
         <TooltipProvider>
           <Toaster />
+          {showMaintenance && (
+            <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+              <div className="bg-slate-900 border-2 border-amber-400 rounded-lg p-8 text-center max-w-md">
+                <h2 className="text-2xl font-bold text-amber-400 mb-4">🔧 Maintenance</h2>
+                <p className="text-white mb-6">We're making improvements. Back in:</p>
+                <div className="text-5xl font-bold text-amber-400 mb-4">
+                  {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+                </div>
+                <p className="text-gray-300">Thank you for your patience!</p>
+              </div>
+            </div>
+          )}
           <div className="min-h-screen bg-slate-950 flex flex-col">
             <div className="flex-1 overflow-y-auto pb-20 sm:pb-24">
               <Router />
