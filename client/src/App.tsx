@@ -54,14 +54,18 @@ function App() {
     }
   }, []);
 
+  const updateGlobalSettingsMutation = trpc.system.updateGlobalSettings.useMutation();
+
   // Auto-toggle off gift premium when 100 users reached or global setting disabled
   useEffect(() => {
     if (globalSettings && !globalSettings.showGiftPremiumBanner) {
       setShowGiftPremium(false);
     } else if (giftEligibility && !giftEligibility.isEligible && showGiftPremium) {
+      // 100 users reached - auto-disable banner in global settings
       setShowGiftPremium(false);
+      updateGlobalSettingsMutation.mutate({ showGiftPremiumBanner: 0 });
     }
-  }, [giftEligibility, globalSettings, showGiftPremium]);
+  }, [giftEligibility, globalSettings, showGiftPremium, updateGlobalSettingsMutation]);
 
   useEffect(() => {
     localStorage.setItem("openpecker-maintenance", showMaintenance.toString());

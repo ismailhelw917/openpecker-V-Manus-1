@@ -90,15 +90,24 @@ export default function Auth() {
 
       if (result.success) {
         if (result.isPremium) {
-          toast.success("🎉 Welcome! You've been granted FREE lifetime premium!");
+          toast.success("🎉 Welcome! You've been granted FREE lifetime premium!", {
+            duration: 5000,
+          });
+          setTimeout(() => {
+            setMode("login");
+            setRegisterName("");
+            setRegisterEmail("");
+            setRegisterPassword("");
+            setRegisterConfirmPassword("");
+          }, 2000);
         } else {
           toast.success("Account created! You can now sign in.");
+          setMode("login");
+          setRegisterName("");
+          setRegisterEmail("");
+          setRegisterPassword("");
+          setRegisterConfirmPassword("");
         }
-        setMode("login");
-        setRegisterName("");
-        setRegisterEmail("");
-        setRegisterPassword("");
-        setRegisterConfirmPassword("");
       } else {
         toast.error(result.error || "Registration failed");
       }
