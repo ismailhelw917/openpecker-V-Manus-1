@@ -128,8 +128,8 @@ function App() {
             </div>
           )}
           
-          {/* Premium Signup Banner - Show for premium users without email */}
-          {!premiumBannerDismissed && isAuthenticated && user?.isPremium && !user?.email && (
+          {/* Premium Signup Banner - Show ONLY for premium users without email (unregistered) */}
+          {!premiumBannerDismissed && isAuthenticated && user?.isPremium && !user?.email && !user?.hasRegistered && (
             <div className="fixed top-0 left-0 right-0 bg-gradient-to-r from-purple-600 via-purple-500 to-purple-600 text-white font-bold text-center py-3 z-40 shadow-lg">
               <div className="flex items-center justify-center gap-3 max-w-full px-4">
                 <span className="text-sm sm:text-base">✨ You have FREE lifetime premium! Sign up to keep your status.</span>
