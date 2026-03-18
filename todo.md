@@ -314,3 +314,11 @@
 - [x] Add green checkmark watermark for correct solutions (exclude auto-solve)
 - [x] Add session timer in header
 - [x] Add cycle progress indicator in header
+
+## Gift Premium Auto-Toggle Implementation (Round 28 - User Request)
+- [x] Add checkGiftEligibility tRPC procedure to count total users
+- [x] Create countTotalUsers function in db.ts
+- [x] Update App.tsx to call checkGiftEligibility query
+- [x] Auto-toggle off gift premium banner when 100 users reached
+- [x] Banner only displays when isEligible is true
+- [x] Test gift premium auto-toggle logic

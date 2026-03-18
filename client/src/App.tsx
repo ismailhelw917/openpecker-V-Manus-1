@@ -15,6 +15,7 @@ import Auth from "./pages/Auth";
 import { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
 import { useAuth } from "./_core/hooks/useAuth";
+import { trpc } from "./lib/trpc";
 
 function Router() {
   return (
@@ -44,6 +45,7 @@ function App() {
   });
   const [giftPremiumDismissed, setGiftPremiumDismissed] = useState(false);
   const { isAuthenticated, loading } = useAuth();
+  const { data: giftEligibility } = trpc.auth.checkGiftEligibility.useQuery();
 
   useEffect(() => {
     // Initialize device ID if not already set
@@ -53,6 +55,13 @@ function App() {
       localStorage.setItem("openpecker-device-id", newDeviceId);
     }
   }, []);
+
+  // Auto-toggle off gift premium when 100 users reached
+  useEffect(() => {
+    if (giftEligibility && !giftEligibility.isEligible && showGiftPremium) {
+      setShowGiftPremium(false);
+    }
+  }, [giftEligibility, showGiftPremium]);
 
   useEffect(() => {
     localStorage.setItem("openpecker-maintenance", showMaintenance.toString());
@@ -113,7 +122,7 @@ function App() {
               </div>
             </div>
           )}
-          {showGiftPremium && !giftPremiumDismissed && (
+          {showGiftPremium && !giftPremiumDismissed && giftEligibility?.isEligible && (
             <div className="fixed top-0 left-0 right-0 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-900 font-bold text-center py-4 z-40 animate-pulse shadow-lg">
               <div className="flex items-center justify-center gap-2">
                 <span>🎉 First 100 users to sign up get FREE lifetime premium! You're one of them! 🎉</span>
@@ -126,7 +135,7 @@ function App() {
               </div>
             </div>
           )}
-          <div className={`min-h-screen bg-slate-950 flex flex-col ${showGiftPremium && !giftPremiumDismissed && isAuthenticated && !loading ? 'pt-16' : ''}`}>
+          <div className={`min-h-screen bg-slate-950 flex flex-col ${showGiftPremium && !giftPremiumDismissed && giftEligibility?.isEligible ? 'pt-16' : ''}`}>
             <div className="flex-1 overflow-y-auto pb-20 sm:pb-24">
               <Router />
             </div>

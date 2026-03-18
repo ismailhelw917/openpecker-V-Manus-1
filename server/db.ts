@@ -608,3 +608,20 @@ export async function updateUserPasswordHash(userId: number, passwordHash: strin
 
   await db.update(users).set({ passwordHash }).where(eq(users.id, userId));
 }
+
+
+/**
+ * Count total number of users in database
+ */
+export async function countTotalUsers() {
+  const db = await getDb();
+  if (!db) return 0;
+
+  try {
+    const result = await db.select().from(users);
+    return result.length;
+  } catch (error) {
+    console.error("Error counting users:", error);
+    return 0;
+  }
+}

@@ -27,6 +27,7 @@ import {
   getUserByEmail,
   updateUserPasswordHash,
   upsertUser,
+  countTotalUsers,
 } from "./db";
 
 const BCRYPT_ROUNDS = 10;
@@ -83,6 +84,24 @@ export const appRouter = router({
         return {
           success: false,
           error: "Failed to grant premium access",
+        };
+      }
+    }),
+    checkGiftEligibility: publicProcedure.query(async () => {
+      try {
+        // Count total users in database
+        const totalUsers = await countTotalUsers();
+        
+        // Return whether gift is still active (less than 100 users)
+        return {
+          isEligible: totalUsers < 100,
+          totalUsers: totalUsers,
+        };
+      } catch (error) {
+        console.error("[Check Gift Eligibility] Error:", error);
+        return {
+          isEligible: false,
+          totalUsers: 0,
         };
       }
     }),
