@@ -41,7 +41,8 @@ function App() {
   });
   const [showGiftPremium, setShowGiftPremium] = useState(() => {
     const stored = localStorage.getItem("openpecker-gift-premium");
-    return stored === "true";
+    // Default to true if not set (show banner by default on first visit)
+    return stored === null ? true : stored === "true";
   });
   const [giftPremiumDismissed, setGiftPremiumDismissed] = useState(false);
   const { isAuthenticated, loading } = useAuth();
