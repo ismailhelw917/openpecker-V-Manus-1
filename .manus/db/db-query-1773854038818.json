@@ -1,0 +1,42 @@
+{
+  "query": "SELECT DISTINCT ts.id, ts.openingName, ts.deviceId, ts.userId, ts.puzzleCount, \n  (SELECT COUNT(*) FROM puzzle_attempts pa WHERE pa.trainingSetId = ts.id) as attemptCount\nFROM training_sets ts \nWHERE ts.id IN (SELECT DISTINCT trainingSetId FROM puzzle_attempts)\nORDER BY attemptCount DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT DISTINCT ts.id, ts.openingName, ts.deviceId, ts.userId, ts.puzzleCount, \n  (SELECT COUNT(*) FROM puzzle_attempts pa WHERE pa.trainingSetId = ts.id) as attemptCount\nFROM training_sets ts \nWHERE ts.id IN (SELECT DISTINCT trainingSetId FROM puzzle_attempts)\nORDER BY attemptCount DESC;",
+  "rows": [
+    {
+      "id": "sx04qPxOGedsGvkcBSkcs",
+      "openingName": "NULL",
+      "deviceId": "NULL",
+      "userId": "NULL",
+      "puzzleCount": "3",
+      "attemptCount": "2"
+    },
+    {
+      "id": "hMDaDvo6Y3_oz7zmHx01C",
+      "openingName": "NULL",
+      "deviceId": "NULL",
+      "userId": "NULL",
+      "puzzleCount": "3",
+      "attemptCount": "2"
+    },
+    {
+      "id": "fniWGObb3LOMqNqxohLpU",
+      "openingName": "NULL",
+      "deviceId": "NULL",
+      "userId": "NULL",
+      "puzzleCount": "3",
+      "attemptCount": "2"
+    },
+    {
+      "id": "qOW9TgWKTALAkiV4eVyoQ",
+      "openingName": "NULL",
+      "deviceId": "NULL",
+      "userId": "NULL",
+      "puzzleCount": "3",
+      "attemptCount": "2"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topeningName\tdeviceId\tuserId\tpuzzleCount\tattemptCount\nsx04qPxOGedsGvkcBSkcs\tNULL\tNULL\tNULL\t3\t2\nhMDaDvo6Y3_oz7zmHx01C\tNULL\tNULL\tNULL\t3\t2\nfniWGObb3LOMqNqxohLpU\tNULL\tNULL\tNULL\t3\t2\nqOW9TgWKTALAkiV4eVyoQ\tNULL\tNULL\tNULL\t3\t2\n",
+  "stderr": "",
+  "execution_time_ms": 1573
+}

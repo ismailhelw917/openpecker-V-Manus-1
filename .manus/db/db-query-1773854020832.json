@@ -1,0 +1,110 @@
+{
+  "query": "SELECT id, openingName, deviceId, userId, puzzleCount, cyclesCompleted, totalAttempts, bestAccuracy FROM training_sets ORDER BY createdAt DESC LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT id, openingName, deviceId, userId, puzzleCount, cyclesCompleted, totalAttempts, bestAccuracy FROM training_sets ORDER BY createdAt DESC LIMIT 10;",
+  "rows": [
+    {
+      "id": "sx04qPxOGedsGvkcBSkcs",
+      "openingName": "NULL",
+      "deviceId": "NULL",
+      "userId": "NULL",
+      "puzzleCount": "3",
+      "cyclesCompleted": "0",
+      "totalAttempts": "0",
+      "bestAccuracy": "NULL"
+    },
+    {
+      "id": "Pf32juZW-2EdujyhK4IEM",
+      "openingName": "NULL",
+      "deviceId": "NULL",
+      "userId": "NULL",
+      "puzzleCount": "5",
+      "cyclesCompleted": "2",
+      "totalAttempts": "15",
+      "bestAccuracy": "80.00"
+    },
+    {
+      "id": "oPZG3sA0bppzk8tzPuvr9",
+      "openingName": "NULL",
+      "deviceId": "NULL",
+      "userId": "NULL",
+      "puzzleCount": "10",
+      "cyclesCompleted": "0",
+      "totalAttempts": "0",
+      "bestAccuracy": "NULL"
+    },
+    {
+      "id": "hMDaDvo6Y3_oz7zmHx01C",
+      "openingName": "NULL",
+      "deviceId": "NULL",
+      "userId": "NULL",
+      "puzzleCount": "3",
+      "cyclesCompleted": "0",
+      "totalAttempts": "0",
+      "bestAccuracy": "NULL"
+    },
+    {
+      "id": "arAkY5_siyZwXzmYIwP3a",
+      "openingName": "NULL",
+      "deviceId": "NULL",
+      "userId": "NULL",
+      "puzzleCount": "5",
+      "cyclesCompleted": "2",
+      "totalAttempts": "15",
+      "bestAccuracy": "80.00"
+    },
+    {
+      "id": "MNzcx1Kv5_u_BlPzBzDnz",
+      "openingName": "NULL",
+      "deviceId": "NULL",
+      "userId": "NULL",
+      "puzzleCount": "10",
+      "cyclesCompleted": "0",
+      "totalAttempts": "0",
+      "bestAccuracy": "NULL"
+    },
+    {
+      "id": "7wFQKtYHwppVKzzfB6WWI",
+      "openingName": "Italian Game",
+      "deviceId": "UzNp9qOlKuNMHaSJ28Wtp",
+      "userId": "NULL",
+      "puzzleCount": "50",
+      "cyclesCompleted": "0",
+      "totalAttempts": "0",
+      "bestAccuracy": "NULL"
+    },
+    {
+      "id": "qOW9TgWKTALAkiV4eVyoQ",
+      "openingName": "NULL",
+      "deviceId": "NULL",
+      "userId": "NULL",
+      "puzzleCount": "3",
+      "cyclesCompleted": "0",
+      "totalAttempts": "0",
+      "bestAccuracy": "NULL"
+    },
+    {
+      "id": "mbBdO7BjrJ6NVt-hJWiuz",
+      "openingName": "NULL",
+      "deviceId": "NULL",
+      "userId": "NULL",
+      "puzzleCount": "5",
+      "cyclesCompleted": "2",
+      "totalAttempts": "15",
+      "bestAccuracy": "80.00"
+    },
+    {
+      "id": "InuG38Efxpj0fmJvDTfsF",
+      "openingName": "NULL",
+      "deviceId": "NULL",
+      "userId": "NULL",
+      "puzzleCount": "10",
+      "cyclesCompleted": "0",
+      "totalAttempts": "0",
+      "bestAccuracy": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topeningName\tdeviceId\tuserId\tpuzzleCount\tcyclesCompleted\ttotalAttempts\tbestAccuracy\nsx04qPxOGedsGvkcBSkcs\tNULL\tNULL\tNULL\t3\t0\t0\tNULL\nPf32juZW-2EdujyhK4IEM\tNULL\tNULL\tNULL\t5\t2\t15\t80.00\noPZG3sA0bppzk8tzPuvr9\tNULL\tNULL\tNULL\t10\t0\t0\tNULL\nhMDaDvo6Y3_oz7zmHx01C\tNULL\tNULL\tNULL\t3\t0\t0\tNULL\narAkY5_siyZwXzmYIwP3a\tNULL\tNULL\tNULL\t5\t2\t15\t80.00\nMNzcx1Kv5_u_BlPzBzDnz\tNULL\tNULL\tNULL\t10\t0\t0\tNULL\n7wFQKtYHwppVKzzfB6WWI\tItalian Game\tUzNp9qOlKuNMHaSJ28Wtp\tNULL\t50\t0\t0\tNULL\nqOW9TgWKTALAkiV4eVyoQ\tNULL\tNULL\tNULL\t3\t0\t0\tNULL\nmbBdO7BjrJ6NVt-hJWiuz\tNULL\tNULL\tNULL\t5\t2\t15\t80.00\nInuG38Efxpj0fmJvDTfsF\tNULL\tNULL\tNULL\t10\t0\t0\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 1612
+}

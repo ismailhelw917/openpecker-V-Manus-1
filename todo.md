@@ -611,7 +611,7 @@
 
 
 ## Round 47 - Bug Fixes
-- [ ] Fix Stats page to show real-time per-puzzle data (not waiting for cycle completion)
-- [ ] Fix Sets page to show real-time per-puzzle data (not waiting for cycle completion)
-- [ ] Make Train page scrollable
-- [ ] Sync project directory for checkpoint saves
+- [x] Fix Stats page to show real-time per-puzzle data (not waiting for cycle completion)
+- [x] Fix Sets page to show real-time per-puzzle data (not waiting for cycle completion)
+- [x] Make Train page scrollable
+- [x] Sync project directory for checkpoint saves
