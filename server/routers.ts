@@ -59,6 +59,67 @@ export const appRouter = router({
         success: true,
       } as const;
     }),
+    register: publicProcedure
+      .input(
+        z.object({
+          name: z.string().min(2, "Name must be at least 2 characters"),
+          email: z.string().email("Invalid email address"),
+          password: z.string().min(8, "Password must be at least 8 characters"),
+        })
+      )
+      .mutation(async ({ input }) => {
+        try {
+          const db = await (await import("./db")).getDb();
+          if (!db) {
+            return {
+              success: false,
+              error: "Database not available",
+            };
+          }
+
+          // Check if user with this email already exists
+          const existingUser = await db
+            .select()
+            .from((await import("../drizzle/schema")).users)
+            .where(
+              (await import("drizzle-orm")).eq(
+                (await import("../drizzle/schema")).users.email,
+                input.email
+              )
+            )
+            .limit(1);
+
+          if (existingUser.length > 0) {
+            return {
+              success: false,
+              error: "Email already registered",
+            };
+          }
+
+          // Create new user with unique openId
+          const openId = `local_${nanoid()}`;
+          const newUser = {
+            openId,
+            name: input.name,
+            email: input.email,
+            loginMethod: "email",
+            role: "user" as const,
+          };
+
+          await (await import("./db")).upsertUser(newUser);
+
+          return {
+            success: true,
+            message: "Account created successfully. Please sign in with Manus OAuth.",
+          };
+        } catch (error) {
+          console.error("[Registration] Error:", error);
+          return {
+            success: false,
+            error: "Registration failed. Please try again.",
+          };
+        }
+      }),
   }),
 
   // Puzzle-related procedures

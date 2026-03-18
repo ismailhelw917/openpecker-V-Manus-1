@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
 import { Mail, Lock, User } from "lucide-react";
+import { trpc } from "@/lib/trpc";
 
 type AuthMode = "login" | "register";
 
@@ -54,6 +55,8 @@ export default function Auth() {
     }
   };
 
+  const registerMutation = trpc.auth.register.useMutation();
+
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -74,14 +77,24 @@ export default function Auth() {
 
     setIsLoading(true);
     try {
-      // TODO: Call registration endpoint
-      toast.success("Account created! You can now sign in with Manus.");
-      setMode("login");
-      setName("");
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
+      const result = await registerMutation.mutateAsync({
+        name,
+        email,
+        password,
+      });
+
+      if (result.success) {
+        toast.success("Account created! You can now sign in with Manus.");
+        setMode("login");
+        setName("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+      } else {
+        toast.error(result.error || "Registration failed");
+      }
     } catch (error) {
+      console.error("Registration error:", error);
       toast.error("Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
