@@ -22,8 +22,7 @@ export default function Session() {
   const [targetCycles, setTargetCycles] = useState(3);
   const [boardSize, setBoardSize] = useState(400);
   const [captureSquare, setCaptureSquare] = useState<string | null>(null);
-  const [legalMovesHint, setLegalMovesHint] = useState<string[]>([]);
-  const [showHint, setShowHint] = useState(false);
+
   
   // Calculate responsive board size
   useEffect(() => {
@@ -220,13 +219,9 @@ export default function Session() {
         return false;
       }
 
-      // If move is illegal, show legal moves hint
+      // If move is illegal, return false silently (no error toast)
       if (!result) {
         console.log('Illegal move attempted:', { from: sourceSquare, to: targetSquare, fen: currentPuzzle.fen });
-        const legalMoves = game.moves({ square: sourceSquare as any, verbose: true }).map((m: any) => m.to);
-        setLegalMovesHint(legalMoves);
-        setShowHint(true);
-        setTimeout(() => setShowHint(false), 3000);
         return false;
       }
 

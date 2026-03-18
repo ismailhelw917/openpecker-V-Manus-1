@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE puzzles SET ecoCode = 'B00' WHERE openingName = 'Owens Defense'; UPDATE puzzles SET ecoCode = 'C20' WHERE openingName = 'Parham Attack'; UPDATE puzzles SET ecoCode = 'C08' WHERE openingName = 'Paulsen Opening'; UPDATE puzzles SET ecoCode = 'C42' WHERE openingName = 'Petroff Defense'; UPDATE puzzles SET ecoCode = 'C41' WHERE openingName = 'Philidor Defense'; UPDATE puzzles SET ecoCode = 'B07' WHERE openingName = 'Pirc Defense'; UPDATE puzzles SET ecoCode = 'B87' WHERE openingName = 'Polugaevsky Variation'; UPDATE puzzles SET ecoCode = 'C44' WHERE openingName = 'Ponziani Opening'; UPDATE puzzles SET ecoCode = 'B07' WHERE openingName = 'Prc Defense'; UPDATE puzzles SET ecoCode = 'D43' WHERE openingName = 'Pseudo-Benoni';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute UPDATE puzzles SET ecoCode = 'B00' WHERE openingName = 'Owens Defense'; UPDATE puzzles SET ecoCode = 'C20' WHERE openingName = 'Parham Attack'; UPDATE puzzles SET ecoCode = 'C08' WHERE openingName = 'Paulsen Opening'; UPDATE puzzles SET ecoCode = 'C42' WHERE openingName = 'Petroff Defense'; UPDATE puzzles SET ecoCode = 'C41' WHERE openingName = 'Philidor Defense'; UPDATE puzzles SET ecoCode = 'B07' WHERE openingName = 'Pirc Defense'; UPDATE puzzles SET ecoCode = 'B87' WHERE openingName = 'Polugaevsky Variation'; UPDATE puzzles SET ecoCode = 'C44' WHERE openingName = 'Ponziani Opening'; UPDATE puzzles SET ecoCode = 'B07' WHERE openingName = 'Prc Defense'; UPDATE puzzles SET ecoCode = 'D43' WHERE openingName = 'Pseudo-Benoni';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 3470
+}

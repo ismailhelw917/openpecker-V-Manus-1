@@ -1,0 +1,35 @@
+{
+  "query": "SELECT id, name, email FROM users ORDER BY createdAt DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT id, name, email FROM users ORDER BY createdAt DESC;",
+  "rows": [
+    {
+      "id": "750380",
+      "name": "BR",
+      "email": "bagavathiraja29@gmail.com"
+    },
+    {
+      "id": "750255",
+      "name": "Ayush",
+      "email": "try.ayush019@gmail.com"
+    },
+    {
+      "id": "750215",
+      "name": "N.Balaji",
+      "email": "pugazhbalaji@gmail.com"
+    },
+    {
+      "id": "750148",
+      "name": "Aalem salem",
+      "email": "salem.t.elsayed@gmail.com"
+    },
+    {
+      "id": "690065",
+      "name": "Ismail",
+      "email": "happychesspenguin@gmail.com"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\n750380\tBR\tbagavathiraja29@gmail.com\n750255\tAyush\ttry.ayush019@gmail.com\n750215\tN.Balaji\tpugazhbalaji@gmail.com\n750148\tAalem salem\tsalem.t.elsayed@gmail.com\n690065\tIsmail\thappychesspenguin@gmail.com\n",
+  "stderr": "",
+  "execution_time_ms": 1519
+}

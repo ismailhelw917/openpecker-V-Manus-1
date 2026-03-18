@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE puzzles SET ecoCode = 'B20' WHERE openingName = 'Sicilian Defense'; UPDATE puzzles SET ecoCode = 'B90' WHERE openingName = 'Sicilian Najdorf'; UPDATE puzzles SET ecoCode = 'B33' WHERE openingName = 'Sicilian Sveshnikov'; UPDATE puzzles SET ecoCode = 'B36' WHERE openingName = 'Sicilian Taimanov'; UPDATE puzzles SET ecoCode = 'D10' WHERE openingName = 'Slav Defense';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute UPDATE puzzles SET ecoCode = 'B20' WHERE openingName = 'Sicilian Defense'; UPDATE puzzles SET ecoCode = 'B90' WHERE openingName = 'Sicilian Najdorf'; UPDATE puzzles SET ecoCode = 'B33' WHERE openingName = 'Sicilian Sveshnikov'; UPDATE puzzles SET ecoCode = 'B36' WHERE openingName = 'Sicilian Taimanov'; UPDATE puzzles SET ecoCode = 'D10' WHERE openingName = 'Slav Defense';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2579
+}
