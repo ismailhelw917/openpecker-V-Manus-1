@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ChevronLeft, Lock, Zap, Shield, CreditCard, Loader, Check } from "lucide-react";
+import { ChevronLeft, Lock, Zap, Shield, CreditCard, Loader, Check, Gift, Tag } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 
 interface BoardTheme {
   id: 'classic' | 'green' | 'blue' | 'purple';
@@ -45,6 +46,133 @@ const PREMIUM_FEATURES = [
   "Priority puzzle loading",
   "Support independent development",
 ];
+
+function PromoCodeSection() {
+  const [promoCode, setPromoCode] = useState("");
+  const [validationResult, setValidationResult] = useState<any>(null);
+  const [isValidating, setIsValidating] = useState(false);
+
+  const redeemMutation = trpc.promo.redeem.useMutation({
+    onSuccess: (data) => {
+      if (data.success) {
+        toast.success(
+          data.benefitType === "lifetime_premium"
+            ? "Congratulations! You now have lifetime premium access!"
+            : `Congratulations! You've unlocked ${data.discountPercent}% lifetime discount!`
+        );
+        setPromoCode("");
+        setValidationResult(null);
+      } else {
+        toast.error(data.error || "Failed to redeem promo code");
+      }
+    },
+    onError: () => {
+      toast.error("Failed to redeem promo code. Please try again.");
+    },
+  });
+
+  const handleValidate = async () => {
+    if (!promoCode.trim()) {
+      toast.error("Please enter a promo code");
+      return;
+    }
+    setIsValidating(true);
+    try {
+      const res = await fetch(
+        `/api/trpc/promo.validate?input=${encodeURIComponent(JSON.stringify({ code: promoCode.trim() }))}`
+      );
+      const json = await res.json();
+      const result = json?.result?.data;
+      setValidationResult(result);
+      if (result?.valid) {
+        toast.success("Promo code is valid!");
+      } else {
+        toast.error(result?.error || "Invalid promo code");
+      }
+    } catch {
+      toast.error("Failed to validate promo code");
+    } finally {
+      setIsValidating(false);
+    }
+  };
+
+  const handleRedeem = () => {
+    const deviceId = localStorage.getItem("openpecker-device-id") || undefined;
+    redeemMutation.mutate({ code: promoCode.trim(), deviceId });
+  };
+
+  return (
+    <div className="mb-12">
+      <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+        <Gift className="w-5 h-5" />
+        PROMO CODE
+      </h2>
+
+      <Card className="bg-slate-900/50 border-teal-900/30 p-6">
+        <p className="text-slate-400 text-sm mb-4">
+          Have a promo code? Enter it below to unlock special benefits.
+        </p>
+
+        <div className="flex gap-3">
+          <input
+            type="text"
+            value={promoCode}
+            onChange={(e) => {
+              setPromoCode(e.target.value.toUpperCase());
+              setValidationResult(null);
+            }}
+            placeholder="Enter promo code"
+            className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 font-mono text-lg tracking-wider"
+          />
+          <Button
+            onClick={handleValidate}
+            disabled={isValidating || !promoCode.trim()}
+            className="bg-teal-500 hover:bg-teal-600 text-white font-semibold px-6"
+          >
+            {isValidating ? <Loader className="w-4 h-4 animate-spin" /> : "Apply"}
+          </Button>
+        </div>
+
+        {/* Validation Result */}
+        {validationResult && validationResult.valid && (
+          <div className="mt-4 p-4 rounded-lg border border-teal-400/30 bg-teal-400/10">
+            <div className="flex items-start gap-3">
+              <Tag className="w-5 h-5 text-teal-400 mt-0.5 shrink-0" />
+              <div className="flex-1">
+                <p className="text-teal-300 font-semibold mb-1">
+                  {validationResult.benefitType === "lifetime_premium"
+                    ? "Lifetime Premium Access"
+                    : `${validationResult.discountPercent}% Lifetime Discount`}
+                </p>
+                <p className="text-slate-400 text-sm mb-1">{validationResult.description}</p>
+                <p className="text-slate-500 text-xs">
+                  {validationResult.remainingUses} uses remaining
+                </p>
+              </div>
+            </div>
+            <Button
+              onClick={handleRedeem}
+              disabled={redeemMutation.isPending}
+              className="w-full mt-4 bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-3"
+            >
+              {redeemMutation.isPending ? (
+                <Loader className="w-4 h-4 animate-spin" />
+              ) : (
+                "Redeem Now"
+              )}
+            </Button>
+          </div>
+        )}
+
+        {validationResult && !validationResult.valid && (
+          <div className="mt-4 p-4 rounded-lg border border-red-400/30 bg-red-400/10">
+            <p className="text-red-300 text-sm">{validationResult.error}</p>
+          </div>
+        )}
+      </Card>
+    </div>
+  );
+}
 
 export default function Settings() {
   const [, setLocation] = useLocation();
@@ -220,6 +348,9 @@ export default function Settings() {
             )}
           </Card>
         </div>
+
+        {/* Promo Code Section */}
+        <PromoCodeSection />
 
         {/* Account Section */}
         {user && (

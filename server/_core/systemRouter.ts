@@ -1,7 +1,8 @@
-import { z } from "zod";
 import { notifyOwner } from "./notification";
 import { adminProcedure, publicProcedure, router } from "./trpc";
 import { getGlobalSettings, updateGlobalSettings } from "../db";
+import { classifyNullPuzzles, getPuzzleClassificationStats } from "../classify-puzzles-db";
+import { z } from "zod";
 
 export const systemRouter = router({
   health: publicProcedure
@@ -46,4 +47,24 @@ export const systemRouter = router({
         success: !!result,
       };
     }),
+
+  // Puzzle classification procedures
+  classifyPuzzles: adminProcedure
+    .input(
+      z.object({
+        batchSize: z.number().default(1000),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const classified = await classifyNullPuzzles(input.batchSize);
+      return {
+        success: true,
+        classified,
+      };
+    }),
+
+  getPuzzleStats: publicProcedure.query(async () => {
+    const stats = await getPuzzleClassificationStats();
+    return stats;
+  }),
 });

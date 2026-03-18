@@ -23,13 +23,26 @@ import {
   insertOpenings,
   recordPuzzleAttempt,
   getPuzzleAttemptsByTrainingSet,
+  getPuzzleAttemptStats,
+  getPuzzleAttemptsByUser,
   getUserByOpenId,
   getUserByEmail,
   updateUserPasswordHash,
   upsertUser,
   countTotalUsers,
   getAllRegisteredUsers,
+  getPromoCodeByCode,
+  redeemPromoCode,
+  getAllPromoCodes,
+  getUserRedemptions,
 } from "./db";
+import {
+  getOrCreateAnonymousUser,
+  linkDeviceToUser,
+  getUserByDeviceId,
+  getAllUsers,
+  getUserCount,
+} from "./anonymous-users";
 
 const BCRYPT_ROUNDS = 10;
 const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
@@ -62,6 +75,23 @@ export const appRouter = router({
 
   auth: router({
     me: publicProcedure.query((opts) => opts.ctx.user),
+    getOrCreateAnonymous: publicProcedure
+      .input(z.object({ deviceId: z.string() }))
+      .mutation(async ({ input }) => {
+        try {
+          const user = await getOrCreateAnonymousUser(input.deviceId);
+          return {
+            success: true,
+            user,
+          };
+        } catch (error) {
+          console.error("[GET OR CREATE ANONYMOUS] Error:", error);
+          return {
+            success: false,
+            error: "Failed to create anonymous user",
+          };
+        }
+      }),
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
@@ -211,6 +241,97 @@ export const appRouter = router({
           return {
             success: false,
             error: "Login failed. Please try again.",
+          };
+        }
+      }),
+    updateProfile: protectedProcedure
+      .input(
+        z.object({
+          userId: z.number(),
+          name: z.string().optional(),
+          email: z.string().email().optional(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        try {
+          if (ctx.user?.id !== input.userId) {
+            return {
+              success: false,
+              error: "Unauthorized",
+            };
+          }
+
+          const updates: any = {};
+          if (input.name) updates.name = input.name;
+          if (input.email) updates.email = input.email;
+
+          await upsertUser({
+            openId: ctx.user.openId,
+            ...updates,
+          });
+
+          return {
+            success: true,
+            message: "Profile updated successfully",
+          };
+        } catch (error) {
+          console.error("[Update Profile] Error:", error);
+          return {
+            success: false,
+            error: "Failed to update profile",
+          };
+        }
+      }),
+    changePassword: protectedProcedure
+      .input(
+        z.object({
+          userId: z.number(),
+          currentPassword: z.string().min(1, "Current password required"),
+          newPassword: z.string().min(8, "Password must be at least 8 characters"),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        try {
+          if (ctx.user?.id !== input.userId) {
+            return {
+              success: false,
+              error: "Unauthorized",
+            };
+          }
+
+          // Get user with password hash
+          const user = await getUserByOpenId(ctx.user.openId);
+          if (!user || !user.passwordHash) {
+            return {
+              success: false,
+              error: "User not found or password not set",
+            };
+          }
+
+          // Verify current password
+          const passwordMatch = await bcrypt.compare(input.currentPassword, user.passwordHash);
+          if (!passwordMatch) {
+            return {
+              success: false,
+              error: "Current password is incorrect",
+            };
+          }
+
+          // Hash new password
+          const newPasswordHash = await bcrypt.hash(input.newPassword, BCRYPT_ROUNDS);
+
+          // Update password
+          await updateUserPasswordHash(user.id, newPasswordHash);
+
+          return {
+            success: true,
+            message: "Password changed successfully",
+          };
+        } catch (error) {
+          console.error("[Change Password] Error:", error);
+          return {
+            success: false,
+            error: "Failed to change password",
           };
         }
       }),
@@ -564,31 +685,45 @@ export const appRouter = router({
       )
       .query(async ({ input }) => {
         const sets = await getTrainingSetsByUser(input.userId || null, input.deviceId || null);
-        return sets.map((set: any) => {
-          const themes = typeof set.themes === 'string' ? JSON.parse(set.themes) : set.themes || [];
-          const puzzlesJson = typeof set.puzzlesJson === 'string' ? JSON.parse(set.puzzlesJson) : set.puzzlesJson || [];
-          return {
-            id: set.id,
-            userId: set.userId,
-            deviceId: set.deviceId,
-            openingName: set.openingName || 'Custom Set',
-            openingFen: set.openingFen,
-            themes: themes,
-            minRating: set.minRating,
-            maxRating: set.maxRating,
-            puzzleCount: set.puzzleCount || puzzlesJson.length,
-            targetCycles: set.targetCycles,
-            colorFilter: set.colorFilter,
-            puzzlesJson: puzzlesJson,
-            status: set.status,
-            cyclesCompleted: set.cyclesCompleted || 0,
-            bestAccuracy: set.bestAccuracy,
-            lastPlayedAt: set.lastPlayedAt,
-            totalAttempts: set.totalAttempts,
-            createdAt: set.createdAt,
-            updatedAt: set.updatedAt,
-          };
-        });
+        // Fetch per-set puzzle attempt stats for real-time data
+        const setsWithStats = await Promise.all(
+          sets.map(async (set: any) => {
+            const themes = typeof set.themes === 'string' ? JSON.parse(set.themes) : set.themes || [];
+            const puzzlesJson = typeof set.puzzlesJson === 'string' ? JSON.parse(set.puzzlesJson) : set.puzzlesJson || [];
+            
+            // Get real-time attempt stats for this set
+            const attempts = await getPuzzleAttemptsByTrainingSet(set.id);
+            const attemptCount = attempts.length;
+            const correctCount = attempts.filter((a: any) => a.isCorrect).length;
+            const realTimeAccuracy = attemptCount > 0 ? Math.round((correctCount / attemptCount) * 100) : null;
+            const totalTimeMs = attempts.reduce((sum: number, a: any) => sum + (a.timeMs || 0), 0);
+            const lastAttempt = attempts.length > 0 ? attempts[attempts.length - 1] : null;
+            
+            return {
+              id: set.id,
+              userId: set.userId,
+              deviceId: set.deviceId,
+              openingName: set.openingName || 'Custom Set',
+              openingFen: set.openingFen,
+              themes: themes,
+              minRating: set.minRating,
+              maxRating: set.maxRating,
+              puzzleCount: set.puzzleCount || puzzlesJson.length,
+              targetCycles: set.targetCycles,
+              colorFilter: set.colorFilter,
+              puzzlesJson: puzzlesJson,
+              status: set.status,
+              cyclesCompleted: set.cyclesCompleted || 0,
+              bestAccuracy: realTimeAccuracy ?? set.bestAccuracy,
+              lastPlayedAt: lastAttempt?.completedAt || set.lastPlayedAt,
+              totalAttempts: attemptCount || set.totalAttempts || 0,
+              totalTimeMs: totalTimeMs,
+              createdAt: set.createdAt,
+              updatedAt: set.updatedAt,
+            };
+          })
+        );
+        return setsWithStats;
       }),
 
     /**
@@ -728,13 +863,15 @@ export const appRouter = router({
       )
       .query(async ({ input }) => {
         try {
+          // Get real-time stats from individual puzzle attempts (not just completed cycles)
+          const attemptStats = await getPuzzleAttemptStats(input.userId || null, input.deviceId || null);
+          
+          // Also get completed cycles count
           const cycles = await getCycleHistoryByUser(input.userId || null, input.deviceId || null);
-
-          const totalPuzzles = cycles.reduce((sum, c) => sum + c.totalPuzzles, 0);
-          const totalCorrect = cycles.reduce((sum, c) => sum + c.correctCount, 0);
-          const accuracy = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 100) : 0;
           const completedCycles = cycles.length;
-          const totalTimeMs = cycles.reduce((sum, c) => sum + (c.totalTimeMs || 0), 0);
+
+          const { totalPuzzles, totalCorrect, totalTimeMs } = attemptStats;
+          const accuracy = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 100) : 0;
 
           return {
             totalPuzzles,
@@ -762,7 +899,14 @@ export const appRouter = router({
         if (!ctx.user) return null;
         const cycles = await getCycleHistoryByUser(ctx.user.id, null);
         
-        if (cycles.length === 0) {
+        // Get real-time stats from individual puzzle attempts
+        const attemptStats = await getPuzzleAttemptStats(ctx.user.id, null);
+        
+        // Use puzzle attempts for real-time data, fall back to cycles if no attempts
+        const totalPuzzles = attemptStats.totalPuzzles > 0 ? attemptStats.totalPuzzles : cycles.reduce((sum, c) => sum + c.totalPuzzles, 0);
+        const totalCorrect = attemptStats.totalCorrect > 0 ? attemptStats.totalCorrect : cycles.reduce((sum, c) => sum + c.correctCount, 0);
+        
+        if (totalPuzzles === 0) {
           return {
             rating: 1200,
             peakRating: 1200,
@@ -786,13 +930,9 @@ export const appRouter = router({
             consistency: 0,
           };
         }
-        
-        // Calculate real stats from cycle data
-        const totalPuzzles = cycles.reduce((sum, c) => sum + c.totalPuzzles, 0);
-        const totalCorrect = cycles.reduce((sum, c) => sum + c.correctCount, 0);
         const accuracy = totalPuzzles > 0 ? (totalCorrect / totalPuzzles) * 100 : 0;
         const completedCycles = cycles.length;
-        const totalTimeMs = cycles.reduce((sum, c) => sum + (c.totalTimeMs || 0), 0);
+        const totalTimeMs = attemptStats.totalTimeMs > 0 ? attemptStats.totalTimeMs : cycles.reduce((sum, c) => sum + (c.totalTimeMs || 0), 0);
         const totalTimeHours = totalTimeMs / 1000 / 60 / 60;
         const totalTimeMinutes = (totalTimeMs / 1000 / 60) % 60;
         const winRate = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 100) : 0;
@@ -878,16 +1018,21 @@ export const appRouter = router({
       )
       .query(async ({ input }) => {
         try {
-          const registeredUsers = await getAllRegisteredUsers();
+          const registeredUsers = await getAllUsers(input.limit * 2); // Fetch more to account for filtering
 
-          // Calculate stats for each user
+          // Calculate stats for each user using puzzle_attempts for real-time data
           const leaderboardData = await Promise.all(
-            registeredUsers.map(async (user) => {
+            registeredUsers.map(async (user: any) => {
+              // Try puzzle attempts first for real-time data
+              const attemptStats = await getPuzzleAttemptStats(user.id, null);
               const cycles = await getCycleHistoryByUser(user.id, null);
-              const totalPuzzles = cycles.reduce((sum, c) => sum + c.totalPuzzles, 0);
-              const totalCorrect = cycles.reduce((sum, c) => sum + c.correctCount, 0);
+              
+              // Use attempt stats if available, fall back to cycle stats
+              const totalPuzzles = attemptStats.totalPuzzles > 0 ? attemptStats.totalPuzzles : cycles.reduce((sum, c) => sum + c.totalPuzzles, 0);
+              const totalCorrect = attemptStats.totalCorrect > 0 ? attemptStats.totalCorrect : cycles.reduce((sum, c) => sum + c.correctCount, 0);
+              const totalTimeMs = attemptStats.totalTimeMs > 0 ? attemptStats.totalTimeMs : cycles.reduce((sum, c) => sum + (c.totalTimeMs || 0), 0);
+              
               const accuracy = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 100) : 0;
-              const totalTimeMs = cycles.reduce((sum, c) => sum + (c.totalTimeMs || 0), 0);
               const avgTimePerPuzzle = totalPuzzles > 0 ? Math.round(totalTimeMs / totalPuzzles / 1000) : 0;
               const baseRating = 1200;
               const ratingGain = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 200) : 0;
@@ -907,7 +1052,7 @@ export const appRouter = router({
           );
 
           // Sort by selected metric
-          const sorted = leaderboardData.sort((a, b) => {
+          const sorted = leaderboardData.sort((a: any, b: any) => {
             if (input.sortBy === "accuracy") {
               return b.accuracy - a.accuracy;
             } else if (input.sortBy === "speed") {
@@ -918,7 +1063,7 @@ export const appRouter = router({
           });
 
           // Return top N users with rank
-          return sorted.slice(0, input.limit).map((user, index) => ({
+          return sorted.slice(0, input.limit).map((user: any, index: number) => ({
             ...user,
             rank: index + 1,
           }));
@@ -1000,6 +1145,62 @@ export const appRouter = router({
       .input(z.object({ trainingSetId: z.string() }))
       .query(async ({ input }) => {
         return getPuzzleAttemptsByTrainingSet(input.trainingSetId);
+      }),
+  }),
+
+  // ==================== PROMO CODES ====================
+  promo: router({
+    /**
+     * Validate a promo code (check if it exists, is active, has uses left)
+     */
+    validate: publicProcedure
+      .input(z.object({ code: z.string().min(1) }))
+      .query(async ({ input }) => {
+        const promo = await getPromoCodeByCode(input.code);
+        if (!promo) return { valid: false, error: "Invalid promo code" };
+        if (!promo.isActive) return { valid: false, error: "This promo code is no longer active" };
+        if (promo.expiresAt && new Date(promo.expiresAt) < new Date()) return { valid: false, error: "This promo code has expired" };
+        if (promo.currentUses >= promo.maxUses) return { valid: false, error: "This promo code has reached its maximum uses" };
+        return {
+          valid: true,
+          benefitType: promo.benefitType,
+          discountPercent: promo.discountPercent,
+          description: promo.description,
+          remainingUses: promo.maxUses - promo.currentUses,
+        };
+      }),
+
+    /**
+     * Redeem a promo code
+     */
+    redeem: publicProcedure
+      .input(z.object({
+        code: z.string().min(1),
+        deviceId: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const promo = await getPromoCodeByCode(input.code);
+        if (!promo) return { success: false, error: "Invalid promo code" };
+
+        const userId = ctx.user?.id || null;
+        const deviceId = input.deviceId || null;
+
+        if (!userId && !deviceId) {
+          return { success: false, error: "Please sign in or provide a device ID to redeem" };
+        }
+
+        return redeemPromoCode(promo.id, userId, deviceId);
+      }),
+
+    /**
+     * Get user's redeemed promo codes
+     */
+    myRedemptions: publicProcedure
+      .input(z.object({ deviceId: z.string().optional() }))
+      .query(async ({ input, ctx }) => {
+        const userId = ctx.user?.id || null;
+        const deviceId = input.deviceId || null;
+        return getUserRedemptions(userId, deviceId);
       }),
   }),
 });

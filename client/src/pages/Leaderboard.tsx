@@ -1,18 +1,27 @@
-import { useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { trpc } from '../lib/trpc';
 
 type SortBy = 'accuracy' | 'speed' | 'rating';
 
 export function Leaderboard() {
   const [sortBy, setSortBy] = useState<SortBy>('accuracy');
+  const utils = trpc.useUtils();
   
-  const { data: leaderboardData = [], isLoading } = trpc.stats.getLeaderboard.useQuery({
-    limit: 100,
+  const { data: leaderboardData = [], isLoading, refetch } = trpc.stats.getLeaderboard.useQuery({
+    limit: 1000,
     sortBy,
   });
 
+  // Auto-refresh leaderboard every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetch();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [refetch]);
+
   const displayData = useMemo(() => {
-    return leaderboardData.map((user, index) => ({
+    return leaderboardData.map((user: any, index: number) => ({
       ...user,
       rank: index + 1,
     }));
@@ -24,7 +33,7 @@ export function Leaderboard() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-amber-400 mb-2">Leaderboard</h1>
-          <p className="text-slate-400">Top chess opening practitioners</p>
+          <p className="text-slate-400">All players ranked by performance</p>
         </div>
 
         {/* Sort Controls */}
@@ -86,7 +95,7 @@ export function Leaderboard() {
                 </tr>
               </thead>
               <tbody>
-                {displayData.map((user) => (
+                {displayData.map((user: any) => (
                   <tr
                     key={user.id}
                     className="border-b border-slate-800 hover:bg-slate-900/50 transition-colors"

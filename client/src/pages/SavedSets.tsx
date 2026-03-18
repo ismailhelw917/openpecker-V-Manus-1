@@ -136,11 +136,17 @@ export default function SavedSets() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3 mb-6">
+                  <div className="grid grid-cols-4 gap-3 mb-6">
                     <div className="bg-slate-800/50 rounded p-3">
-                      <p className="text-slate-400 text-xs uppercase">Best Accuracy</p>
+                      <p className="text-slate-400 text-xs uppercase">Accuracy</p>
                       <p className="text-white font-bold text-lg">
-                        {set.bestAccuracy ? `${Math.round(Number(set.bestAccuracy))}%` : "0%"}
+                        {set.bestAccuracy != null ? `${Math.round(Number(set.bestAccuracy))}%` : "—"}
+                      </p>
+                    </div>
+                    <div className="bg-slate-800/50 rounded p-3">
+                      <p className="text-slate-400 text-xs uppercase">Solved</p>
+                      <p className="text-white font-bold text-lg">
+                        {set.totalAttempts || 0}
                       </p>
                     </div>
                     <div className="bg-slate-800/50 rounded p-3">

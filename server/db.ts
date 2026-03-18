@@ -1,4 +1,4 @@
-import { eq, and, gte, lte, desc, asc, sql } from "drizzle-orm";
+import { eq, and, or, gte, lte, desc, asc, sql, count, sum, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, 
@@ -15,6 +15,10 @@ import {
   puzzleAttempts,
   InsertPuzzleAttempt,
   globalSettings,
+  promoCodes,
+  InsertPromoCode,
+  promoRedemptions,
+  InsertPromoRedemption,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -445,6 +449,57 @@ export async function getPuzzleAttemptsByTrainingSet(trainingSetId: string) {
     .orderBy(asc(puzzleAttempts.completedAt));
 }
 
+/**
+ * Get all puzzle attempts for a user (by userId or deviceId)
+ * Used for real-time stats aggregation
+ */
+export async function getPuzzleAttemptsByUser(userId: number | null, deviceId: string | null) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const conditions = [];
+  if (userId) conditions.push(eq(puzzleAttempts.userId, userId));
+  if (deviceId) conditions.push(eq(puzzleAttempts.deviceId, deviceId));
+
+  if (conditions.length === 0) return [];
+
+  return db
+    .select()
+    .from(puzzleAttempts)
+    .where(conditions.length === 1 ? conditions[0] : or(...conditions))
+    .orderBy(desc(puzzleAttempts.completedAt));
+}
+
+/**
+ * Get aggregated puzzle attempt stats for a user (by userId or deviceId)
+ */
+export async function getPuzzleAttemptStats(userId: number | null, deviceId: string | null) {
+  const db = await getDb();
+  if (!db) return { totalPuzzles: 0, totalCorrect: 0, totalTimeMs: 0 };
+
+  // First get all training set IDs for this user/device
+  const userSets = await getTrainingSetsByUser(userId, deviceId);
+  if (userSets.length === 0) return { totalPuzzles: 0, totalCorrect: 0, totalTimeMs: 0 };
+
+  const setIds = userSets.map((s: any) => s.id);
+
+  // Query puzzle_attempts by training set IDs (works even if userId/deviceId are NULL in attempts)
+  const result = await db
+    .select({
+      totalPuzzles: count(),
+      totalCorrect: sum(puzzleAttempts.isCorrect),
+      totalTimeMs: sum(puzzleAttempts.timeMs),
+    })
+    .from(puzzleAttempts)
+    .where(inArray(puzzleAttempts.trainingSetId, setIds));
+
+  return {
+    totalPuzzles: Number(result[0]?.totalPuzzles || 0),
+    totalCorrect: Number(result[0]?.totalCorrect || 0),
+    totalTimeMs: Number(result[0]?.totalTimeMs || 0),
+  };
+}
+
 
 /**
  * Get random puzzles from puzzles_raw table
@@ -710,5 +765,125 @@ export async function updateGlobalSettings(updates: { showGiftPremiumBanner?: nu
   } catch (error) {
     console.error("Error updating global settings:", error);
     return null;
+  }
+}
+
+
+// ==================== PROMO CODE FUNCTIONS ====================
+
+/**
+ * Get a promo code by its code string
+ */
+export async function getPromoCodeByCode(code: string) {
+  const db = await getDb();
+  if (!db) return null;
+  try {
+    const result = await db.select().from(promoCodes).where(eq(promoCodes.code, code.toUpperCase())).limit(1);
+    return result[0] || null;
+  } catch (error) {
+    console.error("Error getting promo code:", error);
+    return null;
+  }
+}
+
+/**
+ * Redeem a promo code for a user/device
+ */
+export async function redeemPromoCode(promoCodeId: number, userId: number | null, deviceId: string | null) {
+  const db = await getDb();
+  if (!db) return { success: false, error: "Database not available" };
+
+  try {
+    // Get the promo code
+    const promo = await db.select().from(promoCodes).where(eq(promoCodes.id, promoCodeId)).limit(1);
+    if (!promo[0]) return { success: false, error: "Promo code not found" };
+
+    const code = promo[0];
+
+    // Check if active
+    if (!code.isActive) return { success: false, error: "This promo code is no longer active" };
+
+    // Check if expired
+    if (code.expiresAt && new Date(code.expiresAt) < new Date()) {
+      return { success: false, error: "This promo code has expired" };
+    }
+
+    // Check usage limit
+    if (code.currentUses >= code.maxUses) {
+      return { success: false, error: "This promo code has reached its maximum number of uses" };
+    }
+
+    // Check if user already redeemed this code
+    const conditions = [eq(promoRedemptions.promoCodeId, promoCodeId)];
+    if (userId) conditions.push(eq(promoRedemptions.userId, userId));
+    else if (deviceId) conditions.push(eq(promoRedemptions.deviceId, deviceId));
+
+    const existing = await db.select().from(promoRedemptions).where(and(...conditions)).limit(1);
+    if (existing[0]) {
+      return { success: false, error: "You have already redeemed this promo code" };
+    }
+
+    // Record the redemption
+    await db.insert(promoRedemptions).values({
+      promoCodeId,
+      userId,
+      deviceId,
+    });
+
+    // Increment usage count
+    await db.update(promoCodes)
+      .set({ currentUses: sql`${promoCodes.currentUses} + 1` })
+      .where(eq(promoCodes.id, promoCodeId));
+
+    // If lifetime_premium, update user's isPremium status
+    if (code.benefitType === "lifetime_premium" && userId) {
+      await db.update(users)
+        .set({ isPremium: 1 })
+        .where(eq(users.id, userId));
+    }
+
+    return {
+      success: true,
+      benefitType: code.benefitType,
+      discountPercent: code.discountPercent,
+      description: code.description,
+    };
+  } catch (error) {
+    console.error("Error redeeming promo code:", error);
+    return { success: false, error: "Failed to redeem promo code" };
+  }
+}
+
+/**
+ * Get all promo codes (admin)
+ */
+export async function getAllPromoCodes() {
+  const db = await getDb();
+  if (!db) return [];
+  try {
+    return await db.select().from(promoCodes).orderBy(desc(promoCodes.createdAt));
+  } catch (error) {
+    console.error("Error getting promo codes:", error);
+    return [];
+  }
+}
+
+/**
+ * Get user's redeemed promo codes
+ */
+export async function getUserRedemptions(userId: number | null, deviceId: string | null) {
+  const db = await getDb();
+  if (!db) return [];
+  try {
+    const conditions = [];
+    if (userId) conditions.push(eq(promoRedemptions.userId, userId));
+    if (deviceId) conditions.push(eq(promoRedemptions.deviceId, deviceId));
+    if (conditions.length === 0) return [];
+
+    const whereClause = conditions.length === 1 ? conditions[0] : or(...conditions);
+    return await db.select().from(promoRedemptions).where(whereClause);
+  } catch (error) {
+    console.error("Error getting user redemptions:", error);
+    return [];
   }
 }

@@ -1,4 +1,4 @@
-import { Home, Play, BookOpen, BarChart3, Settings, Trophy } from "lucide-react";
+import { Home, Play, BookOpen, Trophy, BarChart3, Settings, TrendingUp } from "lucide-react";
 import { useLocation } from "wouter";
 
 export default function BottomNav() {

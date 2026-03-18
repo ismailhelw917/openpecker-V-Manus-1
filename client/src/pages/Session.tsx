@@ -55,7 +55,6 @@ export default function Session() {
   const [showCorrectCheckmark, setShowCorrectCheckmark] = useState(false);
   const [showWrongX, setShowWrongX] = useState(false);
   const [currentMoveIndex, setCurrentMoveIndex] = useState(0); // Track which move in the sequence
-
   // Board theme definitions
   const themeColors = {
     classic: { light: '#f0d9b5', dark: '#b58863' },
@@ -70,10 +69,57 @@ export default function Session() {
   );
 
   // Cycle recording mutation
-  const completeCycleMutation = trpc.cycles.complete.useMutation();
+  const utils = trpc.useUtils();
+  const completeCycleMutation = trpc.cycles.complete.useMutation({
+    onSuccess: () => {
+      // Invalidate stats queries to refresh data
+      utils.stats.getUserStats.invalidate();
+      utils.stats.getLeaderboard.invalidate();
+      // Invalidate training sets
+      utils.trainingSets.getById.invalidate({ id: sessionId });
+    },
+  });
   
   // Update training set mutation
-  const updateTrainingSetMutation = trpc.trainingSets.update.useMutation();
+  const updateTrainingSetMutation = trpc.trainingSets.update.useMutation({
+    onSuccess: () => {
+      // Invalidate training set queries
+      utils.trainingSets.getById.invalidate({ id: sessionId });
+    },
+  });
+
+  // Record individual puzzle attempt mutation (fires after each puzzle)
+  const recordAttemptMutation = trpc.attempts.record.useMutation({
+    onSuccess: () => {
+      // Invalidate stats so they update in real-time
+      utils.stats.getSummary.invalidate();
+      utils.stats.getUserStats.invalidate();
+    },
+  });
+
+  // Track puzzle start time for timing each puzzle
+  const [puzzleStartTime, setPuzzleStartTime] = useState<number>(Date.now());
+
+  // Helper to record a puzzle attempt
+  const recordPuzzleAttempt = (isCorrect: boolean, timeMs: number) => {
+    const deviceId = localStorage.getItem('openpecker-device-id') || '';
+    recordAttemptMutation.mutate({
+      userId: user?.id,
+      deviceId,
+      trainingSetId: sessionId,
+      cycleNumber: currentCycle,
+      puzzleId: currentPuzzle?.id || `puzzle-${currentPuzzleIndex}`,
+      isCorrect,
+      timeMs,
+      attemptNumber: 1,
+    });
+    // Also update training set lastPlayedAt and totalAttempts
+    updateTrainingSetMutation.mutate({
+      id: sessionId,
+      lastPlayedAt: new Date(),
+      totalAttempts: (getTrainingSet.data?.totalAttempts || 0) + 1,
+    });
+  };
 
   // Session timer
   useEffect(() => {
@@ -242,6 +288,10 @@ export default function Session() {
       console.log('Move validation:', { currentMoveIndex, expectedMove, moveUCI, totalMoves: movesList.length, puzzleId: currentPuzzle.id });
 
       if (expectedMove === moveUCI) {
+        // Record correct puzzle attempt immediately
+        const puzzleTimeMs = Date.now() - puzzleStartTime;
+        recordPuzzleAttempt(true, puzzleTimeMs);
+        
         setCorrectCount((prev) => prev + 1);
         setShowCorrectCheckmark(true);
         setSolved(true);
@@ -272,6 +322,7 @@ export default function Session() {
             setCurrentPuzzleIndex(nextIndex);
             setSolved(false);
             setCaptureSquare(null);
+            setPuzzleStartTime(Date.now()); // Reset timer for next puzzle
             
             const nextPuzzle = puzzles[nextIndex];
             if (nextPuzzle?.fen) {
@@ -283,6 +334,7 @@ export default function Session() {
               setCurrentCycle(currentCycle + 1);
               setCurrentPuzzleIndex(0);
               setCorrectCount(0);
+              setPuzzleStartTime(Date.now()); // Reset timer for new cycle
               
               const firstPuzzle = puzzles[0];
               if (firstPuzzle?.fen) {
@@ -315,6 +367,10 @@ export default function Session() {
           }
         }, 1500);
       } else {
+        // Record incorrect puzzle attempt immediately
+        const puzzleTimeMs = Date.now() - puzzleStartTime;
+        recordPuzzleAttempt(false, puzzleTimeMs);
+        
         // Show wrong X watermark
         setShowWrongX(true);
         setTimeout(() => setShowWrongX(false), 1000);
@@ -374,6 +430,7 @@ export default function Session() {
                       setCurrentPuzzleIndex(nextIndex);
                       setSolved(false);
                       setCaptureSquare(null);
+                      setPuzzleStartTime(Date.now()); // Reset timer for next puzzle
                       
                       const nextPuzzle = puzzles[nextIndex];
                       if (nextPuzzle?.fen) {

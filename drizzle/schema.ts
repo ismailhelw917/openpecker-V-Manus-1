@@ -260,3 +260,42 @@ export const dailyStats = mysqlTable("dailyStats", {
 
 export type DailyStat = typeof dailyStats.$inferSelect;
 export type InsertDailyStat = typeof dailyStats.$inferInsert;
+
+/**
+ * Promo Codes - stores promotional codes with usage limits and benefits
+ */
+export const promoCodes = mysqlTable("promo_codes", {
+  id: int("id").autoincrement().primaryKey(),
+  code: varchar("code", { length: 64 }).notNull().unique(),
+  description: text("description"),
+  benefitType: mysqlEnum("benefitType", ["lifetime_premium", "discount"]).notNull(),
+  discountPercent: int("discountPercent"), // e.g., 80 for 80% discount
+  maxUses: int("maxUses").notNull(), // Maximum consecutive uses
+  currentUses: int("currentUses").default(0).notNull(),
+  isActive: int("isActive").default(1).notNull(), // 1 = active, 0 = deactivated
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  expiresAt: timestamp("expiresAt"),
+}, (table) => ({
+  codeIdx: index("idx_promo_code").on(table.code),
+}));
+
+export type PromoCode = typeof promoCodes.$inferSelect;
+export type InsertPromoCode = typeof promoCodes.$inferInsert;
+
+/**
+ * Promo Code Redemptions - tracks which users redeemed which promo codes
+ */
+export const promoRedemptions = mysqlTable("promo_redemptions", {
+  id: int("id").autoincrement().primaryKey(),
+  promoCodeId: int("promoCodeId").notNull(),
+  userId: int("userId"),
+  deviceId: varchar("deviceId", { length: 64 }),
+  redeemedAt: timestamp("redeemedAt").defaultNow().notNull(),
+}, (table) => ({
+  promoCodeIdIdx: index("idx_redemption_promoCodeId").on(table.promoCodeId),
+  userIdIdx: index("idx_redemption_userId").on(table.userId),
+  deviceIdIdx: index("idx_redemption_deviceId").on(table.deviceId),
+}));
+
+export type PromoRedemption = typeof promoRedemptions.$inferSelect;
+export type InsertPromoRedemption = typeof promoRedemptions.$inferInsert;

@@ -1,4 +1,3 @@
-import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import BottomNav from "@/components/BottomNav";
 import NotFound from "@/pages/NotFound";
@@ -13,11 +12,16 @@ import Settings from "./pages/Settings";
 import Session from "./pages/Session";
 import Auth from "./pages/Auth";
 import { Leaderboard } from "./pages/Leaderboard";
+import Profile from "./pages/Profile";
+import AdminAnalytics from "./pages/AdminAnalytics";
+import ProAnalytics from "./pages/ProAnalytics";
+
 import { useEffect, useState } from "react";
-import { nanoid } from "nanoid";
 import { useAuth } from "./_core/hooks/useAuth";
+import { getOrCreateDeviceId } from "./_core/deviceId";
 import { trpc } from "./lib/trpc";
 import { useLocation } from "wouter";
+import { PremiumBanner } from "./components/PremiumBanner";
 
 function Router() {
   return (
@@ -28,8 +32,12 @@ function Router() {
       <Route path={"/stats"} component={Stats} />
       <Route path={"/leaderboard"} component={Leaderboard} />
       <Route path={"/settings"} component={Settings} />
+      <Route path={"/profile"} component={Profile} />
       <Route path={"/session/:id"} component={Session} />
       <Route path={"/auth"} component={Auth} />
+       <Route path={"admin/analytics"} component={AdminAnalytics} />
+      <Route path={"analytics"} component={ProAnalytics} />
+
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
@@ -50,14 +58,25 @@ function App() {
   const { data: giftEligibility } = trpc.auth.checkGiftEligibility.useQuery();
   const { data: globalSettings } = trpc.system.getGlobalSettings.useQuery();
 
+  // Initialize device ID and create anonymous account
+  const createAnonymousUserMutation = trpc.auth.getOrCreateAnonymous.useMutation();
+  const [anonUserCreated, setAnonUserCreated] = useState(false);
+
   useEffect(() => {
-    // Initialize device ID if not already set
-    const existingDeviceId = localStorage.getItem("openpecker-device-id");
-    if (!existingDeviceId) {
-      const newDeviceId = nanoid();
-      localStorage.setItem("openpecker-device-id", newDeviceId);
+    // Only create anonymous account once when not authenticated
+    if (isAuthenticated || loading || anonUserCreated) return;
+    
+    const deviceId = getOrCreateDeviceId();
+    if (deviceId) {
+      setAnonUserCreated(true);
+      createAnonymousUserMutation.mutate({ deviceId }, {
+        onError: () => {
+          // Silently fail - anonymous account creation is non-critical
+          setAnonUserCreated(false);
+        },
+      });
     }
-  }, []);
+  }, [isAuthenticated, loading]);
 
   const updateGlobalSettingsMutation = trpc.system.updateGlobalSettings.useMutation();
 
@@ -76,90 +95,44 @@ function App() {
     localStorage.setItem("openpecker-maintenance", showMaintenance.toString());
   }, [showMaintenance]);
 
-  // Remove localStorage persistence for gift premium - use global settings instead
-
+  // Timer countdown
   useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      // Ctrl+Shift+M to toggle maintenance
-      if (e.ctrlKey && e.shiftKey && e.key === 'M') {
-        e.preventDefault();
-        setShowMaintenance(!showMaintenance);
-      }
-      // Ctrl+Shift+G to toggle gift premium
-      if (e.ctrlKey && e.shiftKey && e.key === 'G') {
-        e.preventDefault();
-        setShowGiftPremium(!showGiftPremium);
-      }
-    };
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [showMaintenance, showGiftPremium]);
-
-  useEffect(() => {
-    if (!showMaintenance) return;
     const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          setShowMaintenance(false);
-          return 0;
-        }
-        return prev - 1;
-      });
+      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 180));
     }, 1000);
     return () => clearInterval(interval);
-  }, [showMaintenance]);
+  }, []);
 
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400 mx-auto mb-4"></div>
+          <p className="text-slate-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <ErrorBoundary>
-      <ThemeProvider defaultTheme="dark">
-        <TooltipProvider>
-          <Toaster />
-          {showMaintenance && (
-            <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-              <div className="bg-slate-900 border-2 border-amber-400 rounded-lg p-8 text-center max-w-md">
-                <h2 className="text-2xl font-bold text-amber-400 mb-4">🔧 Maintenance</h2>
-                <p className="text-white mb-6">We're making improvements. Back in:</p>
-                <div className="text-5xl font-bold text-amber-400 mb-4">
-                  {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
-                </div>
-                <p className="text-gray-300">Thank you for your patience!</p>
-              </div>
-            </div>
-          )}
-          
-          {/* Premium Signup Banner - Show ONLY for premium users without email (unregistered) */}
-          {!premiumBannerDismissed && isAuthenticated && user?.isPremium && !user?.email && !user?.hasRegistered && (
-            <div className="fixed top-0 left-0 right-0 bg-gradient-to-r from-purple-600 via-purple-500 to-purple-600 text-white font-bold text-center py-3 z-40 shadow-lg">
-              <div className="flex items-center justify-center gap-3 max-w-full px-4">
-                <span className="text-sm sm:text-base">✨ You have FREE lifetime premium! Sign up to keep your status.</span>
-                <button
-                  onClick={() => setLocation("/auth")}
-                  className="ml-2 px-4 py-1 bg-white text-purple-600 font-bold rounded hover:bg-gray-100 transition-colors text-sm whitespace-nowrap"
-                >
-                  Sign Up Now
-                </button>
-                <button
-                  onClick={() => setPremiumBannerDismissed(true)}
-                  className="ml-2 text-white hover:opacity-75 font-semibold text-lg"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-          )}
+    <ThemeProvider>
+      <TooltipProvider>
+        <ErrorBoundary>
+          <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950">
+            {/* Premium Banner for unregistered users */}
+            {!isAuthenticated && showGiftPremium && !premiumBannerDismissed && (
+              <PremiumBanner onDismiss={() => setPremiumBannerDismissed(true)} />
+            )}
 
-          <div className={`min-h-screen bg-slate-950 flex flex-col ${!premiumBannerDismissed && isAuthenticated && user?.isPremium && !user?.email ? 'pt-16' : ''}`}>
-            <div className="flex-1 overflow-y-auto pb-20 sm:pb-24">
-              <Router />
-            </div>
-            <BottomNav />
+            {/* Routes */}
+            <Router />
+
+            {/* Bottom Navigation (only for authenticated users) */}
+            {isAuthenticated && !loading && <BottomNav />}
           </div>
-        </TooltipProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
+        </ErrorBoundary>
+      </TooltipProvider>
+    </ThemeProvider>
   );
 }
 
