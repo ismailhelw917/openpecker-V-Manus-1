@@ -108,10 +108,14 @@ export default function Auth() {
       <Card className="bg-slate-900/50 border-teal-900/30 w-full max-w-md p-8">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-full border-2 border-amber-400 flex items-center justify-center mx-auto mb-4">
-            <span className="text-3xl">♟</span>
+          <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-teal-900/40 to-slate-900/40 rounded-lg p-2 backdrop-blur-sm">
+            <img
+              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/openpecker-logo-UbbhKD7VjajRRYYwpnAd2y.webp"
+              alt="OpenPecker Logo"
+              className="w-full h-full object-contain"
+            />
           </div>
-          <h1 className="text-3xl font-bold text-amber-400">OpenPecker</h1>
+          <h1 className="text-3xl font-bold text-teal-600">OpenPecker</h1>
           <p className="text-slate-400 mt-2">
             {mode === "login" ? "Sign in to your account" : "Create a new account"}
           </p>
