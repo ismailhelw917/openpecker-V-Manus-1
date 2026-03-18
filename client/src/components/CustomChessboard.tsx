@@ -34,11 +34,18 @@ const DraggablePiece = ({ piece, squareName }: { piece: any; squareName: string 
       {...listeners}
       {...attributes}
       draggable="false"
-      src={`https://chess1.org/assets/piece/cburnett/${piece.color}${piece.type.toUpperCase()}.svg`}
+      src={`https://cdn.jsdelivr.net/gh/lichess-org/lila@master/public/piece/cburnett/${piece.color}${piece.type.toUpperCase()}.svg`}
       alt={`${piece.color}${piece.type}`}
       className={`w-full h-full p-1 cursor-grab transition-none relative z-10 ${isDragging ? 'opacity-0' : 'opacity-100'}`}
       style={{ ...style, touchAction: 'none' }}
       onClick={(e) => e.stopPropagation()}
+      onError={(e) => {
+        // Fallback to alternative source if primary fails
+        const img = e.target as HTMLImageElement;
+        if (!img.src.includes('lichess-org')) {
+          img.src = `https://chess1.org/assets/piece/cburnett/${piece.color}${piece.type.toUpperCase()}.svg`;
+        }
+      }}
       referrerPolicy="no-referrer"
     />
   );
@@ -231,10 +238,16 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
       <DragOverlay>
         {activePiece ? (
           <img
-            src={`https://chess1.org/assets/piece/cburnett/${activePiece.color}${activePiece.type.toUpperCase()}.svg`}
+            src={`https://cdn.jsdelivr.net/gh/lichess-org/lila@master/public/piece/cburnett/${activePiece.color}${activePiece.type.toUpperCase()}.svg`}
             alt={`${activePiece.color}${activePiece.type}`}
             className="w-full h-full p-1 cursor-grabbing transition-none"
             draggable="false"
+            onError={(e) => {
+              const img = e.target as HTMLImageElement;
+              if (!img.src.includes('chess1.org')) {
+                img.src = `https://chess1.org/assets/piece/cburnett/${activePiece.color}${activePiece.type.toUpperCase()}.svg`;
+              }
+            }}
             referrerPolicy="no-referrer"
           />
         ) : null}
