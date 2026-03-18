@@ -25,6 +25,7 @@ export default function Auth() {
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [registerConfirmPassword, setRegisterConfirmPassword] = useState("");
+  const [premiumNotificationShown, setPremiumNotificationShown] = useState(false);
 
   const registerMutation = trpc.auth.register.useMutation();
   const loginMutation = trpc.auth.login.useMutation();
@@ -89,10 +90,12 @@ export default function Auth() {
       });
 
       if (result.success) {
-        if (result.isPremium) {
+        if (result.isPremium && !premiumNotificationShown) {
           toast.success("🎉 Welcome! You've been granted FREE lifetime premium!", {
             duration: 5000,
           });
+          setPremiumNotificationShown(true);
+          localStorage.setItem(`premium_notified_${registerEmail}`, "true");
           setTimeout(() => {
             setMode("login");
             setRegisterName("");

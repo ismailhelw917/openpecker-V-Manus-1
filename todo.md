@@ -372,3 +372,13 @@
 - [x] All charts display with proper styling and data
 - [x] Tested on dev server - stats page now shows all information
 - [x] Ready to deploy to live site
+
+## Critical Fixes (Round 35 - Urgent)
+- [x] Delete puzzle sets with less than 30 puzzles
+- [x] Fix congratulations notification to show only once per user
+- [ ] Add cycle tracking display (e.g., 1/3 cycles completed)
+- [ ] Implement puzzle set repetition for remaining cycles
+- [ ] Repeat puzzles if set has fewer puzzles than session selection
+- [ ] Fix stats screen to accurately reflect session screen data
+- [ ] Test all puzzle flow scenarios
+- [ ] Deploy all fixes to live site

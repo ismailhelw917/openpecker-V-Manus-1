@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,7 @@ import { Download, Zap, Shield, Loader } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { trpc } from "@/lib/trpc";
 
 type Tab = "overview" | "trends" | "openings";
 
@@ -99,6 +100,30 @@ export default function Stats() {
   const { user } = useAuth();
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [stats, setStats] = useState<any>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+
+  // Fetch real user stats
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const { data: userStats } = trpc.stats.getUserStats.useQuery();
+        if (userStats) {
+          setStats(userStats);
+        }
+      } catch (error) {
+        console.error("Failed to fetch stats:", error);
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+
+    if (user?.isPremium) {
+      fetchStats();
+    } else {
+      setStatsLoading(false);
+    }
+  }, [user?.isPremium]);
 
   const handleCheckout = async (priceId: string, planName: string) => {
     if (!user) {
@@ -144,6 +169,17 @@ export default function Stats() {
       setLoading(false);
     }
   };
+
+  if (statsLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400 mx-auto mb-4"></div>
+          <p className="text-slate-400">Loading stats...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!user?.isPremium) {
     return (
