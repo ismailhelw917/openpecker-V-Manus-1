@@ -692,3 +692,9 @@
 - [x] Fix Stats.tsx premium modal buttons (added handleCheckout + onClick handlers)
 - [x] Fix ProAnalytics.tsx "Upgrade to Pro" button (navigates to /settings)
 - [x] Fix Train.tsx locked opening toasts (added "Upgrade" action button)
+
+## Round 60 - Navigation Fix
+- [x] Ensure BottomNav is present on all pages and never removed (was already in App.tsx, added pb-24 to SavedSets/Settings)
+
+## Round 61 - Train Tab Scrolling
+- [x] Add overflow-y-auto and pb-24 to Train tab for scrolling and BottomNav spacing
