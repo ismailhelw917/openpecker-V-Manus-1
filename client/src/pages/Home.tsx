@@ -46,10 +46,10 @@ export default function Home() {
         </div>
         
         {/* Title */}
-        <h1 className="text-6xl font-black text-teal-700 mb-4">OpenPecker</h1>
+        <h1 className="text-4xl md:text-6xl font-black text-teal-700 mb-4">OpenPecker</h1>
 
         {/* Subtitle */}
-        <p className="text-xl text-slate-700 mb-8">
+        <p className="text-base md:text-xl text-slate-700 mb-8">
           Master opening tactics through deliberate repetition.
         </p>
 
@@ -77,44 +77,30 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-3 gap-4 w-full max-w-md -mt-4">
-        <Card className="bg-teal-50 border-teal-200 p-4 text-center">
-          <p className="text-teal-600 font-bold text-2xl">{stats.cycles}</p>
-          <p className="text-slate-600 text-xs uppercase tracking-wider">Cycles</p>
-        </Card>
-        <Card className="bg-teal-50 border-teal-200 p-4 text-center">
-          <p className="text-teal-600 font-bold text-2xl">{stats.solved}</p>
-          <p className="text-slate-600 text-xs uppercase tracking-wider">Solved</p>
-        </Card>
-        <Card className="bg-teal-50 border-teal-200 p-4 text-center">
-          <p className="text-teal-600 font-bold text-2xl">{stats.accuracy}%</p>
-          <p className="text-slate-600 text-xs uppercase tracking-wider">Acc%</p>
-        </Card>
-      </div>
+
 
       {/* Feature Highlights */}
       <div className="mt-16 max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
         <Card className="bg-teal-50 border-teal-200 p-4">
-          <h3 className="text-teal-700 font-bold mb-2">📚 5.8M Puzzles</h3>
+          <h3 className="text-teal-700 font-bold mb-2 text-sm md:text-base">📚 5.8M Puzzles</h3>
           <p className="text-slate-700 text-sm">
             Train with thousands of opening variations from Lichess
           </p>
         </Card>
         <Card className="bg-teal-50 border-teal-200 p-4">
-          <h3 className="text-teal-700 font-bold mb-2">📊 Advanced Stats</h3>
+          <h3 className="text-teal-700 font-bold mb-2 text-sm md:text-base">📊 Advanced Stats</h3>
           <p className="text-slate-700 text-sm">
             Track accuracy, rating trends, and opening mastery
           </p>
         </Card>
         <Card className="bg-teal-50 border-teal-200 p-4">
-          <h3 className="text-teal-700 font-bold mb-2">⚙️ Customizable</h3>
+          <h3 className="text-teal-700 font-bold mb-2 text-sm md:text-base">⚙️ Customizable</h3>
           <p className="text-slate-700 text-sm">
             Choose rating range, themes, and difficulty levels
           </p>
         </Card>
         <Card className="bg-teal-50 border-teal-200 p-4">
-          <h3 className="text-teal-700 font-bold mb-2">🪶 Woodpecker Method</h3>
+          <h3 className="text-teal-700 font-bold mb-2 text-sm md:text-base">🪶 Woodpecker Method</h3>
           <p className="text-slate-700 text-sm">
             Deliberate repetition of opening tactics until mastery
           </p>
