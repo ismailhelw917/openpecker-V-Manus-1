@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD `isRegistered` int DEFAULT 0 NOT NULL;

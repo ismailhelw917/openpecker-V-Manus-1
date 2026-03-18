@@ -625,10 +625,26 @@ export async function countTotalUsers() {
   if (!db) return 0;
 
   try {
-    const result = await db.select().from(users);
+    const result = await db.select().from(users).where(eq(users.isRegistered, 1));
     return result.length;
   } catch (error) {
     console.error("Error counting users:", error);
+    return 0;
+  }
+}
+
+/**
+ * Count only registered users (those with email/password or OAuth)
+ */
+export async function countRegisteredUsers() {
+  const db = await getDb();
+  if (!db) return 0;
+
+  try {
+    const result = await db.select().from(users).where(eq(users.isRegistered, 1));
+    return result.length;
+  } catch (error) {
+    console.error("Error counting registered users:", error);
     return 0;
   }
 }

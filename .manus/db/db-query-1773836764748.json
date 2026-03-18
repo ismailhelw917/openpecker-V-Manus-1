@@ -1,0 +1,15 @@
+{
+  "query": "SELECT COUNT(*) as real_registered_users, SUM(CASE WHEN passwordHash IS NOT NULL AND passwordHash != '' THEN 1 ELSE 0 END) as email_password_users, SUM(CASE WHEN openId IS NOT NULL AND openId != '' THEN 1 ELSE 0 END) as oauth_users FROM users WHERE (passwordHash IS NOT NULL AND passwordHash != '') OR (openId IS NOT NULL AND openId != '');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT COUNT(*) as real_registered_users, SUM(CASE WHEN passwordHash IS NOT NULL AND passwordHash != '' THEN 1 ELSE 0 END) as email_password_users, SUM(CASE WHEN openId IS NOT NULL AND openId != '' THEN 1 ELSE 0 END) as oauth_users FROM users WHERE (passwordHash IS NOT NULL AND passwordHash != '') OR (openId IS NOT NULL AND openId != '');",
+  "rows": [
+    {
+      "real_registered_users": "10",
+      "email_password_users": "9",
+      "oauth_users": "10"
+    }
+  ],
+  "messages": [],
+  "stdout": "real_registered_users\temail_password_users\toauth_users\n10\t9\t10\n",
+  "stderr": "",
+  "execution_time_ms": 1588
+}
