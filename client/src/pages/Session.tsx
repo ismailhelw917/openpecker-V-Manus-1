@@ -377,7 +377,7 @@ export default function Session() {
               <p className="text-sm font-bold text-amber-400">{formatTime(sessionTime)}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-400">Cycle</p>
+              <p className="text-xs text-slate-400">Cycles</p>
               <p className="text-sm font-bold text-amber-400">{currentPuzzleIndex + 1}/{puzzles.length}</p>
             </div>
           </div>
