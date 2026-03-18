@@ -28,6 +28,7 @@ import {
   updateUserPasswordHash,
   upsertUser,
   countTotalUsers,
+  getAllRegisteredUsers,
 } from "./db";
 
 const BCRYPT_ROUNDS = 10;
@@ -857,6 +858,68 @@ export const appRouter = router({
         console.error("[GET USER STATS ERROR]", error);
         return null;
       }
+    }),
+
+    /**
+     * Get leaderboard with top users ranked by accuracy and speed
+     */
+    getLeaderboard: publicProcedure
+      .input(
+        z.object({
+          limit: z.number().default(50),
+          sortBy: z.enum(["accuracy", "speed", "rating"]).default("accuracy"),
+        })
+      )
+      .query(async ({ input }) => {
+        try {
+          const registeredUsers = await getAllRegisteredUsers();
+
+          // Calculate stats for each user
+          const leaderboardData = await Promise.all(
+            registeredUsers.map(async (user) => {
+              const cycles = await getCycleHistoryByUser(user.id, null);
+              const totalPuzzles = cycles.reduce((sum, c) => sum + c.totalPuzzles, 0);
+              const totalCorrect = cycles.reduce((sum, c) => sum + c.correctCount, 0);
+              const accuracy = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 100) : 0;
+              const totalTimeMs = cycles.reduce((sum, c) => sum + (c.totalTimeMs || 0), 0);
+              const avgTimePerPuzzle = totalPuzzles > 0 ? Math.round(totalTimeMs / totalPuzzles / 1000) : 0;
+              const baseRating = 1200;
+              const ratingGain = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 200) : 0;
+              const rating = baseRating + ratingGain;
+
+              return {
+                id: user.id,
+                name: user.name || "Anonymous",
+                isPremium: user.isPremium === 1,
+                accuracy,
+                speed: avgTimePerPuzzle,
+                rating,
+                totalPuzzles,
+                completedCycles: cycles.length,
+              };
+            })
+          );
+
+          // Sort by selected metric
+          const sorted = leaderboardData.sort((a, b) => {
+            if (input.sortBy === "accuracy") {
+              return b.accuracy - a.accuracy;
+            } else if (input.sortBy === "speed") {
+              return a.speed - b.speed;
+            } else {
+              return b.rating - a.rating;
+            }
+          });
+
+          // Return top N users with rank
+          return sorted.slice(0, input.limit).map((user, index) => ({
+            ...user,
+            rank: index + 1,
+          }));
+        } catch (error) {
+          console.error("[GET LEADERBOARD ERROR]", error);
+          return [];
+        }
     }),
   }),
 

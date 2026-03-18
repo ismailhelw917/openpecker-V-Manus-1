@@ -12,6 +12,7 @@ import Stats from "./pages/Stats";
 import Settings from "./pages/Settings";
 import Session from "./pages/Session";
 import Auth from "./pages/Auth";
+import { Leaderboard } from "./pages/Leaderboard";
 import { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
 import { useAuth } from "./_core/hooks/useAuth";
@@ -25,6 +26,7 @@ function Router() {
       <Route path={"/train"} component={Train} />
       <Route path={"/sets"} component={SavedSets} />
       <Route path={"/stats"} component={Stats} />
+      <Route path={"/leaderboard"} component={Leaderboard} />
       <Route path={"/settings"} component={Settings} />
       <Route path={"/session/:id"} component={Session} />
       <Route path={"/auth"} component={Auth} />

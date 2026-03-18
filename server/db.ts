@@ -649,6 +649,22 @@ export async function countRegisteredUsers() {
   }
 }
 
+/**
+ * Get all registered users
+ */
+export async function getAllRegisteredUsers() {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    const result = await db.select().from(users).where(eq(users.hasRegistered, 1));
+    return result;
+  } catch (error) {
+    console.error("Error fetching registered users:", error);
+    return [];
+  }
+}
+
 
 /**
  * Get global settings
