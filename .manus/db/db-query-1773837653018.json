@@ -1,0 +1,16 @@
+{
+  "query": "SELECT COUNT(*) as total_users, SUM(CASE WHEN hasRegistered = 1 THEN 1 ELSE 0 END) as registered_users, SUM(CASE WHEN hasRegistered = 0 THEN 1 ELSE 0 END) as guest_users, SUM(CASE WHEN isPremium = 1 THEN 1 ELSE 0 END) as premium_users FROM users;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT COUNT(*) as total_users, SUM(CASE WHEN hasRegistered = 1 THEN 1 ELSE 0 END) as registered_users, SUM(CASE WHEN hasRegistered = 0 THEN 1 ELSE 0 END) as guest_users, SUM(CASE WHEN isPremium = 1 THEN 1 ELSE 0 END) as premium_users FROM users;",
+  "rows": [
+    {
+      "total_users": "10",
+      "registered_users": "10",
+      "guest_users": "0",
+      "premium_users": "10"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_users\tregistered_users\tguest_users\tpremium_users\n10\t10\t0\t10\n",
+  "stderr": "",
+  "execution_time_ms": 1582
+}

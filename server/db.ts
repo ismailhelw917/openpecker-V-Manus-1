@@ -625,7 +625,7 @@ export async function countTotalUsers() {
   if (!db) return 0;
 
   try {
-    const result = await db.select().from(users).where(eq(users.isRegistered, 1));
+    const result = await db.select().from(users);
     return result.length;
   } catch (error) {
     console.error("Error counting users:", error);
@@ -641,7 +641,7 @@ export async function countRegisteredUsers() {
   if (!db) return 0;
 
   try {
-    const result = await db.select().from(users).where(eq(users.isRegistered, 1));
+    const result = await db.select().from(users).where(eq(users.hasRegistered, 1));
     return result.length;
   } catch (error) {
     console.error("Error counting registered users:", error);
