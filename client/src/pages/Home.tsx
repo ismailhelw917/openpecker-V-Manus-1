@@ -4,11 +4,23 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
+import { toast } from "sonner";
 
 export default function Home() {
   const [, setLocation] = useLocation();
   const { user, isAuthenticated, loading } = useAuth();
   const [stats, setStats] = useState({ cycles: 0, solved: 0, accuracy: 0 });
+  const [premiumNotified, setPremiumNotified] = useState(false);
+
+  useEffect(() => {
+    // Show premium notification to authenticated users
+    if (isAuthenticated && user && !premiumNotified && user.isPremium) {
+      toast.success("🎉 Welcome! You've been granted FREE lifetime premium!", {
+        duration: 5000,
+      });
+      setPremiumNotified(true);
+    }
+  }, [isAuthenticated, user, premiumNotified]);
 
   useEffect(() => {
     // Load remembered email if exists
