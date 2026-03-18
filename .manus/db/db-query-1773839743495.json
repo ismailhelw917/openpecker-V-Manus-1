@@ -1,0 +1,50 @@
+{
+  "query": "SELECT id, openingName, puzzleCount, bestAccuracy, lastPlayedAt, cyclesCompleted FROM training_sets LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT id, openingName, puzzleCount, bestAccuracy, lastPlayedAt, cyclesCompleted FROM training_sets LIMIT 5;",
+  "rows": [
+    {
+      "id": "0f2SWqBTJzU0QK-e_Qb1x",
+      "openingName": "Advanced Openings",
+      "puzzleCount": "50",
+      "bestAccuracy": "NULL",
+      "lastPlayedAt": "NULL",
+      "cyclesCompleted": "0"
+    },
+    {
+      "id": "786DK-2jjEgctSRvXZbBc",
+      "openingName": "Advanced Openings",
+      "puzzleCount": "50",
+      "bestAccuracy": "NULL",
+      "lastPlayedAt": "NULL",
+      "cyclesCompleted": "0"
+    },
+    {
+      "id": "85ibM0Sg-cf5a_iSpnOFH",
+      "openingName": "Alekhine Defense",
+      "puzzleCount": "50",
+      "bestAccuracy": "NULL",
+      "lastPlayedAt": "NULL",
+      "cyclesCompleted": "0"
+    },
+    {
+      "id": "BS-Z_Rr60O3ymxvh4tGUK",
+      "openingName": "Alekhine Defense",
+      "puzzleCount": "50",
+      "bestAccuracy": "NULL",
+      "lastPlayedAt": "NULL",
+      "cyclesCompleted": "0"
+    },
+    {
+      "id": "F-C97xdTAWwHj_3BbVHQS",
+      "openingName": "Advanced Openings",
+      "puzzleCount": "50",
+      "bestAccuracy": "NULL",
+      "lastPlayedAt": "NULL",
+      "cyclesCompleted": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topeningName\tpuzzleCount\tbestAccuracy\tlastPlayedAt\tcyclesCompleted\n0f2SWqBTJzU0QK-e_Qb1x\tAdvanced Openings\t50\tNULL\tNULL\t0\n786DK-2jjEgctSRvXZbBc\tAdvanced Openings\t50\tNULL\tNULL\t0\n85ibM0Sg-cf5a_iSpnOFH\tAlekhine Defense\t50\tNULL\tNULL\t0\nBS-Z_Rr60O3ymxvh4tGUK\tAlekhine Defense\t50\tNULL\tNULL\t0\nF-C97xdTAWwHj_3BbVHQS\tAdvanced Openings\t50\tNULL\tNULL\t0\n",
+  "stderr": "",
+  "execution_time_ms": 1561
+}

@@ -1,0 +1,46 @@
+{
+  "query": "SELECT * FROM cycle_history LIMIT 3;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT * FROM cycle_history LIMIT 3;",
+  "rows": [
+    {
+      "id": "1",
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "DPfI5M7g0aTLRYXSbJxka",
+      "cycleNumber": "1",
+      "totalPuzzles": "5",
+      "correctCount": "4",
+      "totalTimeMs": "60000",
+      "accuracy": "80.00",
+      "completedAt": "2026-03-17 09:46:49"
+    },
+    {
+      "id": "2",
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "DPfI5M7g0aTLRYXSbJxka",
+      "cycleNumber": "2",
+      "totalPuzzles": "10",
+      "correctCount": "7",
+      "totalTimeMs": "120000",
+      "accuracy": "70.00",
+      "completedAt": "2026-03-17 09:46:50"
+    },
+    {
+      "id": "30001",
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "Xzw5is4b7lny0Q-CKQxZg",
+      "cycleNumber": "1",
+      "totalPuzzles": "5",
+      "correctCount": "4",
+      "totalTimeMs": "60000",
+      "accuracy": "80.00",
+      "completedAt": "2026-03-17 11:20:34"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\tdeviceId\ttrainingSetId\tcycleNumber\ttotalPuzzles\tcorrectCount\ttotalTimeMs\taccuracy\tcompletedAt\n1\tNULL\tNULL\tDPfI5M7g0aTLRYXSbJxka\t1\t5\t4\t60000\t80.00\t2026-03-17 09:46:49\n2\tNULL\tNULL\tDPfI5M7g0aTLRYXSbJxka\t2\t10\t7\t120000\t70.00\t2026-03-17 09:46:50\n30001\tNULL\tNULL\tXzw5is4b7lny0Q-CKQxZg\t1\t5\t4\t60000\t80.00\t2026-03-17 11:20:34\n",
+  "stderr": "",
+  "execution_time_ms": 1597
+}

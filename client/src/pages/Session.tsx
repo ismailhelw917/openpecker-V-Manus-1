@@ -70,6 +70,9 @@ export default function Session() {
 
   // Cycle recording mutation
   const completeCycleMutation = trpc.cycles.complete.useMutation();
+  
+  // Update training set mutation
+  const updateTrainingSetMutation = trpc.trainingSets.update.useMutation();
 
   // Session timer
   useEffect(() => {
@@ -285,6 +288,7 @@ export default function Session() {
               }
             } else {
               // All cycles completed - record final cycle
+              const accuracy = (correctCount / puzzles.length) * 100;
               completeCycleMutation.mutate({
                 userId: user?.id,
                 deviceId: localStorage.getItem('openpecker-device-id') || '',
@@ -294,6 +298,16 @@ export default function Session() {
                 correctCount,
                 totalTimeMs: sessionTime * 1000,
               });
+              
+              // Update training set with session stats
+              updateTrainingSetMutation.mutate({
+                id: sessionId,
+                bestAccuracy: accuracy,
+                lastPlayedAt: new Date(),
+                cyclesCompleted: currentCycle,
+                totalAttempts: puzzles.length,
+              });
+              
               setTimeout(() => setLocation("/sets"), 1000);
             }
           }

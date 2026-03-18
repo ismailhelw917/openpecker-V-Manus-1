@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE training_sets ts\nSET \n  cyclesCompleted = (SELECT MAX(cycleNumber) FROM cycle_history WHERE trainingSetId = ts.id),\n  bestAccuracy = (SELECT MAX(accuracy) FROM cycle_history WHERE trainingSetId = ts.id),\n  lastPlayedAt = (SELECT MAX(completedAt) FROM cycle_history WHERE trainingSetId = ts.id),\n  totalAttempts = (SELECT SUM(totalPuzzles) FROM cycle_history WHERE trainingSetId = ts.id)\nWHERE id IN (SELECT DISTINCT trainingSetId FROM cycle_history);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute UPDATE training_sets ts\nSET \n  cyclesCompleted = (SELECT MAX(cycleNumber) FROM cycle_history WHERE trainingSetId = ts.id),\n  bestAccuracy = (SELECT MAX(accuracy) FROM cycle_history WHERE trainingSetId = ts.id),\n  lastPlayedAt = (SELECT MAX(completedAt) FROM cycle_history WHERE trainingSetId = ts.id),\n  totalAttempts = (SELECT SUM(totalPuzzles) FROM cycle_history WHERE trainingSetId = ts.id)\nWHERE id IN (SELECT DISTINCT trainingSetId FROM cycle_history);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1597
+}

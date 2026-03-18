@@ -136,7 +136,7 @@ export default function SavedSets() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 mb-6">
+                  <div className="grid grid-cols-3 gap-3 mb-6">
                     <div className="bg-slate-800/50 rounded p-3">
                       <p className="text-slate-400 text-xs uppercase">Best Accuracy</p>
                       <p className="text-white font-bold text-lg">
@@ -145,12 +145,20 @@ export default function SavedSets() {
                     </div>
                     <div className="bg-slate-800/50 rounded p-3">
                       <p className="text-slate-400 text-xs uppercase">Last Played</p>
-                      <p className="text-white font-bold">
+                      <p className="text-white font-bold text-sm">
                         {set.lastPlayedAt
                           ? new Date(set.lastPlayedAt).toLocaleDateString("en-US", {
                               month: "short",
                               day: "numeric",
                             })
+                          : "—"}
+                      </p>
+                    </div>
+                    <div className="bg-slate-800/50 rounded p-3">
+                      <p className="text-slate-400 text-xs uppercase">Avg Time</p>
+                      <p className="text-white font-bold text-sm">
+                        {set.totalAttempts && set.totalTimeMs
+                          ? `${Math.round((set.totalTimeMs / 1000) / set.totalAttempts)}s`
                           : "—"}
                       </p>
                     </div>
