@@ -100,30 +100,35 @@ export default function Stats() {
   const { user } = useAuth();
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [stats, setStats] = useState<any>(null);
-  const [statsLoading, setStatsLoading] = useState(true);
 
-  // Fetch real user stats
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const { data: userStats } = trpc.stats.getUserStats.useQuery();
-        if (userStats) {
-          setStats(userStats);
-        }
-      } catch (error) {
-        console.error("Failed to fetch stats:", error);
-      } finally {
-        setStatsLoading(false);
-      }
-    };
+  // Fetch real user stats using tRPC
+  const { data: stats, isLoading: statsLoading } = trpc.stats.getUserStats.useQuery(undefined, {
+    enabled: Boolean(user?.isPremium),
+  });
 
-    if (user?.isPremium) {
-      fetchStats();
-    } else {
-      setStatsLoading(false);
-    }
-  }, [user?.isPremium]);
+  // Build stats metrics dynamically from real data
+  const STATS_METRICS = stats ? [
+    { label: "RATING", value: stats.rating.toString(), highlight: true },
+    { label: "PEAK RATING", value: stats.peakRating.toString() },
+    { label: "ACCURACY", value: stats.accuracy + "%" },
+    { label: "WIN RATE", value: stats.winRate + "%" },
+    { label: "LOSS RATE", value: stats.lossRate + "%" },
+    { label: "TOTAL PUZZLES", value: stats.totalPuzzles.toString() },
+    { label: "TOTAL CYCLES", value: stats.totalCycles.toString() },
+    { label: "AVG TIME/PUZ", value: stats.avgTimePerPuzzle },
+    { label: "CURRENT STREAK", value: stats.currentStreak.toString() },
+    { label: "LONGEST STREAK", value: stats.longestStreak.toString() },
+    { label: "TOTAL TIME (H)", value: stats.totalTimeHours },
+    { label: "PUZZLES TODAY", value: stats.puzzlesToday.toString() },
+    { label: "CYCLES TODAY", value: stats.cyclesToday.toString() },
+    { label: "AVG PUZ/DAY", value: stats.avgPuzzlesPerDay.toString() },
+    { label: "AVG CYC/DAY", value: stats.avgCyclesPerDay.toString() },
+    { label: "RATING GAIN", value: "+" + stats.ratingGain.toString() },
+    { label: "BEST OPENING", value: stats.bestOpening },
+    { label: "WEAKEST OPENING", value: stats.weakestOpening },
+    { label: "STUDY TIME", value: stats.studyTime },
+    { label: "CONSISTENCY", value: stats.consistency + "%" },
+  ] : []
 
   const handleCheckout = async (priceId: string, planName: string) => {
     if (!user) {

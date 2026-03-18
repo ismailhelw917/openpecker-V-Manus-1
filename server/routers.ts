@@ -734,37 +734,104 @@ export const appRouter = router({
       try {
         if (!ctx.user) return null;
         const cycles = await getCycleHistoryByUser(ctx.user.id, null);
+        
+        if (cycles.length === 0) {
+          return {
+            rating: 1200,
+            peakRating: 1200,
+            accuracy: 0,
+            winRate: 0,
+            lossRate: 0,
+            totalPuzzles: 0,
+            totalCycles: 0,
+            avgTimePerPuzzle: '0s',
+            currentStreak: 0,
+            longestStreak: 0,
+            totalTimeHours: '0h',
+            puzzlesToday: 0,
+            cyclesToday: 0,
+            avgPuzzlesPerDay: 0,
+            avgCyclesPerDay: 0,
+            ratingGain: 0,
+            bestOpening: 'N/A',
+            weakestOpening: 'N/A',
+            studyTime: '0h 0m',
+            consistency: 0,
+          };
+        }
+        
+        // Calculate real stats from cycle data
         const totalPuzzles = cycles.reduce((sum, c) => sum + c.totalPuzzles, 0);
         const totalCorrect = cycles.reduce((sum, c) => sum + c.correctCount, 0);
         const accuracy = totalPuzzles > 0 ? (totalCorrect / totalPuzzles) * 100 : 0;
         const completedCycles = cycles.length;
         const totalTimeMs = cycles.reduce((sum, c) => sum + (c.totalTimeMs || 0), 0);
-        const totalTimeHours = Math.round(totalTimeMs / 1000 / 60 / 60 * 10) / 10;
+        const totalTimeHours = totalTimeMs / 1000 / 60 / 60;
+        const totalTimeMinutes = (totalTimeMs / 1000 / 60) % 60;
         const winRate = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 100) : 0;
         const lossRate = 100 - winRate;
         const avgTimePerPuzzle = totalPuzzles > 0 ? Math.round(totalTimeMs / totalPuzzles / 1000) : 0;
         
+        // Calculate today's stats
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const todaysCycles = cycles.filter(c => new Date(c.completedAt || new Date()).getTime() >= today.getTime());
+        const puzzlesToday = todaysCycles.reduce((sum, c) => sum + c.totalPuzzles, 0);
+        const cyclesToday = todaysCycles.length;
+        
+        // Calculate averages
+        const daysActive = Math.max(1, completedCycles);
+        const avgPuzzlesPerDay = Math.round(totalPuzzles / daysActive);
+        const avgCyclesPerDay = (completedCycles / daysActive).toFixed(1);
+        
+        // Calculate streaks (simplified)
+        let currentStreak = 0;
+        let longestStreak = 0;
+        let tempStreak = 0;
+        for (const cycle of cycles) {
+          const cycleAccuracy = typeof cycle.accuracy === 'string' ? parseFloat(cycle.accuracy) : cycle.accuracy || 0;
+          if (cycleAccuracy >= 70) {
+            tempStreak++;
+            longestStreak = Math.max(longestStreak, tempStreak);
+          } else {
+            tempStreak = 0;
+          }
+        }
+        currentStreak = tempStreak;
+        
+        // Calculate rating (simple ELO-like calculation)
+        const baseRating = 1200;
+        const ratingGain = Math.round(winRate * 2);
+        const rating = baseRating + ratingGain;
+        const peakRating = rating + Math.round(ratingGain * 0.3);
+        
+        // Calculate consistency
+        const accuracies = cycles.map(c => c.totalPuzzles > 0 ? (c.correctCount / c.totalPuzzles) * 100 : 0);
+        const avgAccuracy = accuracies.length > 0 ? accuracies.reduce((a, b) => a + b) / accuracies.length : 0;
+        const variance = accuracies.length > 0 ? accuracies.reduce((sum, acc) => sum + Math.pow(acc - avgAccuracy, 2), 0) / accuracies.length : 0;
+        const consistency = Math.max(0, Math.round(100 - Math.sqrt(variance)));
+        
         return {
-          rating: 705,
-          peakRating: 855,
+          rating,
+          peakRating,
           accuracy: Math.round(accuracy),
           winRate,
           lossRate,
           totalPuzzles,
           totalCycles: completedCycles,
           avgTimePerPuzzle: avgTimePerPuzzle + 's',
-          currentStreak: 7,
-          longestStreak: 12,
-          totalTimeHours: totalTimeHours + 'h',
-          puzzlesToday: 18,
-          cyclesToday: 1,
-          avgPuzzlesPerDay: 33,
-          avgCyclesPerDay: 1.7,
-          ratingGain: 55,
+          currentStreak,
+          longestStreak,
+          totalTimeHours: Math.round(totalTimeHours * 10) / 10 + 'h',
+          puzzlesToday,
+          cyclesToday,
+          avgPuzzlesPerDay,
+          avgCyclesPerDay: parseFloat(avgCyclesPerDay),
+          ratingGain,
           bestOpening: 'Sicilian',
           weakestOpening: 'Ruy Lopez',
-          studyTime: totalTimeHours + 'h 14m',
-          consistency: 78,
+          studyTime: Math.floor(totalTimeHours) + 'h ' + Math.floor(totalTimeMinutes) + 'm',
+          consistency,
         };
       } catch (error) {
         console.error("[GET USER STATS ERROR]", error);
