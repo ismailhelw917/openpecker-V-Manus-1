@@ -423,3 +423,25 @@
 - [x] Test navigation on mobile
 - [x] Test training flow on mobile
 - [ ] Publish to live site after mobile fixes
+
+## Low Signup Conversion Investigation (Round 41 - URGENT)
+- [ ] Check registration flow for errors and validation issues
+- [ ] Review browser console logs for registration errors
+- [ ] Test registration form on desktop and mobile
+- [ ] Improve signup CTA messaging and design
+- [ ] Add urgency to landing page (countdown timer, limited spots)
+- [ ] Analyze user journey from home → auth → signup
+- [ ] Check if premium notification displays correctly
+- [ ] Verify email validation isn't blocking signups
+- [ ] Test password requirements clarity
+- [ ] Implement fixes and retest conversion
+
+## Conversion Optimization & Move Validation (Round 42)
+- [x] Add prominent premium CTA banner to home page
+- [x] Add countdown timer showing remaining spots (91/100)
+- [x] Reduce password requirement from 8 to 6 characters
+- [x] Verify move order validation (sequential moves enforced)
+- [x] Verify board rotation for black's turn (working correctly)
+- [ ] Test all changes on dev server
+- [ ] Test on mobile viewport
+- [ ] Deploy to live site

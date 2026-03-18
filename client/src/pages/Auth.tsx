@@ -76,8 +76,8 @@ export default function Auth() {
       return;
     }
 
-    if (registerPassword.length < 8) {
-      toast.error("Password must be at least 8 characters");
+    if (registerPassword.length < 6) {
+      toast.error("Password must be at least 6 characters");
       return;
     }
 
