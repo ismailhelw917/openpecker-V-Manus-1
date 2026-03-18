@@ -33,7 +33,10 @@ function Router() {
 
 function App() {
   const [timeLeft, setTimeLeft] = useState(180);
-  const [showMaintenance, setShowMaintenance] = useState(true);
+  const [showMaintenance, setShowMaintenance] = useState(() => {
+    const stored = localStorage.getItem("openpecker-maintenance");
+    return stored === "true";
+  });
 
   useEffect(() => {
     // Initialize device ID if not already set
@@ -43,6 +46,22 @@ function App() {
       localStorage.setItem("openpecker-device-id", newDeviceId);
     }
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("openpecker-maintenance", showMaintenance.toString());
+  }, [showMaintenance]);
+
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Ctrl+Shift+M to toggle maintenance
+      if (e.ctrlKey && e.shiftKey && e.key === 'M') {
+        e.preventDefault();
+        setShowMaintenance(!showMaintenance);
+      }
+    };
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [showMaintenance]);
 
   useEffect(() => {
     if (!showMaintenance) return;
