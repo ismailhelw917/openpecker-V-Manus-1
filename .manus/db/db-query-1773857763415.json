@@ -1,0 +1,42 @@
+{
+  "query": "SELECT \n  COALESCE(ch.userId, 0) as userId,\n  ch.deviceId,\n  COUNT(*) as totalCycles,\n  SUM(ch.totalPuzzles) as totalPuzzles,\n  SUM(ch.correctCount) as totalCorrect,\n  SUM(ch.totalTimeMs) as totalTimeMs\nFROM cycle_history ch\nGROUP BY COALESCE(ch.userId, 0), ch.deviceId\nORDER BY totalPuzzles DESC\nLIMIT 30;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT \n  COALESCE(ch.userId, 0) as userId,\n  ch.deviceId,\n  COUNT(*) as totalCycles,\n  SUM(ch.totalPuzzles) as totalPuzzles,\n  SUM(ch.correctCount) as totalCorrect,\n  SUM(ch.totalTimeMs) as totalTimeMs\nFROM cycle_history ch\nGROUP BY COALESCE(ch.userId, 0), ch.deviceId\nORDER BY totalPuzzles DESC\nLIMIT 30;",
+  "rows": [
+    {
+      "userId": "750255",
+      "deviceId": "NULL",
+      "totalCycles": "10",
+      "totalPuzzles": "75",
+      "totalCorrect": "55",
+      "totalTimeMs": "900000"
+    },
+    {
+      "userId": "0",
+      "deviceId": "NULL",
+      "totalCycles": "10",
+      "totalPuzzles": "75",
+      "totalCorrect": "55",
+      "totalTimeMs": "900000"
+    },
+    {
+      "userId": "750215",
+      "deviceId": "NULL",
+      "totalCycles": "10",
+      "totalPuzzles": "75",
+      "totalCorrect": "55",
+      "totalTimeMs": "900000"
+    },
+    {
+      "userId": "750380",
+      "deviceId": "NULL",
+      "totalCycles": "10",
+      "totalPuzzles": "75",
+      "totalCorrect": "55",
+      "totalTimeMs": "900000"
+    }
+  ],
+  "messages": [],
+  "stdout": "userId\tdeviceId\ttotalCycles\ttotalPuzzles\ttotalCorrect\ttotalTimeMs\n750255\tNULL\t10\t75\t55\t900000\n0\tNULL\t10\t75\t55\t900000\n750215\tNULL\t10\t75\t55\t900000\n750380\tNULL\t10\t75\t55\t900000\n",
+  "stderr": "",
+  "execution_time_ms": 2159
+}

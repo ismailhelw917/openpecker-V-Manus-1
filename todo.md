@@ -644,3 +644,17 @@
 - [x] Add test event (evt_test_) handling to webhook for verification
 - [x] Add detailed logging to webhook handler (event type, amount, email, userId)
 - [x] Add payment_intent.payment_failed handler for error tracking
+
+## Round 53 - Strenuous Puzzle Solvability Verification (COMPLETED)
+- [x] Investigate puzzle data structure (FEN, moves format, how solution works)
+- [x] Build comprehensive verification script that replays all moves on chess engine (7 tests)
+- [x] Run verification against ALL puzzles in database - 100% pass rate across all categories
+- [x] Report: ALL puzzles solvable. Color field inverted but doesn't affect gameplay
+- [x] Runtime validation not needed - 0 broken puzzles found
+- [x] Write vitest tests for puzzle solvability (7 tests, all passing)
+
+## Round 54 - Multiple Fixes
+- [x] Fix Stripe webhook to handle test events (livemode=false detection added)
+- [x] HTTPS already configured via Manus hosting (openpecker.com served over HTTPS)
+- [x] Show 100 users including guests on leaderboard (SQL-based aggregation)
+- [x] Unmerge the first 3 premium accounts on leaderboard (each shows separately)

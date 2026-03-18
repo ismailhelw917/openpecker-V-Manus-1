@@ -21,22 +21,14 @@ export function Leaderboard() {
     return () => clearInterval(interval);
   }, [refetch]);
 
-  // Deduplicate by name (keep the one with more puzzles) and filter out zero-activity
+  // Show all entries as-is (no deduplication - each user appears separately)
   const displayData = useMemo(() => {
-    const nameMap = new Map<string, any>();
-    for (const entry of leaderboardData) {
-      const key = (entry.name || 'Anonymous').toLowerCase();
-      const existing = nameMap.get(key);
-      if (!existing || entry.totalPuzzles > existing.totalPuzzles) {
-        nameMap.set(key, entry);
-      }
-    }
-    return Array.from(nameMap.values())
-      .filter((u: any) => u.totalPuzzles > 0 || u.completedCycles > 0)
-      .map((user: any, index: number) => ({
-        ...user,
-        rank: index + 1,
-      }));
+    return leaderboardData.map((entry: any, index: number) => ({
+      ...entry,
+      rank: index + 1,
+      // Use uniqueKey from backend for React key
+      key: entry.uniqueKey || `entry-${index}`,
+    }));
   }, [leaderboardData]);
 
   const currentUserId = user?.id;
@@ -90,10 +82,10 @@ export function Leaderboard() {
                   const podiumRank = podiumOrder[i];
                   const isGold = podiumRank === 1;
                   const isSilver = podiumRank === 2;
-                  const isMe = entry.id === currentUserId;
+                  const isMe = entry.id === currentUserId && entry.id > 0;
                   return (
                     <div
-                      key={entry.id}
+                      key={entry.key || entry.uniqueKey || `podium-${i}`}
                       className={`rounded-xl p-4 text-center border-2 transition-all ${
                         isGold
                           ? 'bg-gradient-to-b from-amber-900/40 to-amber-950/20 border-amber-400/60 shadow-lg shadow-amber-400/10 -mt-4'
@@ -131,11 +123,11 @@ export function Leaderboard() {
             {displayData.length >= 1 && (
               <div className="sm:hidden space-y-3 mb-6">
                 {displayData.slice(0, 3).map((entry: any) => {
-                  const isMe = entry.id === currentUserId;
+                  const isMe = entry.id === currentUserId && entry.id > 0;
                   const medal = entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : '🥉';
                   return (
                     <div
-                      key={entry.id}
+                      key={entry.key || entry.uniqueKey || `mobile-top-${entry.rank}`}
                       className={`rounded-xl p-3 border-2 flex items-center gap-3 ${
                         entry.rank === 1
                           ? 'bg-gradient-to-r from-amber-900/40 to-amber-950/20 border-amber-400/60'
@@ -181,10 +173,10 @@ export function Leaderboard() {
                 </thead>
                 <tbody>
                   {displayData.map((entry: any) => {
-                    const isMe = entry.id === currentUserId;
+                    const isMe = entry.id === currentUserId && entry.id > 0;
                     return (
                       <tr
-                        key={entry.id}
+                        key={entry.key || entry.uniqueKey || `row-${entry.rank}`}
                         className={`border-b border-slate-800/50 transition-colors ${
                           isMe
                             ? 'bg-amber-900/20 hover:bg-amber-900/30'
@@ -241,10 +233,10 @@ export function Leaderboard() {
             {/* Mobile List (remaining after top 3) */}
             <div className="sm:hidden space-y-2">
               {displayData.slice(3).map((entry: any) => {
-                const isMe = entry.id === currentUserId;
+                const isMe = entry.id === currentUserId && entry.id > 0;
                 return (
                   <div
-                    key={entry.id}
+                    key={entry.key || entry.uniqueKey || `mobile-${entry.rank}`}
                     className={`rounded-lg p-3 border flex items-center gap-3 ${
                       isMe
                         ? 'bg-amber-900/20 border-amber-400/30'

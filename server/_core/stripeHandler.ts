@@ -111,8 +111,9 @@ export function registerStripeRoutes(app: express.Express) {
         }
 
         // Handle test events for webhook verification
-        if (event.id.startsWith('evt_test_')) {
-          console.log("[Webhook] Test event detected, returning verification response");
+        // Test events can have evt_test_ prefix OR be identified by livemode=false
+        if (event.id.startsWith('evt_test_') || (event as any).livemode === false) {
+          console.log(`[Webhook] Test event detected (${event.type}, id=${event.id}), returning verification response`);
           return res.json({ verified: true });
         }
 

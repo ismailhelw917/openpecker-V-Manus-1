@@ -7,6 +7,7 @@ import { nanoid } from "nanoid";
 import bcrypt from "bcrypt";
 import { sdk } from "./_core/sdk";
 import {
+  getDb,
   getPuzzlesByThemeAndRating,
   getRandomPuzzlesByThemeAndRating,
   getPuzzleById,
@@ -1025,74 +1026,128 @@ export const appRouter = router({
 
     /**
      * Get leaderboard with top users ranked by accuracy and speed
-     * Uses both puzzle_attempts (real-time) and cycle_history (completed cycles) data
+     * Includes both registered users and guests, up to 100 entries
+     * Each user appears separately (no merging)
      */
     getLeaderboard: publicProcedure
       .input(
         z.object({
-          limit: z.number().default(50),
+          limit: z.number().default(100),
           sortBy: z.enum(["accuracy", "speed", "rating"]).default("accuracy"),
         })
       )
       .query(async ({ input }) => {
         try {
-          // Get all users who have actual activity (training sets)
-          const allUsers = await getAllUsers(500);
-          
-          // Process only users who have training sets (active users)
-          const leaderboardData: any[] = [];
-          
-          await Promise.all(
-            allUsers.map(async (user: any) => {
-              // Get real-time stats from puzzle_attempts via training sets
-              const attemptStats = await getPuzzleAttemptStats(user.id, null);
-              const cycles = await getCycleHistoryByUser(user.id, null);
-              
-              // Use attempt stats if available, fall back to cycle stats
-              const totalPuzzles = attemptStats.totalPuzzles > 0 
-                ? attemptStats.totalPuzzles 
-                : cycles.reduce((sum: number, c: any) => sum + c.totalPuzzles, 0);
-              const totalCorrect = attemptStats.totalCorrect > 0 
-                ? attemptStats.totalCorrect 
-                : cycles.reduce((sum: number, c: any) => sum + c.correctCount, 0);
-              const totalTimeMs = attemptStats.totalTimeMs > 0 
-                ? attemptStats.totalTimeMs 
-                : cycles.reduce((sum: number, c: any) => sum + (c.totalTimeMs || 0), 0);
-              
-              // Skip users with no activity at all
-              if (totalPuzzles === 0 && cycles.length === 0) return;
-              
-              const accuracy = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 100) : 0;
-              const avgTimePerPuzzle = totalPuzzles > 0 ? Math.round(totalTimeMs / totalPuzzles / 1000) : 0;
-              const baseRating = 1200;
-              const ratingGain = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 200) : 0;
-              const rating = baseRating + ratingGain;
-              const totalTimeSec = Math.round(totalTimeMs / 1000);
-              const totalTimeMin = Math.round(totalTimeSec / 60);
+          const db = await getDb();
+          if (!db) return [];
 
-              leaderboardData.push({
-                id: user.id,
-                name: user.name || "Anonymous",
-                isPremium: user.isPremium === 1,
-                accuracy,
-                speed: avgTimePerPuzzle,
-                rating,
-                totalPuzzles,
-                totalCorrect,
-                completedCycles: cycles.length,
-                totalTimeMin,
-              });
-            })
-          );
+          // Step 1: Get all users with cycle_history activity (registered + guests)
+          const cycleStats = await db.execute(`
+            SELECT 
+              ch.userId,
+              ch.deviceId,
+              COALESCE(u.name, CONCAT('Guest-', LEFT(ch.deviceId, 8))) as name,
+              COALESCE(u.isPremium, 0) as isPremium,
+              COUNT(*) as completedCycles,
+              SUM(ch.totalPuzzles) as totalPuzzles,
+              SUM(ch.correctCount) as totalCorrect,
+              SUM(ch.totalTimeMs) as totalTimeMs
+            FROM cycle_history ch
+            LEFT JOIN users u ON ch.userId = u.id AND ch.userId IS NOT NULL AND ch.userId > 0
+            WHERE (ch.userId IS NOT NULL AND ch.userId > 0) OR ch.deviceId IS NOT NULL
+            GROUP BY ch.userId, ch.deviceId, COALESCE(u.name, CONCAT('Guest-', LEFT(ch.deviceId, 8))), COALESCE(u.isPremium, 0)
+            ORDER BY totalPuzzles DESC
+            LIMIT 100
+          `) as any;
 
-          // Sort by selected metric
+          const cycleRows = (cycleStats[0] || cycleStats) as any[];
+
+          // Step 2: Also get users with puzzle_attempts but no cycle_history
+          const attemptStats = await db.execute(`
+            SELECT 
+              pa.userId,
+              pa.deviceId,
+              COALESCE(u.name, CONCAT('Guest-', LEFT(pa.deviceId, 8))) as name,
+              COALESCE(u.isPremium, 0) as isPremium,
+              0 as completedCycles,
+              COUNT(*) as totalPuzzles,
+              SUM(pa.isCorrect) as totalCorrect,
+              SUM(pa.timeMs) as totalTimeMs
+            FROM puzzle_attempts pa
+            LEFT JOIN users u ON pa.userId = u.id AND pa.userId IS NOT NULL AND pa.userId > 0
+            WHERE ((pa.userId IS NOT NULL AND pa.userId > 0) OR pa.deviceId IS NOT NULL)
+              AND NOT EXISTS (
+                SELECT 1 FROM cycle_history ch2 
+                WHERE (ch2.userId = pa.userId AND pa.userId > 0) 
+                   OR (ch2.deviceId = pa.deviceId AND pa.deviceId IS NOT NULL)
+              )
+            GROUP BY pa.userId, pa.deviceId, COALESCE(u.name, CONCAT('Guest-', LEFT(pa.deviceId, 8))), COALESCE(u.isPremium, 0)
+            ORDER BY totalPuzzles DESC
+            LIMIT 50
+          `) as any;
+
+          const attemptRows = (attemptStats[0] || attemptStats) as any[];
+
+          // Step 3: Combine all active users
+          const activeEntries = [...cycleRows, ...attemptRows];
+
+          // Step 4: Get remaining registered users (no activity) to fill up to 100
+          const activeUserIds = activeEntries
+            .filter((e: any) => e.userId && Number(e.userId) > 0)
+            .map((e: any) => Number(e.userId));
+
+          let inactiveUsers: any[] = [];
+          if (activeEntries.length < input.limit) {
+            const remaining = input.limit - activeEntries.length;
+            const excludeClause = activeUserIds.length > 0 
+              ? `AND u.id NOT IN (${activeUserIds.join(',')})` 
+              : '';
+            const inactiveResult = await db.execute(`
+              SELECT id as userId, NULL as deviceId, name, isPremium,
+                0 as completedCycles, 0 as totalPuzzles, 0 as totalCorrect, 0 as totalTimeMs
+              FROM users u
+              WHERE u.hasRegistered = 1 ${excludeClause}
+              ORDER BY u.lastSignedIn DESC
+              LIMIT ${remaining}
+            `) as any;
+            inactiveUsers = (inactiveResult[0] || inactiveResult) as any[];
+          }
+
+          // Step 5: Build leaderboard entries
+          const allEntries = [...activeEntries, ...inactiveUsers];
+          const leaderboardData = allEntries.map((row: any) => {
+            const totalPuzzles = Number(row.totalPuzzles || 0);
+            const totalCorrect = Number(row.totalCorrect || 0);
+            const totalTimeMs = Number(row.totalTimeMs || 0);
+            const completedCycles = Number(row.completedCycles || 0);
+            const accuracy = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 100) : 0;
+            const avgTimePerPuzzle = totalPuzzles > 0 ? Math.round(totalTimeMs / totalPuzzles / 1000) : 0;
+            const baseRating = 1200;
+            const ratingGain = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 200) : 0;
+            const rating = baseRating + ratingGain;
+            const totalTimeMin = Math.round(totalTimeMs / 1000 / 60);
+
+            return {
+              id: Number(row.userId || 0),
+              uniqueKey: row.userId && Number(row.userId) > 0 ? `user-${row.userId}` : `guest-${row.deviceId || 'unknown'}`,
+              name: row.name || 'Guest',
+              isPremium: Number(row.isPremium || 0) === 1,
+              accuracy,
+              speed: avgTimePerPuzzle,
+              rating,
+              totalPuzzles,
+              totalCorrect,
+              completedCycles,
+              totalTimeMin,
+            };
+          });
+
+          // Step 6: Sort by selected metric
           const sorted = leaderboardData.sort((a: any, b: any) => {
             if (input.sortBy === "accuracy") {
-              // For accuracy ties, sort by total puzzles (more puzzles = more reliable)
               if (b.accuracy === a.accuracy) return b.totalPuzzles - a.totalPuzzles;
               return b.accuracy - a.accuracy;
             } else if (input.sortBy === "speed") {
-              // For speed, lower is better; filter out 0s (no data)
               if (a.speed === 0) return 1;
               if (b.speed === 0) return -1;
               if (a.speed === b.speed) return b.totalPuzzles - a.totalPuzzles;
@@ -1103,9 +1158,9 @@ export const appRouter = router({
             }
           });
 
-          // Return top N users with rank
-          return sorted.slice(0, input.limit).map((user: any, index: number) => ({
-            ...user,
+          // Return top N with rank
+          return sorted.slice(0, input.limit).map((entry: any, index: number) => ({
+            ...entry,
             rank: index + 1,
           }));
         } catch (error) {
