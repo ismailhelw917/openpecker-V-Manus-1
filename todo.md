@@ -756,3 +756,18 @@
 - [x] Fixed ProAnalytics.tsx to use live data instead of hardcoded values (4→439 users, 3→3 premium, etc.)
 - [x] Fixed SQL column name (lastSignedIn not lastSignInAt) and timestamp comparison
 - [x] Verified endpoint returns correct counts: 439 users, 3 premium, 1 admin, 5 active, 55 sessions
+
+## Round 70 - Leaderboard Enhancements (DONE)
+- [x] Add live users indicator (online now count) to leaderboard header - pulsing green dot
+- [x] Include all 448 registered users in leaderboard (active at top, registered below)
+- [x] Ensure no duplicate entries on leaderboard - merged via openId=device-{deviceId}
+- [x] Test and verify leaderboard displays correctly
+
+## Round 71 - Multiple Changes (DONE)
+- [x] Remove repeat solving from session screen (shows X for 1.2s then advances)
+- [x] Fix leaderboard duplicate (Guest-36PN_RgY merged via openId=device-{deviceId})
+- [x] Create Stripe 70% discount coupon (CHESS70, max 100 uses)
+- [x] Create Stripe 60% discount coupon (CHESS60, max 200 uses)
+- [x] Generate Facebook campaign image for 70% discount with chess visual (gold theme)
+- [x] Generate Facebook campaign image for 60% discount with chess visual (silver theme)
+- [x] Puzzle classification 100% complete (all 5.4M puzzles classified)

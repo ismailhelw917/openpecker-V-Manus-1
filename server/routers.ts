@@ -1124,36 +1124,96 @@ export const appRouter = router({
     getLeaderboard: publicProcedure
       .input(
         z.object({
-          limit: z.number().default(100),
+          limit: z.number().default(500),
           sortBy: z.enum(["accuracy", "speed", "rating"]).default("accuracy"),
         })
       )
       .query(async ({ input }) => {
         try {
           const db = await getDb();
-          if (!db) return [];
+          if (!db) return { entries: [], onlineCount: 0, totalUsers: 0 };
 
-          // Step 1: Get cycle_history stats grouped by userId (for logged-in users)
-          const cycleByUser = await db.execute(`
+          // Get online user count (active in last 15 minutes)
+          const onlineResult = await db.execute(`
+            SELECT COUNT(*) as cnt FROM users 
+            WHERE lastSignedIn >= DATE_SUB(NOW(), INTERVAL 15 MINUTE)
+          `) as any;
+          const onlineRows = (onlineResult[0] || onlineResult) as any[];
+          const onlineCount = Number(onlineRows[0]?.cnt || 0);
+
+          // Get total registered users
+          const totalResult = await db.execute(`SELECT COUNT(*) as cnt FROM users`) as any;
+          const totalRows = (totalResult[0] || totalResult) as any[];
+          const totalUsers = Number(totalRows[0]?.cnt || 0);
+
+          // Step 1: Get all registered users with their puzzle stats
+          // Merge both userId-based AND deviceId-based activity (via openId = 'device-{deviceId}')
+          const allUsersResult = await db.execute(`
             SELECT 
-              ch.userId,
+              u.id as userId,
               u.name,
               u.isPremium,
-              COUNT(*) as completedCycles,
-              SUM(ch.totalPuzzles) as totalPuzzles,
-              SUM(ch.correctCount) as totalCorrect,
-              SUM(ch.totalTimeMs) as totalTimeMs
-            FROM cycle_history ch
-            INNER JOIN users u ON ch.userId = u.id
-            WHERE ch.userId IS NOT NULL AND ch.userId > 0
-            GROUP BY ch.userId, u.name, u.isPremium
-            ORDER BY SUM(ch.totalPuzzles) DESC
-            LIMIT 100
+              u.lastSignedIn,
+              u.createdAt,
+              REPLACE(u.openId, 'device-', '') as linkedDeviceId,
+              COALESCE(ch_uid.completedCycles, 0) + COALESCE(ch_did.completedCycles, 0) as completedCycles,
+              COALESCE(ch_uid.totalPuzzles, 0) + COALESCE(ch_did.totalPuzzles, 0) as chPuzzles,
+              COALESCE(ch_uid.totalCorrect, 0) + COALESCE(ch_did.totalCorrect, 0) as chCorrect,
+              COALESCE(ch_uid.totalTimeMs, 0) + COALESCE(ch_did.totalTimeMs, 0) as chTimeMs,
+              COALESCE(pa_uid.paPuzzles, 0) + COALESCE(pa_did.paPuzzles, 0) as paPuzzles,
+              COALESCE(pa_uid.paCorrect, 0) + COALESCE(pa_did.paCorrect, 0) as paCorrect,
+              COALESCE(pa_uid.paTimeMs, 0) + COALESCE(pa_did.paTimeMs, 0) as paTimeMs
+            FROM users u
+            LEFT JOIN (
+              SELECT userId, COUNT(*) as completedCycles, 
+                     SUM(totalPuzzles) as totalPuzzles, 
+                     SUM(correctCount) as totalCorrect, 
+                     SUM(totalTimeMs) as totalTimeMs
+              FROM cycle_history 
+              WHERE userId IS NOT NULL AND userId > 0
+              GROUP BY userId
+            ) ch_uid ON u.id = ch_uid.userId
+            LEFT JOIN (
+              SELECT deviceId, COUNT(*) as completedCycles, 
+                     SUM(totalPuzzles) as totalPuzzles, 
+                     SUM(correctCount) as totalCorrect, 
+                     SUM(totalTimeMs) as totalTimeMs
+              FROM cycle_history 
+              WHERE (userId IS NULL OR userId = 0)
+                AND deviceId IS NOT NULL AND deviceId != ''
+              GROUP BY deviceId
+            ) ch_did ON REPLACE(u.openId, 'device-', '') = ch_did.deviceId
+            LEFT JOIN (
+              SELECT userId, COUNT(*) as paPuzzles, 
+                     SUM(isCorrect) as paCorrect, 
+                     SUM(timeMs) as paTimeMs
+              FROM puzzle_attempts 
+              WHERE userId IS NOT NULL AND userId > 0
+              GROUP BY userId
+            ) pa_uid ON u.id = pa_uid.userId
+            LEFT JOIN (
+              SELECT deviceId, COUNT(*) as paPuzzles, 
+                     SUM(isCorrect) as paCorrect, 
+                     SUM(timeMs) as paTimeMs
+              FROM puzzle_attempts 
+              WHERE (userId IS NULL OR userId = 0)
+                AND deviceId IS NOT NULL AND deviceId != ''
+              GROUP BY deviceId
+            ) pa_did ON REPLACE(u.openId, 'device-', '') = pa_did.deviceId
+            ORDER BY u.lastSignedIn DESC
           `) as any;
-          const cycleUserRows = (cycleByUser[0] || cycleByUser) as any[];
+          const allUserRows = (allUsersResult[0] || allUsersResult) as any[];
 
-          // Step 2: Get cycle_history stats grouped by deviceId (for guests only)
-          const cycleByDevice = await db.execute(`
+          // Collect all deviceIds that are linked to registered users
+          const linkedDeviceIds = new Set<string>();
+          for (const row of allUserRows) {
+            const did = row.linkedDeviceId;
+            if (did && did !== '') linkedDeviceIds.add(did);
+          }
+
+          // Step 2: Get ONLY truly orphaned guest entries (deviceId not linked to any registered user)
+          // This prevents duplicates where a guest later registered
+          const guestCycleResult = await db.execute(`
             SELECT 
               ch.deviceId,
               CONCAT('Guest-', LEFT(ch.deviceId, 8)) as name,
@@ -1165,36 +1225,16 @@ export const appRouter = router({
             FROM cycle_history ch
             WHERE (ch.userId IS NULL OR ch.userId = 0)
               AND ch.deviceId IS NOT NULL AND ch.deviceId != ''
+              AND NOT EXISTS (
+                SELECT 1 FROM users u2 WHERE u2.openId = CONCAT('device-', ch.deviceId)
+              )
             GROUP BY ch.deviceId
             ORDER BY SUM(ch.totalPuzzles) DESC
             LIMIT 50
           `) as any;
-          const cycleDeviceRows = (cycleByDevice[0] || cycleByDevice) as any[];
+          const guestCycleRows = (guestCycleResult[0] || guestCycleResult) as any[];
 
-          // Step 3: Get puzzle_attempts stats for users NOT in cycle_history
-          const attemptByUser = await db.execute(`
-            SELECT 
-              pa.userId,
-              u.name,
-              u.isPremium,
-              0 as completedCycles,
-              COUNT(*) as totalPuzzles,
-              SUM(pa.isCorrect) as totalCorrect,
-              SUM(pa.timeMs) as totalTimeMs
-            FROM puzzle_attempts pa
-            INNER JOIN users u ON pa.userId = u.id
-            WHERE pa.userId IS NOT NULL AND pa.userId > 0
-              AND NOT EXISTS (
-                SELECT 1 FROM cycle_history ch2 WHERE ch2.userId = pa.userId
-              )
-            GROUP BY pa.userId, u.name, u.isPremium
-            ORDER BY COUNT(*) DESC
-            LIMIT 50
-          `) as any;
-          const attemptUserRows = (attemptByUser[0] || attemptByUser) as any[];
-
-          // Step 4: Get puzzle_attempts stats for guest devices NOT in cycle_history
-          const attemptByDevice = await db.execute(`
+          const guestAttemptResult = await db.execute(`
             SELECT 
               pa.deviceId,
               CONCAT('Guest-', LEFT(pa.deviceId, 8)) as name,
@@ -1207,6 +1247,9 @@ export const appRouter = router({
             WHERE (pa.userId IS NULL OR pa.userId = 0)
               AND pa.deviceId IS NOT NULL AND pa.deviceId != ''
               AND NOT EXISTS (
+                SELECT 1 FROM users u2 WHERE u2.openId = CONCAT('device-', pa.deviceId)
+              )
+              AND NOT EXISTS (
                 SELECT 1 FROM cycle_history ch2 
                 WHERE ch2.deviceId = pa.deviceId AND ch2.deviceId IS NOT NULL AND ch2.deviceId != ''
               )
@@ -1214,41 +1257,69 @@ export const appRouter = router({
             ORDER BY COUNT(*) DESC
             LIMIT 50
           `) as any;
-          const attemptDeviceRows = (attemptByDevice[0] || attemptByDevice) as any[];
+          const guestAttemptRows = (guestAttemptResult[0] || guestAttemptResult) as any[];
 
-          // Step 5: Combine and deduplicate
+          // Step 3: Build entries from all registered users
           const seenUserIds = new Set<number>();
-          const seenDeviceIds = new Set<string>();
-          const activeEntries: any[] = [];
+          const entries: any[] = [];
 
-          // Process user-based entries first (higher priority)
-          for (const row of [...cycleUserRows, ...attemptUserRows]) {
+          for (const row of allUserRows) {
             const uid = Number(row.userId || 0);
             if (uid > 0 && !seenUserIds.has(uid)) {
               seenUserIds.add(uid);
-              activeEntries.push({ ...row, userId: uid, deviceId: null, source: 'user' });
+              // Use cycle_history data if available, otherwise puzzle_attempts
+              const completedCycles = Number(row.completedCycles || 0);
+              const totalPuzzles = completedCycles > 0 
+                ? Number(row.chPuzzles || 0) 
+                : Number(row.paPuzzles || 0);
+              const totalCorrect = completedCycles > 0 
+                ? Number(row.chCorrect || 0) 
+                : Number(row.paCorrect || 0);
+              const totalTimeMs = completedCycles > 0 
+                ? Number(row.chTimeMs || 0) 
+                : Number(row.paTimeMs || 0);
+
+              entries.push({
+                userId: uid,
+                name: row.name || 'Guest',
+                isPremium: Number(row.isPremium || 0),
+                completedCycles,
+                totalPuzzles,
+                totalCorrect,
+                totalTimeMs,
+                hasActivity: totalPuzzles > 0,
+                lastSignedIn: row.lastSignedIn,
+              });
             }
           }
 
-          // Then device-based entries (guests)
-          for (const row of [...cycleDeviceRows, ...attemptDeviceRows]) {
+          // Step 4: Add guest entries
+          const seenDeviceIds = new Set<string>();
+          for (const row of [...guestCycleRows, ...guestAttemptRows]) {
             const did = row.deviceId || '';
             if (did && !seenDeviceIds.has(did)) {
               seenDeviceIds.add(did);
-              activeEntries.push({ ...row, userId: 0, source: 'device' });
+              entries.push({
+                userId: 0,
+                deviceId: did,
+                name: row.name || 'Guest',
+                isPremium: 0,
+                completedCycles: Number(row.completedCycles || 0),
+                totalPuzzles: Number(row.totalPuzzles || 0),
+                totalCorrect: Number(row.totalCorrect || 0),
+                totalTimeMs: Number(row.totalTimeMs || 0),
+                hasActivity: true,
+                lastSignedIn: null,
+              });
             }
           }
 
-          // Step 6: Only show users/guests who have actual puzzle activity
-          // Don't fill with inactive users who have 0 puzzles - keeps leaderboard meaningful
-
-          // Step 7: Build leaderboard entries
-          const allEntries = activeEntries;
-          const leaderboardData = allEntries.map((row: any) => {
-            const totalPuzzles = Number(row.totalPuzzles || 0);
-            const totalCorrect = Number(row.totalCorrect || 0);
-            const totalTimeMs = Number(row.totalTimeMs || 0);
-            const completedCycles = Number(row.completedCycles || 0);
+          // Step 5: Build leaderboard entries with computed stats
+          const leaderboardData = entries.map((row: any) => {
+            const totalPuzzles = row.totalPuzzles;
+            const totalCorrect = row.totalCorrect;
+            const totalTimeMs = row.totalTimeMs;
+            const completedCycles = row.completedCycles;
             const accuracy = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 100) : 0;
             const avgTimePerPuzzle = totalPuzzles > 0 ? Math.round(totalTimeMs / totalPuzzles / 1000) : 0;
             const baseRating = 1200;
@@ -1257,10 +1328,10 @@ export const appRouter = router({
             const totalTimeMin = Math.round(totalTimeMs / 1000 / 60);
 
             return {
-              id: Number(row.userId || 0),
-              uniqueKey: row.userId && Number(row.userId) > 0 ? `user-${row.userId}` : `guest-${row.deviceId || 'unknown'}`,
-              name: row.name || 'Guest',
-              isPremium: Number(row.isPremium || 0) === 1,
+              id: row.userId,
+              uniqueKey: row.userId > 0 ? `user-${row.userId}` : `guest-${row.deviceId || 'unknown'}`,
+              name: row.name,
+              isPremium: Number(row.isPremium) === 1,
               accuracy,
               speed: avgTimePerPuzzle,
               rating,
@@ -1268,11 +1339,15 @@ export const appRouter = router({
               totalCorrect,
               completedCycles,
               totalTimeMin,
+              hasActivity: row.hasActivity,
             };
           });
 
-          // Step 8: Sort by selected metric
-          const sorted = leaderboardData.sort((a: any, b: any) => {
+          // Step 6: Sort - active users first (by selected metric), then inactive users (by name)
+          const activeUsers = leaderboardData.filter((e: any) => e.hasActivity);
+          const inactiveUsers = leaderboardData.filter((e: any) => !e.hasActivity);
+
+          activeUsers.sort((a: any, b: any) => {
             if (input.sortBy === "accuracy") {
               if (b.accuracy === a.accuracy) return b.totalPuzzles - a.totalPuzzles;
               return b.accuracy - a.accuracy;
@@ -1287,14 +1362,25 @@ export const appRouter = router({
             }
           });
 
-          // Return top N with rank
-          return sorted.slice(0, input.limit).map((entry: any, index: number) => ({
+          // Inactive users sorted alphabetically by name
+          inactiveUsers.sort((a: any, b: any) => a.name.localeCompare(b.name));
+
+          const combined = [...activeUsers, ...inactiveUsers];
+
+          // Return with rank and metadata
+          const rankedEntries = combined.slice(0, input.limit).map((entry: any, index: number) => ({
             ...entry,
             rank: index + 1,
           }));
+
+          return {
+            entries: rankedEntries,
+            onlineCount,
+            totalUsers,
+          };
         } catch (error) {
           console.error("[GET LEADERBOARD ERROR]", error);
-          return [];
+          return { entries: [], onlineCount: 0, totalUsers: 0 };
         }
     }),
   }),

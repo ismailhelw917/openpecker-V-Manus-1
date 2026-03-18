@@ -1,0 +1,18 @@
+{
+  "query": "SELECT 'cycle_history' as source, COUNT(*) as cnt FROM cycle_history WHERE userId = 751535 OR deviceId LIKE '36PN%'\nUNION ALL\nSELECT 'puzzle_attempts', COUNT(*) FROM puzzle_attempts WHERE userId = 751535 OR deviceId LIKE '36PN%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT 'cycle_history' as source, COUNT(*) as cnt FROM cycle_history WHERE userId = 751535 OR deviceId LIKE '36PN%'\nUNION ALL\nSELECT 'puzzle_attempts', COUNT(*) FROM puzzle_attempts WHERE userId = 751535 OR deviceId LIKE '36PN%';",
+  "rows": [
+    {
+      "source": "puzzle_attempts",
+      "cnt": "1"
+    },
+    {
+      "source": "cycle_history",
+      "cnt": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "source\tcnt\npuzzle_attempts\t1\ncycle_history\t0\n",
+  "stderr": "",
+  "execution_time_ms": 1600
+}

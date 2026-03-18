@@ -541,7 +541,8 @@ export default function Session() {
         }
       } else {
         // ===== WRONG MOVE (but legal) =====
-        // FIX #4: The move stays on the board briefly so the user sees it, then undo
+        // Lock the board immediately so the puzzle can't be replayed
+        setSolved(true);
 
         // Record incorrect attempt
         const puzzleTimeMs = Date.now() - puzzleStartTime;
@@ -549,20 +550,12 @@ export default function Session() {
 
         // Show wrong X watermark
         setShowWrongX(true);
-        safePuzzleTimeout(() => setShowWrongX(false), 1000);
+        safePuzzleTimeout(() => setShowWrongX(false), 1200);
 
-        // After a brief pause showing the wrong move, undo and auto-solve
+        // After showing the wrong move briefly, advance to next puzzle
         safePuzzleTimeout(() => {
-          // Undo the wrong move
-          game.undo();
-          setGameFen(game.fen());
-          setCaptureAnimation(null);
-
-          // Reset to puzzle start position and auto-solve
-          safePuzzleTimeout(() => {
-            autoSolvePuzzle(currentPuzzle, movesList);
-          }, 300);
-        }, 800);
+          advanceToNextPuzzle();
+        }, 1500);
       }
 
       return true;
