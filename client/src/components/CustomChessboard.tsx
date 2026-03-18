@@ -57,7 +57,6 @@ const DroppableSquare = ({ squareName, isDark, children, onDrop, boardColors }: 
       onClick={() => onDrop(squareName)}
     >
       {children}
-      <span className="absolute bottom-0 right-0 text-[8px] text-black/30">{squareName}</span>
     </div>
   );
 };
