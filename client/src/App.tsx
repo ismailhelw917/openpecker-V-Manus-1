@@ -11,6 +11,7 @@ import SavedSets from "./pages/SavedSets";
 import Stats from "./pages/Stats";
 import Settings from "./pages/Settings";
 import Session from "./pages/Session";
+import Auth from "./pages/Auth";
 
 function Router() {
   return (
@@ -21,6 +22,7 @@ function Router() {
       <Route path={"/stats"} component={Stats} />
       <Route path={"/settings"} component={Settings} />
       <Route path={"/session/:id"} component={Session} />
+      <Route path={"/auth"} component={Auth} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
