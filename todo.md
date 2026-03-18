@@ -621,3 +621,9 @@
 - [x] Fix footer/navigation bar missing from mobile website
 - [x] Show BottomNav for all users (authenticated and anonymous)
 - [x] Test on mobile and desktop viewports
+
+
+## Round 49 - Invalid Move Error Regression Fix
+- [x] Fix "Invalid move" error thrown when dragging piece to illegal square
+- [x] Ensure chess.move() errors are caught gracefully in both Session.tsx and CustomChessboard.tsx
+- [x] Test move validation with legal and illegal moves (11 tests passing)

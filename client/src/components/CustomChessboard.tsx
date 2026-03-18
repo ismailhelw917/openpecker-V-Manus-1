@@ -178,6 +178,12 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
     setActivePiece(null);
     setActiveSquare(null);
     const { active, over } = event;
+    
+    // Safety check: ensure we have valid drag data
+    if (!active?.data?.current?.piece || !over) {
+      return false;
+    }
+    
     const piece = active.data.current.piece;
     const currentTurn = game.turn();
     
@@ -186,17 +192,28 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
       return false;
     }
     
-    console.log('Drag end details:', { 
-      activeId: active?.id, 
-      overId: over?.id,
-      orientation,
-      squares: squares.map(s => getSquareName(s.r, s.c))
-    });
-    if (over && active.id !== over.id) {
-      const result = await onPieceDrop?.(active.id, over.id);
-      return result || false;
+    // Don't process if dropped on same square
+    if (active.id === over.id) {
+      return false;
     }
-    return false;
+    
+    // Pre-validate: check if the piece actually exists on the source square
+    const sourcePiece = game.get(active.id as any);
+    if (!sourcePiece) {
+      console.log('No piece found on source square during drag end:', active.id);
+      return false;
+    }
+    
+    // Pre-validate: check if the move is legal
+    const legalMoves = game.moves({ square: active.id as any, verbose: true });
+    const isLegal = legalMoves.some((m: any) => m.to === over.id);
+    if (!isLegal) {
+      console.log('Illegal move rejected in chessboard:', active.id, '->', over.id);
+      return false;
+    }
+    
+    const result = await onPieceDrop?.(active.id, over.id);
+    return result || false;
   };
 
   return (

@@ -241,9 +241,26 @@ export default function Session() {
     if (!currentPuzzle?.fen) return false;
 
     try {
-      // Use the current puzzle's FEN directly to avoid race conditions
-      const game = new Chess(currentPuzzle.fen);
-      console.log('Attempting move:', { sourceSquare, targetSquare, fen: currentPuzzle.fen, legalMoves: game.moves() });
+      // Use the current displayed FEN (fen state) to match what the user sees on the board
+      const currentFen = fen || currentPuzzle.fen;
+      const game = new Chess(currentFen);
+      
+      // Pre-validate: check if source square has a piece
+      const piece = game.get(sourceSquare as any);
+      if (!piece) {
+        console.log('No piece on source square:', sourceSquare);
+        return false;
+      }
+      
+      // Pre-validate: check if the move is in the list of legal moves
+      const legalMoves = game.moves({ square: sourceSquare as any, verbose: true });
+      const isLegal = legalMoves.some((m: any) => m.to === targetSquare);
+      if (!isLegal) {
+        console.log('Illegal move attempted:', { from: sourceSquare, to: targetSquare, legalMoves: legalMoves.map((m: any) => m.to) });
+        return false;
+      }
+      
+      console.log('Attempting move:', { sourceSquare, targetSquare, fen: currentFen });
       
       let result = null;
       try {
@@ -255,19 +272,21 @@ export default function Session() {
         
         // Check if target square is on promotion rank (8th for white, 1st for black)
         const targetRank = parseInt(targetSquare[1]);
-        if (targetRank === 8 || targetRank === 1) {
+        const isPawn = piece.type === 'p';
+        if (isPawn && (targetRank === 8 || targetRank === 1)) {
           moveObj.promotion = "q";
         }
         
         result = game.move(moveObj);
       } catch (e) {
-        console.error("Move error:", e);
+        // This should rarely happen now due to pre-validation above
+        console.log("Move rejected by chess engine:", sourceSquare, "->", targetSquare);
         return false;
       }
 
       // If move is illegal, return false silently (no error toast)
       if (!result) {
-        console.log('Illegal move attempted:', { from: sourceSquare, to: targetSquare, fen: currentPuzzle.fen });
+        console.log('Move returned null:', { from: sourceSquare, to: targetSquare });
         return false;
       }
 
@@ -459,7 +478,11 @@ export default function Session() {
                 const promotion = expectedMove.length > 4 ? expectedMove[4] : undefined;
                 
                 try {
-                  const moveResult = game.move({ from, to, promotion: promotion || 'q' });
+                  const moveObj: any = { from, to };
+                  if (promotion) {
+                    moveObj.promotion = promotion;
+                  }
+                  const moveResult = game.move(moveObj);
                   if (moveResult) {
                     // Show animation for this move
                     setAutoSolveMove({ from, to });
@@ -475,11 +498,11 @@ export default function Session() {
                       setTimeout(playNextMove, delayPerMove * 0.3);
                     }, delayPerMove * 0.7);
                   } else {
-                    console.error("Failed to play move:", expectedMove);
+                    console.log("Failed to play auto-solve move:", expectedMove);
                     setIsAutoSolving(false);
                   }
                 } catch (e) {
-                  console.error("Error playing move:", e);
+                  console.log("Error playing auto-solve move:", e);
                   setIsAutoSolving(false);
                 }
               };
