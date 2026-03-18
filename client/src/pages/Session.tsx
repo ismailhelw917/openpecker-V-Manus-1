@@ -175,7 +175,9 @@ export default function Session() {
   // Determine board orientation based on whose turn it is
   const gameForOrientation = new Chess(currentPuzzle?.fen || fen);
   const isWhiteTurn = gameForOrientation.turn() === 'w';
+  // Board should show the player's perspective - if it's white's turn, show from white's side, etc.
   const boardOrientation = isWhiteTurn ? 'white' : 'black';
+  console.log('Turn detection:', { turn: gameForOrientation.turn(), isWhiteTurn, boardOrientation });
 
   // Format time display
   const formatTime = (seconds: number) => {

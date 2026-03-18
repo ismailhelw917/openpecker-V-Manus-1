@@ -1,0 +1,25 @@
+{
+  "query": "SELECT id, fen, moves FROM puzzles LIMIT 3",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT id, fen, moves FROM puzzles LIMIT 3",
+  "rows": [
+    {
+      "id": "00008",
+      "fen": "r6k/pp2r2p/4Rp1Q/3p4/8/1N1P2R1/PqP2bPP/7K b - - 0 24",
+      "moves": "f2g3 e6e7 b2b1 b3c1 b1c1 h6c1"
+    },
+    {
+      "id": "0000D",
+      "fen": "5rk1/1p3ppp/pq3b2/8/8/1P1Q1N2/P4PPP/3R2K1 w - - 2 27",
+      "moves": "d3d6 f8d8 d6d8 f6d8"
+    },
+    {
+      "id": "0008Q",
+      "fen": "8/4R3/1p2P3/p4r2/P6p/1P3Pk1/4K3/8 w - - 1 64",
+      "moves": "e7f7 f5e5 e2f1 e5e6"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tfen\tmoves\n00008\tr6k/pp2r2p/4Rp1Q/3p4/8/1N1P2R1/PqP2bPP/7K b - - 0 24\tf2g3 e6e7 b2b1 b3c1 b1c1 h6c1\n0000D\t5rk1/1p3ppp/pq3b2/8/8/1P1Q1N2/P4PPP/3R2K1 w - - 2 27\td3d6 f8d8 d6d8 f6d8\n0008Q\t8/4R3/1p2P3/p4r2/P6p/1P3Pk1/4K3/8 w - - 1 64\te7f7 f5e5 e2f1 e5e6\n",
+  "stderr": "",
+  "execution_time_ms": 1663
+}

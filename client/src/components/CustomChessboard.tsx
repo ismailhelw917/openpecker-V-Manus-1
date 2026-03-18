@@ -34,7 +34,7 @@ const DraggablePiece = ({ piece, squareName }: { piece: any; squareName: string 
       {...listeners}
       {...attributes}
       draggable="false"
-      src={`https://lichess1.org/assets/piece/cburnett/${piece.color}${piece.type.toUpperCase()}.svg`}
+      src={`https://chess1.org/assets/piece/cburnett/${piece.color}${piece.type.toUpperCase()}.svg`}
       alt={`${piece.color}${piece.type}`}
       className={`w-full h-full p-1 cursor-grab transition-none relative z-10 ${isDragging ? 'opacity-0' : 'opacity-100'}`}
       style={{ ...style, touchAction: 'none' }}
@@ -102,6 +102,10 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
   }, [orientation]);
 
   const getSquareName = (r: number, c: number) => {
+    if (orientation === 'black') {
+      // For black orientation, reverse both rank and file for 180° rotation
+      return `${String.fromCharCode(97 + (7 - c))}${r + 1}`;
+    }
     return `${String.fromCharCode(97 + c)}${8 - r}`;
   };
 
@@ -208,7 +212,7 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
       <DragOverlay>
         {activePiece ? (
           <img
-            src={`https://lichess1.org/assets/piece/cburnett/${activePiece.color}${activePiece.type.toUpperCase()}.svg`}
+            src={`https://chess1.org/assets/piece/cburnett/${activePiece.color}${activePiece.type.toUpperCase()}.svg`}
             alt={`${activePiece.color}${activePiece.type}`}
             className="w-full h-full p-1 cursor-grabbing transition-none"
             draggable="false"

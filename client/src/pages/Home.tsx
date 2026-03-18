@@ -112,7 +112,7 @@ export default function Home() {
         <Card className="bg-teal-50 border-teal-200 p-4">
           <h3 className="text-teal-700 font-bold mb-2 text-sm md:text-base">📚 5.8M Puzzles</h3>
           <p className="text-slate-700 text-sm">
-            Train with thousands of opening variations from Lichess
+            Train with thousands of opening variations from chess
           </p>
         </Card>
         <Card className="bg-teal-50 border-teal-200 p-4">
