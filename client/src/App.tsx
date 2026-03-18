@@ -43,8 +43,7 @@ function App() {
     return stored === "true";
   });
   const [giftPremiumDismissed, setGiftPremiumDismissed] = useState(false);
-  const [isFirstHundred, setIsFirstHundred] = useState(false);
-  const { isAuthenticated, loading, user } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
 
   useEffect(() => {
     // Initialize device ID if not already set
@@ -54,16 +53,6 @@ function App() {
       localStorage.setItem("openpecker-device-id", newDeviceId);
     }
   }, []);
-
-  // Check if user is within first 100 users
-  useEffect(() => {
-    if (isAuthenticated && user && !loading) {
-      // Check if user ID is within first 100 (ID 1-100)
-      if (user.id && user.id <= 100) {
-        setIsFirstHundred(true);
-      }
-    }
-  }, [isAuthenticated, user, loading]);
 
   useEffect(() => {
     localStorage.setItem("openpecker-maintenance", showMaintenance.toString());
@@ -124,7 +113,7 @@ function App() {
               </div>
             </div>
           )}
-          {showGiftPremium && !giftPremiumDismissed && isAuthenticated && !loading && isFirstHundred && (
+          {showGiftPremium && !giftPremiumDismissed && (
             <div className="fixed top-0 left-0 right-0 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-900 font-bold text-center py-4 z-40 animate-pulse shadow-lg">
               <div className="flex items-center justify-center gap-2">
                 <span>🎉 First 100 users to sign up get FREE lifetime premium! You're one of them! 🎉</span>
