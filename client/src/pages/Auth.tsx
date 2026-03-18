@@ -108,7 +108,7 @@ export default function Auth() {
       <Card className="bg-slate-900/20 border-teal-900/20 w-full max-w-md p-8 backdrop-blur-sm">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-teal-900/40 to-slate-900/40 rounded-lg p-2 backdrop-blur-sm">
+          <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-teal-900/40 to-slate-900/40 rounded-lg p-2 backdrop-blur-sm border-2 border-amber-400/70 shadow-lg shadow-amber-400/20">
             <img
               src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/openpecker-logo-UbbhKD7VjajRRYYwpnAd2y.webp"
               alt="OpenPecker Logo"
