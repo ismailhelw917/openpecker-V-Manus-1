@@ -22,6 +22,27 @@ export default function Session() {
   const [targetCycles, setTargetCycles] = useState(3);
   const [boardSize, setBoardSize] = useState(400);
   const [captureSquare, setCaptureSquare] = useState<string | null>(null);
+  
+  // Calculate responsive board size
+  useEffect(() => {
+    const calculateBoardSize = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      
+      // For mobile (< 640px width), use 90% of viewport width minus padding
+      if (width < 640) {
+        const mobileSize = Math.min(width - 32, height - 280);
+        setBoardSize(Math.max(mobileSize, 250));
+      } else {
+        // For desktop, use fixed size
+        setBoardSize(400);
+      }
+    };
+    
+    calculateBoardSize();
+    window.addEventListener("resize", calculateBoardSize);
+    return () => window.removeEventListener("resize", calculateBoardSize);
+  }, []);
   const [autoSolveMove, setAutoSolveMove] = useState<{ from: string; to: string } | null>(null);
   const [isAutoSolving, setIsAutoSolving] = useState(false);
   const [autoNextCountdown, setAutoNextCountdown] = useState<number | null>(null);
@@ -32,6 +53,7 @@ export default function Session() {
   const [sessionTime, setSessionTime] = useState(0);
   const [showCorrectCheckmark, setShowCorrectCheckmark] = useState(false);
   const [showWrongX, setShowWrongX] = useState(false);
+  const [currentMoveIndex, setCurrentMoveIndex] = useState(0); // Track which move in the sequence
 
   // Board theme definitions
   const themeColors = {
@@ -208,10 +230,9 @@ export default function Session() {
         movesList = currentPuzzle.moves.split(' ').filter((m: string) => m.length > 0);
       }
       
-      const expectedMove = movesList[0];
+      const expectedMove = movesList[currentMoveIndex];
       const moveUCI = `${result.from}${result.to}${result.promotion || ""}`;
-
-      console.log('Move validation:', { expectedMove, moveUCI, movesList, puzzleId: currentPuzzle.id });
+      console.log('Move validation:', { currentMoveIndex, expectedMove, moveUCI, totalMoves: movesList.length, puzzleId: currentPuzzle.id });
 
       if (expectedMove === moveUCI) {
         setCorrectCount((prev) => prev + 1);

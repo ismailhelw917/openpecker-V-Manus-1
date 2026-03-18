@@ -405,3 +405,21 @@
 - [ ] Verify success rate, puzzles solved, accuracy calculations
 - [ ] Test data flow from Sessions → Sets → Stats
 - [ ] Deploy fixes to live site
+
+## Multi-Move Solution Validation Fix (Round 39)
+- [ ] Add move sequence tracking state to Session.tsx
+- [ ] Fix move validation to check sequential moves, not just first move
+- [ ] Prevent users from skipping moves in multi-move solutions
+- [ ] Test with 2-move, 3-move, and 4+ move puzzles
+- [ ] Verify incorrect intermediate moves trigger auto-solve
+- [ ] Deploy fix to live site
+
+## PRIORITY: Mobile Optimization (Round 40 - HIGHEST PRIORITY)
+- [x] Fix session screen chessboard to fit mobile viewport
+- [x] Optimize board sizing for small screens (iPhone, Android)
+- [x] Test touch interactions on mobile
+- [x] Verify all UI elements are mobile-responsive
+- [x] Test premium banner on mobile
+- [x] Test navigation on mobile
+- [x] Test training flow on mobile
+- [ ] Publish to live site after mobile fixes
