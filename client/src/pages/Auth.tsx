@@ -89,7 +89,11 @@ export default function Auth() {
       });
 
       if (result.success) {
-        toast.success("Account created! You can now sign in.");
+        if (result.isPremium) {
+          toast.success("🎉 Welcome! You've been granted FREE lifetime premium!");
+        } else {
+          toast.success("Account created! You can now sign in.");
+        }
         setMode("login");
         setRegisterName("");
         setRegisterEmail("");

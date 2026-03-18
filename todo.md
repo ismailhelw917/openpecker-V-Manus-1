@@ -338,3 +338,11 @@
 - [x] Banner now controlled by database global settings (showGiftPremiumBanner flag)
 - [x] Verified banner displays correctly on dev server with global settings
 - [x] Ready to deploy to live site
+
+## Auto-Premium for First 100 Signups (Round 31 - Feature)
+- [x] Update register procedure to auto-grant premium to first 100 users
+- [x] Check user count during registration and set isPremium flag
+- [x] Add welcome watermark message showing premium grant notification
+- [x] Display "🎉 Welcome! You've been granted FREE lifetime premium!" toast on signup
+- [x] Verified auto-premium logic works on dev server
+- [x] Ready to deploy to live site

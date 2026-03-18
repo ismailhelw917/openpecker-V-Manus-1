@@ -129,6 +129,11 @@ export const appRouter = router({
 
           // Create new user with unique openId
           const openId = `local_${nanoid()}`;
+          
+          // Check if this is within first 100 users
+          const totalUsers = await countTotalUsers();
+          const isPremium = totalUsers < 100 ? 1 : 0;
+          
           const newUser = {
             openId,
             name: input.name,
@@ -136,6 +141,7 @@ export const appRouter = router({
             passwordHash,
             loginMethod: "email",
             role: "user" as const,
+            isPremium,
           };
 
           await upsertUser(newUser);
@@ -143,6 +149,7 @@ export const appRouter = router({
           return {
             success: true,
             message: "Account created successfully. Please sign in.",
+            isPremium: isPremium === 1,
           };
         } catch (error) {
           console.error("[Registration] Error:", error);
