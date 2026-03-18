@@ -196,6 +196,7 @@ export default function Session() {
     try {
       // Use the current puzzle's FEN directly to avoid race conditions
       const game = new Chess(currentPuzzle.fen);
+      console.log('Attempting move:', { sourceSquare, targetSquare, fen: currentPuzzle.fen, legalMoves: game.moves() });
       
       let result = null;
       try {

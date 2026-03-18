@@ -110,18 +110,19 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
   }, [orientation]);
 
   const getSquareName = (r: number, c: number) => {
-    // Standard chess board coordinates: a-h (files), 1-8 (ranks)
-    // r=0 is top, r=7 is bottom; c=0 is left, c=7 is right
-    const file = String.fromCharCode(97 + c); // a-h
-    const rank = 8 - r; // 8-1 (top to bottom)
+    // Chess.js board[r][c]: r=0 is rank 8, r=7 is rank 1
+    // Standard algebraic notation: a-h (files), 1-8 (ranks)
     
     if (orientation === 'black') {
-      // For black orientation, flip both file and rank for 180 rotation
-      const flippedFile = String.fromCharCode(97 + (7 - c)); // h-a
-      const flippedRank = r + 1; // 1-8 (bottom to top)
-      return `${flippedFile}${flippedRank}`;
+      // Black orientation: 180 degree rotation
+      const file = String.fromCharCode(97 + (7 - c)); // h-a
+      const rank = r + 1; // 1-8 (from bottom to top)
+      return `${file}${rank}`;
     }
     
+    // White orientation: standard mapping
+    const file = String.fromCharCode(97 + c); // a-h
+    const rank = 8 - r; // 8-1 (from top to bottom)
     return `${file}${rank}`;
   };
 
