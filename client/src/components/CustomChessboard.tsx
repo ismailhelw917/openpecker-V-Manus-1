@@ -118,6 +118,7 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
 
   const handleSquareClick = (squareName: string) => {
     const piece = game.get(squareName as any);
+    const currentTurn = game.turn();
     
     if (selectedSquare) {
       const moves = game.moves({ square: selectedSquare as any, verbose: true });
@@ -127,22 +128,32 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
         onPieceDrop?.(selectedSquare, squareName);
         setSelectedSquare(null);
       } else {
-        if (piece && piece.color === game.turn()) {
+        // Only allow selecting pieces of the current player
+        if (piece && piece.color === currentTurn) {
           setSelectedSquare(squareName);
         } else {
           setSelectedSquare(null);
         }
       }
     } else {
-      if (piece && piece.color === game.turn()) {
+      // Only allow selecting pieces of the current player
+      if (piece && piece.color === currentTurn) {
         setSelectedSquare(squareName);
       }
     }
   };
 
   const handleDragStart = (event: any) => {
+    const piece = event.active.data.current.piece;
+    const currentTurn = game.turn();
+    
+    // Prevent dragging pieces that don't belong to the current player
+    if (piece.color !== currentTurn) {
+      return;
+    }
+    
     console.log('Drag start:', event);
-    setActivePiece(event.active.data.current.piece);
+    setActivePiece(piece);
     setActiveSquare(event.active.id);
   };
 
@@ -150,6 +161,14 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
     setActivePiece(null);
     setActiveSquare(null);
     const { active, over } = event;
+    const piece = active.data.current.piece;
+    const currentTurn = game.turn();
+    
+    // Prevent moves from pieces that don't belong to the current player
+    if (piece.color !== currentTurn) {
+      return false;
+    }
+    
     console.log('Drag end details:', { 
       activeId: active?.id, 
       overId: over?.id,

@@ -66,20 +66,7 @@ export default function Home() {
           Master opening tactics through deliberate repetition.
         </p>
 
-        {/* Premium Offer Banner */}
-        {!isAuthenticated && (
-          <div className="w-full max-w-sm mb-6 bg-gradient-to-r from-amber-400 to-amber-500 rounded-lg p-4 border-2 border-amber-600 shadow-lg">
-            <p className="text-amber-900 font-bold text-sm mb-2">🎉 LIMITED TIME OFFER</p>
-            <p className="text-amber-900 font-bold text-lg mb-1">Get FREE Lifetime Premium</p>
-            <p className="text-amber-800 text-xs mb-3">First 100 users only • {remainingSpots} spots remaining</p>
-            <Button
-              onClick={() => setLocation("/auth")}
-              className="w-full bg-amber-900 hover:bg-amber-950 text-white font-bold py-2 rounded"
-            >
-              Claim Your Premium Now →
-            </Button>
-          </div>
-        )}
+
 
         {/* CTA Buttons */}
         <div className="space-y-3 mb-6">
