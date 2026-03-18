@@ -749,3 +749,10 @@
 - [x] Enable multi-move sequential correct moves in puzzles - opponent auto-plays between user moves
 - [x] Reimplement capture/take animation - explosion + fade-out animation with framer-motion
 - [x] Allow pieces to move anywhere legal, not only the correct solution - wrong moves show briefly then auto-solve
+
+## Round 69 - Fix User Counting (DONE)
+- [x] Investigate how users are counted across the app (leaderboard, stats, home page)
+- [x] Created system.getUserAnalytics tRPC endpoint with real DB queries
+- [x] Fixed ProAnalytics.tsx to use live data instead of hardcoded values (4→439 users, 3→3 premium, etc.)
+- [x] Fixed SQL column name (lastSignedIn not lastSignInAt) and timestamp comparison
+- [x] Verified endpoint returns correct counts: 439 users, 3 premium, 1 admin, 5 active, 55 sessions

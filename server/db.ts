@@ -674,8 +674,8 @@ export async function countTotalUsers() {
   if (!db) return 0;
 
   try {
-    const result = await db.select().from(users);
-    return result.length;
+    const result = await db.select({ count: sql<number>`COUNT(*)` }).from(users);
+    return result[0]?.count || 0;
   } catch (error) {
     console.error("Error counting users:", error);
     return 0;
@@ -690,11 +690,48 @@ export async function countRegisteredUsers() {
   if (!db) return 0;
 
   try {
-    const result = await db.select().from(users).where(eq(users.hasRegistered, 1));
-    return result.length;
+    const result = await db.select({ count: sql<number>`COUNT(*)` }).from(users).where(eq(users.hasRegistered, 1));
+    return result[0]?.count || 0;
   } catch (error) {
     console.error("Error counting registered users:", error);
     return 0;
+  }
+}
+
+/**
+ * Get comprehensive user analytics for the admin dashboard
+ */
+export async function getUserAnalytics() {
+  const db = await getDb();
+  if (!db) return { totalUsers: 0, premiumUsers: 0, adminUsers: 0, activeUsers: 0, totalSessions: 0, recentSignups: 0 };
+
+  try {
+    // Use raw SQL for reliable results with TiDB
+    const result = await db.execute(sql`
+      SELECT
+        (SELECT COUNT(*) FROM users) as totalUsers,
+        (SELECT COUNT(*) FROM users WHERE isPremium = 1) as premiumUsers,
+        (SELECT COUNT(*) FROM users WHERE role = 'admin') as adminUsers,
+        (SELECT COUNT(DISTINCT userId) FROM training_sets WHERE userId IS NOT NULL) as activeUsers,
+        (SELECT COUNT(*) FROM training_sets) as totalSessions,
+        (SELECT COUNT(*) FROM users WHERE lastSignedIn >= DATE_SUB(NOW(), INTERVAL 24 HOUR)) as recentSignups
+    `);
+
+    // db.execute returns [rows, fields] - extract first row
+    const rows = (result as any)[0] || result;
+    const row = Array.isArray(rows) ? rows[0] : rows;
+
+    return {
+      totalUsers: Number(row?.totalUsers) || 0,
+      premiumUsers: Number(row?.premiumUsers) || 0,
+      adminUsers: Number(row?.adminUsers) || 0,
+      activeUsers: Number(row?.activeUsers) || 0,
+      totalSessions: Number(row?.totalSessions) || 0,
+      recentSignups: Number(row?.recentSignups) || 0,
+    };
+  } catch (error) {
+    console.error("Error getting user analytics:", error);
+    return { totalUsers: 0, premiumUsers: 0, adminUsers: 0, activeUsers: 0, totalSessions: 0, recentSignups: 0 };
   }
 }
 

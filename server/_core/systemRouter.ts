@@ -1,6 +1,6 @@
 import { notifyOwner } from "./notification";
 import { adminProcedure, publicProcedure, router } from "./trpc";
-import { getGlobalSettings, updateGlobalSettings } from "../db";
+import { getGlobalSettings, updateGlobalSettings, getUserAnalytics } from "../db";
 import { classifyNullPuzzles, getPuzzleClassificationStats } from "../classify-puzzles-db";
 import { z } from "zod";
 
@@ -66,5 +66,10 @@ export const systemRouter = router({
   getPuzzleStats: publicProcedure.query(async () => {
     const stats = await getPuzzleClassificationStats();
     return stats;
+  }),
+
+  getUserAnalytics: publicProcedure.query(async () => {
+    const analytics = await getUserAnalytics();
+    return analytics;
   }),
 });

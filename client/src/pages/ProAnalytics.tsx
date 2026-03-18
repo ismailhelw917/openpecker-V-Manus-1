@@ -64,29 +64,28 @@ export default function ProAnalytics() {
     }
   }, [statsQuery.data]);
 
-  // Fetch user stats from database
-  useEffect(() => {
-    const fetchUserStats = async () => {
-      try {
-        // This would be a tRPC call to get user analytics
-        // For now, we'll use mock data that would be replaced with real API call
-        const response = await fetch("/api/trpc/system.getUserAnalytics");
-        if (response.ok) {
-          const data = await response.json();
-          setUserStats(data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch user stats:", error);
-      }
-    };
+  // Fetch user stats from database using tRPC
+  const userAnalyticsQuery = trpc.system.getUserAnalytics.useQuery();
 
-    fetchUserStats();
-  }, []);
+  useEffect(() => {
+    if (userAnalyticsQuery.data) {
+      setUserStats({
+        totalUsers: userAnalyticsQuery.data.totalUsers,
+        premiumUsers: userAnalyticsQuery.data.premiumUsers,
+        adminUsers: userAnalyticsQuery.data.adminUsers,
+        activeUsers: userAnalyticsQuery.data.activeUsers,
+        totalSessions: userAnalyticsQuery.data.totalSessions,
+      });
+    }
+  }, [userAnalyticsQuery.data]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      await utils.system.getPuzzleStats.invalidate();
+      await Promise.all([
+        utils.system.getPuzzleStats.invalidate(),
+        utils.system.getUserAnalytics.invalidate(),
+      ]);
       await new Promise((resolve) => setTimeout(resolve, 500));
     } finally {
       setRefreshing(false);
@@ -167,7 +166,7 @@ export default function ProAnalytics() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-slate-400 text-sm font-medium">Total Users</p>
-                      <p className="text-4xl font-bold text-amber-400 mt-2">4</p>
+                      <p className="text-4xl font-bold text-amber-400 mt-2">{userStats?.totalUsers ?? '...'}</p>
                       <p className="text-xs text-slate-500 mt-1">Registered accounts</p>
                     </div>
                     <Users className="w-12 h-12 text-amber-400/30" />
@@ -179,8 +178,12 @@ export default function ProAnalytics() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-slate-400 text-sm font-medium">Premium Users</p>
-                      <p className="text-4xl font-bold text-purple-400 mt-2">3</p>
-                      <p className="text-xs text-slate-500 mt-1">75% conversion rate</p>
+                      <p className="text-4xl font-bold text-purple-400 mt-2">{userStats?.premiumUsers ?? '...'}</p>
+                      <p className="text-xs text-slate-500 mt-1">
+                        {userStats && userStats.totalUsers > 0
+                          ? `${((userStats.premiumUsers / userStats.totalUsers) * 100).toFixed(1)}% conversion rate`
+                          : 'Loading...'}
+                      </p>
                     </div>
                     <Award className="w-12 h-12 text-purple-400/30" />
                   </div>
@@ -191,7 +194,7 @@ export default function ProAnalytics() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-slate-400 text-sm font-medium">Active Sessions</p>
-                      <p className="text-4xl font-bold text-green-400 mt-2">15</p>
+                      <p className="text-4xl font-bold text-green-400 mt-2">{userStats?.totalSessions ?? '...'}</p>
                       <p className="text-xs text-slate-500 mt-1">Training sessions</p>
                     </div>
                     <Activity className="w-12 h-12 text-green-400/30" />
@@ -203,7 +206,7 @@ export default function ProAnalytics() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-slate-400 text-sm font-medium">Admin Users</p>
-                      <p className="text-4xl font-bold text-cyan-400 mt-2">1</p>
+                      <p className="text-4xl font-bold text-cyan-400 mt-2">{userStats?.adminUsers ?? '...'}</p>
                       <p className="text-xs text-slate-500 mt-1">Platform admins</p>
                     </div>
                     <Lock className="w-12 h-12 text-cyan-400/30" />
