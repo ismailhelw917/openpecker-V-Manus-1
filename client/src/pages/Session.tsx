@@ -29,6 +29,7 @@ export default function Session() {
   });
   const [sessionTime, setSessionTime] = useState(0);
   const [showCorrectCheckmark, setShowCorrectCheckmark] = useState(false);
+  const [showWrongX, setShowWrongX] = useState(false);
 
   // Board theme definitions
   const themeColors = {
@@ -261,6 +262,10 @@ export default function Session() {
           }
         }, 1500);
       } else {
+        // Show wrong X watermark
+        setShowWrongX(true);
+        setTimeout(() => setShowWrongX(false), 1000);
+        
         // Show capture animation on wrong move
         setCaptureSquare(targetSquare);
         
@@ -431,6 +436,17 @@ export default function Session() {
               <div className="text-green-400 opacity-80 animate-pulse">
                 <svg className="w-32 h-32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+          )}
+          
+          {/* Red X Watermark for Wrong Moves */}
+          {showWrongX && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="text-red-500 opacity-80 animate-pulse">
+                <svg className="w-32 h-32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </div>
             </div>

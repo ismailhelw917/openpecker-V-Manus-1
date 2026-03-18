@@ -9,7 +9,7 @@ import { useState, useEffect } from "react";
 
 type Step = "opening-selection" | "configuration";
 
-const PUZZLE_COUNT_OPTIONS = [10, 25, 50, 100];
+const PUZZLE_COUNT_OPTIONS = [50, 100, 150, 200, 250];
 
 export default function Train() {
   const [, setLocation] = useLocation();
@@ -26,7 +26,7 @@ export default function Train() {
   const [maxRating, setMaxRating] = useState(2000);
   const [targetCycles, setTargetCycles] = useState(3);
   const [colorFilter, setColorFilter] = useState<"white" | "black" | "both">("both");
-  const [puzzleCount, setPuzzleCount] = useState(25);
+  const [puzzleCount, setPuzzleCount] = useState(50);
 
   // Fetch available openings using tRPC
   const getOpeningsQuery = trpc.openings.getNames.useQuery();

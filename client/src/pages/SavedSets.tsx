@@ -21,8 +21,17 @@ export default function SavedSets() {
     },
     {
       enabled: !!deviceId,
+      refetchOnWindowFocus: true,
+      refetchOnMount: true,
     }
   );
+
+  // Refetch sets when component mounts
+  useEffect(() => {
+    if (deviceId) {
+      setsQuery.refetch();
+    }
+  }, [deviceId]);
 
   const deleteSetMutation = trpc.trainingSets.delete.useMutation({
     onSuccess: () => {

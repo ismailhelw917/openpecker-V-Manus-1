@@ -241,6 +241,23 @@ export default function Settings() {
             </Card>
           </div>
         )}
+
+        {/* Contact Us Section */}
+        <div className="mb-12">
+          <h2 className="text-lg font-bold text-white mb-6">Contact & Support</h2>
+          <Card className="bg-slate-900/50 border-teal-900/30 p-6">
+            <p className="text-slate-400 text-sm mb-4">Have questions or feedback? We would love to hear from you!</p>
+            <a
+              href="mailto:happychesspenguin@gmail.com"
+              className="inline-block w-full"
+            >
+              <Button className="w-full bg-teal-500 hover:bg-teal-600 text-white font-semibold">
+                Contact Us
+              </Button>
+            </a>
+            <p className="text-slate-500 text-xs mt-3 text-center">happychesspenguin@gmail.com</p>
+          </Card>
+        </div>
       </div>
 
       {/* Premium Modal */}
