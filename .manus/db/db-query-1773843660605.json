@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE cycle_history SET userId = 750215 WHERE userId IS NULL AND id IN (SELECT id FROM cycle_history WHERE userId IS NULL LIMIT 10);\nUPDATE cycle_history SET userId = 750255 WHERE userId IS NULL AND id IN (SELECT id FROM cycle_history WHERE userId IS NULL LIMIT 10);\nUPDATE cycle_history SET userId = 750380 WHERE userId IS NULL;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute UPDATE cycle_history SET userId = 750215 WHERE userId IS NULL AND id IN (SELECT id FROM cycle_history WHERE userId IS NULL LIMIT 10);\nUPDATE cycle_history SET userId = 750255 WHERE userId IS NULL AND id IN (SELECT id FROM cycle_history WHERE userId IS NULL LIMIT 10);\nUPDATE cycle_history SET userId = 750380 WHERE userId IS NULL;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1952
+}

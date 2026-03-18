@@ -1,0 +1,22 @@
+{
+  "query": "SELECT userId, COUNT(*) as cycle_count FROM cycle_history GROUP BY userId;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT userId, COUNT(*) as cycle_count FROM cycle_history GROUP BY userId;",
+  "rows": [
+    {
+      "userId": "750215",
+      "cycle_count": "10"
+    },
+    {
+      "userId": "750255",
+      "cycle_count": "10"
+    },
+    {
+      "userId": "750380",
+      "cycle_count": "10"
+    }
+  ],
+  "messages": [],
+  "stdout": "userId\tcycle_count\n750215\t10\n750255\t10\n750380\t10\n",
+  "stderr": "",
+  "execution_time_ms": 1578
+}

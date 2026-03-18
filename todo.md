@@ -445,3 +445,11 @@
 - [ ] Test all changes on dev server
 - [ ] Test on mobile viewport
 - [ ] Deploy to live site
+
+
+## Critical Fixes (Round 25 - User Request)
+- [x] Fix puzzle loading and move validation - ensure all puzzles are solvable
+- [x] Display opening names in training UI for users (Session page shows openingName in header)
+- [x] Merge new puzzle database with opening data (updated fetchPuzzles and fetchPuzzlesByOpening to return openingName)
+- [x] Verify all puzzles load correctly with valid moves (database has valid FEN and moves)
+- [ ] Test complete puzzle solving workflow

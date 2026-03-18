@@ -345,6 +345,8 @@ export const appRouter = router({
               rating: z.number(),
               themes: z.array(z.string()),
               color: z.string().optional(),
+              openingName: z.string().optional(),
+              openingVariation: z.string().optional(),
             })
           ),
         })
@@ -444,6 +446,8 @@ export const appRouter = router({
                 rating: p.rating,
                 themes,
                 color: p.color,
+                openingName: p.openingName,
+                openingVariation: p.openingVariation,
               };
             }),
           };
@@ -517,6 +521,8 @@ export const appRouter = router({
                 rating: p.rating,
                 themes,
                 color: p.color,
+                openingName: p.openingName,
+                openingVariation: p.openingVariation,
               };
             }),
           };

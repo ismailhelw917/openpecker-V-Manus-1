@@ -456,6 +456,9 @@ export default function Session() {
           Back
         </button>
         <div className="text-center flex-1 px-4">
+          {currentPuzzle?.openingName && (
+            <p className="text-xs text-teal-300 mb-2 font-semibold">{currentPuzzle.openingName}</p>
+          )}
           <div className="flex items-center justify-center gap-4 mb-1">
             <div>
               <p className="text-xs text-slate-400">Time</p>
