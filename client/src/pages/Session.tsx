@@ -21,11 +21,14 @@ export default function Session() {
   const [currentCycle, setCurrentCycle] = useState(1);
   const [targetCycles, setTargetCycles] = useState(3);
   const [boardSize, setBoardSize] = useState(400);
-  const [captureSquare, setCaptureSquare] = useState<string | null>(null);
 
   // Chess game instance - kept as ref to avoid re-renders
   const gameRef = useRef(new Chess());
   const [gameFen, setGameFen] = useState(gameRef.current.fen());
+
+  // FIX #1: Store board orientation at puzzle init, not derived from game.turn()
+  // This prevents the board from flipping during auto-solve or opponent moves
+  const [boardOrientation, setBoardOrientation] = useState<'white' | 'black'>('white');
 
   // Puzzle generation counter - increments on each puzzle change to cancel stale timeouts
   const puzzleGenRef = useRef(0);
@@ -53,7 +56,6 @@ export default function Session() {
 
   // Track which move in the puzzle sequence the user needs to play
   // In Lichess format: moves[0]=setup, moves[1]=user, moves[2]=opponent, moves[3]=user, etc.
-  // userMoveIndex tracks the index into movesList that the user needs to play next
   const [userMoveIndex, setUserMoveIndex] = useState(1);
 
   // Calculate responsive board size
@@ -77,7 +79,6 @@ export default function Session() {
 
   const [autoSolveMove, setAutoSolveMove] = useState<{ from: string; to: string } | null>(null);
   const [isAutoSolving, setIsAutoSolving] = useState(false);
-  const [autoNextCountdown, setAutoNextCountdown] = useState<number | null>(null);
   const [boardTheme, setBoardTheme] = useState<'classic' | 'green' | 'blue' | 'purple'>(() => {
     const saved = localStorage.getItem('board-theme');
     return (saved as 'classic' | 'green' | 'blue' | 'purple') || 'classic';
@@ -85,6 +86,13 @@ export default function Session() {
   const [sessionTime, setSessionTime] = useState(0);
   const [showCorrectCheckmark, setShowCorrectCheckmark] = useState(false);
   const [showWrongX, setShowWrongX] = useState(false);
+
+  // FIX #3: Capture animation state - tracks the piece being captured and its movement
+  const [captureAnimation, setCaptureAnimation] = useState<{
+    piece: { type: string; color: string };
+    from: string;
+    to: string;
+  } | null>(null);
 
   // Board theme definitions
   const themeColors = {
@@ -204,6 +212,10 @@ export default function Session() {
       }
     }
 
+    // FIX #1: Store orientation at init time - user plays the side whose turn it is after setup
+    const userColor = game.turn() === 'w' ? 'white' : 'black';
+    setBoardOrientation(userColor);
+
     // Update game state
     gameRef.current = game;
     setGameFen(game.fen());
@@ -213,7 +225,7 @@ export default function Session() {
     setAutoSolveMove(null);
     setShowCorrectCheckmark(false);
     setShowWrongX(false);
-    setCaptureSquare(null);
+    setCaptureAnimation(null);
     setPuzzleStartTime(Date.now());
 
     console.log('Puzzle initialized:', {
@@ -222,6 +234,7 @@ export default function Session() {
       setupMove: movesList[0],
       puzzleFen: game.fen(),
       userTurn: game.turn(),
+      orientation: userColor,
       expectedUserMove: movesList[1],
       totalMoves: movesList.length,
     });
@@ -321,6 +334,14 @@ export default function Session() {
 
     safePuzzleTimeout(() => {
       const game = gameRef.current;
+
+      // FIX #3: Check if this move captures a piece and trigger capture animation
+      const targetPiece = game.get(to as any);
+      if (targetPiece) {
+        setCaptureAnimation({ piece: targetPiece, from, to });
+        safePuzzleTimeout(() => setCaptureAnimation(null), 400);
+      }
+
       playUCIMove(game, opponentMove);
       setGameFen(game.fen());
       setAutoSolveMove(null);
@@ -329,6 +350,70 @@ export default function Session() {
 
     return false; // puzzle not yet complete
   }, [playUCIMove, safePuzzleTimeout]);
+
+  // Helper: mark puzzle as solved and advance
+  const markPuzzleSolved = useCallback(() => {
+    const puzzleTimeMs = Date.now() - puzzleStartTime;
+    recordPuzzleAttempt(true, puzzleTimeMs);
+    setCorrectCount(prev => prev + 1);
+    setShowCorrectCheckmark(true);
+    setSolved(true);
+    safePuzzleTimeout(() => setShowCorrectCheckmark(false), 1000);
+    safePuzzleTimeout(() => advanceToNextPuzzle(), 1500);
+  }, [puzzleStartTime, recordPuzzleAttempt, safePuzzleTimeout, advanceToNextPuzzle]);
+
+  // Helper: auto-solve the puzzle after a wrong move
+  const autoSolvePuzzle = useCallback((currentPuzzle: any, movesList: string[]) => {
+    // Reset to puzzle start position (after setup move)
+    const solveGame = new Chess(currentPuzzle.fen);
+    if (movesList.length > 0) {
+      playUCIMove(solveGame, movesList[0]); // Play setup move
+    }
+    gameRef.current = solveGame;
+    setGameFen(solveGame.fen());
+
+    // Auto-solve: play remaining moves with animation
+    safePuzzleTimeout(() => {
+      setIsAutoSolving(true);
+      let solveIndex = 1; // Start from user's first move
+
+      const playNextSolveMove = () => {
+        if (solveIndex >= movesList.length) {
+          setIsAutoSolving(false);
+          setAutoSolveMove(null);
+
+          // Auto-advance after showing solution
+          safePuzzleTimeout(() => advanceToNextPuzzle(), 1500);
+          return;
+        }
+
+        const move = movesList[solveIndex];
+        const from = move.substring(0, 2);
+        const to = move.substring(2, 4);
+
+        setAutoSolveMove({ from, to });
+
+        const delayPerMove = Math.max(400, 2000 / (movesList.length - 1));
+        safePuzzleTimeout(() => {
+          // FIX #3: Check for captures during auto-solve
+          const targetPiece = solveGame.get(to as any);
+          if (targetPiece) {
+            setCaptureAnimation({ piece: targetPiece, from, to });
+            safePuzzleTimeout(() => setCaptureAnimation(null), 400);
+          }
+
+          playUCIMove(solveGame, move);
+          setGameFen(solveGame.fen());
+          setAutoSolveMove(null);
+          solveIndex++;
+
+          safePuzzleTimeout(playNextSolveMove, delayPerMove * 0.3);
+        }, delayPerMove * 0.7);
+      };
+
+      playNextSolveMove();
+    }, 300);
+  }, [playUCIMove, safePuzzleTimeout, advanceToNextPuzzle]);
 
   if (!match) return null;
 
@@ -362,10 +447,6 @@ export default function Session() {
   const currentPuzzle = puzzles[currentPuzzleIndex];
   const progress = ((currentPuzzleIndex + 1) / puzzles.length) * 100;
 
-  // Determine board orientation: the user plays the side whose turn it is AFTER the setup move
-  // Since we've already played the setup move, game.turn() gives us the user's color
-  const boardOrientation = gameRef.current.turn() === 'w' ? 'white' : 'black';
-
   // Format time display
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -397,7 +478,7 @@ export default function Session() {
         return false;
       }
 
-      // Pre-validate: check if the move is legal
+      // FIX #4: Allow any legal move, not just the correct solution
       const legalMoves = game.moves({ square: sourceSquare as any, verbose: true });
       const isLegal = legalMoves.some((m: any) => m.to === targetSquare);
       if (!isLegal) {
@@ -412,67 +493,55 @@ export default function Session() {
         moveObj.promotion = "q";
       }
 
+      // FIX #3: Check if this move captures a piece BEFORE making the move
+      const capturedPiece = game.get(targetSquare as any);
+
       const result = game.move(moveObj);
       if (!result) {
         console.log('Move rejected by engine');
         return false;
       }
 
+      // FIX #3: Trigger capture animation if a piece was captured
+      if (capturedPiece) {
+        setCaptureAnimation({ piece: capturedPiece, from: sourceSquare, to: targetSquare });
+        safePuzzleTimeout(() => setCaptureAnimation(null), 400);
+      }
+
       // Build UCI string for comparison
       const moveUCI = `${result.from}${result.to}${result.promotion || ""}`;
       console.log('Move validation:', { userMoveIndex, expectedMove, moveUCI, totalMoves: movesList.length });
 
-      if (expectedMove === moveUCI) {
-        // Correct move!
-        setGameFen(game.fen());
+      // Update the board with the move (FIX #4: always show the move, even if wrong)
+      setGameFen(game.fen());
 
-        // Check if there are more moves in the sequence
+      if (expectedMove === moveUCI) {
+        // ===== CORRECT MOVE =====
+        // Check if there are more moves in the sequence (FIX #2: multi-move support)
         const nextOpponentMoveIndex = userMoveIndex + 1;
 
         if (nextOpponentMoveIndex >= movesList.length) {
           // Puzzle fully solved - no more moves
-          const puzzleTimeMs = Date.now() - puzzleStartTime;
-          recordPuzzleAttempt(true, puzzleTimeMs);
-          setCorrectCount(prev => prev + 1);
-          setShowCorrectCheckmark(true);
-          setSolved(true);
-          safePuzzleTimeout(() => setShowCorrectCheckmark(false), 1000);
-          safePuzzleTimeout(() => advanceToNextPuzzle(), 1500);
+          markPuzzleSolved();
         } else {
           // Play opponent's response, then wait for user's next move
           const puzzleDone = playOpponentResponse(movesList, nextOpponentMoveIndex);
 
           if (puzzleDone) {
-            // All moves played
-            const puzzleTimeMs = Date.now() - puzzleStartTime;
-            recordPuzzleAttempt(true, puzzleTimeMs);
-            setCorrectCount(prev => prev + 1);
-            setShowCorrectCheckmark(true);
-            setSolved(true);
-            safePuzzleTimeout(() => setShowCorrectCheckmark(false), 1000);
-            safePuzzleTimeout(() => advanceToNextPuzzle(), 1500);
+            markPuzzleSolved();
           } else {
             // Check if user has more moves after opponent response
             const nextUserMoveIndex = nextOpponentMoveIndex + 1;
             if (nextUserMoveIndex >= movesList.length) {
               // Opponent's response was the last move - puzzle solved
-              safePuzzleTimeout(() => {
-                const puzzleTimeMs = Date.now() - puzzleStartTime;
-                recordPuzzleAttempt(true, puzzleTimeMs);
-                setCorrectCount(prev => prev + 1);
-                setShowCorrectCheckmark(true);
-                setSolved(true);
-                safePuzzleTimeout(() => setShowCorrectCheckmark(false), 1000);
-                safePuzzleTimeout(() => advanceToNextPuzzle(), 1500);
-              }, 700);
+              safePuzzleTimeout(() => markPuzzleSolved(), 700);
             }
             // Otherwise, user needs to play nextUserMoveIndex (set by playOpponentResponse)
           }
         }
       } else {
-        // Wrong move - undo it
-        game.undo();
-        setGameFen(game.fen());
+        // ===== WRONG MOVE (but legal) =====
+        // FIX #4: The move stays on the board briefly so the user sees it, then undo
 
         // Record incorrect attempt
         const puzzleTimeMs = Date.now() - puzzleStartTime;
@@ -482,56 +551,18 @@ export default function Session() {
         setShowWrongX(true);
         safePuzzleTimeout(() => setShowWrongX(false), 1000);
 
-        // Show capture animation
-        setCaptureSquare(targetSquare);
-
-        // Auto-solve: show the correct solution
+        // After a brief pause showing the wrong move, undo and auto-solve
         safePuzzleTimeout(() => {
-          setCaptureSquare(null);
+          // Undo the wrong move
+          game.undo();
+          setGameFen(game.fen());
+          setCaptureAnimation(null);
 
-          // Reset to puzzle start position (after setup move)
-          const solveGame = new Chess(currentPuzzle.fen);
-          if (movesList.length > 0) {
-            playUCIMove(solveGame, movesList[0]); // Play setup move
-          }
-          gameRef.current = solveGame;
-          setGameFen(solveGame.fen());
-
-          // Auto-solve: play remaining moves with animation
+          // Reset to puzzle start position and auto-solve
           safePuzzleTimeout(() => {
-            setIsAutoSolving(true);
-            let solveIndex = 1; // Start from user's first move
-
-            const playNextSolveMove = () => {
-              if (solveIndex >= movesList.length) {
-                setIsAutoSolving(false);
-                setAutoSolveMove(null);
-
-                // Auto-advance after showing solution
-                safePuzzleTimeout(() => advanceToNextPuzzle(), 1500);
-                return;
-              }
-
-              const move = movesList[solveIndex];
-              const from = move.substring(0, 2);
-              const to = move.substring(2, 4);
-
-              setAutoSolveMove({ from, to });
-
-              const delayPerMove = Math.max(400, 2000 / (movesList.length - 1));
-              safePuzzleTimeout(() => {
-                playUCIMove(solveGame, move);
-                setGameFen(solveGame.fen());
-                setAutoSolveMove(null);
-                solveIndex++;
-
-                safePuzzleTimeout(playNextSolveMove, delayPerMove * 0.3);
-              }, delayPerMove * 0.7);
-            };
-
-            playNextSolveMove();
+            autoSolvePuzzle(currentPuzzle, movesList);
           }, 300);
-        }, 600);
+        }, 800);
       }
 
       return true;
@@ -586,11 +617,10 @@ export default function Session() {
             game={new Chess(gameFen)}
             onPieceDrop={handleMove}
             boardColors={themeColors[boardTheme]}
-            captureSquare={captureSquare}
             orientation={boardOrientation}
             autoSolveMove={autoSolveMove}
-            autoNextCountdown={autoNextCountdown}
             isAutoSolving={isAutoSolving}
+            captureAnimation={captureAnimation}
           />
 
           {/* Green Checkmark Watermark for Correct Solutions */}

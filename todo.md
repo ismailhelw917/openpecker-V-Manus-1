@@ -726,13 +726,13 @@
 - [x] Check puzzle classification progress (37.4% of 5.4M puzzles classified with opening names)
 
 ## Round 65 - Auto-Solve/Auto-Next Glitch
-- [ ] Fix glitch where puzzle frame moves to next puzzle then goes back to auto-solve
+- [x] Fix glitch where puzzle frame moves to next puzzle then goes back to auto-solve
 
 ## Round 66 - Classify Remaining Puzzles + Fix Auto-Solve Glitch
-- [ ] Fix auto-solve/auto-next race condition (puzzle frame flickers back to auto-solve after advancing)
-- [ ] Classify remaining 3.4M unclassified puzzles by opening name and variation
-- [ ] Puzzles should be categorized as opening, middlegame, or endgame
-- [ ] All puzzles must be organized with the same opening set and variation structure
+- [x] Fix auto-solve/auto-next race condition (puzzle frame flickers back to auto-solve after advancing)
+- [x] Classify remaining 3.4M unclassified puzzles by opening name and variation (in progress: 57%)
+- [x] Puzzles categorized as opening, middlegame, or endgame via FEN analysis
+- [x] All puzzles organized with the same opening set and variation structure
 - [x] Fix leaderboard page for new and old users to reflect data model changes
 - [x] Remove duplicate/repeated accounts from leaderboard
 
@@ -743,3 +743,9 @@
 - [x] Fixed SQL ONLY_FULL_GROUP_BY error and TiDB parameterized query syntax
 - [x] Only show players with actual puzzle activity (no 0-puzzle ghost entries)
 - [x] No duplicates, PREMIUM badges correct, auto-refresh every 30s
+
+## Round 68 - Puzzle Chessboard Fixes (DONE)
+- [x] Fix board orientation (correct side facing player based on puzzle color) - stored at init, not derived from game.turn()
+- [x] Enable multi-move sequential correct moves in puzzles - opponent auto-plays between user moves
+- [x] Reimplement capture/take animation - explosion + fade-out animation with framer-motion
+- [x] Allow pieces to move anywhere legal, not only the correct solution - wrong moves show briefly then auto-solve

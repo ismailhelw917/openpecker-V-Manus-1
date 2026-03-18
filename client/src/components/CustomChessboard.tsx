@@ -3,6 +3,12 @@ import { Chess } from 'chess.js';
 import { DndContext, DragOverlay, useDraggable, useDroppable, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { motion, AnimatePresence } from 'motion/react';
 
+interface CaptureAnimationData {
+  piece: { type: string; color: string };
+  from: string;
+  to: string;
+}
+
 interface CustomChessboardProps {
   game: any;
   orientation?: 'white' | 'black';
@@ -12,7 +18,7 @@ interface CustomChessboardProps {
   optionSquares?: Record<string, any>;
   lastMove?: { from: string; to: string } | null;
   legalMoves?: string[];
-  captureSquare?: string | null;
+  captureAnimation?: CaptureAnimationData | null;
   autoSolveMove?: { from: string; to: string } | null;
   autoNextCountdown?: number | null;
   isAutoSolving?: boolean;
@@ -77,7 +83,7 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
   boardColors = { light: '#f0d9b5', dark: '#b58863' },
   optionSquares = {},
   legalMoves: propLegalMoves,
-  captureSquare,
+  captureAnimation,
   autoSolveMove,
   autoNextCountdown,
   isAutoSolving,
@@ -111,18 +117,14 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
 
   const getSquareName = (r: number, c: number) => {
     // Chess.js board[r][c]: r=0 is rank 8, r=7 is rank 1
-    // Standard algebraic notation: a-h (files), 1-8 (ranks)
-    
     if (orientation === 'black') {
-      // Black orientation: 180 degree rotation
       const file = String.fromCharCode(97 + (7 - c)); // h-a
-      const rank = r + 1; // 1-8 (from bottom to top)
+      const rank = r + 1; // 1-8
       return `${file}${rank}`;
     }
-    
     // White orientation: standard mapping
     const file = String.fromCharCode(97 + c); // a-h
-    const rank = 8 - r; // 8-1 (from top to bottom)
+    const rank = 8 - r; // 8-1
     return `${file}${rank}`;
   };
 
@@ -169,7 +171,6 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
       return;
     }
     
-    console.log('Drag start:', event);
     setActivePiece(piece);
     setActiveSquare(event.active.id);
   };
@@ -200,7 +201,6 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
     // Pre-validate: check if the piece actually exists on the source square
     const sourcePiece = game.get(active.id as any);
     if (!sourcePiece) {
-      console.log('No piece found on source square during drag end:', active.id);
       return false;
     }
     
@@ -208,7 +208,6 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
     const legalMoves = game.moves({ square: active.id as any, verbose: true });
     const isLegal = legalMoves.some((m: any) => m.to === over.id);
     if (!isLegal) {
-      console.log('Illegal move rejected in chessboard:', active.id, '->', over.id);
       return false;
     }
     
@@ -226,18 +225,46 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
 
           return (
             <DroppableSquare key={squareName} squareName={squareName} isDark={isDark} onDrop={handleSquareClick} boardColors={boardColors}>
+              {/* Capture explosion animation */}
               <AnimatePresence>
-                {captureSquare === squareName && (
+                {captureAnimation && captureAnimation.to === squareName && (
                   <motion.div
-                    key="capture-effect"
-                    initial={{ scale: 0.2, opacity: 0.8 }}
-                    animate={{ scale: 1.5, opacity: 0 }}
+                    key={`capture-explosion-${squareName}`}
+                    initial={{ scale: 0.5, opacity: 0.9 }}
+                    animate={{ scale: 2, opacity: 0 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
-                    className="absolute inset-0 bg-red-500 rounded-full z-0 pointer-events-none"
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    className="absolute inset-0 z-20 pointer-events-none"
+                  >
+                    <div className="w-full h-full rounded-full bg-red-500/60" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Captured piece fading out animation */}
+              <AnimatePresence>
+                {captureAnimation && captureAnimation.to === squareName && (
+                  <motion.img
+                    key={`captured-piece-${squareName}`}
+                    src={`https://cdn.jsdelivr.net/gh/lichess-org/lila@master/public/piece/cburnett/${captureAnimation.piece.color}${captureAnimation.piece.type.toUpperCase()}.svg`}
+                    alt="captured"
+                    className="absolute inset-0 w-full h-full p-1 z-30 pointer-events-none"
+                    initial={{ scale: 1, opacity: 1 }}
+                    animate={{ scale: 0.3, opacity: 0, y: -20, rotate: 45 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    crossOrigin="anonymous"
+                    onError={(e) => {
+                      const img = e.target as HTMLImageElement;
+                      if (!img.dataset.fallback) {
+                        img.dataset.fallback = 'true';
+                        img.src = `https://chess1.org/assets/piece/cburnett/${captureAnimation.piece.color}${captureAnimation.piece.type.toUpperCase()}.svg`;
+                      }
+                    }}
                   />
                 )}
               </AnimatePresence>
+
               {piece && <DraggablePiece piece={piece} squareName={squareName} />}
               {optionSquares[squareName] && <div className="absolute inset-0" style={optionSquares[squareName]} />}
               {selectedSquare === squareName && <div className="absolute inset-0 bg-yellow-400/50" />}
@@ -259,8 +286,6 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
           );
         })}
       </div>
-
-      {/* Auto-next countdown and checkmark removed */}
 
       <DragOverlay>
         {activePiece ? (

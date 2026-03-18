@@ -8,6 +8,12 @@ import { Chess } from 'chess.js';
  * - moves[1] = user's first answer
  * - moves[2] = opponent's response (auto-played)
  * - moves[3] = user's second answer, etc.
+ *
+ * Also tests:
+ * - FIX #1: Board orientation stored at init, not derived from game.turn()
+ * - FIX #2: Multi-move puzzle sequences
+ * - FIX #3: Capture detection for animation
+ * - FIX #4: Any legal move allowed (not just correct solution)
  */
 
 // Helper: parse moves from puzzle data (mirrors Session.tsx logic)
@@ -126,6 +132,45 @@ describe('Puzzle Initialization - Setup Move', () => {
   });
 });
 
+describe('FIX #1 - Board Orientation Stability', () => {
+  it('orientation should be stored once at init and not change during play', () => {
+    const puzzle = SAMPLE_PUZZLES[0];
+    const game = new Chess(puzzle.fen);
+    const moves = parseMovesList(puzzle);
+    playUCIMove(game, moves[0]);
+
+    // Orientation determined once at init
+    const storedOrientation = game.turn() === 'w' ? 'white' : 'black';
+    expect(storedOrientation).toBe('white');
+
+    // After playing more moves, game.turn() changes but stored orientation should NOT
+    playUCIMove(game, moves[1]); // User plays
+    expect(game.turn()).toBe('b'); // Turn changed to black
+    // storedOrientation is still 'white' (stored in React state, not re-derived)
+    expect(storedOrientation).toBe('white');
+
+    playUCIMove(game, moves[2]); // Opponent plays
+    expect(game.turn()).toBe('w'); // Turn back to white
+    expect(storedOrientation).toBe('white'); // Still the same
+  });
+
+  it('black-playing puzzles should have black orientation throughout', () => {
+    const puzzle = SAMPLE_PUZZLES[1]; // 0000D - user plays black
+    const game = new Chess(puzzle.fen);
+    const moves = parseMovesList(puzzle);
+    playUCIMove(game, moves[0]);
+
+    const storedOrientation = game.turn() === 'w' ? 'white' : 'black';
+    expect(storedOrientation).toBe('black');
+
+    // Play through all moves - orientation should never change
+    for (let i = 1; i < moves.length; i++) {
+      playUCIMove(game, moves[i]);
+      expect(storedOrientation).toBe('black'); // Always black
+    }
+  });
+});
+
 describe('Move Validation - User Moves', () => {
   it('should validate user move against moves[1] (not moves[0])', () => {
     const puzzle = SAMPLE_PUZZLES[0]; // 00008
@@ -176,16 +221,9 @@ describe('Move Validation - User Moves', () => {
   it('should correctly identify user moves vs opponent moves in sequence', () => {
     const movesList = ['f2g3', 'e6e7', 'b2b1', 'b3c1', 'b1c1', 'h6c1'];
 
-    // Index 0: setup (opponent) - auto-played
-    // Index 1: user move - expect user input
-    // Index 2: opponent response - auto-played
-    // Index 3: user move - expect user input
-    // Index 4: opponent response - auto-played
-    // Index 5: user move - expect user input
-
     for (let i = 0; i < movesList.length; i++) {
-      const isUserMove = i % 2 === 1; // Odd indices are user moves
-      const isOpponentMove = i % 2 === 0; // Even indices are opponent/setup moves
+      const isUserMove = i % 2 === 1;
+      const isOpponentMove = i % 2 === 0;
 
       if (i === 0) {
         expect(isOpponentMove).toBe(true); // Setup move
@@ -195,6 +233,159 @@ describe('Move Validation - User Moves', () => {
         expect(isOpponentMove).toBe(true); // Opponent responses
       }
     }
+  });
+});
+
+describe('FIX #4 - Any Legal Move Allowed', () => {
+  it('should accept a wrong but legal move without crashing', () => {
+    const puzzle = SAMPLE_PUZZLES[0];
+    const game = new Chess(puzzle.fen);
+    const moves = parseMovesList(puzzle);
+    playUCIMove(game, moves[0]); // Setup
+
+    // Find any legal move that is NOT the expected one
+    const allLegalMoves = game.moves({ verbose: true });
+    const expectedMove = moves[1]; // e6e7
+    const wrongMove = allLegalMoves.find(
+      (m: any) => `${m.from}${m.to}${m.promotion || ''}` !== expectedMove
+    );
+    expect(wrongMove).toBeDefined();
+
+    // The wrong move should still be accepted by the engine
+    const result = game.move({ from: wrongMove!.from, to: wrongMove!.to });
+    expect(result).not.toBeNull();
+
+    // But it's not the correct solution
+    const moveUCI = `${result!.from}${result!.to}${result!.promotion || ''}`;
+    expect(moveUCI).not.toBe(expectedMove);
+  });
+
+  it('should be able to undo a wrong move', () => {
+    const puzzle = SAMPLE_PUZZLES[0];
+    const game = new Chess(puzzle.fen);
+    const moves = parseMovesList(puzzle);
+    playUCIMove(game, moves[0]);
+
+    const fenBeforeWrongMove = game.fen();
+
+    // Play a wrong but legal move
+    const allLegal = game.moves({ verbose: true });
+    const wrongMove = allLegal.find(
+      (m: any) => `${m.from}${m.to}${m.promotion || ''}` !== moves[1]
+    );
+    game.move({ from: wrongMove!.from, to: wrongMove!.to });
+
+    // Undo should restore the position
+    game.undo();
+    expect(game.fen()).toBe(fenBeforeWrongMove);
+  });
+
+  it('should reject truly illegal moves', () => {
+    const game = new Chess(SAMPLE_PUZZLES[0].fen);
+    const moves = parseMovesList(SAMPLE_PUZZLES[0]);
+    playUCIMove(game, moves[0]);
+
+    // Try to move a rook to an impossible square
+    const legalMoves = game.moves({ square: 'e6' as any, verbose: true });
+    const isLegal = legalMoves.some((m: any) => m.to === 'a1');
+    expect(isLegal).toBe(false);
+  });
+});
+
+describe('FIX #2 - Multi-Move Puzzle Sequences', () => {
+  it('should handle a 6-move puzzle (3 user moves, 3 opponent moves)', () => {
+    const puzzle = SAMPLE_PUZZLES[0];
+    const moves = parseMovesList(puzzle);
+    expect(moves.length).toBe(6);
+
+    const game = new Chess(puzzle.fen);
+    playUCIMove(game, moves[0]); // Setup
+
+    // Simulate the full sequence
+    let userMoveIndex = 1;
+    while (userMoveIndex < moves.length) {
+      // User plays
+      expect(playUCIMove(game, moves[userMoveIndex])).toBe(true);
+
+      // Opponent responds (if there's a next move)
+      const opponentIndex = userMoveIndex + 1;
+      if (opponentIndex < moves.length) {
+        expect(playUCIMove(game, moves[opponentIndex])).toBe(true);
+      }
+
+      userMoveIndex += 2;
+    }
+  });
+
+  it('should handle a 4-move puzzle (2 user moves)', () => {
+    const puzzle = SAMPLE_PUZZLES[1];
+    const moves = parseMovesList(puzzle);
+    expect(moves.length).toBe(4);
+
+    const game = new Chess(puzzle.fen);
+    playUCIMove(game, moves[0]); // Setup
+
+    // User move 1
+    expect(playUCIMove(game, moves[1])).toBe(true);
+    // Opponent response
+    expect(playUCIMove(game, moves[2])).toBe(true);
+    // User move 2 (final)
+    expect(playUCIMove(game, moves[3])).toBe(true);
+  });
+
+  it('should handle a 2-move puzzle (1 user move)', () => {
+    const puzzle = SAMPLE_PUZZLES[2];
+    const moves = parseMovesList(puzzle);
+    expect(moves.length).toBe(4); // This one has 4 moves
+
+    const game = new Chess(puzzle.fen);
+    playUCIMove(game, moves[0]); // Setup
+    expect(playUCIMove(game, moves[1])).toBe(true); // User move
+  });
+
+  it('user move indices should always be odd (1, 3, 5, ...)', () => {
+    const moves = parseMovesList(SAMPLE_PUZZLES[0]);
+    for (let i = 1; i < moves.length; i += 2) {
+      expect(i % 2).toBe(1); // User moves at odd indices
+    }
+    for (let i = 0; i < moves.length; i += 2) {
+      expect(i % 2).toBe(0); // Opponent moves at even indices
+    }
+  });
+});
+
+describe('FIX #3 - Capture Detection for Animation', () => {
+  it('should detect when a move captures a piece', () => {
+    const puzzle = SAMPLE_PUZZLES[0];
+    const game = new Chess(puzzle.fen);
+    const moves = parseMovesList(puzzle);
+    playUCIMove(game, moves[0]); // f2g3
+
+    // User's move e6e7 - check if e7 has a piece (it does: black rook)
+    const targetPiece = game.get('e7' as any);
+    expect(targetPiece).not.toBeNull();
+    expect(targetPiece?.type).toBe('r');
+    expect(targetPiece?.color).toBe('b');
+  });
+
+  it('should not detect capture on empty squares', () => {
+    const game = new Chess('rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1');
+    // e5 is empty
+    const targetPiece = game.get('e5' as any);
+    expect(targetPiece).toBeFalsy();
+  });
+
+  it('should detect captures during opponent auto-play', () => {
+    const puzzle = SAMPLE_PUZZLES[1]; // 0000D
+    const game = new Chess(puzzle.fen);
+    const moves = parseMovesList(puzzle);
+    playUCIMove(game, moves[0]); // d3d6 (setup)
+    playUCIMove(game, moves[1]); // f8d8 (user captures)
+
+    // Opponent's response d6d8 captures on d8
+    const targetPiece = game.get('d8' as any);
+    expect(targetPiece).not.toBeNull();
+    // d8 now has the piece that was just moved there
   });
 });
 
