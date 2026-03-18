@@ -127,8 +127,8 @@ function App() {
             {/* Routes */}
             <Router />
 
-            {/* Bottom Navigation (only for authenticated users) */}
-            {isAuthenticated && !loading && <BottomNav />}
+            {/* Bottom Navigation (for all users) */}
+            {!loading && <BottomNav />}
           </div>
         </ErrorBoundary>
       </TooltipProvider>

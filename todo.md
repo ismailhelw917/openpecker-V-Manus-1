@@ -615,3 +615,9 @@
 - [x] Fix Sets page to show real-time per-puzzle data (not waiting for cycle completion)
 - [x] Make Train page scrollable
 - [x] Sync project directory for checkpoint saves
+
+
+## Round 48 - Footer/Navigation Bar Fix
+- [x] Fix footer/navigation bar missing from mobile website
+- [x] Show BottomNav for all users (authenticated and anonymous)
+- [x] Test on mobile and desktop viewports
