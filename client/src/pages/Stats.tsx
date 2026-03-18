@@ -103,7 +103,7 @@ export default function Stats() {
 
   // Fetch real user stats using tRPC
   const { data: stats, isLoading: statsLoading } = trpc.stats.getUserStats.useQuery(undefined, {
-    enabled: Boolean(user?.isPremium),
+    enabled: Boolean(user),
   });
 
   // Build stats metrics dynamically from real data
@@ -185,24 +185,22 @@ export default function Stats() {
       </div>
     );
   }
-
-  if (!user?.isPremium) {
+  if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center px-4">
         <div className="text-center max-w-md">
           <div className="text-6xl mb-6">🔒</div>
-          <h2 className="text-3xl font-bold text-amber-400 mb-4">Premium Feature</h2>
-          <p className="text-slate-400 mb-8">Advanced statistics and performance analytics are available for premium members only.</p>
-          <Button
-            onClick={() => setShowPremiumModal(true)}
-            className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-3 rounded-lg"
-          >
-            Upgrade to Premium
-          </Button>
+          <h2 className="text-3xl font-bold text-amber-400 mb-4">Sign In Required</h2>
+          <p className="text-slate-400 mb-8">Please sign in to view your statistics.</p>
         </div>
+      </div>
+    );
+  }
 
-        {/* Premium Modal */}
-        {showPremiumModal && (
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-20">
+      {/* Premium Modal */}
+      {showPremiumModal && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <Card className="bg-gradient-to-b from-amber-950 via-slate-900 to-slate-950 border-amber-400/30 max-w-lg w-full max-h-[90vh] overflow-y-auto relative">
               <button
@@ -267,12 +265,7 @@ export default function Stats() {
             </Card>
           </div>
         )}
-      </div>
-    );
-  }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-24">
       {/* Header */}
       <div className="bg-slate-900/50 backdrop-blur border-b border-teal-900/30 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-6">
