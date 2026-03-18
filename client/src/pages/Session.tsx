@@ -390,14 +390,7 @@ export default function Session() {
       {/* Footer Navigation */}
       <div className="h-20 border-t border-teal-900/30 bg-slate-900/50 flex-shrink-0" />
 
-      {/* Status Message */}
-      {solved && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-          <div className="bg-green-900/90 border border-green-900 p-4 rounded-lg">
-            <p className="text-green-400 font-bold">✓ Correct!</p>
-          </div>
-        </div>
-      )}
+      {/* Status Message removed */}
     </div>
   );
 }

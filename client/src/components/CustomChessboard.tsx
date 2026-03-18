@@ -204,30 +204,7 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
         })}
       </div>
 
-      {/* Auto-solve indicator removed - only show countdown */}
-
-      {/* Auto-next countdown overlay */}
-      <AnimatePresence>
-        {autoNextCountdown !== null && autoNextCountdown !== undefined && autoNextCountdown > 0 && (
-          <motion.div
-            className="absolute inset-0 flex items-end justify-center pointer-events-none pb-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <div className="flex flex-col items-center">
-              <div className="text-white font-bold mb-2">Next puzzle in...</div>
-              <motion.div
-                className="w-16 h-16 rounded-full border-4 border-amber-400 flex items-center justify-center bg-slate-900/80"
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 0.5, repeat: Infinity }}
-              >
-                <span className="text-2xl font-bold text-amber-400">{autoNextCountdown || 0}</span>
-              </motion.div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Auto-next countdown and checkmark removed */}
 
       <DragOverlay>
         {activePiece ? (
