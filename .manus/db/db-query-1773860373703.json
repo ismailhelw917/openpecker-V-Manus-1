@@ -1,0 +1,58 @@
+{
+  "query": "SELECT ecoCode, COUNT(*) as cnt FROM puzzles WHERE ecoCode IS NOT NULL AND ecoCode != '' GROUP BY ecoCode ORDER BY ecoCode LIMIT 20 OFFSET 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT ecoCode, COUNT(*) as cnt FROM puzzles WHERE ecoCode IS NOT NULL AND ecoCode != '' GROUP BY ecoCode ORDER BY ecoCode LIMIT 20 OFFSET 20;",
+  "rows": [
+    {
+      "ecoCode": "C41",
+      "cnt": "305"
+    },
+    {
+      "ecoCode": "C44",
+      "cnt": "53"
+    },
+    {
+      "ecoCode": "C45",
+      "cnt": "437"
+    },
+    {
+      "ecoCode": "C50",
+      "cnt": "841"
+    },
+    {
+      "ecoCode": "C60",
+      "cnt": "449"
+    },
+    {
+      "ecoCode": "D00",
+      "cnt": "64"
+    },
+    {
+      "ecoCode": "D01",
+      "cnt": "13"
+    },
+    {
+      "ecoCode": "D02",
+      "cnt": "14"
+    },
+    {
+      "ecoCode": "D10",
+      "cnt": "184"
+    },
+    {
+      "ecoCode": "D80",
+      "cnt": "52"
+    },
+    {
+      "ecoCode": "E11",
+      "cnt": "6"
+    },
+    {
+      "ecoCode": "E20",
+      "cnt": "90"
+    }
+  ],
+  "messages": [],
+  "stdout": "ecoCode\tcnt\nC41\t305\nC44\t53\nC45\t437\nC50\t841\nC60\t449\nD00\t64\nD01\t13\nD02\t14\nD10\t184\nD80\t52\nE11\t6\nE20\t90\n",
+  "stderr": "",
+  "execution_time_ms": 2387
+}

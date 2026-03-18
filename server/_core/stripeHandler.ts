@@ -89,24 +89,30 @@ export function registerStripeRoutes(app: express.Express) {
     async (req, res) => {
       try {
         const sig = req.headers["stripe-signature"] as string;
-        const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
+        const webhookSecret1 = process.env.STRIPE_WEBHOOK_SECRET || "";
+        const webhookSecret2 = process.env.STRIPE_WEBHOOK_SECRET_2 || "";
+        const secrets = [webhookSecret1, webhookSecret2].filter(Boolean);
 
-        if (!sig || !webhookSecret) {
+        if (!sig || secrets.length === 0) {
           console.warn("Missing webhook signature or secret");
           return res.json({ received: true });
         }
 
-        let event: Stripe.Event;
+        let event: Stripe.Event | null = null;
+        const stripe = getStripe();
 
-        try {
-          const stripe = getStripe();
-          event = stripe.webhooks.constructEvent(
-            req.body,
-            sig,
-            webhookSecret
-          );
-        } catch (err) {
-          console.error("Webhook signature verification failed:", err);
+        // Try each webhook secret until one works
+        for (const secret of secrets) {
+          try {
+            event = stripe.webhooks.constructEvent(req.body, sig, secret);
+            break; // Verification succeeded
+          } catch (err) {
+            // Try next secret
+          }
+        }
+
+        if (!event) {
+          console.error("Webhook signature verification failed with all secrets");
           return res.status(400).json({ error: "Webhook signature verification failed" });
         }
 

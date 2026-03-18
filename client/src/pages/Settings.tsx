@@ -79,10 +79,10 @@ function PromoCodeSection() {
     setIsValidating(true);
     try {
       const res = await fetch(
-        `/api/trpc/promo.validate?input=${encodeURIComponent(JSON.stringify({ code: promoCode.trim() }))}`
+        `/api/trpc/promo.validate?input=${encodeURIComponent(JSON.stringify({ json: { code: promoCode.trim() } }))}`
       );
       const json = await res.json();
-      const result = json?.result?.data;
+      const result = json?.result?.data?.json;
       setValidationResult(result);
       if (result?.valid) {
         toast.success("Promo code is valid!");

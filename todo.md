@@ -658,3 +658,37 @@
 - [x] HTTPS already configured via Manus hosting (openpecker.com served over HTTPS)
 - [x] Show 100 users including guests on leaderboard (SQL-based aggregation)
 - [x] Unmerge the first 3 premium accounts on leaderboard (each shows separately)
+
+## Round 55 - Domain, Promo Codes, Puzzle DB
+- [x] Configure www.openpecker.com domain (already configured in Manus hosting)
+- [x] Review promo code types and amounts (OPENPECKER50: lifetime free, OPENPECKER80: 80% discount)
+- [x] Fix promo code validation bug (superjson input encoding)
+- [x] Verify promo code functionality (both codes validate and show Redeem Now)
+- [ ] Configure the puzzle database - classify all 5M+ puzzles with proper opening names
+
+## Round 55b - Puzzle Database Classification
+- [ ] Build ECO code to opening name lookup table
+- [ ] Classify 533K puzzles that have ECO codes but no opening name
+- [ ] Build FEN-based opening book classifier
+- [ ] Run FEN-based classification on remaining ~4.5M puzzles without openings
+- [ ] Verify classification results and coverage
+
+## Round 56 - Stripe Webhook Verification (Queued)
+- [ ] Verify Stripe webhooks are connected and receiving events correctly
+
+## Round 57 - Leaderboard: 100 Users with Old Stats
+- [x] Load all old player statistics (cycle_history, puzzle_attempts) into leaderboard
+- [x] Show 100 names including guests (all 334 users available, fills to 100)
+- [x] Ensure no duplicate entries (active users shown first, then inactive fill remaining)
+- [x] Verify Stripe webhooks - STRIPE_WEBHOOK_SECRET not set, user notified to add it via Settings > Secrets
+
+## Round 58 - Stripe Webhook Secrets
+- [ ] Configure STRIPE_WEBHOOK_SECRET (whsec_KeWT4T7OffZdQldNw3q5s4z81SxuijTA) via Settings > Secrets (user needs to add manually)
+- [x] Add support for second webhook secret (STRIPE_WEBHOOK_SECRET_2 set)
+- [x] Update webhook handler to try both secrets for signature verification
+- [x] Vitest validates STRIPE_WEBHOOK_SECRET_2 is set correctly
+
+## Round 59 - Premium Paywall Buttons Fix
+- [x] Fix Stats.tsx premium modal buttons (added handleCheckout + onClick handlers)
+- [x] Fix ProAnalytics.tsx "Upgrade to Pro" button (navigates to /settings)
+- [x] Fix Train.tsx locked opening toasts (added "Upgrade" action button)

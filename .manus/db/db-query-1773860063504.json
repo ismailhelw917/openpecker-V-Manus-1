@@ -1,0 +1,17 @@
+{
+  "query": "SELECT \n  SUM(CASE WHEN openingName IS NOT NULL AND openingName != '' THEN 1 ELSE 0 END) as with_openings,\n  SUM(CASE WHEN openingName IS NULL OR openingName = '' THEN 1 ELSE 0 END) as without_openings,\n  SUM(CASE WHEN ecoCode IS NOT NULL AND ecoCode != '' THEN 1 ELSE 0 END) as with_eco,\n  COUNT(DISTINCT openingName) as unique_openings,\n  COUNT(DISTINCT ecoCode) as unique_eco_codes\nFROM puzzles;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT \n  SUM(CASE WHEN openingName IS NOT NULL AND openingName != '' THEN 1 ELSE 0 END) as with_openings,\n  SUM(CASE WHEN openingName IS NULL OR openingName = '' THEN 1 ELSE 0 END) as without_openings,\n  SUM(CASE WHEN ecoCode IS NOT NULL AND ecoCode != '' THEN 1 ELSE 0 END) as with_eco,\n  COUNT(DISTINCT openingName) as unique_openings,\n  COUNT(DISTINCT ecoCode) as unique_eco_codes\nFROM puzzles;",
+  "rows": [
+    {
+      "with_openings": "405361",
+      "without_openings": "5009639",
+      "with_eco": "602341",
+      "unique_openings": "135",
+      "unique_eco_codes": "32"
+    }
+  ],
+  "messages": [],
+  "stdout": "with_openings\twithout_openings\twith_eco\tunique_openings\tunique_eco_codes\n405361\t5009639\t602341\t135\t32\n",
+  "stderr": "",
+  "execution_time_ms": 4555
+}

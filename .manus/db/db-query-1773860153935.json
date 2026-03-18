@@ -1,0 +1,15 @@
+{
+  "query": "SELECT \n  SUM(CASE WHEN openingName IN ('Beginner Openings', 'Intermediate Openings', 'Advanced Openings', 'Expert Openings') THEN 1 ELSE 0 END) as generic_categories,\n  SUM(CASE WHEN openingName NOT IN ('Beginner Openings', 'Intermediate Openings', 'Advanced Openings', 'Expert Openings') AND openingName IS NOT NULL AND openingName != '' THEN 1 ELSE 0 END) as real_openings,\n  SUM(CASE WHEN ecoCode IS NOT NULL AND ecoCode != '' AND (openingName IS NULL OR openingName = '') THEN 1 ELSE 0 END) as has_eco_no_name\nFROM puzzles;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT \n  SUM(CASE WHEN openingName IN ('Beginner Openings', 'Intermediate Openings', 'Advanced Openings', 'Expert Openings') THEN 1 ELSE 0 END) as generic_categories,\n  SUM(CASE WHEN openingName NOT IN ('Beginner Openings', 'Intermediate Openings', 'Advanced Openings', 'Expert Openings') AND openingName IS NOT NULL AND openingName != '' THEN 1 ELSE 0 END) as real_openings,\n  SUM(CASE WHEN ecoCode IS NOT NULL AND ecoCode != '' AND (openingName IS NULL OR openingName = '') THEN 1 ELSE 0 END) as has_eco_no_name\nFROM puzzles;",
+  "rows": [
+    {
+      "generic_categories": "390361",
+      "real_openings": "15000",
+      "has_eco_no_name": "533093"
+    }
+  ],
+  "messages": [],
+  "stdout": "generic_categories\treal_openings\thas_eco_no_name\n390361\t15000\t533093\n",
+  "stderr": "",
+  "execution_time_ms": 4399
+}

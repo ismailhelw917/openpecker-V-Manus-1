@@ -1,0 +1,130 @@
+{
+  "query": "SELECT openingName, COUNT(*) as cnt FROM puzzles WHERE openingName IS NOT NULL AND openingName != '' GROUP BY openingName ORDER BY cnt DESC LIMIT 30;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT openingName, COUNT(*) as cnt FROM puzzles WHERE openingName IS NOT NULL AND openingName != '' GROUP BY openingName ORDER BY cnt DESC LIMIT 30;",
+  "rows": [
+    {
+      "openingName": "Expert Openings",
+      "cnt": "100000"
+    },
+    {
+      "openingName": "Advanced Openings",
+      "cnt": "100000"
+    },
+    {
+      "openingName": "Intermediate Openings",
+      "cnt": "96344"
+    },
+    {
+      "openingName": "Beginner Openings",
+      "cnt": "94017"
+    },
+    {
+      "openingName": "Sicilian Defense",
+      "cnt": "2341"
+    },
+    {
+      "openingName": "French Defense",
+      "cnt": "997"
+    },
+    {
+      "openingName": "Queens Pawn Game",
+      "cnt": "861"
+    },
+    {
+      "openingName": "Caro-Kann Defense",
+      "cnt": "839"
+    },
+    {
+      "openingName": "Italian Game",
+      "cnt": "837"
+    },
+    {
+      "openingName": "Scandinavian Defense",
+      "cnt": "630"
+    },
+    {
+      "openingName": "Queens Gambit Declined",
+      "cnt": "558"
+    },
+    {
+      "openingName": "English Opening",
+      "cnt": "516"
+    },
+    {
+      "openingName": "Indian Defense",
+      "cnt": "455"
+    },
+    {
+      "openingName": "Ruy Lopez",
+      "cnt": "449"
+    },
+    {
+      "openingName": "Scotch Game",
+      "cnt": "437"
+    },
+    {
+      "openingName": "Philidor Defense",
+      "cnt": "305"
+    },
+    {
+      "openingName": "Kings Gambit Accepted",
+      "cnt": "273"
+    },
+    {
+      "openingName": "Pirc Defense",
+      "cnt": "234"
+    },
+    {
+      "openingName": "Vienna Game",
+      "cnt": "228"
+    },
+    {
+      "openingName": "Modern Defense",
+      "cnt": "224"
+    },
+    {
+      "openingName": "Russian Game",
+      "cnt": "219"
+    },
+    {
+      "openingName": "Zukertort Opening",
+      "cnt": "218"
+    },
+    {
+      "openingName": "Bishops Opening",
+      "cnt": "217"
+    },
+    {
+      "openingName": "Four Knights Game",
+      "cnt": "209"
+    },
+    {
+      "openingName": "Kings Pawn Game",
+      "cnt": "203"
+    },
+    {
+      "openingName": "Slav Defense",
+      "cnt": "184"
+    },
+    {
+      "openingName": "Benoni Defense",
+      "cnt": "162"
+    },
+    {
+      "openingName": "Queens Gambit Accepted",
+      "cnt": "148"
+    },
+    {
+      "openingName": "Nimzo-Larsen Attack",
+      "cnt": "145"
+    },
+    {
+      "openingName": "Horwitz Defense",
+      "cnt": "135"
+    }
+  ],
+  "messages": [],
+  "stdout": "openingName\tcnt\nExpert Openings\t100000\nAdvanced Openings\t100000\nIntermediate Openings\t96344\nBeginner Openings\t94017\nSicilian Defense\t2341\nFrench Defense\t997\nQueens Pawn Game\t861\nCaro-Kann Defense\t839\nItalian Game\t837\nScandinavian Defense\t630\nQueens Gambit Declined\t558\nEnglish Opening\t516\nIndian Defense\t455\nRuy Lopez\t449\nScotch Game\t437\nPhilidor Defense\t305\nKings Gambit Accepted\t273\nPirc Defense\t234\nVienna Game\t228\nModern Defense\t224\nRussian Game\t219\nZukertort Opening\t218\nBishops Opening\t217\nFour Knights Game\t209\nKings Pawn Game\t203\nSlav Defense\t184\nBenoni Defense\t162\nQueens Gambit Accepted\t148\nNimzo-Larsen Attack\t145\nHorwitz Defense\t135\n",
+  "stderr": "",
+  "execution_time_ms": 1850
+}

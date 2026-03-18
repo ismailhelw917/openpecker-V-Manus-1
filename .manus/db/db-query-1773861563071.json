@@ -1,0 +1,16 @@
+{
+  "query": "SELECT \n  (SELECT COUNT(DISTINCT COALESCE(userId, 0)) + COUNT(DISTINCT deviceId) FROM cycle_history) as cycle_users,\n  (SELECT COUNT(DISTINCT COALESCE(userId, 0)) + COUNT(DISTINCT deviceId) FROM puzzle_attempts) as attempt_users,\n  (SELECT COUNT(*) FROM users WHERE hasRegistered = 1) as registered_users,\n  (SELECT COUNT(*) FROM users) as total_users;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT \n  (SELECT COUNT(DISTINCT COALESCE(userId, 0)) + COUNT(DISTINCT deviceId) FROM cycle_history) as cycle_users,\n  (SELECT COUNT(DISTINCT COALESCE(userId, 0)) + COUNT(DISTINCT deviceId) FROM puzzle_attempts) as attempt_users,\n  (SELECT COUNT(*) FROM users WHERE hasRegistered = 1) as registered_users,\n  (SELECT COUNT(*) FROM users) as total_users;",
+  "rows": [
+    {
+      "cycle_users": "4",
+      "attempt_users": "3",
+      "registered_users": "3",
+      "total_users": "334"
+    }
+  ],
+  "messages": [],
+  "stdout": "cycle_users\tattempt_users\tregistered_users\ttotal_users\n4\t3\t3\t334\n",
+  "stderr": "",
+  "execution_time_ms": 1658
+}

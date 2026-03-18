@@ -106,7 +106,10 @@ export default function ProAnalytics() {
           <p className="text-slate-300 mb-6">
             Advanced Analytics is available for Pro subscribers only. Upgrade your account to access detailed platform statistics.
           </p>
-          <Button className="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold">
+          <Button 
+            onClick={() => setLocation("/settings")}
+            className="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold"
+          >
             Upgrade to Pro
           </Button>
         </Card>

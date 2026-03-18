@@ -1091,7 +1091,7 @@ export const appRouter = router({
           // Step 3: Combine all active users
           const activeEntries = [...cycleRows, ...attemptRows];
 
-          // Step 4: Get remaining registered users (no activity) to fill up to 100
+          // Step 4: Get remaining users (including guests) to fill up to 100
           const activeUserIds = activeEntries
             .filter((e: any) => e.userId && Number(e.userId) > 0)
             .map((e: any) => Number(e.userId));
@@ -1106,7 +1106,7 @@ export const appRouter = router({
               SELECT id as userId, NULL as deviceId, name, isPremium,
                 0 as completedCycles, 0 as totalPuzzles, 0 as totalCorrect, 0 as totalTimeMs
               FROM users u
-              WHERE u.hasRegistered = 1 ${excludeClause}
+              WHERE 1=1 ${excludeClause}
               ORDER BY u.lastSignedIn DESC
               LIMIT ${remaining}
             `) as any;

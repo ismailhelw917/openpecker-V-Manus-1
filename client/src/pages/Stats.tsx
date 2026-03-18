@@ -64,6 +64,33 @@ export default function Stats() {
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [deviceId, setDeviceId] = useState<string | null>(null);
+
+  const handleCheckout = async (priceId: string, planName: string) => {
+    if (!user) {
+      toast.error("Please sign in to upgrade");
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ priceId, planName, userId: user.id, email: user.email }),
+      });
+      if (!response.ok) throw new Error(`Failed to create checkout session: ${response.status}`);
+      const data = await response.json();
+      if (data?.url) {
+        window.open(data.url, "_blank");
+        toast.success("Opening Stripe checkout...");
+      } else {
+        throw new Error("No checkout URL received");
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to start checkout");
+    } finally {
+      setLoading(false);
+    }
+  };
   const utils = trpc.useUtils();
 
   // Get device ID from localStorage
@@ -158,6 +185,7 @@ export default function Stats() {
 
             <div className="px-6 py-8 space-y-4">
               <button
+                onClick={() => handleCheckout("price_monthly", "Monthly")}
                 disabled={loading}
                 className="w-full p-4 rounded-lg border-2 border-slate-700 bg-slate-800/50 hover:border-amber-400 hover:bg-amber-400/5 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -171,6 +199,7 @@ export default function Stats() {
               </button>
 
               <button
+                onClick={() => handleCheckout("price_lifetime", "Lifetime")}
                 disabled={loading}
                 className="w-full p-4 rounded-lg border-2 border-amber-400/40 bg-amber-400/10 hover:border-amber-400 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
               >

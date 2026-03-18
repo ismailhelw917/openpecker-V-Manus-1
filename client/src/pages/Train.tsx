@@ -204,7 +204,9 @@ export default function Train() {
                         <Card
                           onClick={() => {
                             if (!canAccess) {
-                              toast.error("Unlock this opening with a premium account");
+                              toast.error("Unlock this opening with a premium account", {
+                                action: { label: "Upgrade", onClick: () => setLocation("/settings") },
+                              });
                               return;
                             }
                             setSelectedOpening(group.name);
@@ -239,7 +241,9 @@ export default function Train() {
                                   key={variation}
                                   onClick={() => {
                                     if (!varCanAccess) {
-                                      toast.error("Unlock this variation with a premium account");
+                                      toast.error("Unlock this variation with a premium account", {
+                                        action: { label: "Upgrade", onClick: () => setLocation("/settings") },
+                                      });
                                       return;
                                     }
                                     setSelectedOpening(variation);
