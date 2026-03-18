@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
 import { useAuth } from "./_core/hooks/useAuth";
 import { trpc } from "./lib/trpc";
+import { useLocation } from "wouter";
 
 function Router() {
   return (
@@ -41,7 +42,9 @@ function App() {
   });
   const [showGiftPremium, setShowGiftPremium] = useState(true);
   const [giftPremiumDismissed, setGiftPremiumDismissed] = useState(false);
-  const { isAuthenticated, loading } = useAuth();
+  const [premiumBannerDismissed, setPremiumBannerDismissed] = useState(false);
+  const { isAuthenticated, loading, user } = useAuth();
+  const [, setLocation] = useLocation();
   const { data: giftEligibility } = trpc.auth.checkGiftEligibility.useQuery();
   const { data: globalSettings } = trpc.system.getGlobalSettings.useQuery();
 
@@ -124,8 +127,29 @@ function App() {
               </div>
             </div>
           )}
+          
+          {/* Premium Signup Banner - Show for premium users without email */}
+          {!premiumBannerDismissed && isAuthenticated && user?.isPremium && !user?.email && (
+            <div className="fixed top-0 left-0 right-0 bg-gradient-to-r from-purple-600 via-purple-500 to-purple-600 text-white font-bold text-center py-3 z-40 shadow-lg">
+              <div className="flex items-center justify-center gap-3 max-w-full px-4">
+                <span className="text-sm sm:text-base">✨ You have FREE lifetime premium! Sign up to keep your status.</span>
+                <button
+                  onClick={() => setLocation("/auth")}
+                  className="ml-2 px-4 py-1 bg-white text-purple-600 font-bold rounded hover:bg-gray-100 transition-colors text-sm whitespace-nowrap"
+                >
+                  Sign Up Now
+                </button>
+                <button
+                  onClick={() => setPremiumBannerDismissed(true)}
+                  className="ml-2 text-white hover:opacity-75 font-semibold text-lg"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          )}
 
-          <div className="min-h-screen bg-slate-950 flex flex-col">
+          <div className={`min-h-screen bg-slate-950 flex flex-col ${!premiumBannerDismissed && isAuthenticated && user?.isPremium && !user?.email ? 'pt-16' : ''}`}>
             <div className="flex-1 overflow-y-auto pb-20 sm:pb-24">
               <Router />
             </div>
