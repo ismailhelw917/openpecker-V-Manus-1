@@ -396,3 +396,12 @@
 - [x] Updated 2 recent users (Ayush, N.Balaji) to have premium status
 - [ ] Test new signups to verify premium status is granted
 - [ ] Deploy fix to live site
+
+## Sets and Stats Data Sync Issue (Round 38)
+- [x] Check cycle history data recording in Session.tsx
+- [x] Add cycle recording mutation calls when cycles complete
+- [ ] Fix Sets page to display real training set statistics
+- [ ] Fix Stats page to aggregate session cycle data
+- [ ] Verify success rate, puzzles solved, accuracy calculations
+- [ ] Test data flow from Sessions → Sets → Stats
+- [ ] Deploy fixes to live site

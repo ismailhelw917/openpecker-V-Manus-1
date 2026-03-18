@@ -4,11 +4,13 @@ import { trpc } from "@/lib/trpc";
 import { Chess } from "chess.js";
 import { ChevronLeft } from "lucide-react";
 import { CustomChessboard } from "@/components/CustomChessboard";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 export default function Session() {
   const [match, params] = useRoute("/session/:id");
   const [, setLocation] = useLocation();
   const sessionId = params?.id as string;
+  const { user } = useAuth();
 
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
   const [fen, setFen] = useState("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
@@ -43,6 +45,9 @@ export default function Session() {
     { id: sessionId },
     { enabled: !!sessionId }
   );
+
+  // Cycle recording mutation
+  const completeCycleMutation = trpc.cycles.complete.useMutation();
 
   // Session timer
   useEffect(() => {
@@ -256,7 +261,16 @@ export default function Session() {
                 setFen(firstPuzzle.fen);
               }
             } else {
-              // All cycles completed
+              // All cycles completed - record final cycle
+              completeCycleMutation.mutate({
+                userId: user?.id,
+                deviceId: localStorage.getItem('openpecker-device-id') || '',
+                trainingSetId: sessionId,
+                cycleNumber: currentCycle,
+                totalPuzzles: puzzles.length,
+                correctCount,
+                totalTimeMs: sessionTime * 1000,
+              });
               setTimeout(() => setLocation("/sets"), 1000);
             }
           }
@@ -327,6 +341,16 @@ export default function Session() {
                         setFen(nextPuzzle.fen);
                       }
                     } else {
+                      // Record cycle completion
+                      completeCycleMutation.mutate({
+                        userId: user?.id,
+                        deviceId: localStorage.getItem('openpecker-device-id') || '',
+                        trainingSetId: sessionId,
+                        cycleNumber: currentCycle,
+                        totalPuzzles: puzzles.length,
+                        correctCount,
+                        totalTimeMs: sessionTime * 1000,
+                      });
                       setTimeout(() => setLocation("/sets"), 1000);
                     }
                   }, 1500);
