@@ -105,7 +105,7 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center p-4 pb-24">
-      <Card className="bg-slate-900/50 border-teal-900/30 w-full max-w-md p-8">
+      <Card className="bg-slate-900/20 border-teal-900/20 w-full max-w-md p-8 backdrop-blur-sm">
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-teal-900/40 to-slate-900/40 rounded-lg p-2 backdrop-blur-sm">
@@ -115,8 +115,8 @@ export default function Auth() {
               className="w-full h-full object-contain"
             />
           </div>
-          <h1 className="text-3xl font-bold text-teal-600">OpenPecker</h1>
-          <p className="text-slate-400 mt-2">
+          <h1 className="text-3xl font-bold text-teal-500">OpenPecker</h1>
+          <p className="text-slate-500 mt-2">
             {mode === "login" ? "Sign in to your account" : "Create a new account"}
           </p>
         </div>
@@ -136,7 +136,7 @@ export default function Auth() {
                   placeholder="you@example.com"
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
-                  className="pl-10 bg-slate-800 border-slate-700 text-white placeholder-slate-500"
+                  className="pl-10 bg-slate-900/30 border-slate-700/50 text-slate-100 placeholder-slate-600 backdrop-blur-sm"
                 />
               </div>
             </div>
@@ -153,7 +153,7 @@ export default function Auth() {
                   placeholder="••••••••"
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
-                  className="pl-10 bg-slate-800 border-slate-700 text-white placeholder-slate-500"
+                  className="pl-10 bg-slate-900/30 border-slate-700/50 text-slate-100 placeholder-slate-600 backdrop-blur-sm"
                 />
               </div>
             </div>
@@ -168,7 +168,7 @@ export default function Auth() {
               />
               <label
                 htmlFor="remember"
-                className="text-sm text-slate-400 cursor-pointer"
+                className="text-sm text-slate-500 cursor-pointer"
               >
                 Keep me signed in for 30 days
               </label>
@@ -177,12 +177,12 @@ export default function Auth() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 text-lg"
+              className="w-full bg-teal-600/80 hover:bg-teal-600 text-white font-bold py-3 text-lg backdrop-blur-sm"
             >
               {isLoading ? "Signing in..." : "Sign In"}
             </Button>
 
-            <p className="text-xs text-slate-500 text-center pt-2">
+            <p className="text-xs text-slate-600 text-center pt-2">
               By signing in, you agree to our Terms of Service
             </p>
           </form>
@@ -217,7 +217,7 @@ export default function Auth() {
                   placeholder="you@example.com"
                   value={registerEmail}
                   onChange={(e) => setRegisterEmail(e.target.value)}
-                  className="pl-10 bg-slate-800 border-slate-700 text-white placeholder-slate-500"
+                  className="pl-10 bg-slate-900/30 border-slate-700/50 text-slate-100 placeholder-slate-600 backdrop-blur-sm"
                 />
               </div>
             </div>
@@ -234,7 +234,7 @@ export default function Auth() {
                   placeholder="••••••••"
                   value={registerPassword}
                   onChange={(e) => setRegisterPassword(e.target.value)}
-                  className="pl-10 bg-slate-800 border-slate-700 text-white placeholder-slate-500"
+                  className="pl-10 bg-slate-900/30 border-slate-700/50 text-slate-100 placeholder-slate-600 backdrop-blur-sm"
                 />
               </div>
             </div>
@@ -251,7 +251,7 @@ export default function Auth() {
                   placeholder="••••••••"
                   value={registerConfirmPassword}
                   onChange={(e) => setRegisterConfirmPassword(e.target.value)}
-                  className="pl-10 bg-slate-800 border-slate-700 text-white placeholder-slate-500"
+                  className="pl-10 bg-slate-900/30 border-slate-700/50 text-slate-100 placeholder-slate-600 backdrop-blur-sm"
                 />
               </div>
             </div>
@@ -264,7 +264,7 @@ export default function Auth() {
               {isLoading ? "Creating account..." : "Create Account"}
             </Button>
 
-            <p className="text-xs text-slate-500 text-center">
+            <p className="text-xs text-slate-600 text-center">
               By creating an account, you agree to our Terms of Service
             </p>
           </form>
@@ -272,7 +272,7 @@ export default function Auth() {
 
         {/* Toggle Mode Button */}
         <div className="mt-6 pt-6 border-t border-slate-700 text-center">
-          <p className="text-slate-400 text-sm mb-3">
+          <p className="text-slate-500 text-sm mb-3">
             {mode === "login"
               ? "Don't have an account? "
               : "Already have an account? "}
@@ -297,7 +297,7 @@ export default function Auth() {
         <div className="mt-4">
           <Button
             onClick={() => setLocation("/")}
-            className="w-full bg-slate-800 hover:bg-slate-700 text-white border border-slate-700"
+            className="w-full bg-slate-900/30 hover:bg-slate-900/50 text-slate-100 border border-slate-700/50 backdrop-blur-sm"
           >
             Continue as Guest
           </Button>
