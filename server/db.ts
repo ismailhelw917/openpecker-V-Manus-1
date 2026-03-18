@@ -344,21 +344,18 @@ export async function getTrainingSetsByUser(userId: number | null, deviceId: str
   const db = await getDb();
   if (!db) return [];
 
-  if (userId) {
-    return db
-      .select()
-      .from(trainingSets)
-      .where(eq(trainingSets.userId, userId))
-      .orderBy(desc(trainingSets.updatedAt));
-  } else if (deviceId) {
-    return db
-      .select()
-      .from(trainingSets)
-      .where(eq(trainingSets.deviceId, deviceId))
-      .orderBy(desc(trainingSets.updatedAt));
-  }
+  // Build OR conditions to find sets by userId OR deviceId
+  const conditions = [];
+  if (userId) conditions.push(eq(trainingSets.userId, userId));
+  if (deviceId) conditions.push(eq(trainingSets.deviceId, deviceId));
 
-  return [];
+  if (conditions.length === 0) return [];
+
+  return db
+    .select()
+    .from(trainingSets)
+    .where(conditions.length === 1 ? conditions[0] : or(...conditions))
+    .orderBy(desc(trainingSets.updatedAt));
 }
 
 export async function updateTrainingSet(id: string, updates: any) {
@@ -385,21 +382,18 @@ export async function getCycleHistoryByUser(userId: number | null, deviceId: str
   const db = await getDb();
   if (!db) return [];
 
-  if (userId) {
-    return db
-      .select()
-      .from(cycleHistory)
-      .where(eq(cycleHistory.userId, userId))
-      .orderBy(desc(cycleHistory.completedAt));
-  } else if (deviceId) {
-    return db
-      .select()
-      .from(cycleHistory)
-      .where(eq(cycleHistory.deviceId, deviceId))
-      .orderBy(desc(cycleHistory.completedAt));
-  }
+  // Build OR conditions to find cycles by userId OR deviceId
+  const conditions = [];
+  if (userId) conditions.push(eq(cycleHistory.userId, userId));
+  if (deviceId) conditions.push(eq(cycleHistory.deviceId, deviceId));
 
-  return [];
+  if (conditions.length === 0) return [];
+
+  return db
+    .select()
+    .from(cycleHistory)
+    .where(conditions.length === 1 ? conditions[0] : or(...conditions))
+    .orderBy(desc(cycleHistory.completedAt));
 }
 
 export async function getCycleHistoryByTrainingSet(trainingSetId: string) {

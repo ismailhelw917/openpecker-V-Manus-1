@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRoute, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Chess } from "chess.js";
 import { ChevronLeft } from "lucide-react";
 import { CustomChessboard } from "@/components/CustomChessboard";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { getOrCreateDeviceId } from "@/_core/deviceId";
 
 export default function Session() {
   const [match, params] = useRoute("/session/:id");
@@ -13,7 +14,6 @@ export default function Session() {
   const { user } = useAuth();
 
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
-  const [fen, setFen] = useState("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
   const [puzzles, setPuzzles] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [correctCount, setCorrectCount] = useState(0);
@@ -23,27 +23,34 @@ export default function Session() {
   const [boardSize, setBoardSize] = useState(400);
   const [captureSquare, setCaptureSquare] = useState<string | null>(null);
 
-  
+  // Chess game instance - kept as ref to avoid re-renders
+  const gameRef = useRef(new Chess());
+  const [gameFen, setGameFen] = useState(gameRef.current.fen());
+
+  // Track which move in the puzzle sequence the user needs to play
+  // In Lichess format: moves[0]=setup, moves[1]=user, moves[2]=opponent, moves[3]=user, etc.
+  // userMoveIndex tracks the index into movesList that the user needs to play next
+  const [userMoveIndex, setUserMoveIndex] = useState(1);
+
   // Calculate responsive board size
   useEffect(() => {
     const calculateBoardSize = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
-      
-      // For mobile (< 640px width), use 90% of viewport width minus padding
+
       if (width < 640) {
         const mobileSize = Math.min(width - 32, height - 280);
         setBoardSize(Math.max(mobileSize, 250));
       } else {
-        // For desktop, use fixed size
         setBoardSize(400);
       }
     };
-    
+
     calculateBoardSize();
     window.addEventListener("resize", calculateBoardSize);
     return () => window.removeEventListener("resize", calculateBoardSize);
   }, []);
+
   const [autoSolveMove, setAutoSolveMove] = useState<{ from: string; to: string } | null>(null);
   const [isAutoSolving, setIsAutoSolving] = useState(false);
   const [autoNextCountdown, setAutoNextCountdown] = useState<number | null>(null);
@@ -54,7 +61,7 @@ export default function Session() {
   const [sessionTime, setSessionTime] = useState(0);
   const [showCorrectCheckmark, setShowCorrectCheckmark] = useState(false);
   const [showWrongX, setShowWrongX] = useState(false);
-  const [currentMoveIndex, setCurrentMoveIndex] = useState(0); // Track which move in the sequence
+
   // Board theme definitions
   const themeColors = {
     classic: { light: '#f0d9b5', dark: '#b58863' },
@@ -72,37 +79,34 @@ export default function Session() {
   const utils = trpc.useUtils();
   const completeCycleMutation = trpc.cycles.complete.useMutation({
     onSuccess: () => {
-      // Invalidate stats queries to refresh data
       utils.stats.getUserStats.invalidate();
       utils.stats.getLeaderboard.invalidate();
-      // Invalidate training sets
-      utils.trainingSets.getById.invalidate({ id: sessionId });
-    },
-  });
-  
-  // Update training set mutation
-  const updateTrainingSetMutation = trpc.trainingSets.update.useMutation({
-    onSuccess: () => {
-      // Invalidate training set queries
       utils.trainingSets.getById.invalidate({ id: sessionId });
     },
   });
 
-  // Record individual puzzle attempt mutation (fires after each puzzle)
+  // Update training set mutation
+  const updateTrainingSetMutation = trpc.trainingSets.update.useMutation({
+    onSuccess: () => {
+      utils.trainingSets.getById.invalidate({ id: sessionId });
+    },
+  });
+
+  // Record individual puzzle attempt mutation
   const recordAttemptMutation = trpc.attempts.record.useMutation({
     onSuccess: () => {
-      // Invalidate stats so they update in real-time
       utils.stats.getSummary.invalidate();
       utils.stats.getUserStats.invalidate();
     },
   });
 
-  // Track puzzle start time for timing each puzzle
+  // Track puzzle start time
   const [puzzleStartTime, setPuzzleStartTime] = useState<number>(Date.now());
 
   // Helper to record a puzzle attempt
-  const recordPuzzleAttempt = (isCorrect: boolean, timeMs: number) => {
-    const deviceId = localStorage.getItem('openpecker-device-id') || '';
+  const recordPuzzleAttempt = useCallback((isCorrect: boolean, timeMs: number) => {
+    const deviceId = getOrCreateDeviceId();
+    const currentPuzzle = puzzles[currentPuzzleIndex];
     recordAttemptMutation.mutate({
       userId: user?.id,
       deviceId,
@@ -113,41 +117,83 @@ export default function Session() {
       timeMs,
       attemptNumber: 1,
     });
-    // Also update training set lastPlayedAt and totalAttempts
     updateTrainingSetMutation.mutate({
       id: sessionId,
       lastPlayedAt: new Date(),
       totalAttempts: (getTrainingSet.data?.totalAttempts || 0) + 1,
     });
-  };
+  }, [puzzles, currentPuzzleIndex, user, sessionId, currentCycle, getTrainingSet.data?.totalAttempts]);
 
   // Session timer
   useEffect(() => {
     if (isLoading || !puzzles.length) return;
-    
+
     const interval = setInterval(() => {
       setSessionTime(prev => prev + 1);
     }, 1000);
-    
+
     return () => clearInterval(interval);
   }, [isLoading, puzzles.length]);
 
-  // Calculate board size on mount and resize
-  useEffect(() => {
-    const calculateBoardSize = () => {
-      const headerHeight = 80;
-      const footerHeight = 80;
-      const padding = 16;
-      const availableHeight = window.innerHeight - headerHeight - footerHeight - padding;
-      const availableWidth = window.innerWidth - padding;
-      const size = Math.min(availableHeight, availableWidth, 600);
-      setBoardSize(Math.max(300, size));
-    };
-
-    calculateBoardSize();
-    window.addEventListener("resize", calculateBoardSize);
-    return () => window.removeEventListener("resize", calculateBoardSize);
+  // Parse moves list from puzzle data
+  const parseMovesList = useCallback((puzzle: any): string[] => {
+    if (!puzzle?.moves) return [];
+    if (Array.isArray(puzzle.moves)) return puzzle.moves;
+    if (typeof puzzle.moves === 'string') {
+      return puzzle.moves.split(' ').filter((m: string) => m.length > 0);
+    }
+    return [];
   }, []);
+
+  // Play a UCI move on the game instance
+  const playUCIMove = useCallback((game: Chess, uciMove: string): boolean => {
+    const from = uciMove.substring(0, 2);
+    const to = uciMove.substring(2, 4);
+    const promotion = uciMove.length > 4 ? uciMove[4] : undefined;
+
+    try {
+      const moveObj: any = { from, to };
+      if (promotion) moveObj.promotion = promotion;
+      const result = game.move(moveObj);
+      return !!result;
+    } catch {
+      return false;
+    }
+  }, []);
+
+  // Initialize a puzzle: load FEN, play setup move, update board
+  const initializePuzzle = useCallback((puzzle: any) => {
+    if (!puzzle?.fen) return;
+
+    const movesList = parseMovesList(puzzle);
+    const game = new Chess(puzzle.fen);
+
+    // Play the setup move (movesList[0]) - this is the opponent's move that creates the puzzle
+    if (movesList.length > 0) {
+      const setupPlayed = playUCIMove(game, movesList[0]);
+      if (!setupPlayed) {
+        console.error('Failed to play setup move:', movesList[0], 'on FEN:', puzzle.fen);
+      }
+    }
+
+    // Update game state
+    gameRef.current = game;
+    setGameFen(game.fen());
+    setUserMoveIndex(1); // User needs to play movesList[1]
+    setSolved(false);
+    setCaptureSquare(null);
+    setPuzzleStartTime(Date.now());
+
+    console.log('Puzzle initialized:', {
+      id: puzzle.id,
+      originalFen: puzzle.fen,
+      setupMove: movesList[0],
+      puzzleFen: game.fen(),
+      userTurn: game.turn(),
+      expectedUserMove: movesList[1],
+      totalMoves: movesList.length,
+    });
+  }, [parseMovesList, playUCIMove]);
 
   // Load puzzles from training set
   useEffect(() => {
@@ -175,20 +221,82 @@ export default function Session() {
       setSolved(false);
       setCurrentCycle(1);
       setTargetCycles(getTrainingSet.data.targetCycles || 3);
-      
-      // Load first puzzle FEN
-      const firstPuzzle = puzzleList[0];
-      if (firstPuzzle?.fen) {
-        setFen(firstPuzzle.fen);
-        console.log("Loaded puzzle FEN:", firstPuzzle.fen);
-      }
-      
+
+      // Initialize first puzzle
+      initializePuzzle(puzzleList[0]);
+
       setIsLoading(false);
     } catch (error) {
       console.error("Error loading puzzles:", error);
       setIsLoading(false);
     }
   }, [getTrainingSet.data]);
+
+  // Advance to next puzzle
+  const advanceToNextPuzzle = useCallback(() => {
+    if (currentPuzzleIndex < puzzles.length - 1) {
+      const nextIndex = currentPuzzleIndex + 1;
+      setCurrentPuzzleIndex(nextIndex);
+      initializePuzzle(puzzles[nextIndex]);
+    } else {
+      // Cycle completed
+      if (currentCycle < targetCycles) {
+        // Start next cycle
+        const nextCycle = currentCycle + 1;
+        setCurrentCycle(nextCycle);
+        setCurrentPuzzleIndex(0);
+        setCorrectCount(0);
+        initializePuzzle(puzzles[0]);
+      } else {
+        // All cycles completed - record final cycle
+        const accuracy = (correctCount / puzzles.length) * 100;
+        completeCycleMutation.mutate({
+          userId: user?.id,
+          deviceId: getOrCreateDeviceId(),
+          trainingSetId: sessionId,
+          cycleNumber: currentCycle,
+          totalPuzzles: puzzles.length,
+          correctCount,
+          totalTimeMs: sessionTime * 1000,
+        });
+
+        updateTrainingSetMutation.mutate({
+          id: sessionId,
+          bestAccuracy: accuracy,
+          lastPlayedAt: new Date(),
+          cyclesCompleted: currentCycle,
+          totalAttempts: puzzles.length,
+        });
+
+        setTimeout(() => setLocation("/sets"), 1000);
+      }
+    }
+  }, [currentPuzzleIndex, puzzles, currentCycle, targetCycles, correctCount, sessionTime, sessionId, user, initializePuzzle]);
+
+  // Play opponent's response move after user's correct move
+  const playOpponentResponse = useCallback((movesList: string[], nextMoveIndex: number) => {
+    if (nextMoveIndex >= movesList.length) {
+      // No more moves - puzzle is complete (user got it right)
+      return true; // puzzle solved
+    }
+
+    // Play opponent's response move with animation
+    const opponentMove = movesList[nextMoveIndex];
+    const from = opponentMove.substring(0, 2);
+    const to = opponentMove.substring(2, 4);
+
+    setAutoSolveMove({ from, to });
+
+    setTimeout(() => {
+      const game = gameRef.current;
+      playUCIMove(game, opponentMove);
+      setGameFen(game.fen());
+      setAutoSolveMove(null);
+      setUserMoveIndex(nextMoveIndex + 1); // User needs to play the next move
+    }, 600);
+
+    return false; // puzzle not yet complete
+  }, [playUCIMove]);
 
   if (!match) return null;
 
@@ -221,13 +329,10 @@ export default function Session() {
 
   const currentPuzzle = puzzles[currentPuzzleIndex];
   const progress = ((currentPuzzleIndex + 1) / puzzles.length) * 100;
-  
-  // Determine board orientation based on whose turn it is
-  const gameForOrientation = new Chess(currentPuzzle?.fen || fen);
-  const isWhiteTurn = gameForOrientation.turn() === 'w';
-  // Board should show the player's perspective - if it's white's turn, show from white's side, etc.
-  const boardOrientation = isWhiteTurn ? 'white' : 'black';
-  console.log('Turn detection:', { turn: gameForOrientation.turn(), isWhiteTurn, boardOrientation });
+
+  // Determine board orientation: the user plays the side whose turn it is AFTER the setup move
+  // Since we've already played the setup move, game.turn() gives us the user's color
+  const boardOrientation = gameRef.current.turn() === 'w' ? 'white' : 'black';
 
   // Format time display
   const formatTime = (seconds: number) => {
@@ -237,283 +342,167 @@ export default function Session() {
   };
 
   const handleMove = (sourceSquare: string, targetSquare: string) => {
-    if (solved) return false;
-    if (!currentPuzzle?.fen) return false;
+    if (solved || isAutoSolving) return false;
+
+    const currentPuzzle = puzzles[currentPuzzleIndex];
+    if (!currentPuzzle) return false;
+
+    const movesList = parseMovesList(currentPuzzle);
+    const expectedMove = movesList[userMoveIndex];
+
+    if (!expectedMove) {
+      console.log('No expected move at index:', userMoveIndex);
+      return false;
+    }
 
     try {
-      // Use the current displayed FEN (fen state) to match what the user sees on the board
-      const currentFen = fen || currentPuzzle.fen;
-      const game = new Chess(currentFen);
-      
+      const game = gameRef.current;
+
       // Pre-validate: check if source square has a piece
       const piece = game.get(sourceSquare as any);
       if (!piece) {
         console.log('No piece on source square:', sourceSquare);
         return false;
       }
-      
-      // Pre-validate: check if the move is in the list of legal moves
+
+      // Pre-validate: check if the move is legal
       const legalMoves = game.moves({ square: sourceSquare as any, verbose: true });
       const isLegal = legalMoves.some((m: any) => m.to === targetSquare);
       if (!isLegal) {
-        console.log('Illegal move attempted:', { from: sourceSquare, to: targetSquare, legalMoves: legalMoves.map((m: any) => m.to) });
-        return false;
-      }
-      
-      console.log('Attempting move:', { sourceSquare, targetSquare, fen: currentFen });
-      
-      let result = null;
-      try {
-        // Only add promotion if the move is to the 8th or 1st rank (pawn promotion)
-        const moveObj: any = {
-          from: sourceSquare,
-          to: targetSquare,
-        };
-        
-        // Check if target square is on promotion rank (8th for white, 1st for black)
-        const targetRank = parseInt(targetSquare[1]);
-        const isPawn = piece.type === 'p';
-        if (isPawn && (targetRank === 8 || targetRank === 1)) {
-          moveObj.promotion = "q";
-        }
-        
-        result = game.move(moveObj);
-      } catch (e) {
-        // This should rarely happen now due to pre-validation above
-        console.log("Move rejected by chess engine:", sourceSquare, "->", targetSquare);
+        console.log('Illegal move:', sourceSquare, '->', targetSquare);
         return false;
       }
 
-      // If move is illegal, return false silently (no error toast)
+      // Build move object
+      const moveObj: any = { from: sourceSquare, to: targetSquare };
+      const targetRank = parseInt(targetSquare[1]);
+      if (piece.type === 'p' && (targetRank === 8 || targetRank === 1)) {
+        moveObj.promotion = "q";
+      }
+
+      const result = game.move(moveObj);
       if (!result) {
-        console.log('Move returned null:', { from: sourceSquare, to: targetSquare });
+        console.log('Move rejected by engine');
         return false;
       }
 
-      // Update the displayed FEN after successful move
-      setFen(game.fen());
-
-      // Check if move is correct
-      // Parse moves - could be array or space-separated string
-      let movesList: string[] = [];
-      if (Array.isArray(currentPuzzle.moves)) {
-        movesList = currentPuzzle.moves;
-      } else if (typeof currentPuzzle.moves === 'string') {
-        movesList = currentPuzzle.moves.split(' ').filter((m: string) => m.length > 0);
-      }
-      
-      const expectedMove = movesList[currentMoveIndex];
+      // Build UCI string for comparison
       const moveUCI = `${result.from}${result.to}${result.promotion || ""}`;
-      console.log('Move validation:', { currentMoveIndex, expectedMove, moveUCI, totalMoves: movesList.length, puzzleId: currentPuzzle.id });
+      console.log('Move validation:', { userMoveIndex, expectedMove, moveUCI, totalMoves: movesList.length });
 
       if (expectedMove === moveUCI) {
-        // Record correct puzzle attempt immediately
-        const puzzleTimeMs = Date.now() - puzzleStartTime;
-        recordPuzzleAttempt(true, puzzleTimeMs);
-        
-        setCorrectCount((prev) => prev + 1);
-        setShowCorrectCheckmark(true);
-        setSolved(true);
-        
-        // Hide checkmark after 1 second
-        setTimeout(() => setShowCorrectCheckmark(false), 1000);
-        
-        // Start countdown for auto-next
-        let countdown = 1;
-        setAutoNextCountdown(countdown);
-        const countdownInterval = setInterval(() => {
-          countdown -= 1;
-          if (countdown > 0) {
-            setAutoNextCountdown(countdown);
-          } else {
-            setAutoNextCountdown(null);
-            clearInterval(countdownInterval);
-          }
-        }, 500);
+        // Correct move!
+        setGameFen(game.fen());
 
-        // Auto-advance after 1.5 seconds
-        setTimeout(() => {
-          clearInterval(countdownInterval);
-          setAutoNextCountdown(null);
-          
-          if (currentPuzzleIndex < puzzles.length - 1) {
-            const nextIndex = currentPuzzleIndex + 1;
-            setCurrentPuzzleIndex(nextIndex);
-            setSolved(false);
-            setCaptureSquare(null);
-            setPuzzleStartTime(Date.now()); // Reset timer for next puzzle
-            
-            const nextPuzzle = puzzles[nextIndex];
-            if (nextPuzzle?.fen) {
-              setFen(nextPuzzle.fen);
-            }
+        // Check if there are more moves in the sequence
+        const nextOpponentMoveIndex = userMoveIndex + 1;
+
+        if (nextOpponentMoveIndex >= movesList.length) {
+          // Puzzle fully solved - no more moves
+          const puzzleTimeMs = Date.now() - puzzleStartTime;
+          recordPuzzleAttempt(true, puzzleTimeMs);
+          setCorrectCount(prev => prev + 1);
+          setShowCorrectCheckmark(true);
+          setSolved(true);
+          setTimeout(() => setShowCorrectCheckmark(false), 1000);
+
+          // Auto-advance after delay
+          setTimeout(() => {
+            advanceToNextPuzzle();
+          }, 1500);
+        } else {
+          // Play opponent's response, then wait for user's next move
+          const puzzleDone = playOpponentResponse(movesList, nextOpponentMoveIndex);
+
+          if (puzzleDone) {
+            // All moves played
+            const puzzleTimeMs = Date.now() - puzzleStartTime;
+            recordPuzzleAttempt(true, puzzleTimeMs);
+            setCorrectCount(prev => prev + 1);
+            setShowCorrectCheckmark(true);
+            setSolved(true);
+            setTimeout(() => setShowCorrectCheckmark(false), 1000);
+            setTimeout(() => advanceToNextPuzzle(), 1500);
           } else {
-            // Cycle completed - increment cycle or finish session
-            if (currentCycle < targetCycles) {
-              setCurrentCycle(currentCycle + 1);
-              setCurrentPuzzleIndex(0);
-              setCorrectCount(0);
-              setPuzzleStartTime(Date.now()); // Reset timer for new cycle
-              
-              const firstPuzzle = puzzles[0];
-              if (firstPuzzle?.fen) {
-                setFen(firstPuzzle.fen);
-              }
-            } else {
-              // All cycles completed - record final cycle
-              const accuracy = (correctCount / puzzles.length) * 100;
-              completeCycleMutation.mutate({
-                userId: user?.id,
-                deviceId: localStorage.getItem('openpecker-device-id') || '',
-                trainingSetId: sessionId,
-                cycleNumber: currentCycle,
-                totalPuzzles: puzzles.length,
-                correctCount,
-                totalTimeMs: sessionTime * 1000,
-              });
-              
-              // Update training set with session stats
-              updateTrainingSetMutation.mutate({
-                id: sessionId,
-                bestAccuracy: accuracy,
-                lastPlayedAt: new Date(),
-                cyclesCompleted: currentCycle,
-                totalAttempts: puzzles.length,
-              });
-              
-              setTimeout(() => setLocation("/sets"), 1000);
+            // Check if user has more moves after opponent response
+            const nextUserMoveIndex = nextOpponentMoveIndex + 1;
+            if (nextUserMoveIndex >= movesList.length) {
+              // Opponent's response was the last move - puzzle solved
+              setTimeout(() => {
+                const puzzleTimeMs = Date.now() - puzzleStartTime;
+                recordPuzzleAttempt(true, puzzleTimeMs);
+                setCorrectCount(prev => prev + 1);
+                setShowCorrectCheckmark(true);
+                setSolved(true);
+                setTimeout(() => setShowCorrectCheckmark(false), 1000);
+                setTimeout(() => advanceToNextPuzzle(), 1500);
+              }, 700);
             }
+            // Otherwise, user needs to play nextUserMoveIndex (set by playOpponentResponse)
           }
-        }, 1500);
+        }
       } else {
-        // Record incorrect puzzle attempt immediately
+        // Wrong move - undo it
+        game.undo();
+        setGameFen(game.fen());
+
+        // Record incorrect attempt
         const puzzleTimeMs = Date.now() - puzzleStartTime;
         recordPuzzleAttempt(false, puzzleTimeMs);
-        
+
         // Show wrong X watermark
         setShowWrongX(true);
         setTimeout(() => setShowWrongX(false), 1000);
-        
-        // Show capture animation on wrong move
+
+        // Show capture animation
         setCaptureSquare(targetSquare);
-        
-        // Reset board after animation and show auto-solve
+
+        // Auto-solve: show the correct solution
         setTimeout(() => {
-          setFen(currentPuzzle.fen);
           setCaptureSquare(null);
-          
-          // Auto-solve after 0.5 seconds - play entire solution sequence
+
+          // Reset to puzzle start position (after setup move)
+          const solveGame = new Chess(currentPuzzle.fen);
+          if (movesList.length > 0) {
+            playUCIMove(solveGame, movesList[0]); // Play setup move
+          }
+          gameRef.current = solveGame;
+          setGameFen(solveGame.fen());
+
+          // Auto-solve: play remaining moves with animation
           setTimeout(() => {
-            const game = new Chess(currentPuzzle.fen);
-            let movesList: string[] = [];
-            if (Array.isArray(currentPuzzle.moves)) {
-              movesList = currentPuzzle.moves;
-            } else if (typeof currentPuzzle.moves === 'string') {
-              movesList = currentPuzzle.moves.split(' ').filter((m: string) => m.length > 0);
-            }
-            
-            if (movesList.length === 0) return;
-            
-            try {
-              setIsAutoSolving(true);
-              let moveIndex = 0;
-              
-              // Function to play moves sequentially with animation
-              const playNextMove = () => {
-                if (moveIndex >= movesList.length) {
-                  // All moves played - don't count as correct or solved
-                  setIsAutoSolving(false);
-                  setAutoSolveMove(null);
-                  // Don't set setSolved(true) - user didn't solve it correctly
-                  
-                  // Start countdown for auto-next
-                  let countdown = 1;
-                  setAutoNextCountdown(countdown);
-                  const countdownInterval = setInterval(() => {
-                    countdown -= 1;
-                    if (countdown > 0) {
-                      setAutoNextCountdown(countdown);
-                    } else {
-                      setAutoNextCountdown(null);
-                      clearInterval(countdownInterval);
-                    }
-                  }, 500);
-                  
-                  // Auto-advance after 1.5 seconds
-                  setTimeout(() => {
-                    clearInterval(countdownInterval);
-                    setAutoNextCountdown(null);
-                    
-                    if (currentPuzzleIndex < puzzles.length - 1) {
-                      const nextIndex = currentPuzzleIndex + 1;
-                      setCurrentPuzzleIndex(nextIndex);
-                      setSolved(false);
-                      setCaptureSquare(null);
-                      setPuzzleStartTime(Date.now()); // Reset timer for next puzzle
-                      
-                      const nextPuzzle = puzzles[nextIndex];
-                      if (nextPuzzle?.fen) {
-                        setFen(nextPuzzle.fen);
-                      }
-                    } else {
-                      // Record cycle completion
-                      completeCycleMutation.mutate({
-                        userId: user?.id,
-                        deviceId: localStorage.getItem('openpecker-device-id') || '',
-                        trainingSetId: sessionId,
-                        cycleNumber: currentCycle,
-                        totalPuzzles: puzzles.length,
-                        correctCount,
-                        totalTimeMs: sessionTime * 1000,
-                      });
-                      setTimeout(() => setLocation("/sets"), 1000);
-                    }
-                  }, 1500);
-                  return;
-                }
-                
-                const expectedMove = movesList[moveIndex];
-                const from = expectedMove.substring(0, 2);
-                const to = expectedMove.substring(2, 4);
-                const promotion = expectedMove.length > 4 ? expectedMove[4] : undefined;
-                
-                try {
-                  const moveObj: any = { from, to };
-                  if (promotion) {
-                    moveObj.promotion = promotion;
-                  }
-                  const moveResult = game.move(moveObj);
-                  if (moveResult) {
-                    // Show animation for this move
-                    setAutoSolveMove({ from, to });
-                    
-                    // Play move after animation (total 2s / number of moves)
-                    const delayPerMove = 2000 / movesList.length;
-                    setTimeout(() => {
-                      setFen(game.fen());
-                      setAutoSolveMove(null);
-                      moveIndex++;
-                      
-                      // Play next move
-                      setTimeout(playNextMove, delayPerMove * 0.3);
-                    }, delayPerMove * 0.7);
-                  } else {
-                    console.log("Failed to play auto-solve move:", expectedMove);
-                    setIsAutoSolving(false);
-                  }
-                } catch (e) {
-                  console.log("Error playing auto-solve move:", e);
-                  setIsAutoSolving(false);
-                }
-              };
-              
-              // Start playing moves
-              playNextMove();
-            } catch (e) {
-              console.error("Error auto-solving:", e);
-              setIsAutoSolving(false);
-            }
-          }, 500);
+            setIsAutoSolving(true);
+            let solveIndex = 1; // Start from user's first move
+
+            const playNextSolveMove = () => {
+              if (solveIndex >= movesList.length) {
+                setIsAutoSolving(false);
+                setAutoSolveMove(null);
+
+                // Auto-advance after showing solution
+                setTimeout(() => advanceToNextPuzzle(), 1500);
+                return;
+              }
+
+              const move = movesList[solveIndex];
+              const from = move.substring(0, 2);
+              const to = move.substring(2, 4);
+
+              setAutoSolveMove({ from, to });
+
+              const delayPerMove = Math.max(400, 2000 / (movesList.length - 1));
+              setTimeout(() => {
+                playUCIMove(solveGame, move);
+                setGameFen(solveGame.fen());
+                setAutoSolveMove(null);
+                solveIndex++;
+
+                setTimeout(playNextSolveMove, delayPerMove * 0.3);
+              }, delayPerMove * 0.7);
+            };
+
+            playNextSolveMove();
+          }, 300);
         }, 600);
       }
 
@@ -566,7 +555,7 @@ export default function Session() {
       <div className="flex-1 flex items-center justify-center p-2 sm:p-4 overflow-hidden">
         <div style={{ width: boardSize, height: boardSize }} className="relative">
           <CustomChessboard
-            game={new Chess(fen)}
+            game={new Chess(gameFen)}
             onPieceDrop={handleMove}
             boardColors={themeColors[boardTheme]}
             captureSquare={captureSquare}
@@ -575,7 +564,7 @@ export default function Session() {
             autoNextCountdown={autoNextCountdown}
             isAutoSolving={isAutoSolving}
           />
-          
+
           {/* Green Checkmark Watermark for Correct Solutions */}
           {showCorrectCheckmark && !isAutoSolving && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -586,7 +575,7 @@ export default function Session() {
               </div>
             </div>
           )}
-          
+
           {/* Red X Watermark for Wrong Moves */}
           {showWrongX && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -602,8 +591,6 @@ export default function Session() {
 
       {/* Footer Navigation */}
       <div className="h-14 sm:h-20 border-t border-teal-900/30 bg-slate-900/50 flex-shrink-0" />
-
-      {/* Status Message removed */}
     </div>
   );
 }

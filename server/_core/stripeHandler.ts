@@ -25,8 +25,8 @@ const STRIPE_PRICES = {
 };
 
 export function registerStripeRoutes(app: express.Express) {
-  // Create checkout session endpoint
-  app.post("/api/create-checkout-session", async (req, res) => {
+  // Create checkout session endpoint (needs its own JSON parser since registered before global express.json)
+  app.post("/api/create-checkout-session", express.json(), async (req, res) => {
     try {
       const { priceId, userId, email } = req.body;
 
@@ -57,14 +57,16 @@ export function registerStripeRoutes(app: express.Express) {
             quantity: 1,
           },
         ],
-        mode: "payment",
-        success_url: `${origin}?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${origin}/settings`,
+        mode: actualPriceId === STRIPE_PRICES.price_monthly ? "subscription" : "payment",
+        success_url: `${origin}/settings?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/settings?payment=cancelled`,
         customer_email: email,
         client_reference_id: userId.toString(),
+        allow_promotion_codes: true,
         metadata: {
           userId: userId.toString(),
           email,
+          plan: actualPriceId === STRIPE_PRICES.price_monthly ? "monthly" : "lifetime",
         },
       });
 
@@ -116,11 +118,15 @@ export function registerStripeRoutes(app: express.Express) {
           return res.status(400).json({ error: "Webhook signature verification failed" });
         }
 
-        // Handle test events for webhook verification
-        // Test events can have evt_test_ prefix OR be identified by livemode=false
-        if (event.id.startsWith('evt_test_') || (event as any).livemode === false) {
-          console.log(`[Webhook] Test event detected (${event.type}, id=${event.id}), returning verification response`);
+        // Handle test verification events (evt_test_ prefix only)
+        if (event.id.startsWith('evt_test_')) {
+          console.log(`[Webhook] Test verification event detected (${event.type}, id=${event.id})`);
           return res.json({ verified: true });
+        }
+
+        // Log test mode events but still process them
+        if ((event as any).livemode === false) {
+          console.log(`[Webhook] Processing test mode event: ${event.type} (${event.id})`);
         }
 
         console.log(`[Webhook] Received event: ${event.type} (${event.id})`);
@@ -177,7 +183,7 @@ export function registerStripeRoutes(app: express.Express) {
   );
 
   // Retrieve checkout session details (for verifying payment)
-  app.get("/api/checkout-session/:sessionId", async (req, res) => {
+  app.get("/api/checkout-session/:sessionId", express.json(), async (req, res) => {
     try {
       const { sessionId } = req.params;
 

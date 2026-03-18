@@ -1,49 +1,41 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { getOrCreateDeviceId } from "@/_core/deviceId";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ChevronLeft, Play, Trash2, Loader2, Plus } from "lucide-react";
 
 export default function SavedSets() {
   const [, setLocation] = useLocation();
-  const [deviceId, setDeviceId] = useState<string | null>(null);
+  const { user } = useAuth();
+  const deviceId = getOrCreateDeviceId();
 
-  useEffect(() => {
-    const storedDeviceId = localStorage.getItem("openpecker-device-id");
-    setDeviceId(storedDeviceId);
-  }, []);
-
-  // Fetch saved sets
+  // Fetch saved sets - pass both userId and deviceId for comprehensive lookup
   const setsQuery = trpc.trainingSets.list.useQuery(
     {
+      userId: user?.id,
       deviceId: deviceId || undefined,
     },
     {
-      enabled: !!deviceId,
+      enabled: !!deviceId || !!user,
       refetchOnWindowFocus: true,
       refetchOnMount: true,
     }
   );
 
-  // Refetch sets when component mounts
-  useEffect(() => {
-    if (deviceId) {
-      setsQuery.refetch();
-    }
-  }, [deviceId]);
-
   // Refetch sets when page becomes visible (returns from session)
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && deviceId) {
+      if (document.visibilityState === 'visible') {
         setsQuery.refetch();
       }
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [deviceId, setsQuery]);
+  }, [setsQuery]);
 
   const deleteSetMutation = trpc.trainingSets.delete.useMutation({
     onSuccess: () => {

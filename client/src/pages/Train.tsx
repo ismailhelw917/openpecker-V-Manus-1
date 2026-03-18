@@ -4,6 +4,7 @@ import { ArrowLeft, Search, Lock, Loader2 } from "lucide-react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { getOrCreateDeviceId } from "@/_core/deviceId";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 
@@ -58,8 +59,8 @@ export default function Train() {
 
     setIsFetchingPuzzles(true);
     try {
-      // Get device ID from localStorage
-      const deviceId = localStorage.getItem("openpecker-device-id") || "";
+      // Get or create device ID (ensures it's always available)
+      const deviceId = getOrCreateDeviceId();
 
       // Fetch puzzles for the selected opening using tRPC mutation
       const puzzlesResponse = await fetchPuzzlesMutation.mutateAsync({

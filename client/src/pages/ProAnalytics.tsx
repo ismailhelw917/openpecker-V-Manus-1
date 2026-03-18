@@ -102,15 +102,15 @@ export default function ProAnalytics() {
       <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-24 flex items-center justify-center">
         <Card className="bg-slate-900/50 border-teal-900/30 p-8 max-w-md text-center">
           <Lock className="w-16 h-16 text-amber-400 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-white mb-2">Pro Feature</h1>
+          <h1 className="text-2xl font-bold text-white mb-2">Premium Feature</h1>
           <p className="text-slate-300 mb-6">
-            Advanced Analytics is available for Pro subscribers only. Upgrade your account to access detailed platform statistics.
+            Advanced Analytics is available for Premium subscribers only. Upgrade your account to access detailed platform statistics.
           </p>
           <Button 
             onClick={() => setLocation("/settings")}
             className="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold"
           >
-            Upgrade to Pro
+            Upgrade to Premium
           </Button>
         </Card>
       </div>
@@ -126,7 +126,7 @@ export default function ProAnalytics() {
             <div className="flex items-center gap-3">
               <BarChart3 className="w-8 h-8 text-amber-400" />
               <div>
-                <h1 className="text-3xl font-bold text-amber-400">Pro Analytics</h1>
+                <h1 className="text-3xl font-bold text-amber-400">Premium Analytics</h1>
                 <p className="text-slate-400 text-sm">Professional website analytics with in-depth data insights</p>
               </div>
             </div>
@@ -397,11 +397,11 @@ export default function ProAnalytics() {
               </div>
             )}
 
-            {/* Pro Features Info */}
+            {/* Premium Features Info */}
             <Card className="bg-amber-900/20 border-amber-500/30 p-6">
               <p className="text-amber-200 text-sm">
-                ✨ <strong>Pro Feature:</strong> Professional website analytics with in-depth data insights. Track user engagement,
-                puzzle database growth, training metrics, and platform performance. This is an exclusive Pro subscription feature
+                ✨ <strong>Premium Feature:</strong> Professional website analytics with in-depth data insights. Track user engagement,
+                puzzle database growth, training metrics, and platform performance. This is an exclusive Premium subscription feature
                 designed for serious chess training analysis.
               </p>
             </Card>

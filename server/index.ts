@@ -4,8 +4,12 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { appRouter } from "./routers";
 import { createContext } from "./_core/context";
 import { registerOAuthRoutes } from "./_core/oauth";
+import { registerStripeRoutes } from "./_core/stripeHandler";
 
 const app = express();
+
+// IMPORTANT: Register Stripe routes BEFORE express.json() so webhook gets raw body
+registerStripeRoutes(app);
 
 // Middleware
 app.use(express.json());
@@ -22,24 +26,6 @@ app.use(
     createContext,
   })
 );
-
-// Stripe webhook (must be before express.json())
-app.post("/api/stripe/webhook", express.raw({ type: "application/json" }), async (req, res) => {
-  // This is handled by the webhook handler
-  res.json({ received: true });
-});
-
-// Stripe checkout session endpoint
-app.post("/api/create-checkout-session", async (req, res) => {
-  try {
-    const { priceId, planName, userId, email } = req.body;
-    
-    // Stripe checkout logic here
-    res.json({ url: "https://checkout.stripe.com/..." });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to create checkout session" });
-  }
-});
 
 // Health check
 app.get("/api/health", (req, res) => {

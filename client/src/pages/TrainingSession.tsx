@@ -1,6 +1,7 @@
 import { useParams, useLocation } from "wouter";
 import { useEffect, useState } from "react";
 import { trpc } from "@/lib/trpc";
+import { getOrCreateDeviceId } from "@/_core/deviceId";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ChessBoard } from "@/components/ChessBoard";
@@ -53,7 +54,7 @@ export default function TrainingSession() {
       puzzleId: currentPuzzle.id,
       isCorrect,
       timeMs,
-      deviceId: localStorage.getItem("openpecker-device-id") || undefined,
+      deviceId: getOrCreateDeviceId(),
     });
 
     // Move to next puzzle
@@ -78,7 +79,7 @@ export default function TrainingSession() {
       totalPuzzles: puzzles.length,
       correctCount,
       totalTimeMs,
-      deviceId: localStorage.getItem("openpecker-device-id") || undefined,
+      deviceId: getOrCreateDeviceId(),
     });
 
     // Check if training set is complete

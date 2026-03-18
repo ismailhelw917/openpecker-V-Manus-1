@@ -38,7 +38,7 @@ const DraggablePiece = ({ piece, squareName }: { piece: any; squareName: string 
       alt={`${piece.color}${piece.type}`}
       className={`w-full h-full p-1 cursor-grab transition-none relative z-10 ${isDragging ? 'opacity-0' : 'opacity-100'}`}
       style={{ ...style, touchAction: 'none' }}
-      onClick={(e) => e.stopPropagation()}
+
       onError={(e) => {
         const img = e.target as HTMLImageElement;
         if (!img.dataset.fallback) {
@@ -83,8 +83,8 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
   isAutoSolving,
 }) => {
   const sensors = useSensors(
-    useSensor(MouseSensor),
-    useSensor(TouchSensor)
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { distance: 5 } })
   );
   const board = useMemo(() => game.board(), [game]);
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null);

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Download, Zap, Shield, Loader } from "lucide-react";
 import { StatsDisplay } from "@/components/StatsDisplay";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { getOrCreateDeviceId } from "@/_core/deviceId";
 import { toast } from "sonner";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { trpc } from "@/lib/trpc";
@@ -63,7 +64,9 @@ export default function Stats() {
   const { user } = useAuth();
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [deviceId, setDeviceId] = useState<string | null>(null);
+  const [deviceId] = useState<string | null>(() => {
+    try { return getOrCreateDeviceId(); } catch { return null; }
+  });
 
   const handleCheckout = async (priceId: string, planName: string) => {
     if (!user) {
@@ -93,11 +96,7 @@ export default function Stats() {
   };
   const utils = trpc.useUtils();
 
-  // Get device ID from localStorage
-  useEffect(() => {
-    const storedDeviceId = localStorage.getItem("openpecker-device-id");
-    setDeviceId(storedDeviceId);
-  }, []);
+
 
   // Fetch real user stats using tRPC
   const { data: stats, isLoading: statsLoading, refetch: refetchStats } = trpc.stats.getUserStats.useQuery(undefined, {
@@ -105,9 +104,10 @@ export default function Stats() {
   });
 
   // Fetch stats for anonymous users by device ID
+  // Also used as fallback for logged-in users to include pre-login data
   const { data: anonStats, isLoading: anonStatsLoading } = trpc.stats.getSummary.useQuery(
-    { deviceId: deviceId || undefined },
-    { enabled: !user && !!deviceId }
+    { userId: user?.id, deviceId: deviceId || undefined },
+    { enabled: !!deviceId || !!user }
   );
 
   // Auto-refresh stats every 5 seconds
@@ -323,7 +323,7 @@ export default function Stats() {
         )}
 
         {/* Trends Tab */}
-        {finalStats && activeTab === "trends" && (
+        {activeTab === "trends" && (
           <div className="space-y-8">
             {/* Accuracy Trend */}
             <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-6">
@@ -391,7 +391,7 @@ export default function Stats() {
         )}
 
         {/* Openings Tab */}
-        {stats && activeTab === "openings" && (
+        {finalStats && activeTab === "openings" && (
           <div className="space-y-8">
             <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-6">
               <h3 className="text-base sm:text-xl font-bold text-white mb-4 sm:mb-6">Opening Mastery</h3>

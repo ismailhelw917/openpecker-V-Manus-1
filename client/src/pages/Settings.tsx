@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ChevronLeft, Lock, Zap, Shield, CreditCard, Loader, Check, Gift, Tag } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { getOrCreateDeviceId } from "@/_core/deviceId";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 
@@ -97,7 +98,7 @@ function PromoCodeSection() {
   };
 
   const handleRedeem = () => {
-    const deviceId = localStorage.getItem("openpecker-device-id") || undefined;
+    const deviceId = getOrCreateDeviceId();
     redeemMutation.mutate({ code: promoCode.trim(), deviceId });
   };
 
@@ -177,6 +178,7 @@ function PromoCodeSection() {
 export default function Settings() {
   const [, setLocation] = useLocation();
   const { user, logout } = useAuth();
+  const utils = trpc.useUtils();
   const [selectedTheme, setSelectedTheme] = useState<'classic' | 'green' | 'blue' | 'purple'>(() => {
     const saved = localStorage.getItem('board-theme');
     return (saved as 'classic' | 'green' | 'blue' | 'purple') || 'classic';
@@ -189,6 +191,37 @@ export default function Settings() {
   };
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Handle payment success/cancel from Stripe redirect
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const payment = params.get('payment');
+    const sessionId = params.get('session_id');
+
+    if (payment === 'success' && sessionId) {
+      toast.success('Payment successful! Your premium access is being activated...');
+      // Verify the checkout session and refresh user data
+      fetch(`/api/checkout-session/${sessionId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'paid' || data.status === 'complete') {
+            toast.success('Premium access activated! Enjoy all features.');
+            // Refresh auth state to pick up isPremium change
+            utils.auth.me.invalidate();
+          }
+        })
+        .catch(() => {
+          // Webhook will handle it even if this check fails
+          toast.info('Payment received. Premium access will be activated shortly.');
+        });
+
+      // Clean URL params
+      window.history.replaceState({}, '', '/settings');
+    } else if (payment === 'cancelled') {
+      toast.info('Payment was cancelled. You can try again anytime.');
+      window.history.replaceState({}, '', '/settings');
+    }
+  }, []);
 
   const handleCheckout = async (priceId: string, planName: string) => {
     if (!user) {
@@ -222,8 +255,8 @@ export default function Settings() {
       const data = await response.json();
       const url = data?.url;
       if (url) {
-        window.open(url, "_blank");
-        toast.success("Opening Stripe checkout...");
+        // Redirect in same tab for better UX (Stripe will redirect back)
+        window.location.href = url;
       } else {
         throw new Error("No checkout URL received");
       }

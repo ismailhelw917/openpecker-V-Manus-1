@@ -698,3 +698,29 @@
 
 ## Round 61 - Train Tab Scrolling
 - [x] Add overflow-y-auto and pb-24 to Train tab for scrolling and BottomNav spacing
+
+## Round 62 - Piece Click Fix & Guest Analytics
+- [x] Fix chess pieces vanishing/not moving when clicked (removed stopPropagation, added activation distance)
+- [x] Make analytics pages work for guest users (upgraded getSummary to return full stats)
+- [x] Keep paywall/watermark on analytics for non-premium users (ProAnalytics stays premium-only)
+- [x] Ensure guest activity is correctly represented in leaderboard (guests included in SQL query)
+
+## Round 63 - Train Tab Desktop Scrolling
+- [x] Fix Train tab on desktop so user can scroll to Start Session button (verified working)
+
+## Round 64 - Stripe Full Configuration
+- [x] Review and fix Stripe products/prices configuration
+- [x] Verify checkout session creation works end-to-end
+- [x] Verify webhook handler processes all event types correctly (15 tests passing)
+- [x] Fix middleware order: Stripe webhook registered before express.json() for raw body access
+- [x] Add payment success/cancel handling in Settings page
+- [ ] Add payment history page for users
+- [x] Demonstrate full Stripe capabilities to user
+
+## Bug Fixes (Current Session - User Report)
+- [x] Fix stats data not being saved/persisted (root cause: deviceId not generated before use, userId/deviceId not passed to server)
+- [x] Fix sets data not being saved/persisted (root cause: getTrainingSetsByUser used exclusive OR, now uses inclusive OR for userId+deviceId)
+- [x] Fix leaderboard not showing data (same root cause: NULL userId/deviceId in attempts)
+- [x] Rename all "Pro" references to "Premium" throughout the app (ProAnalytics.tsx updated)
+- [x] Complete puzzle color field inversion fix (5.4M puzzles swapped: white↔black)
+- [x] Check puzzle classification progress (37.4% of 5.4M puzzles classified with opening names)

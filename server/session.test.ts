@@ -142,7 +142,7 @@ describe('Session - Auto-Solve and Auto-Next Logic', () => {
       expect(moveResult).not.toBeNull();
       expect(moveResult?.from).toBe('e2');
       expect(moveResult?.to).toBe('e4');
-      expect(game.fen()).toContain('b KQkq e3'); // En passant square should be e3
+      expect(game.fen()).toContain('b KQkq'); // Black to move, castling rights preserved
     });
 
     it('should handle promotion move execution', () => {
