@@ -44,25 +44,25 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-3 sm:px-4 py-6 sm:py-8">
       {/* Hero Section */}
-      <div className="text-center max-w-2xl mx-auto mb-12">
+      <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
         {/* Logo */}
-        <div className="mb-8 flex justify-center">
-          <div className="bg-teal-700 rounded-lg p-4 shadow-lg">
+        <div className="mb-6 sm:mb-8 flex justify-center">
+          <div className="bg-teal-700 rounded-lg p-3 sm:p-4 shadow-lg">
             <img
               src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/openpecker-logo-UbbhKD7VjajRRYYwpnAd2y.webp"
               alt="OpenPecker Logo"
-              className="w-32 h-32 object-contain"
+              className="w-20 h-20 sm:w-32 sm:h-32 object-contain"
             />
           </div>
         </div>
         
         {/* Title */}
-        <h1 className="text-4xl md:text-6xl font-black text-teal-700 mb-4">OpenPecker</h1>
+        <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-teal-700 mb-3 sm:mb-4">OpenPecker</h1>
 
         {/* Subtitle */}
-        <p className="text-base md:text-xl text-slate-700 mb-8">
+        <p className="text-sm sm:text-base md:text-xl text-slate-700 mb-6 sm:mb-8">
           Master opening tactics through deliberate repetition.
         </p>
 
@@ -95,7 +95,7 @@ export default function Home() {
 
 
       {/* Feature Highlights */}
-      <div className="mt-16 max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+      <div className="mt-8 sm:mt-16 max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 w-full">
         <Card className="bg-teal-50 border-teal-200 p-4">
           <h3 className="text-teal-700 font-bold mb-2 text-sm md:text-base">📚 5.8M Puzzles</h3>
           <p className="text-slate-700 text-sm">

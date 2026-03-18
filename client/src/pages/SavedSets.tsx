@@ -78,27 +78,27 @@ export default function SavedSets() {
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950">
       {/* Header */}
       <div className="bg-slate-900/50 backdrop-blur border-b border-teal-900/30 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
             <button
               onClick={() => setLocation("/")}
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-slate-400 hover:text-white transition-colors shrink-0"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
-            <h1 className="text-3xl font-bold text-amber-400">Your Sets</h1>
+            <h1 className="text-xl sm:text-3xl font-bold text-amber-400 truncate">Your Sets</h1>
           </div>
           <Button
             onClick={() => setLocation("/train")}
-            className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-6"
+            className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-3 sm:px-6 shrink-0"
           >
-            <Plus className="w-4 h-4 mr-2" />
-            NEW SET
+            <Plus className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">NEW SET</span>
           </Button>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Open Sessions Section */}
         {activeSets.length > 0 && (
           <div className="mb-12">
@@ -106,14 +106,14 @@ export default function SavedSets() {
               <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
               Open Sessions
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               {activeSets.map((set: any) => (
                 <Card
                   key={set.id}
-                  className="bg-slate-900/50 border-teal-900/30 p-6 hover:border-teal-700 transition-colors overflow-hidden"
+                  className="bg-slate-900/50 border-teal-900/30 p-4 sm:p-6 hover:border-teal-700 transition-colors overflow-hidden"
                 >
                   <div className="mb-4">
-                    <h3 className="text-xl font-bold text-amber-400 mb-2">
+                    <h3 className="text-base sm:text-xl font-bold text-amber-400 mb-1 sm:mb-2 truncate">
                       {set.openingName || "Custom Set"}
                     </h3>
                     <p className="text-slate-400 text-sm">{set.puzzleCount} Puzzles</p>
@@ -136,21 +136,21 @@ export default function SavedSets() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-4 gap-3 mb-6">
-                    <div className="bg-slate-800/50 rounded p-3">
-                      <p className="text-slate-400 text-xs uppercase">Accuracy</p>
-                      <p className="text-white font-bold text-lg">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
+                    <div className="bg-slate-800/50 rounded p-2 sm:p-3">
+                      <p className="text-slate-400 text-[10px] sm:text-xs uppercase">Accuracy</p>
+                      <p className="text-white font-bold text-sm sm:text-lg">
                         {set.bestAccuracy != null ? `${Math.round(Number(set.bestAccuracy))}%` : "—"}
                       </p>
                     </div>
-                    <div className="bg-slate-800/50 rounded p-3">
-                      <p className="text-slate-400 text-xs uppercase">Solved</p>
-                      <p className="text-white font-bold text-lg">
+                    <div className="bg-slate-800/50 rounded p-2 sm:p-3">
+                      <p className="text-slate-400 text-[10px] sm:text-xs uppercase">Solved</p>
+                      <p className="text-white font-bold text-sm sm:text-lg">
                         {set.totalAttempts || 0}
                       </p>
                     </div>
-                    <div className="bg-slate-800/50 rounded p-3">
-                      <p className="text-slate-400 text-xs uppercase">Last Played</p>
+                    <div className="bg-slate-800/50 rounded p-2 sm:p-3">
+                      <p className="text-slate-400 text-[10px] sm:text-xs uppercase">Last Played</p>
                       <p className="text-white font-bold text-sm">
                         {set.lastPlayedAt
                           ? new Date(set.lastPlayedAt).toLocaleDateString("en-US", {
@@ -160,8 +160,8 @@ export default function SavedSets() {
                           : "—"}
                       </p>
                     </div>
-                    <div className="bg-slate-800/50 rounded p-3">
-                      <p className="text-slate-400 text-xs uppercase">Avg Time</p>
+                    <div className="bg-slate-800/50 rounded p-2 sm:p-3">
+                      <p className="text-slate-400 text-[10px] sm:text-xs uppercase">Avg Time</p>
                       <p className="text-white font-bold text-sm">
                         {set.totalAttempts && set.totalTimeMs
                           ? `${Math.round((set.totalTimeMs / 1000) / set.totalAttempts)}s`
@@ -191,16 +191,15 @@ export default function SavedSets() {
               {pausedSets.map((set: any) => (
                 <Card
                   key={set.id}
-                  className="bg-slate-800/30 border-slate-700 p-4 flex items-center justify-between hover:bg-slate-800/50 transition-colors"
+                  className="bg-slate-800/30 border-slate-700 p-3 sm:p-4 flex items-center justify-between hover:bg-slate-800/50 transition-colors gap-2"
                 >
-                  <div>
-                    <h3 className="text-white font-semibold">{set.openingName || "Custom Set"}</h3>
-                    <p className="text-slate-400 text-sm">
-                      {set.puzzleCount} puzzles • {set.cyclesCompleted || 0} / {set.targetCycles}{" "}
-                      cycles
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-white font-semibold text-sm sm:text-base truncate">{set.openingName || "Custom Set"}</h3>
+                    <p className="text-slate-400 text-xs sm:text-sm">
+                      {set.puzzleCount} puz • {set.cyclesCompleted || 0}/{set.targetCycles} cyc
                     </p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 shrink-0">
                     <Button
                       size="sm"
                       className="bg-amber-600 hover:bg-amber-700"
@@ -256,7 +255,7 @@ export default function SavedSets() {
 
         {/* Empty State - Only show if no active sessions */}
         {activeSets.length === 0 && (
-          <Card className="bg-slate-800/50 border-slate-700 p-12 text-center">
+          <Card className="bg-slate-800/50 border-slate-700 p-6 sm:p-12 text-center">
             <p className="text-slate-300 mb-6">No open sessions. Start a new training session to begin!</p>
             <Button
               className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold"

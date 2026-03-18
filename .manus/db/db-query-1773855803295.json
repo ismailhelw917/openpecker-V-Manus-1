@@ -1,0 +1,37 @@
+{
+  "query": "SELECT u.id, u.name, u.isPremium, COUNT(ch.id) as cycles, SUM(ch.totalPuzzles) as total_puzzles, SUM(ch.correctCount) as correct, SUM(ch.totalTimeMs) as total_time FROM users u INNER JOIN cycle_history ch ON ch.userId = u.id GROUP BY u.id, u.name, u.isPremium ORDER BY total_puzzles DESC LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT u.id, u.name, u.isPremium, COUNT(ch.id) as cycles, SUM(ch.totalPuzzles) as total_puzzles, SUM(ch.correctCount) as correct, SUM(ch.totalTimeMs) as total_time FROM users u INNER JOIN cycle_history ch ON ch.userId = u.id GROUP BY u.id, u.name, u.isPremium ORDER BY total_puzzles DESC LIMIT 20;",
+  "rows": [
+    {
+      "id": "750215",
+      "name": "N.Balaji",
+      "isPremium": "1",
+      "cycles": "10",
+      "total_puzzles": "75",
+      "correct": "55",
+      "total_time": "900000"
+    },
+    {
+      "id": "750255",
+      "name": "Ayush",
+      "isPremium": "1",
+      "cycles": "10",
+      "total_puzzles": "75",
+      "correct": "55",
+      "total_time": "900000"
+    },
+    {
+      "id": "750380",
+      "name": "BR",
+      "isPremium": "1",
+      "cycles": "10",
+      "total_puzzles": "75",
+      "correct": "55",
+      "total_time": "900000"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tisPremium\tcycles\ttotal_puzzles\tcorrect\ttotal_time\n750215\tN.Balaji\t1\t10\t75\t55\t900000\n750255\tAyush\t1\t10\t75\t55\t900000\n750380\tBR\t1\t10\t75\t55\t900000\n",
+  "stderr": "",
+  "execution_time_ms": 1582
+}

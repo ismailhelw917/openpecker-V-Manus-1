@@ -627,3 +627,20 @@
 - [x] Fix "Invalid move" error thrown when dragging piece to illegal square
 - [x] Ensure chess.move() errors are caught gracefully in both Session.tsx and CustomChessboard.tsx
 - [x] Test move validation with legal and illegal moves (11 tests passing)
+
+## Round 50 - Leaderboard Fix & Stats KPI Increase
+- [x] Fix Leaderboard to use real-time puzzle_attempts data (same as Stats/Sets)
+- [x] Increase number of KPIs on Stats page
+- [x] Test Leaderboard and Stats changes
+
+## Round 51 - Mobile Responsiveness Fix
+- [x] Fix text overflow/fitting issues on mobile view across all pages (Home, Train, Session, SavedSets, Profile, Settings, Stats, Leaderboard)
+- [x] Ensure Leaderboard table is readable on mobile
+- [x] Fix Stats KPI cards layout on small screens
+- [x] Fix BottomNav sizing for small screens
+
+## Round 52 - Stripe Data Tracking Check
+- [x] Verify Stripe is tracking data correctly on openpecker.com
+- [x] Add test event (evt_test_) handling to webhook for verification
+- [x] Add detailed logging to webhook handler (event type, amount, email, userId)
+- [x] Add payment_intent.payment_failed handler for error tracking

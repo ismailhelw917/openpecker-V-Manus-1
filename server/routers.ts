@@ -914,20 +914,25 @@ export const appRouter = router({
             winRate: 0,
             lossRate: 0,
             totalPuzzles: 0,
+            totalCorrect: 0,
+            totalIncorrect: 0,
             totalCycles: 0,
             avgTimePerPuzzle: '0s',
             currentStreak: 0,
             longestStreak: 0,
             totalTimeHours: '0h',
+            totalTimeMinutes: 0,
             puzzlesToday: 0,
             cyclesToday: 0,
             avgPuzzlesPerDay: 0,
             avgCyclesPerDay: 0,
+            avgPuzzlesPerCycle: 0,
             ratingGain: 0,
             bestOpening: 'N/A',
             weakestOpening: 'N/A',
             studyTime: '0h 0m',
             consistency: 0,
+            fastestCycleTime: 'N/A',
           };
         }
         const accuracy = totalPuzzles > 0 ? (totalCorrect / totalPuzzles) * 100 : 0;
@@ -978,6 +983,13 @@ export const appRouter = router({
         const variance = accuracies.length > 0 ? accuracies.reduce((sum, acc) => sum + Math.pow(acc - avgAccuracy, 2), 0) / accuracies.length : 0;
         const consistency = Math.max(0, Math.round(100 - Math.sqrt(variance)));
         
+        // Additional computed metrics
+        const totalIncorrect = totalPuzzles - totalCorrect;
+        const fastestCycleMs = cycles.length > 0 ? Math.min(...cycles.map(c => c.totalTimeMs || Infinity)) : 0;
+        const fastestCycleTime = fastestCycleMs > 0 ? Math.round(fastestCycleMs / 1000) + 's' : 'N/A';
+        const avgPuzzlesPerCycle = completedCycles > 0 ? Math.round(totalPuzzles / completedCycles) : 0;
+        const totalTimeMinutesTotal = Math.round(totalTimeMs / 1000 / 60);
+        
         return {
           rating,
           peakRating,
@@ -985,20 +997,25 @@ export const appRouter = router({
           winRate,
           lossRate,
           totalPuzzles,
+          totalCorrect,
+          totalIncorrect,
           totalCycles: completedCycles,
           avgTimePerPuzzle: avgTimePerPuzzle + 's',
           currentStreak,
           longestStreak,
           totalTimeHours: Math.round(totalTimeHours * 10) / 10 + 'h',
+          totalTimeMinutes: totalTimeMinutesTotal,
           puzzlesToday,
           cyclesToday,
           avgPuzzlesPerDay,
           avgCyclesPerDay: parseFloat(avgCyclesPerDay),
+          avgPuzzlesPerCycle,
           ratingGain,
           bestOpening: 'Sicilian',
           weakestOpening: 'Ruy Lopez',
           studyTime: Math.floor(totalTimeHours) + 'h ' + Math.floor(totalTimeMinutes) + 'm',
           consistency,
+          fastestCycleTime,
         };
       } catch (error) {
         console.error("[GET USER STATS ERROR]", error);
@@ -1008,6 +1025,7 @@ export const appRouter = router({
 
     /**
      * Get leaderboard with top users ranked by accuracy and speed
+     * Uses both puzzle_attempts (real-time) and cycle_history (completed cycles) data
      */
     getLeaderboard: publicProcedure
       .input(
@@ -1018,27 +1036,41 @@ export const appRouter = router({
       )
       .query(async ({ input }) => {
         try {
-          const registeredUsers = await getAllUsers(input.limit * 2); // Fetch more to account for filtering
-
-          // Calculate stats for each user using puzzle_attempts for real-time data
-          const leaderboardData = await Promise.all(
-            registeredUsers.map(async (user: any) => {
-              // Try puzzle attempts first for real-time data
+          // Get all users who have actual activity (training sets)
+          const allUsers = await getAllUsers(500);
+          
+          // Process only users who have training sets (active users)
+          const leaderboardData: any[] = [];
+          
+          await Promise.all(
+            allUsers.map(async (user: any) => {
+              // Get real-time stats from puzzle_attempts via training sets
               const attemptStats = await getPuzzleAttemptStats(user.id, null);
               const cycles = await getCycleHistoryByUser(user.id, null);
               
               // Use attempt stats if available, fall back to cycle stats
-              const totalPuzzles = attemptStats.totalPuzzles > 0 ? attemptStats.totalPuzzles : cycles.reduce((sum, c) => sum + c.totalPuzzles, 0);
-              const totalCorrect = attemptStats.totalCorrect > 0 ? attemptStats.totalCorrect : cycles.reduce((sum, c) => sum + c.correctCount, 0);
-              const totalTimeMs = attemptStats.totalTimeMs > 0 ? attemptStats.totalTimeMs : cycles.reduce((sum, c) => sum + (c.totalTimeMs || 0), 0);
+              const totalPuzzles = attemptStats.totalPuzzles > 0 
+                ? attemptStats.totalPuzzles 
+                : cycles.reduce((sum: number, c: any) => sum + c.totalPuzzles, 0);
+              const totalCorrect = attemptStats.totalCorrect > 0 
+                ? attemptStats.totalCorrect 
+                : cycles.reduce((sum: number, c: any) => sum + c.correctCount, 0);
+              const totalTimeMs = attemptStats.totalTimeMs > 0 
+                ? attemptStats.totalTimeMs 
+                : cycles.reduce((sum: number, c: any) => sum + (c.totalTimeMs || 0), 0);
+              
+              // Skip users with no activity at all
+              if (totalPuzzles === 0 && cycles.length === 0) return;
               
               const accuracy = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 100) : 0;
               const avgTimePerPuzzle = totalPuzzles > 0 ? Math.round(totalTimeMs / totalPuzzles / 1000) : 0;
               const baseRating = 1200;
               const ratingGain = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 200) : 0;
               const rating = baseRating + ratingGain;
+              const totalTimeSec = Math.round(totalTimeMs / 1000);
+              const totalTimeMin = Math.round(totalTimeSec / 60);
 
-              return {
+              leaderboardData.push({
                 id: user.id,
                 name: user.name || "Anonymous",
                 isPremium: user.isPremium === 1,
@@ -1046,18 +1078,27 @@ export const appRouter = router({
                 speed: avgTimePerPuzzle,
                 rating,
                 totalPuzzles,
+                totalCorrect,
                 completedCycles: cycles.length,
-              };
+                totalTimeMin,
+              });
             })
           );
 
           // Sort by selected metric
           const sorted = leaderboardData.sort((a: any, b: any) => {
             if (input.sortBy === "accuracy") {
+              // For accuracy ties, sort by total puzzles (more puzzles = more reliable)
+              if (b.accuracy === a.accuracy) return b.totalPuzzles - a.totalPuzzles;
               return b.accuracy - a.accuracy;
             } else if (input.sortBy === "speed") {
+              // For speed, lower is better; filter out 0s (no data)
+              if (a.speed === 0) return 1;
+              if (b.speed === 0) return -1;
+              if (a.speed === b.speed) return b.totalPuzzles - a.totalPuzzles;
               return a.speed - b.speed;
             } else {
+              if (b.rating === a.rating) return b.totalPuzzles - a.totalPuzzles;
               return b.rating - a.rating;
             }
           });

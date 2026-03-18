@@ -244,18 +244,18 @@ export default function Settings() {
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950">
       {/* Header */}
       <div className="bg-slate-900/50 backdrop-blur border-b border-teal-900/30 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-4">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center gap-3 sm:gap-4">
           <button
             onClick={() => setLocation("/")}
-            className="text-slate-400 hover:text-white transition-colors"
+            className="text-slate-400 hover:text-white transition-colors shrink-0"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <h1 className="text-2xl font-bold text-white">Settings</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-white">Settings</h1>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Board Theme Section */}
         <div className="mb-12">
           <div className="mb-6">
@@ -263,7 +263,7 @@ export default function Settings() {
             <p className="text-slate-400 text-sm">Choose your preferred chess board colors</p>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
             {BOARD_THEMES.map((theme) => (
               <button
                 key={theme.id}
@@ -316,15 +316,15 @@ export default function Settings() {
             SUBSCRIPTION & ACCOUNT
           </h2>
 
-          <Card className="bg-slate-900/50 border-teal-900/30 p-6">
-            <div className="flex items-center justify-between mb-6">
+          <Card className="bg-slate-900/50 border-teal-900/30 p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
               <div>
-                <h3 className="text-white font-semibold mb-1">Premium Status</h3>
-                <p className="text-slate-400 text-sm">
+                <h3 className="text-white font-semibold mb-1 text-sm sm:text-base">Premium Status</h3>
+                <p className="text-slate-400 text-xs sm:text-sm">
                   {user?.isPremium ? "You have access to all premium features." : "Upgrade to unlock all openings and advanced stats."}
                 </p>
               </div>
-              <span className={`px-3 py-1 rounded text-sm font-semibold ${
+              <span className={`px-3 py-1 rounded text-xs sm:text-sm font-semibold self-start sm:self-auto shrink-0 ${
                 user?.isPremium 
                   ? "bg-teal-400/20 text-teal-400" 
                   : "bg-amber-400/20 text-amber-400"
@@ -356,10 +356,10 @@ export default function Settings() {
         {user && (
           <div className="mb-12">
             <h2 className="text-lg font-bold text-white mb-6">Account</h2>
-            <Card className="bg-slate-900/50 border-teal-900/30 p-6">
-              <div className="mb-6">
+            <Card className="bg-slate-900/50 border-teal-900/30 p-4 sm:p-6">
+              <div className="mb-4 sm:mb-6">
                 <p className="text-slate-400 text-sm mb-2">Signed in as</p>
-                <p className="text-white font-semibold">{user.email || user.name || "User"}</p>
+                <p className="text-white font-semibold text-sm sm:text-base truncate">{user.email || user.name || "User"}</p>
               </div>
 
               <Button
@@ -376,7 +376,7 @@ export default function Settings() {
         {/* Contact Us Section */}
         <div className="mb-12">
           <h2 className="text-lg font-bold text-white mb-6">Contact & Support</h2>
-          <Card className="bg-slate-900/50 border-teal-900/30 p-6">
+          <Card className="bg-slate-900/50 border-teal-900/30 p-4 sm:p-6">
             <p className="text-slate-400 text-sm mb-4">Have questions or feedback? We would love to hear from you!</p>
             <a
               href="mailto:happychesspenguin@gmail.com"
@@ -404,14 +404,14 @@ export default function Settings() {
             </button>
 
             {/* Header */}
-            <div className="text-center pt-12 pb-8 px-6 bg-gradient-to-b from-amber-900/20 to-transparent">
-              <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/openpecker-premium-logo-LPhYmaC6iM2uaYuZkpHQpR.webp" alt="OpenPecker Premium" className="w-24 h-24 mx-auto mb-4 object-contain" />
-              <h2 className="text-3xl font-bold text-amber-100 mb-2">OpenPecker Premium</h2>
+            <div className="text-center pt-8 sm:pt-12 pb-6 sm:pb-8 px-4 sm:px-6 bg-gradient-to-b from-amber-900/20 to-transparent">
+              <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/openpecker-premium-logo-LPhYmaC6iM2uaYuZkpHQpR.webp" alt="OpenPecker Premium" className="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-3 sm:mb-4 object-contain" />
+              <h2 className="text-2xl sm:text-3xl font-bold text-amber-100 mb-2">OpenPecker Premium</h2>
               <p className="text-amber-200/70">Master every opening. No limits.</p>
             </div>
 
             {/* Features */}
-            <div className="px-6 py-8 border-t border-b border-amber-400/20">
+            <div className="px-4 sm:px-6 py-6 sm:py-8 border-t border-b border-amber-400/20">
               <div className="space-y-4">
                 {PREMIUM_FEATURES.map((feature, idx) => (
                   <div key={idx} className="flex items-start gap-3">
@@ -423,7 +423,7 @@ export default function Settings() {
             </div>
 
             {/* Pricing */}
-            <div className="px-6 py-8 space-y-4">
+            <div className="px-4 sm:px-6 py-6 sm:py-8 space-y-3 sm:space-y-4">
               {/* Monthly */}
               <button
                 onClick={() => handleCheckout("price_monthly", "Monthly")}
@@ -456,7 +456,7 @@ export default function Settings() {
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-6 bg-amber-900/10">
+            <div className="px-4 sm:px-6 py-4 sm:py-6 bg-amber-900/10">
               <p className="text-amber-200/60 text-xs text-center">
                 Secure payments powered by Stripe. Cancel anytime.
               </p>

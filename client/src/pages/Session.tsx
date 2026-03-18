@@ -527,7 +527,7 @@ export default function Session() {
   return (
     <div className="w-screen h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between p-3 border-b border-teal-900/30 flex-shrink-0 bg-slate-900/50 h-20">
+      <div className="flex items-center justify-between p-2 sm:p-3 border-b border-teal-900/30 flex-shrink-0 bg-slate-900/50 min-h-[4rem] sm:h-20">
         <button
           onClick={() => setLocation("/sets")}
           className="flex items-center gap-2 text-amber-400 hover:text-amber-300 font-bold text-sm"
@@ -535,11 +535,11 @@ export default function Session() {
           <ChevronLeft className="w-4 h-4" />
           Back
         </button>
-        <div className="text-center flex-1 px-4">
+        <div className="text-center flex-1 px-2 sm:px-4 min-w-0">
           {currentPuzzle?.openingName && (
-            <p className="text-xs text-teal-300 mb-2 font-semibold">{currentPuzzle.openingName}</p>
+            <p className="text-[10px] sm:text-xs text-teal-300 mb-1 sm:mb-2 font-semibold truncate">{currentPuzzle.openingName}</p>
           )}
-          <div className="flex items-center justify-center gap-4 mb-1">
+          <div className="flex items-center justify-center gap-3 sm:gap-4 mb-1">
             <div>
               <p className="text-xs text-slate-400">Time</p>
               <p className="text-sm font-bold text-amber-400">{formatTime(sessionTime)}</p>
@@ -563,7 +563,7 @@ export default function Session() {
       </div>
 
       {/* Board Container - Centered */}
-      <div className="flex-1 flex items-center justify-center p-4 overflow-hidden">
+      <div className="flex-1 flex items-center justify-center p-2 sm:p-4 overflow-hidden">
         <div style={{ width: boardSize, height: boardSize }} className="relative">
           <CustomChessboard
             game={new Chess(fen)}
@@ -601,7 +601,7 @@ export default function Session() {
       </div>
 
       {/* Footer Navigation */}
-      <div className="h-20 border-t border-teal-900/30 bg-slate-900/50 flex-shrink-0" />
+      <div className="h-14 sm:h-20 border-t border-teal-900/30 bg-slate-900/50 flex-shrink-0" />
 
       {/* Status Message removed */}
     </div>

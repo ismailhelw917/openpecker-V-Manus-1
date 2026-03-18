@@ -1,0 +1,26 @@
+{
+  "query": "SELECT 'puzzle_attempts' as tbl, COUNT(*) as cnt FROM puzzle_attempts UNION ALL SELECT 'users' as tbl, COUNT(*) as cnt FROM users UNION ALL SELECT 'cycle_history' as tbl, COUNT(*) as cnt FROM cycle_history UNION ALL SELECT 'training_sets' as tbl, COUNT(*) as cnt FROM training_sets;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT 'puzzle_attempts' as tbl, COUNT(*) as cnt FROM puzzle_attempts UNION ALL SELECT 'users' as tbl, COUNT(*) as cnt FROM users UNION ALL SELECT 'cycle_history' as tbl, COUNT(*) as cnt FROM cycle_history UNION ALL SELECT 'training_sets' as tbl, COUNT(*) as cnt FROM training_sets;",
+  "rows": [
+    {
+      "tbl": "puzzle_attempts",
+      "cnt": "40"
+    },
+    {
+      "tbl": "users",
+      "cnt": "90"
+    },
+    {
+      "tbl": "cycle_history",
+      "cnt": "38"
+    },
+    {
+      "tbl": "training_sets",
+      "cnt": "45"
+    }
+  ],
+  "messages": [],
+  "stdout": "tbl\tcnt\npuzzle_attempts\t40\nusers\t90\ncycle_history\t38\ntraining_sets\t45\n",
+  "stderr": "",
+  "execution_time_ms": 1634
+}

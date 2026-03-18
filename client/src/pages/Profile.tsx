@@ -102,7 +102,7 @@ export default function Profile() {
   return (
     <div className="w-screen min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-24">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-teal-900/30 bg-slate-900/50 sticky top-0 z-10">
+      <div className="flex items-center justify-between p-3 sm:p-4 border-b border-teal-900/30 bg-slate-900/50 sticky top-0 z-10">
         <button
           onClick={() => setLocation("/")}
           className="flex items-center gap-2 text-amber-400 hover:text-amber-300 font-bold text-sm"
@@ -115,7 +115,7 @@ export default function Profile() {
       </div>
 
       {/* Content */}
-      <div className="max-w-2xl mx-auto p-4 space-y-6">
+      <div className="max-w-2xl mx-auto p-3 sm:p-4 space-y-4 sm:space-y-6">
         {/* Message Alert */}
         {message && (
           <div
@@ -130,9 +130,9 @@ export default function Profile() {
         )}
 
         {/* Account Information Card */}
-        <Card className="bg-slate-800/50 border-teal-900/30 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-amber-400">Account Information</h2>
+        <Card className="bg-slate-800/50 border-teal-900/30 p-4 sm:p-6">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 className="text-base sm:text-xl font-bold text-amber-400">Account Information</h2>
             {!isEditing && (
               <button
                 onClick={() => setIsEditing(true)}
@@ -193,15 +193,15 @@ export default function Profile() {
             <div className="space-y-4">
               <div>
                 <p className="text-sm text-slate-400">Name</p>
-                <p className="text-lg text-white font-semibold">{user.name || "Not set"}</p>
+                <p className="text-sm sm:text-lg text-white font-semibold truncate">{user.name || "Not set"}</p>
               </div>
               <div>
                 <p className="text-sm text-slate-400">Email</p>
-                <p className="text-lg text-white font-semibold">{user.email || "Not set"}</p>
+                <p className="text-sm sm:text-lg text-white font-semibold truncate">{user.email || "Not set"}</p>
               </div>
               <div>
                 <p className="text-sm text-slate-400">Account Type</p>
-                <p className="text-lg text-amber-400 font-semibold">
+                <p className="text-sm sm:text-lg text-amber-400 font-semibold">
                   {user.isPremium ? "Premium" : "Free"}
                 </p>
               </div>
@@ -210,8 +210,8 @@ export default function Profile() {
         </Card>
 
         {/* Change Password Card */}
-        <Card className="bg-slate-800/50 border-teal-900/30 p-6">
-          <h2 className="text-xl font-bold text-amber-400 mb-6">Change Password</h2>
+        <Card className="bg-slate-800/50 border-teal-900/30 p-4 sm:p-6">
+          <h2 className="text-base sm:text-xl font-bold text-amber-400 mb-4 sm:mb-6">Change Password</h2>
 
           <div className="space-y-4">
             <div>
@@ -286,48 +286,48 @@ export default function Profile() {
 
         {/* Statistics Card */}
         {userStats.data && (
-          <Card className="bg-slate-800/50 border-teal-900/30 p-6">
-            <h2 className="text-xl font-bold text-amber-400 mb-6">Your Statistics</h2>
+          <Card className="bg-slate-800/50 border-teal-900/30 p-4 sm:p-6">
+            <h2 className="text-base sm:text-xl font-bold text-amber-400 mb-4 sm:mb-6">Your Statistics</h2>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-slate-700/30 rounded-lg p-4">
-                <p className="text-sm text-slate-400">Total Puzzles</p>
-                <p className="text-2xl font-bold text-amber-400">
+            <div className="grid grid-cols-2 gap-2 sm:gap-4">
+              <div className="bg-slate-700/30 rounded-lg p-3 sm:p-4">
+                <p className="text-xs sm:text-sm text-slate-400">Total Puzzles</p>
+                <p className="text-lg sm:text-2xl font-bold text-amber-400">
                   {userStats.data?.totalPuzzles || 0}
                 </p>
               </div>
 
-              <div className="bg-slate-700/30 rounded-lg p-4">
-                <p className="text-sm text-slate-400">Accuracy</p>
-                <p className="text-2xl font-bold text-teal-300">
+              <div className="bg-slate-700/30 rounded-lg p-3 sm:p-4">
+                <p className="text-xs sm:text-sm text-slate-400">Accuracy</p>
+                <p className="text-lg sm:text-2xl font-bold text-teal-300">
                   {userStats.data?.accuracy || 0}%
                 </p>
               </div>
 
-              <div className="bg-slate-700/30 rounded-lg p-4">
-                <p className="text-sm text-slate-400">Total Cycles</p>
-                <p className="text-2xl font-bold text-amber-400">
+              <div className="bg-slate-700/30 rounded-lg p-3 sm:p-4">
+                <p className="text-xs sm:text-sm text-slate-400">Total Cycles</p>
+                <p className="text-lg sm:text-2xl font-bold text-amber-400">
                   {userStats.data?.totalCycles || 0}
                 </p>
               </div>
 
-              <div className="bg-slate-700/30 rounded-lg p-4">
-                <p className="text-sm text-slate-400">Avg Time/Puzzle</p>
-                <p className="text-2xl font-bold text-teal-300">
+              <div className="bg-slate-700/30 rounded-lg p-3 sm:p-4">
+                <p className="text-xs sm:text-sm text-slate-400">Avg Time/Puzzle</p>
+                <p className="text-lg sm:text-2xl font-bold text-teal-300">
                   {userStats.data?.avgTimePerPuzzle || 0}s
                 </p>
               </div>
 
-              <div className="bg-slate-700/30 rounded-lg p-4">
-                <p className="text-sm text-slate-400">Win Rate</p>
-                <p className="text-2xl font-bold text-green-400">
+              <div className="bg-slate-700/30 rounded-lg p-3 sm:p-4">
+                <p className="text-xs sm:text-sm text-slate-400">Win Rate</p>
+                <p className="text-lg sm:text-2xl font-bold text-green-400">
                   {userStats.data?.winRate || 0}%
                 </p>
               </div>
 
-              <div className="bg-slate-700/30 rounded-lg p-4">
-                <p className="text-sm text-slate-400">Loss Rate</p>
-                <p className="text-2xl font-bold text-red-400">
+              <div className="bg-slate-700/30 rounded-lg p-3 sm:p-4">
+                <p className="text-xs sm:text-sm text-slate-400">Loss Rate</p>
+                <p className="text-lg sm:text-2xl font-bold text-red-400">
                   {userStats.data?.lossRate || 0}%
                 </p>
               </div>
@@ -336,8 +336,8 @@ export default function Profile() {
         )}
 
         {/* Danger Zone */}
-        <Card className="bg-red-900/20 border-red-900/30 p-6">
-          <h2 className="text-xl font-bold text-red-400 mb-4">Danger Zone</h2>
+        <Card className="bg-red-900/20 border-red-900/30 p-4 sm:p-6">
+          <h2 className="text-base sm:text-xl font-bold text-red-400 mb-3 sm:mb-4">Danger Zone</h2>
           <p className="text-sm text-slate-400 mb-4">
             Deleting your account is permanent and cannot be undone.
           </p>

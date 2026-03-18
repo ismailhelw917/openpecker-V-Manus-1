@@ -152,7 +152,7 @@ export default function Train() {
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-slate-900/80 backdrop-blur border-b border-slate-700">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-3">
+        <div className="max-w-4xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center gap-2 sm:gap-3">
           {step !== "opening-selection" && (
             <button
               onClick={() => {
@@ -164,13 +164,13 @@ export default function Train() {
               <ArrowLeft className="w-5 h-5 text-amber-400" />
             </button>
           )}
-          <h1 className="text-2xl font-bold text-amber-400">
+          <h1 className="text-lg sm:text-2xl font-bold text-amber-400">
             {step === "opening-selection" ? "Select Opening" : "Configure Session"}
           </h1>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-6">
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
         {step === "opening-selection" ? (
           <>
             {/* Search Bar */}
@@ -216,7 +216,7 @@ export default function Train() {
                               : "border-slate-700 hover:border-amber-400 bg-slate-800/50"
                           } ${!canAccess ? "opacity-60" : ""}`}
                         >
-                          <h3 className="font-semibold text-white text-lg">{group.name}</h3>
+                          <h3 className="font-semibold text-white text-sm sm:text-lg pr-6">{group.name}</h3>
                           <p className="text-sm text-slate-400 mt-1">
                             {group.variations.length > 0 ? `${group.variations.length} variations` : "Click to select"}
                           </p>
@@ -276,8 +276,8 @@ export default function Train() {
         ) : (
           <>
             {/* Configuration */}
-            <Card className="bg-slate-800 border-slate-700 p-6 mb-6">
-              <h2 className="text-xl font-semibold text-white mb-6">
+            <Card className="bg-slate-800 border-slate-700 p-4 sm:p-6 mb-4 sm:mb-6">
+              <h2 className="text-base sm:text-xl font-semibold text-white mb-4 sm:mb-6 break-words">
                 {selectedOpening}
               </h2>
 
@@ -313,7 +313,7 @@ export default function Train() {
                 <label className="block text-sm font-medium text-slate-300 mb-2">
                   Puzzles per Session
                 </label>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                   {PUZZLE_COUNT_OPTIONS.map((count) => (
                     <button
                       key={count}

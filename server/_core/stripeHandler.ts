@@ -110,10 +110,23 @@ export function registerStripeRoutes(app: express.Express) {
           return res.status(400).json({ error: "Webhook signature verification failed" });
         }
 
+        // Handle test events for webhook verification
+        if (event.id.startsWith('evt_test_')) {
+          console.log("[Webhook] Test event detected, returning verification response");
+          return res.json({ verified: true });
+        }
+
+        console.log(`[Webhook] Received event: ${event.type} (${event.id})`);
+
         // Handle checkout.session.completed event
         if (event.type === "checkout.session.completed") {
           const session = event.data.object as Stripe.Checkout.Session;
           const userId = parseInt(session.client_reference_id || "0");
+          const customerEmail = session.customer_email || session.metadata?.email || "unknown";
+          const amountTotal = session.amount_total ? (session.amount_total / 100).toFixed(2) : "unknown";
+          const currency = session.currency || "eur";
+
+          console.log(`[Webhook] Checkout completed: user=${userId}, email=${customerEmail}, amount=${amountTotal} ${currency}, session=${session.id}`);
 
           if (userId > 0) {
             try {
@@ -125,18 +138,27 @@ export function registerStripeRoutes(app: express.Express) {
                   .set({ isPremium: 1 })
                   .where(eq(users.id, userId));
 
-                console.log(`Payment completed for user ${userId}, premium status updated`);
+                console.log(`[Webhook] Premium status updated for user ${userId}`);
               }
             } catch (dbError) {
-              console.error("Failed to update user premium status:", dbError);
+              console.error("[Webhook] Failed to update user premium status:", dbError);
             }
+          } else {
+            console.warn(`[Webhook] No valid userId in checkout session ${session.id}`);
           }
         }
 
         // Handle payment_intent.succeeded event
         if (event.type === "payment_intent.succeeded") {
           const paymentIntent = event.data.object as Stripe.PaymentIntent;
-          console.log(`Payment intent succeeded: ${paymentIntent.id}`);
+          const amount = (paymentIntent.amount / 100).toFixed(2);
+          console.log(`[Webhook] Payment intent succeeded: ${paymentIntent.id}, amount=${amount} ${paymentIntent.currency}`);
+        }
+
+        // Handle payment_intent.payment_failed event
+        if (event.type === "payment_intent.payment_failed") {
+          const paymentIntent = event.data.object as Stripe.PaymentIntent;
+          console.error(`[Webhook] Payment failed: ${paymentIntent.id}, error=${paymentIntent.last_payment_error?.message || "unknown"}`);
         }
 
         return res.json({ received: true });

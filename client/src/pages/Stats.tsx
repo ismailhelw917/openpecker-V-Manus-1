@@ -195,11 +195,11 @@ export default function Stats() {
 
       {/* Header */}
       <div className="bg-slate-900/50 backdrop-blur border-b border-teal-900/30 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex items-start justify-between mb-6">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+          <div className="flex items-start justify-between mb-4 sm:mb-6">
             <div>
-              <h1 className="text-4xl font-bold text-amber-400 mb-2">Performance</h1>
-              <p className="text-slate-400">Track your opening mastery progress.</p>
+              <h1 className="text-2xl sm:text-4xl font-bold text-amber-400 mb-1 sm:mb-2">Performance</h1>
+              <p className="text-sm sm:text-base text-slate-400">Track your opening mastery progress.</p>
             </div>
             <button className="text-slate-400 hover:text-white transition-colors">
               <Download className="w-5 h-5" />
@@ -207,17 +207,17 @@ export default function Stats() {
           </div>
 
           {/* Controls */}
-          <div className="flex items-center gap-3 flex-wrap">
-            <select className="bg-slate-800 border border-slate-700 text-white px-4 py-2 rounded-lg text-sm">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            <select className="bg-slate-800 border border-slate-700 text-white px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm">
               <option>ALL SETS</option>
             </select>
-            <button className="px-3 py-2 rounded text-slate-400 hover:text-white text-sm transition-colors">
+            <button className="px-2 sm:px-3 py-1.5 sm:py-2 rounded text-slate-400 hover:text-white text-xs sm:text-sm transition-colors">
               7D
             </button>
-            <button className="px-3 py-2 rounded text-slate-400 hover:text-white text-sm transition-colors">
+            <button className="px-2 sm:px-3 py-1.5 sm:py-2 rounded text-slate-400 hover:text-white text-xs sm:text-sm transition-colors">
               30D
             </button>
-            <button className="px-4 py-2 rounded bg-amber-400 text-slate-900 font-semibold text-sm hover:bg-amber-500 transition-colors">
+            <button className="px-3 sm:px-4 py-1.5 sm:py-2 rounded bg-amber-400 text-slate-900 font-semibold text-xs sm:text-sm hover:bg-amber-500 transition-colors">
               ALL
             </button>
             <button className="text-slate-400 hover:text-white transition-colors">
@@ -227,9 +227,9 @@ export default function Stats() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Tab Navigation */}
-        <div className="flex gap-4 mb-8 border-b border-teal-900/30">
+        <div className="flex gap-2 sm:gap-4 mb-6 sm:mb-8 border-b border-teal-900/30 overflow-x-auto">
           <button
             onClick={() => setActiveTab("overview")}
             className={`pb-4 px-2 font-semibold transition-colors ${
@@ -270,9 +270,9 @@ export default function Stats() {
 
             {/* Rating Trend Chart */}
             {finalStats && (
-              <Card className="bg-slate-900/50 border-teal-900/30 p-6">
-                <h3 className="text-xl font-bold text-white mb-6">Rating Progression</h3>
-                <ResponsiveContainer width="100%" height={300}>
+              <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-6">
+                <h3 className="text-base sm:text-xl font-bold text-white mb-4 sm:mb-6">Rating Progression</h3>
+                <ResponsiveContainer width="100%" height={250}>
                   <LineChart data={MOCK_RATING_TREND}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                     <XAxis dataKey="week" stroke="#94a3b8" />
@@ -297,9 +297,9 @@ export default function Stats() {
         {finalStats && activeTab === "trends" && (
           <div className="space-y-8">
             {/* Accuracy Trend */}
-            <Card className="bg-slate-900/50 border-teal-900/30 p-6">
-              <h3 className="text-xl font-bold text-white mb-6">Accuracy Trend (7 Days)</h3>
-              <ResponsiveContainer width="100%" height={300}>
+            <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-6">
+              <h3 className="text-base sm:text-xl font-bold text-white mb-4 sm:mb-6">Accuracy Trend (7 Days)</h3>
+              <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={MOCK_ACCURACY_TREND}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                   <XAxis dataKey="date" stroke="#94a3b8" />
@@ -318,9 +318,9 @@ export default function Stats() {
             </Card>
 
             {/* Time per Puzzle */}
-            <Card className="bg-slate-900/50 border-teal-900/30 p-6">
-              <h3 className="text-xl font-bold text-white mb-6">Average Time Per Puzzle (7 Days)</h3>
-              <ResponsiveContainer width="100%" height={300}>
+            <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-6">
+              <h3 className="text-base sm:text-xl font-bold text-white mb-4 sm:mb-6">Avg Time Per Puzzle (7 Days)</h3>
+              <ResponsiveContainer width="100%" height={250}>
                 <LineChart data={MOCK_TIME_PER_PUZZLE}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                   <XAxis dataKey="day" stroke="#94a3b8" />
@@ -339,9 +339,9 @@ export default function Stats() {
             </Card>
 
             {/* Cycles Per Day */}
-            <Card className="bg-slate-900/50 border-teal-900/30 p-6">
-              <h3 className="text-xl font-bold text-white mb-6">Training Cycles Per Day</h3>
-              <ResponsiveContainer width="100%" height={300}>
+            <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-6">
+              <h3 className="text-base sm:text-xl font-bold text-white mb-4 sm:mb-6">Training Cycles Per Day</h3>
+              <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={MOCK_CYCLES_PER_DAY}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                   <XAxis dataKey="day" stroke="#94a3b8" />
@@ -364,25 +364,25 @@ export default function Stats() {
         {/* Openings Tab */}
         {stats && activeTab === "openings" && (
           <div className="space-y-8">
-            <Card className="bg-slate-900/50 border-teal-900/30 p-6">
-              <h3 className="text-xl font-bold text-white mb-6">Opening Mastery</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg">
-                  <span className="text-white">Italian Game</span>
-                  <div className="flex items-center gap-4">
-                    <div className="w-32 bg-slate-700 rounded-full h-2">
+            <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-6">
+              <h3 className="text-base sm:text-xl font-bold text-white mb-4 sm:mb-6">Opening Mastery</h3>
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between p-3 sm:p-4 bg-slate-800/50 rounded-lg gap-3">
+                  <span className="text-white text-sm sm:text-base truncate">Italian Game</span>
+                  <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+                    <div className="w-16 sm:w-32 bg-slate-700 rounded-full h-2">
                       <div className="bg-amber-400 h-2 rounded-full" style={{ width: "85%" }}></div>
                     </div>
-                    <span className="text-amber-400 font-bold">85%</span>
+                    <span className="text-amber-400 font-bold text-sm sm:text-base">85%</span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg">
-                  <span className="text-white">Sicilian Defense</span>
-                  <div className="flex items-center gap-4">
-                    <div className="w-32 bg-slate-700 rounded-full h-2">
+                <div className="flex items-center justify-between p-3 sm:p-4 bg-slate-800/50 rounded-lg gap-3">
+                  <span className="text-white text-sm sm:text-base truncate">Sicilian Defense</span>
+                  <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+                    <div className="w-16 sm:w-32 bg-slate-700 rounded-full h-2">
                       <div className="bg-teal-400 h-2 rounded-full" style={{ width: "72%" }}></div>
                     </div>
-                    <span className="text-teal-400 font-bold">72%</span>
+                    <span className="text-teal-400 font-bold text-sm sm:text-base">72%</span>
                   </div>
                 </div>
               </div>

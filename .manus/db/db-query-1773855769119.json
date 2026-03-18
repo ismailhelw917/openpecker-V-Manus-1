@@ -1,0 +1,190 @@
+{
+  "query": "SELECT pa.userId, pa.deviceId, pa.trainingSetId, pa.isCorrect, pa.timeMs, ts.userId as tsUserId, ts.deviceId as tsDeviceId FROM puzzle_attempts pa LEFT JOIN training_sets ts ON pa.trainingSetId = ts.id LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT pa.userId, pa.deviceId, pa.trainingSetId, pa.isCorrect, pa.timeMs, ts.userId as tsUserId, ts.deviceId as tsDeviceId FROM puzzle_attempts pa LEFT JOIN training_sets ts ON pa.trainingSetId = ts.id LIMIT 20;",
+  "rows": [
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "6k6XOFlCMUAz_Qf9UksId",
+      "isCorrect": "1",
+      "timeMs": "5000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    },
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "6k6XOFlCMUAz_Qf9UksId",
+      "isCorrect": "0",
+      "timeMs": "8000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    },
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "6bZ41M1SsmMniQPjeK58i",
+      "isCorrect": "1",
+      "timeMs": "5000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    },
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "6bZ41M1SsmMniQPjeK58i",
+      "isCorrect": "0",
+      "timeMs": "8000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    },
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "1r9cT-qpvh-kvTKriunYh",
+      "isCorrect": "1",
+      "timeMs": "5000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    },
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "1r9cT-qpvh-kvTKriunYh",
+      "isCorrect": "0",
+      "timeMs": "8000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    },
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "w-0OwCatmeok7orUibVL-",
+      "isCorrect": "1",
+      "timeMs": "5000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    },
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "w-0OwCatmeok7orUibVL-",
+      "isCorrect": "0",
+      "timeMs": "8000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    },
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "Olh1OLkA6ppEw-BspohRA",
+      "isCorrect": "1",
+      "timeMs": "5000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    },
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "Olh1OLkA6ppEw-BspohRA",
+      "isCorrect": "0",
+      "timeMs": "8000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    },
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "q6aJ-eWlWAth_cGrTej_O",
+      "isCorrect": "1",
+      "timeMs": "5000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    },
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "q6aJ-eWlWAth_cGrTej_O",
+      "isCorrect": "0",
+      "timeMs": "8000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    },
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "8ErYrkAvHf8sTb-beCvhx",
+      "isCorrect": "1",
+      "timeMs": "5000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    },
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "8ErYrkAvHf8sTb-beCvhx",
+      "isCorrect": "0",
+      "timeMs": "8000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    },
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "hj2JydSRsRtAOMEdkL5a7",
+      "isCorrect": "1",
+      "timeMs": "5000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    },
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "hj2JydSRsRtAOMEdkL5a7",
+      "isCorrect": "0",
+      "timeMs": "8000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    },
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "VkNW7awiXmSk0nx-F0BMF",
+      "isCorrect": "1",
+      "timeMs": "5000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    },
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "VkNW7awiXmSk0nx-F0BMF",
+      "isCorrect": "0",
+      "timeMs": "8000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    },
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "hKfnTeEsAQRmFmmDtL7WT",
+      "isCorrect": "1",
+      "timeMs": "5000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    },
+    {
+      "userId": "NULL",
+      "deviceId": "NULL",
+      "trainingSetId": "hKfnTeEsAQRmFmmDtL7WT",
+      "isCorrect": "0",
+      "timeMs": "8000",
+      "tsUserId": "NULL",
+      "tsDeviceId": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "userId\tdeviceId\ttrainingSetId\tisCorrect\ttimeMs\ttsUserId\ttsDeviceId\nNULL\tNULL\t6k6XOFlCMUAz_Qf9UksId\t1\t5000\tNULL\tNULL\nNULL\tNULL\t6k6XOFlCMUAz_Qf9UksId\t0\t8000\tNULL\tNULL\nNULL\tNULL\t6bZ41M1SsmMniQPjeK58i\t1\t5000\tNULL\tNULL\nNULL\tNULL\t6bZ41M1SsmMniQPjeK58i\t0\t8000\tNULL\tNULL\nNULL\tNULL\t1r9cT-qpvh-kvTKriunYh\t1\t5000\tNULL\tNULL\nNULL\tNULL\t1r9cT-qpvh-kvTKriunYh\t0\t8000\tNULL\tNULL\nNULL\tNULL\tw-0OwCatmeok7orUibVL-\t1\t5000\tNULL\tNULL\nNULL\tNULL\tw-0OwCatmeok7orUibVL-\t0\t8000\tNULL\tNULL\nNULL\tNULL\tOlh1OLkA6ppEw-BspohRA\t1\t5000\tNULL\tNULL\nNULL\tNULL\tOlh1OLkA6ppEw-BspohRA\t0\t8000\tNULL\tNULL\nNULL\tNULL\tq6aJ-eWlWAth_cGrTej_O\t1\t5000\tNULL\tNULL\nNULL\tNULL\tq6aJ-eWlWAth_cGrTej_O\t0\t8000\tNULL\tNULL\nNULL\tNULL\t8ErYrkAvHf8sTb-beCvhx\t1\t5000\tNULL\tNULL\nNULL\tNULL\t8ErYrkAvHf8sTb-beCvhx\t0\t8000\tNULL\tNULL\nNULL\tNULL\thj2JydSRsRtAOMEdkL5a7\t1\t5000\tNULL\tNULL\nNULL\tNULL\thj2JydSRsRtAOMEdkL5a7\t0\t8000\tNULL\tNULL\nNULL\tNULL\tVkNW7awiXmSk0nx-F0BMF\t1\t5000\tNULL\tNULL\nNULL\tNULL\tVkNW7awiXmSk0nx-F0BMF\t0\t8000\tNULL\tNULL\nNULL\tNULL\thKfnTeEsAQRmFmmDtL7WT\t1\t5000\tNULL\tNULL\nNULL\tNULL\thKfnTeEsAQRmFmmDtL7WT\t0\t8000\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 1645
+}
