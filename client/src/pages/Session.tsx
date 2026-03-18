@@ -27,6 +27,30 @@ export default function Session() {
   const gameRef = useRef(new Chess());
   const [gameFen, setGameFen] = useState(gameRef.current.fen());
 
+  // Puzzle generation counter - increments on each puzzle change to cancel stale timeouts
+  const puzzleGenRef = useRef(0);
+  // Track all active timeouts so we can cancel them
+  const activeTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  // Safe setTimeout that auto-cancels if puzzle generation has changed
+  const safePuzzleTimeout = useCallback((fn: () => void, delay: number) => {
+    const gen = puzzleGenRef.current;
+    const id = setTimeout(() => {
+      if (puzzleGenRef.current === gen) {
+        fn();
+      }
+      activeTimeoutsRef.current = activeTimeoutsRef.current.filter(t => t !== id);
+    }, delay);
+    activeTimeoutsRef.current.push(id);
+    return id;
+  }, []);
+
+  // Cancel all pending puzzle-related timeouts
+  const cancelAllPuzzleTimeouts = useCallback(() => {
+    activeTimeoutsRef.current.forEach(id => clearTimeout(id));
+    activeTimeoutsRef.current = [];
+  }, []);
+
   // Track which move in the puzzle sequence the user needs to play
   // In Lichess format: moves[0]=setup, moves[1]=user, moves[2]=opponent, moves[3]=user, etc.
   // userMoveIndex tracks the index into movesList that the user needs to play next
@@ -165,6 +189,10 @@ export default function Session() {
   const initializePuzzle = useCallback((puzzle: any) => {
     if (!puzzle?.fen) return;
 
+    // Cancel all pending timeouts from previous puzzle and increment generation
+    cancelAllPuzzleTimeouts();
+    puzzleGenRef.current += 1;
+
     const movesList = parseMovesList(puzzle);
     const game = new Chess(puzzle.fen);
 
@@ -181,6 +209,10 @@ export default function Session() {
     setGameFen(game.fen());
     setUserMoveIndex(1); // User needs to play movesList[1]
     setSolved(false);
+    setIsAutoSolving(false);
+    setAutoSolveMove(null);
+    setShowCorrectCheckmark(false);
+    setShowWrongX(false);
     setCaptureSquare(null);
     setPuzzleStartTime(Date.now());
 
@@ -193,7 +225,7 @@ export default function Session() {
       expectedUserMove: movesList[1],
       totalMoves: movesList.length,
     });
-  }, [parseMovesList, playUCIMove]);
+  }, [parseMovesList, playUCIMove, cancelAllPuzzleTimeouts]);
 
   // Load puzzles from training set
   useEffect(() => {
@@ -287,7 +319,7 @@ export default function Session() {
 
     setAutoSolveMove({ from, to });
 
-    setTimeout(() => {
+    safePuzzleTimeout(() => {
       const game = gameRef.current;
       playUCIMove(game, opponentMove);
       setGameFen(game.fen());
@@ -296,7 +328,7 @@ export default function Session() {
     }, 600);
 
     return false; // puzzle not yet complete
-  }, [playUCIMove]);
+  }, [playUCIMove, safePuzzleTimeout]);
 
   if (!match) return null;
 
@@ -404,12 +436,8 @@ export default function Session() {
           setCorrectCount(prev => prev + 1);
           setShowCorrectCheckmark(true);
           setSolved(true);
-          setTimeout(() => setShowCorrectCheckmark(false), 1000);
-
-          // Auto-advance after delay
-          setTimeout(() => {
-            advanceToNextPuzzle();
-          }, 1500);
+          safePuzzleTimeout(() => setShowCorrectCheckmark(false), 1000);
+          safePuzzleTimeout(() => advanceToNextPuzzle(), 1500);
         } else {
           // Play opponent's response, then wait for user's next move
           const puzzleDone = playOpponentResponse(movesList, nextOpponentMoveIndex);
@@ -421,21 +449,21 @@ export default function Session() {
             setCorrectCount(prev => prev + 1);
             setShowCorrectCheckmark(true);
             setSolved(true);
-            setTimeout(() => setShowCorrectCheckmark(false), 1000);
-            setTimeout(() => advanceToNextPuzzle(), 1500);
+            safePuzzleTimeout(() => setShowCorrectCheckmark(false), 1000);
+            safePuzzleTimeout(() => advanceToNextPuzzle(), 1500);
           } else {
             // Check if user has more moves after opponent response
             const nextUserMoveIndex = nextOpponentMoveIndex + 1;
             if (nextUserMoveIndex >= movesList.length) {
               // Opponent's response was the last move - puzzle solved
-              setTimeout(() => {
+              safePuzzleTimeout(() => {
                 const puzzleTimeMs = Date.now() - puzzleStartTime;
                 recordPuzzleAttempt(true, puzzleTimeMs);
                 setCorrectCount(prev => prev + 1);
                 setShowCorrectCheckmark(true);
                 setSolved(true);
-                setTimeout(() => setShowCorrectCheckmark(false), 1000);
-                setTimeout(() => advanceToNextPuzzle(), 1500);
+                safePuzzleTimeout(() => setShowCorrectCheckmark(false), 1000);
+                safePuzzleTimeout(() => advanceToNextPuzzle(), 1500);
               }, 700);
             }
             // Otherwise, user needs to play nextUserMoveIndex (set by playOpponentResponse)
@@ -452,13 +480,13 @@ export default function Session() {
 
         // Show wrong X watermark
         setShowWrongX(true);
-        setTimeout(() => setShowWrongX(false), 1000);
+        safePuzzleTimeout(() => setShowWrongX(false), 1000);
 
         // Show capture animation
         setCaptureSquare(targetSquare);
 
         // Auto-solve: show the correct solution
-        setTimeout(() => {
+        safePuzzleTimeout(() => {
           setCaptureSquare(null);
 
           // Reset to puzzle start position (after setup move)
@@ -470,7 +498,7 @@ export default function Session() {
           setGameFen(solveGame.fen());
 
           // Auto-solve: play remaining moves with animation
-          setTimeout(() => {
+          safePuzzleTimeout(() => {
             setIsAutoSolving(true);
             let solveIndex = 1; // Start from user's first move
 
@@ -480,7 +508,7 @@ export default function Session() {
                 setAutoSolveMove(null);
 
                 // Auto-advance after showing solution
-                setTimeout(() => advanceToNextPuzzle(), 1500);
+                safePuzzleTimeout(() => advanceToNextPuzzle(), 1500);
                 return;
               }
 
@@ -491,13 +519,13 @@ export default function Session() {
               setAutoSolveMove({ from, to });
 
               const delayPerMove = Math.max(400, 2000 / (movesList.length - 1));
-              setTimeout(() => {
+              safePuzzleTimeout(() => {
                 playUCIMove(solveGame, move);
                 setGameFen(solveGame.fen());
                 setAutoSolveMove(null);
                 solveIndex++;
 
-                setTimeout(playNextSolveMove, delayPerMove * 0.3);
+                safePuzzleTimeout(playNextSolveMove, delayPerMove * 0.3);
               }, delayPerMove * 0.7);
             };
 

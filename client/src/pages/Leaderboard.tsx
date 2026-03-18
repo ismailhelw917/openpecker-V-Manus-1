@@ -13,11 +13,11 @@ export function Leaderboard() {
     sortBy,
   });
 
-  // Auto-refresh leaderboard every 5 seconds
+  // Auto-refresh leaderboard every 30 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       refetch();
-    }, 5000);
+    }, 30000);
     return () => clearInterval(interval);
   }, [refetch]);
 
@@ -40,7 +40,9 @@ export function Leaderboard() {
         <div className="mb-6">
           <h1 className="text-2xl sm:text-4xl font-bold text-amber-400 mb-1 sm:mb-2">Leaderboard</h1>
           <p className="text-sm sm:text-base text-slate-400">
-            {displayData.length} active player{displayData.length !== 1 ? 's' : ''} ranked by performance
+            {displayData.length > 0 
+              ? `${displayData.length} player${displayData.length !== 1 ? 's' : ''} ranked by performance`
+              : 'Start training to appear on the leaderboard!'}
           </p>
         </div>
 
@@ -200,7 +202,7 @@ export function Leaderboard() {
                             )}
                             {entry.isPremium && (
                               <span className="text-[10px] px-1.5 py-0.5 bg-amber-500/20 text-amber-400 rounded-full">
-                                PRO
+                                PREMIUM
                               </span>
                             )}
                           </div>
@@ -258,7 +260,7 @@ export function Leaderboard() {
                         )}
                         {entry.isPremium && (
                           <span className="text-[9px] px-1 py-0.5 bg-amber-500/20 text-amber-400 rounded-full shrink-0">
-                            PRO
+                            PREMIUM
                           </span>
                         )}
                       </div>

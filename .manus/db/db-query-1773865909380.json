@@ -1,0 +1,13 @@
+{
+  "query": "SELECT COUNT(*) as matching FROM puzzles_raw pr INNER JOIN puzzles p ON pr.PuzzleId = p.id WHERE pr.OpeningTags IS NOT NULL AND pr.OpeningTags != '' AND (p.openingName IS NULL OR p.openingName = '')",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT COUNT(*) as matching FROM puzzles_raw pr INNER JOIN puzzles p ON pr.PuzzleId = p.id WHERE pr.OpeningTags IS NOT NULL AND pr.OpeningTags != '' AND (p.openingName IS NULL OR p.openingName = '')",
+  "rows": [
+    {
+      "matching": "53849"
+    }
+  ],
+  "messages": [],
+  "stdout": "matching\n53849\n",
+  "stderr": "",
+  "execution_time_ms": 6971
+}

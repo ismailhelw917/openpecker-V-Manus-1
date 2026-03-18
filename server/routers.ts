@@ -1119,7 +1119,7 @@ export const appRouter = router({
     /**
      * Get leaderboard with top users ranked by accuracy and speed
      * Includes both registered users and guests, up to 100 entries
-     * Each user appears separately (no merging)
+     * Users are deduplicated - same person with both userId and deviceId appears once
      */
     getLeaderboard: publicProcedure
       .input(
@@ -1133,80 +1133,117 @@ export const appRouter = router({
           const db = await getDb();
           if (!db) return [];
 
-          // Step 1: Get all users with cycle_history activity (registered + guests)
-          const cycleStats = await db.execute(`
+          // Step 1: Get cycle_history stats grouped by userId (for logged-in users)
+          const cycleByUser = await db.execute(`
             SELECT 
               ch.userId,
-              ch.deviceId,
-              COALESCE(u.name, CONCAT('Guest-', LEFT(ch.deviceId, 8))) as name,
-              COALESCE(u.isPremium, 0) as isPremium,
+              u.name,
+              u.isPremium,
               COUNT(*) as completedCycles,
               SUM(ch.totalPuzzles) as totalPuzzles,
               SUM(ch.correctCount) as totalCorrect,
               SUM(ch.totalTimeMs) as totalTimeMs
             FROM cycle_history ch
-            LEFT JOIN users u ON ch.userId = u.id AND ch.userId IS NOT NULL AND ch.userId > 0
-            WHERE (ch.userId IS NOT NULL AND ch.userId > 0) OR ch.deviceId IS NOT NULL
-            GROUP BY ch.userId, ch.deviceId, COALESCE(u.name, CONCAT('Guest-', LEFT(ch.deviceId, 8))), COALESCE(u.isPremium, 0)
-            ORDER BY totalPuzzles DESC
+            INNER JOIN users u ON ch.userId = u.id
+            WHERE ch.userId IS NOT NULL AND ch.userId > 0
+            GROUP BY ch.userId, u.name, u.isPremium
+            ORDER BY SUM(ch.totalPuzzles) DESC
             LIMIT 100
           `) as any;
+          const cycleUserRows = (cycleByUser[0] || cycleByUser) as any[];
 
-          const cycleRows = (cycleStats[0] || cycleStats) as any[];
+          // Step 2: Get cycle_history stats grouped by deviceId (for guests only)
+          const cycleByDevice = await db.execute(`
+            SELECT 
+              ch.deviceId,
+              CONCAT('Guest-', LEFT(ch.deviceId, 8)) as name,
+              0 as isPremium,
+              COUNT(*) as completedCycles,
+              SUM(ch.totalPuzzles) as totalPuzzles,
+              SUM(ch.correctCount) as totalCorrect,
+              SUM(ch.totalTimeMs) as totalTimeMs
+            FROM cycle_history ch
+            WHERE (ch.userId IS NULL OR ch.userId = 0)
+              AND ch.deviceId IS NOT NULL AND ch.deviceId != ''
+            GROUP BY ch.deviceId
+            ORDER BY SUM(ch.totalPuzzles) DESC
+            LIMIT 50
+          `) as any;
+          const cycleDeviceRows = (cycleByDevice[0] || cycleByDevice) as any[];
 
-          // Step 2: Also get users with puzzle_attempts but no cycle_history
-          const attemptStats = await db.execute(`
+          // Step 3: Get puzzle_attempts stats for users NOT in cycle_history
+          const attemptByUser = await db.execute(`
             SELECT 
               pa.userId,
-              pa.deviceId,
-              COALESCE(u.name, CONCAT('Guest-', LEFT(pa.deviceId, 8))) as name,
-              COALESCE(u.isPremium, 0) as isPremium,
+              u.name,
+              u.isPremium,
               0 as completedCycles,
               COUNT(*) as totalPuzzles,
               SUM(pa.isCorrect) as totalCorrect,
               SUM(pa.timeMs) as totalTimeMs
             FROM puzzle_attempts pa
-            LEFT JOIN users u ON pa.userId = u.id AND pa.userId IS NOT NULL AND pa.userId > 0
-            WHERE ((pa.userId IS NOT NULL AND pa.userId > 0) OR pa.deviceId IS NOT NULL)
+            INNER JOIN users u ON pa.userId = u.id
+            WHERE pa.userId IS NOT NULL AND pa.userId > 0
               AND NOT EXISTS (
-                SELECT 1 FROM cycle_history ch2 
-                WHERE (ch2.userId = pa.userId AND pa.userId > 0) 
-                   OR (ch2.deviceId = pa.deviceId AND pa.deviceId IS NOT NULL)
+                SELECT 1 FROM cycle_history ch2 WHERE ch2.userId = pa.userId
               )
-            GROUP BY pa.userId, pa.deviceId, COALESCE(u.name, CONCAT('Guest-', LEFT(pa.deviceId, 8))), COALESCE(u.isPremium, 0)
-            ORDER BY totalPuzzles DESC
+            GROUP BY pa.userId, u.name, u.isPremium
+            ORDER BY COUNT(*) DESC
             LIMIT 50
           `) as any;
+          const attemptUserRows = (attemptByUser[0] || attemptByUser) as any[];
 
-          const attemptRows = (attemptStats[0] || attemptStats) as any[];
+          // Step 4: Get puzzle_attempts stats for guest devices NOT in cycle_history
+          const attemptByDevice = await db.execute(`
+            SELECT 
+              pa.deviceId,
+              CONCAT('Guest-', LEFT(pa.deviceId, 8)) as name,
+              0 as isPremium,
+              0 as completedCycles,
+              COUNT(*) as totalPuzzles,
+              SUM(pa.isCorrect) as totalCorrect,
+              SUM(pa.timeMs) as totalTimeMs
+            FROM puzzle_attempts pa
+            WHERE (pa.userId IS NULL OR pa.userId = 0)
+              AND pa.deviceId IS NOT NULL AND pa.deviceId != ''
+              AND NOT EXISTS (
+                SELECT 1 FROM cycle_history ch2 
+                WHERE ch2.deviceId = pa.deviceId AND ch2.deviceId IS NOT NULL AND ch2.deviceId != ''
+              )
+            GROUP BY pa.deviceId
+            ORDER BY COUNT(*) DESC
+            LIMIT 50
+          `) as any;
+          const attemptDeviceRows = (attemptByDevice[0] || attemptByDevice) as any[];
 
-          // Step 3: Combine all active users
-          const activeEntries = [...cycleRows, ...attemptRows];
+          // Step 5: Combine and deduplicate
+          const seenUserIds = new Set<number>();
+          const seenDeviceIds = new Set<string>();
+          const activeEntries: any[] = [];
 
-          // Step 4: Get remaining users (including guests) to fill up to 100
-          const activeUserIds = activeEntries
-            .filter((e: any) => e.userId && Number(e.userId) > 0)
-            .map((e: any) => Number(e.userId));
-
-          let inactiveUsers: any[] = [];
-          if (activeEntries.length < input.limit) {
-            const remaining = input.limit - activeEntries.length;
-            const excludeClause = activeUserIds.length > 0 
-              ? `AND u.id NOT IN (${activeUserIds.join(',')})` 
-              : '';
-            const inactiveResult = await db.execute(`
-              SELECT id as userId, NULL as deviceId, name, isPremium,
-                0 as completedCycles, 0 as totalPuzzles, 0 as totalCorrect, 0 as totalTimeMs
-              FROM users u
-              WHERE 1=1 ${excludeClause}
-              ORDER BY u.lastSignedIn DESC
-              LIMIT ${remaining}
-            `) as any;
-            inactiveUsers = (inactiveResult[0] || inactiveResult) as any[];
+          // Process user-based entries first (higher priority)
+          for (const row of [...cycleUserRows, ...attemptUserRows]) {
+            const uid = Number(row.userId || 0);
+            if (uid > 0 && !seenUserIds.has(uid)) {
+              seenUserIds.add(uid);
+              activeEntries.push({ ...row, userId: uid, deviceId: null, source: 'user' });
+            }
           }
 
-          // Step 5: Build leaderboard entries
-          const allEntries = [...activeEntries, ...inactiveUsers];
+          // Then device-based entries (guests)
+          for (const row of [...cycleDeviceRows, ...attemptDeviceRows]) {
+            const did = row.deviceId || '';
+            if (did && !seenDeviceIds.has(did)) {
+              seenDeviceIds.add(did);
+              activeEntries.push({ ...row, userId: 0, source: 'device' });
+            }
+          }
+
+          // Step 6: Only show users/guests who have actual puzzle activity
+          // Don't fill with inactive users who have 0 puzzles - keeps leaderboard meaningful
+
+          // Step 7: Build leaderboard entries
+          const allEntries = activeEntries;
           const leaderboardData = allEntries.map((row: any) => {
             const totalPuzzles = Number(row.totalPuzzles || 0);
             const totalCorrect = Number(row.totalCorrect || 0);
@@ -1234,7 +1271,7 @@ export const appRouter = router({
             };
           });
 
-          // Step 6: Sort by selected metric
+          // Step 8: Sort by selected metric
           const sorted = leaderboardData.sort((a: any, b: any) => {
             if (input.sortBy === "accuracy") {
               if (b.accuracy === a.accuracy) return b.totalPuzzles - a.totalPuzzles;

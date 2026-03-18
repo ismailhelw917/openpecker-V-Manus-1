@@ -1,0 +1,28 @@
+{
+  "query": "SELECT 'training_sets' as tbl, COUNT(*) as total, \n  SUM(CASE WHEN userId IS NOT NULL AND userId > 0 THEN 1 ELSE 0 END) as has_user,\n  SUM(CASE WHEN deviceId IS NOT NULL AND deviceId != '' THEN 1 ELSE 0 END) as has_device\nFROM training_sets\nUNION ALL\nSELECT 'cycle_history', COUNT(*),\n  SUM(CASE WHEN userId IS NOT NULL AND userId > 0 THEN 1 ELSE 0 END),\n  SUM(CASE WHEN deviceId IS NOT NULL AND deviceId != '' THEN 1 ELSE 0 END)\nFROM cycle_history\nUNION ALL\nSELECT 'puzzle_attempts', COUNT(*),\n  SUM(CASE WHEN userId IS NOT NULL AND userId > 0 THEN 1 ELSE 0 END),\n  SUM(CASE WHEN deviceId IS NOT NULL AND deviceId != '' THEN 1 ELSE 0 END)\nFROM puzzle_attempts",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT 'training_sets' as tbl, COUNT(*) as total, \n  SUM(CASE WHEN userId IS NOT NULL AND userId > 0 THEN 1 ELSE 0 END) as has_user,\n  SUM(CASE WHEN deviceId IS NOT NULL AND deviceId != '' THEN 1 ELSE 0 END) as has_device\nFROM training_sets\nUNION ALL\nSELECT 'cycle_history', COUNT(*),\n  SUM(CASE WHEN userId IS NOT NULL AND userId > 0 THEN 1 ELSE 0 END),\n  SUM(CASE WHEN deviceId IS NOT NULL AND deviceId != '' THEN 1 ELSE 0 END)\nFROM cycle_history\nUNION ALL\nSELECT 'puzzle_attempts', COUNT(*),\n  SUM(CASE WHEN userId IS NOT NULL AND userId > 0 THEN 1 ELSE 0 END),\n  SUM(CASE WHEN deviceId IS NOT NULL AND deviceId != '' THEN 1 ELSE 0 END)\nFROM puzzle_attempts",
+  "rows": [
+    {
+      "tbl": "puzzle_attempts",
+      "total": "48",
+      "has_user": "2",
+      "has_device": "4"
+    },
+    {
+      "tbl": "cycle_history",
+      "total": "44",
+      "has_user": "30",
+      "has_device": "0"
+    },
+    {
+      "tbl": "training_sets",
+      "total": "55",
+      "has_user": "16",
+      "has_device": "32"
+    }
+  ],
+  "messages": [],
+  "stdout": "tbl\ttotal\thas_user\thas_device\npuzzle_attempts\t48\t2\t4\ncycle_history\t44\t30\t0\ntraining_sets\t55\t16\t32\n",
+  "stderr": "",
+  "execution_time_ms": 1574
+}

@@ -724,3 +724,22 @@
 - [x] Rename all "Pro" references to "Premium" throughout the app (ProAnalytics.tsx updated)
 - [x] Complete puzzle color field inversion fix (5.4M puzzles swapped: white↔black)
 - [x] Check puzzle classification progress (37.4% of 5.4M puzzles classified with opening names)
+
+## Round 65 - Auto-Solve/Auto-Next Glitch
+- [ ] Fix glitch where puzzle frame moves to next puzzle then goes back to auto-solve
+
+## Round 66 - Classify Remaining Puzzles + Fix Auto-Solve Glitch
+- [ ] Fix auto-solve/auto-next race condition (puzzle frame flickers back to auto-solve after advancing)
+- [ ] Classify remaining 3.4M unclassified puzzles by opening name and variation
+- [ ] Puzzles should be categorized as opening, middlegame, or endgame
+- [ ] All puzzles must be organized with the same opening set and variation structure
+- [x] Fix leaderboard page for new and old users to reflect data model changes
+- [x] Remove duplicate/repeated accounts from leaderboard
+
+## Round 67 - Leaderboard Complete Fix (DONE)
+- [x] Audit and fix leaderboard backend query (deduplication, data correctness)
+- [x] Audit and fix leaderboard frontend (badges, rendering, edge cases)
+- [x] Visually test leaderboard in browser - 6 active players shown correctly
+- [x] Fixed SQL ONLY_FULL_GROUP_BY error and TiDB parameterized query syntax
+- [x] Only show players with actual puzzle activity (no 0-puzzle ghost entries)
+- [x] No duplicates, PREMIUM badges correct, auto-refresh every 30s

@@ -1,0 +1,31 @@
+{
+  "query": "SELECT \n  COUNT(*) as total_cycles,\n  COUNT(DISTINCT userId) as unique_users,\n  COUNT(DISTINCT deviceId) as unique_devices,\n  SUM(CASE WHEN userId IS NULL OR userId = 0 THEN 1 ELSE 0 END) as null_user_cycles,\n  SUM(CASE WHEN deviceId IS NULL OR deviceId = '' THEN 1 ELSE 0 END) as null_device_cycles\nFROM cycle_history;\n\nSELECT \n  COUNT(*) as total_attempts,\n  COUNT(DISTINCT userId) as unique_users,\n  COUNT(DISTINCT deviceId) as unique_devices,\n  SUM(CASE WHEN userId IS NULL OR userId = 0 THEN 1 ELSE 0 END) as null_user_attempts,\n  SUM(CASE WHEN deviceId IS NULL OR deviceId = '' THEN 1 ELSE 0 END) as null_device_attempts\nFROM puzzle_attempts",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT \n  COUNT(*) as total_cycles,\n  COUNT(DISTINCT userId) as unique_users,\n  COUNT(DISTINCT deviceId) as unique_devices,\n  SUM(CASE WHEN userId IS NULL OR userId = 0 THEN 1 ELSE 0 END) as null_user_cycles,\n  SUM(CASE WHEN deviceId IS NULL OR deviceId = '' THEN 1 ELSE 0 END) as null_device_cycles\nFROM cycle_history;\n\nSELECT \n  COUNT(*) as total_attempts,\n  COUNT(DISTINCT userId) as unique_users,\n  COUNT(DISTINCT deviceId) as unique_devices,\n  SUM(CASE WHEN userId IS NULL OR userId = 0 THEN 1 ELSE 0 END) as null_user_attempts,\n  SUM(CASE WHEN deviceId IS NULL OR deviceId = '' THEN 1 ELSE 0 END) as null_device_attempts\nFROM puzzle_attempts",
+  "rows": [
+    {
+      "total_cycles": "44",
+      "unique_users": "3",
+      "unique_devices": "0",
+      "null_user_cycles": "14",
+      "null_device_cycles": "44"
+    },
+    {
+      "total_cycles": "total_attempts",
+      "unique_users": "unique_users",
+      "unique_devices": "unique_devices",
+      "null_user_cycles": "null_user_attempts",
+      "null_device_cycles": "null_device_attempts"
+    },
+    {
+      "total_cycles": "48",
+      "unique_users": "1",
+      "unique_devices": "3",
+      "null_user_cycles": "46",
+      "null_device_cycles": "44"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_cycles\tunique_users\tunique_devices\tnull_user_cycles\tnull_device_cycles\n44\t3\t0\t14\t44\ntotal_attempts\tunique_users\tunique_devices\tnull_user_attempts\tnull_device_attempts\n48\t1\t3\t46\t44\n",
+  "stderr": "",
+  "execution_time_ms": 1810
+}

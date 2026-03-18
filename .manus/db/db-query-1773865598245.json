@@ -1,0 +1,70 @@
+{
+  "query": "SELECT openingName, COUNT(*) as cnt FROM puzzles WHERE openingName IS NOT NULL AND openingName != '' GROUP BY openingName ORDER BY cnt DESC LIMIT 15",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT openingName, COUNT(*) as cnt FROM puzzles WHERE openingName IS NOT NULL AND openingName != '' GROUP BY openingName ORDER BY cnt DESC LIMIT 15",
+  "rows": [
+    {
+      "openingName": "Uncommon Opening",
+      "cnt": "587341"
+    },
+    {
+      "openingName": "Miscellaneous Opening",
+      "cnt": "342437"
+    },
+    {
+      "openingName": "Endgame Tactics",
+      "cnt": "173827"
+    },
+    {
+      "openingName": "Queens Pawn Game",
+      "cnt": "145043"
+    },
+    {
+      "openingName": "English Opening",
+      "cnt": "98401"
+    },
+    {
+      "openingName": "Advanced Openings",
+      "cnt": "78697"
+    },
+    {
+      "openingName": "Kings Indian Attack",
+      "cnt": "72657"
+    },
+    {
+      "openingName": "Expert Openings",
+      "cnt": "70597"
+    },
+    {
+      "openingName": "Birds Opening",
+      "cnt": "69495"
+    },
+    {
+      "openingName": "Nimzo-Larsen Attack",
+      "cnt": "67532"
+    },
+    {
+      "openingName": "Reti Opening",
+      "cnt": "44365"
+    },
+    {
+      "openingName": "Intermediate Openings",
+      "cnt": "44187"
+    },
+    {
+      "openingName": "Kings Pawn Opening",
+      "cnt": "38732"
+    },
+    {
+      "openingName": "Sicilian Defense",
+      "cnt": "28966"
+    },
+    {
+      "openingName": "Pirc Defense",
+      "cnt": "27208"
+    }
+  ],
+  "messages": [],
+  "stdout": "openingName\tcnt\nUncommon Opening\t587341\nMiscellaneous Opening\t342437\nEndgame Tactics\t173827\nQueens Pawn Game\t145043\nEnglish Opening\t98401\nAdvanced Openings\t78697\nKings Indian Attack\t72657\nExpert Openings\t70597\nBirds Opening\t69495\nNimzo-Larsen Attack\t67532\nReti Opening\t44365\nIntermediate Openings\t44187\nKings Pawn Opening\t38732\nSicilian Defense\t28966\nPirc Defense\t27208\n",
+  "stderr": "",
+  "execution_time_ms": 3401
+}

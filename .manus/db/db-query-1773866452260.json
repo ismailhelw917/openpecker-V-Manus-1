@@ -1,0 +1,13 @@
+{
+  "query": "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'puzzle_attempts' AND COLUMN_NAME LIKE '%time%' OR (TABLE_NAME = 'puzzle_attempts' AND COLUMN_NAME LIKE '%date%') OR (TABLE_NAME = 'puzzle_attempts' AND COLUMN_NAME LIKE '%creat%')",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'puzzle_attempts' AND COLUMN_NAME LIKE '%time%' OR (TABLE_NAME = 'puzzle_attempts' AND COLUMN_NAME LIKE '%date%') OR (TABLE_NAME = 'puzzle_attempts' AND COLUMN_NAME LIKE '%creat%')",
+  "rows": [
+    {
+      "COLUMN_NAME": "timeMs"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\ntimeMs\n",
+  "stderr": "",
+  "execution_time_ms": 1649
+}
