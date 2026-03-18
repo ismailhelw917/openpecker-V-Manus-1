@@ -27,6 +27,8 @@ export default function Auth() {
   const [registerConfirmPassword, setRegisterConfirmPassword] = useState("");
 
   const registerMutation = trpc.auth.register.useMutation();
+  const loginMutation = trpc.auth.login.useMutation();
+  const { refetch: refetchAuth } = trpc.auth.me.useQuery();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,19 +40,20 @@ export default function Auth() {
 
     setIsLoading(true);
     try {
-      // Save remember me preference
-      if (rememberMe) {
-        localStorage.setItem("rememberMe", "true");
-        localStorage.setItem("sessionExpiry", new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString());
-      } else {
-        localStorage.removeItem("rememberMe");
-        localStorage.removeItem("sessionExpiry");
-      }
+      const result = await loginMutation.mutateAsync({
+        email: loginEmail,
+        password: loginPassword,
+        rememberMe,
+      });
 
-      // TODO: Implement actual login endpoint
-      toast.success("Login functionality coming soon");
-      setLoginEmail("");
-      setLoginPassword("");
+      if (result.success) {
+        toast.success(result.message);
+        // Refresh auth state and redirect
+        await refetchAuth();
+        setLocation("/");
+      } else {
+        toast.error(result.error || "Login failed");
+      }
     } catch (error) {
       console.error("Login error:", error);
       toast.error("Login failed. Please try again.");

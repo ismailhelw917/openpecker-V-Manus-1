@@ -297,3 +297,14 @@
 - [x] Reduce initial delay from 3s to 2s for faster feedback
 - [x] Verify TypeScript compilation with zero errors
 - [ ] Save checkpoint
+
+## Stripe Premium Implementation & Testing (Round 26)
+- [ ] Check if Stripe integration is already set up
+- [ ] Implement Stripe checkout session creation
+- [ ] Add premium purchase webhook handling
+- [ ] Update user isPremium flag on successful payment
+- [ ] Add premium access checks to puzzles (unlock all)
+- [ ] Add premium access checks to stats page
+- [ ] Test premium purchase flow end-to-end
+- [ ] Double-check all premium features work
+- [ ] Triple-check all premium features work

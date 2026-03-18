@@ -4,6 +4,8 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
 import { nanoid } from "nanoid";
+import bcrypt from "bcrypt";
+import { sdk } from "./_core/sdk";
 import {
   getPuzzlesByThemeAndRating,
   getRandomPuzzlesByThemeAndRating,
@@ -22,7 +24,13 @@ import {
   recordPuzzleAttempt,
   getPuzzleAttemptsByTrainingSet,
   getUserByOpenId,
+  getUserByEmail,
+  updateUserPasswordHash,
+  upsertUser,
 } from "./db";
+
+const BCRYPT_ROUNDS = 10;
+const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 /**
  * Fetch puzzles from local database only
@@ -69,32 +77,17 @@ export const appRouter = router({
       )
       .mutation(async ({ input }) => {
         try {
-          const db = await (await import("./db")).getDb();
-          if (!db) {
-            return {
-              success: false,
-              error: "Database not available",
-            };
-          }
-
           // Check if user with this email already exists
-          const existingUser = await db
-            .select()
-            .from((await import("../drizzle/schema")).users)
-            .where(
-              (await import("drizzle-orm")).eq(
-                (await import("../drizzle/schema")).users.email,
-                input.email
-              )
-            )
-            .limit(1);
-
-          if (existingUser.length > 0) {
+          const existingUser = await getUserByEmail(input.email);
+          if (existingUser) {
             return {
               success: false,
               error: "Email already registered",
             };
           }
+
+          // Hash password
+          const passwordHash = await bcrypt.hash(input.password, BCRYPT_ROUNDS);
 
           // Create new user with unique openId
           const openId = `local_${nanoid()}`;
@@ -102,21 +95,76 @@ export const appRouter = router({
             openId,
             name: input.name,
             email: input.email,
+            passwordHash,
             loginMethod: "email",
             role: "user" as const,
           };
 
-          await (await import("./db")).upsertUser(newUser);
+          await upsertUser(newUser);
 
           return {
             success: true,
-            message: "Account created successfully. Please sign in with Manus OAuth.",
+            message: "Account created successfully. Please sign in.",
           };
         } catch (error) {
           console.error("[Registration] Error:", error);
           return {
             success: false,
             error: "Registration failed. Please try again.",
+          };
+        }
+      }),
+    login: publicProcedure
+      .input(
+        z.object({
+          email: z.string().email("Invalid email address"),
+          password: z.string().min(1, "Password required"),
+          rememberMe: z.boolean().optional(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        try {
+          // Find user by email
+          const user = await getUserByEmail(input.email);
+          if (!user || !user.passwordHash) {
+            return {
+              success: false,
+              error: "Invalid email or password",
+            };
+          }
+
+          // Verify password
+          const passwordMatch = await bcrypt.compare(input.password, user.passwordHash);
+          if (!passwordMatch) {
+            return {
+              success: false,
+              error: "Invalid email or password",
+            };
+          }
+
+          // Create session token
+          const sessionDuration = input.rememberMe ? SESSION_DURATION_MS : 24 * 60 * 60 * 1000;
+          const sessionToken = await sdk.createSessionToken(user.openId, {
+            expiresInMs: sessionDuration,
+            name: user.name || user.email || "User",
+          });
+
+          // Set session cookie
+          const cookieOptions = getSessionCookieOptions(ctx.req);
+          ctx.res.cookie(COOKIE_NAME, sessionToken, {
+            ...cookieOptions,
+            maxAge: sessionDuration,
+          });
+
+          return {
+            success: true,
+            message: "Logged in successfully",
+          };
+        } catch (error) {
+          console.error("[Login] Error:", error);
+          return {
+            success: false,
+            error: "Login failed. Please try again.",
           };
         }
       }),
@@ -636,6 +684,32 @@ export const appRouter = router({
           };
         }
       }),
+  }),
+
+  // Premium features
+  premium: router({
+    /**
+     * Get user premium status
+     */
+    getStatus: protectedProcedure.query(async ({ ctx }) => {
+      try {
+        if (!ctx.user) {
+          return {
+            isPremium: false,
+          };
+        }
+
+        return {
+          isPremium: ctx.user.isPremium === 1,
+          userId: ctx.user.id,
+        };
+      } catch (error) {
+        console.error("[GET PREMIUM STATUS ERROR]", error);
+        return {
+          isPremium: false,
+        };
+      }
+    }),
   }),
 
   // Puzzle attempts tracking

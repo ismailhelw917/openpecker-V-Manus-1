@@ -193,20 +193,31 @@ export default function Settings() {
               <div>
                 <h3 className="text-white font-semibold mb-1">Premium Status</h3>
                 <p className="text-slate-400 text-sm">
-                  {user ? "Upgrade to unlock all openings and advanced stats." : "Sign in to upgrade"}
+                  {user?.isPremium ? "You have access to all premium features." : "Upgrade to unlock all openings and advanced stats."}
                 </p>
               </div>
-              <span className="bg-amber-400/20 text-amber-400 px-3 py-1 rounded text-sm font-semibold">
-                {user ? "PREMIUM" : "FREE TIER"}
+              <span className={`px-3 py-1 rounded text-sm font-semibold ${
+                user?.isPremium 
+                  ? "bg-teal-400/20 text-teal-400" 
+                  : "bg-amber-400/20 text-amber-400"
+              }`}>
+                {user?.isPremium ? "✓ PREMIUM" : "FREE TIER"}
               </span>
             </div>
 
-            <Button
-              onClick={() => setShowPremiumModal(true)}
-              className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-3 rounded-lg transition-colors"
-            >
-              UPGRADE TO PREMIUM
-            </Button>
+            {!user?.isPremium && (
+              <Button
+                onClick={() => setShowPremiumModal(true)}
+                className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-3 rounded-lg transition-colors"
+              >
+                UPGRADE TO PREMIUM
+              </Button>
+            )}
+            {user?.isPremium && (
+              <div className="w-full p-3 bg-teal-400/10 border border-teal-400/30 rounded-lg text-center text-teal-300 font-semibold">
+                ✓ Premium Active
+              </div>
+            )}
           </Card>
         </div>
 
