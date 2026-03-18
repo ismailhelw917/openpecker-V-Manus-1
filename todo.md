@@ -771,3 +771,7 @@
 - [x] Generate Facebook campaign image for 70% discount with chess visual (gold theme)
 - [x] Generate Facebook campaign image for 60% discount with chess visual (silver theme)
 - [x] Puzzle classification 100% complete (all 5.4M puzzles classified)
+
+## Round 72 - Rank Tab Not Showing 400+ Users (DONE)
+- [x] Fix leaderboard to display all 400+ registered users (451 total shown)
+- [x] Verify in browser that all users appear (6 active + 445 registered, 19972px scrollable)
