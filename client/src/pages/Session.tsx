@@ -16,6 +16,8 @@ export default function Session() {
   const [isLoading, setIsLoading] = useState(true);
   const [correctCount, setCorrectCount] = useState(0);
   const [solved, setSolved] = useState(false);
+  const [currentCycle, setCurrentCycle] = useState(1);
+  const [targetCycles, setTargetCycles] = useState(3);
   const [boardSize, setBoardSize] = useState(400);
   const [captureSquare, setCaptureSquare] = useState<string | null>(null);
   const [autoSolveMove, setAutoSolveMove] = useState<{ from: string; to: string } | null>(null);
@@ -93,6 +95,8 @@ export default function Session() {
       setCurrentPuzzleIndex(0);
       setCorrectCount(0);
       setSolved(false);
+      setCurrentCycle(1);
+      setTargetCycles(getTrainingSet.data.targetCycles || 3);
       
       // Load first puzzle FEN
       const firstPuzzle = puzzleList[0];
@@ -240,7 +244,20 @@ export default function Session() {
               setFen(nextPuzzle.fen);
             }
           } else {
-            setTimeout(() => setLocation("/sets"), 1000);
+            // Cycle completed - increment cycle or finish session
+            if (currentCycle < targetCycles) {
+              setCurrentCycle(currentCycle + 1);
+              setCurrentPuzzleIndex(0);
+              setCorrectCount(0);
+              
+              const firstPuzzle = puzzles[0];
+              if (firstPuzzle?.fen) {
+                setFen(firstPuzzle.fen);
+              }
+            } else {
+              // All cycles completed
+              setTimeout(() => setLocation("/sets"), 1000);
+            }
           }
         }, 1500);
       } else {
@@ -378,7 +395,7 @@ export default function Session() {
             </div>
             <div>
               <p className="text-xs text-slate-400">Cycles</p>
-              <p className="text-sm font-bold text-amber-400">{currentPuzzleIndex + 1}/{puzzles.length}</p>
+              <p className="text-sm font-bold text-amber-400">{currentCycle}/{targetCycles}</p>
             </div>
           </div>
           <div className="w-40 h-0.5 bg-slate-800 rounded-full mx-auto overflow-hidden">
