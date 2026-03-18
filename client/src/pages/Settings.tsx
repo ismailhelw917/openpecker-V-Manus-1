@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ChevronLeft, Lock, Zap, Shield, CreditCard, Loader } from "lucide-react";
+import { ChevronLeft, Lock, Zap, Shield, CreditCard, Loader, Check } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
 
@@ -57,6 +57,7 @@ export default function Settings() {
   const handleThemeChange = (themeId: 'classic' | 'green' | 'blue' | 'purple') => {
     setSelectedTheme(themeId);
     localStorage.setItem('board-theme', themeId);
+    toast.success(`Board theme changed to ${themeId}`);
   };
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -129,26 +130,52 @@ export default function Settings() {
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Board Theme Section */}
         <div className="mb-12">
-          <h2 className="text-lg font-bold text-white mb-6">Board Theme</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="mb-6">
+            <h2 className="text-lg font-bold text-white mb-1">Board Theme</h2>
+            <p className="text-slate-400 text-sm">Choose your preferred chess board colors</p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {BOARD_THEMES.map((theme) => (
               <button
                 key={theme.id}
                 onClick={() => handleThemeChange(theme.id)}
-                className={`p-6 rounded-lg border-2 transition-all text-center ${
+                className={`group relative p-4 rounded-xl border-2 transition-all duration-200 ${
                   selectedTheme === theme.id
-                    ? "border-amber-400 bg-amber-400/10"
-                    : "border-slate-700 bg-slate-800/30 hover:border-slate-600"
+                    ? "border-teal-400 bg-teal-400/10 shadow-lg shadow-teal-400/20"
+                    : "border-slate-700 bg-slate-800/20 hover:border-slate-600 hover:bg-slate-800/40"
                 }`}
               >
-                <div
-                  className="w-16 h-16 rounded mb-3 mx-auto border-2"
-                  style={{
-                    backgroundColor: theme.colors.light,
-                    borderColor: theme.colors.dark,
-                  }}
-                />
-                <p className="font-semibold text-white">{theme.name}</p>
+                {/* Checkmark for selected */}
+                {selectedTheme === theme.id && (
+                  <div className="absolute -top-2 -right-2 bg-teal-400 rounded-full p-1 shadow-lg">
+                    <Check className="w-4 h-4 text-slate-900" strokeWidth={3} />
+                  </div>
+                )}
+                
+                {/* Theme preview - checkerboard */}
+                <div className="mb-3 mx-auto">
+                  <div className="w-20 h-20 rounded-lg border-2 overflow-hidden shadow-md" style={{ borderColor: theme.colors.dark }}>
+                    <div className="grid grid-cols-4 w-full h-full">
+                      {[...Array(16)].map((_, i) => (
+                        <div
+                          key={i}
+                          className="w-full h-full"
+                          style={{
+                            backgroundColor: (i + Math.floor(i / 4)) % 2 === 0 ? theme.colors.light : theme.colors.dark,
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Theme name */}
+                <p className={`font-semibold text-sm transition-colors ${
+                  selectedTheme === theme.id ? "text-teal-300" : "text-slate-300 group-hover:text-white"
+                }`}>
+                  {theme.name}
+                </p>
               </button>
             ))}
           </div>
