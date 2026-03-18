@@ -1,0 +1,100 @@
+{
+  "query": "\nSELECT id, openId, name, email, loginMethod, lastSignedIn, createdAt \nFROM users \nWHERE name LIKE 'Guest-%' \nORDER BY lastSignedIn DESC \nLIMIT 10;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \nSELECT id, openId, name, email, loginMethod, lastSignedIn, createdAt \nFROM users \nWHERE name LIKE 'Guest-%' \nORDER BY lastSignedIn DESC \nLIMIT 10;\n",
+  "rows": [
+    {
+      "id": "752562",
+      "openId": "device-4e5c29200d7f95648ade8bd3afc6efe9",
+      "name": "Guest-4e5c2920",
+      "email": "device-4e5c29200d7f95648ade8bd3afc6efe9@anonymous.local",
+      "loginMethod": "device",
+      "lastSignedIn": "2026-03-18 21:51:21",
+      "createdAt": "2026-03-18 21:51:21"
+    },
+    {
+      "id": "752561",
+      "openId": "device-9c72e0d9c07fb714cd36a600f7cfcfc2",
+      "name": "Guest-9c72e0d9",
+      "email": "device-9c72e0d9c07fb714cd36a600f7cfcfc2@anonymous.local",
+      "loginMethod": "device",
+      "lastSignedIn": "2026-03-18 21:49:58",
+      "createdAt": "2026-03-18 21:49:58"
+    },
+    {
+      "id": "752560",
+      "openId": "device-2300d6a1ff795c2732bd42c4fa3533e8",
+      "name": "Guest-2300d6a1",
+      "email": "device-2300d6a1ff795c2732bd42c4fa3533e8@anonymous.local",
+      "loginMethod": "device",
+      "lastSignedIn": "2026-03-18 21:48:23",
+      "createdAt": "2026-03-18 21:48:23"
+    },
+    {
+      "id": "752559",
+      "openId": "device-2a3084c46bf9d8e45132f85f84ee44da",
+      "name": "Guest-2a3084c4",
+      "email": "device-2a3084c46bf9d8e45132f85f84ee44da@anonymous.local",
+      "loginMethod": "device",
+      "lastSignedIn": "2026-03-18 21:46:32",
+      "createdAt": "2026-03-18 21:46:32"
+    },
+    {
+      "id": "752533",
+      "openId": "device-c1828ae05f4f6795a61d23648c06afb3",
+      "name": "Guest-c1828ae0",
+      "email": "device-c1828ae05f4f6795a61d23648c06afb3@anonymous.local",
+      "loginMethod": "device",
+      "lastSignedIn": "2026-03-18 21:36:21",
+      "createdAt": "2026-03-18 21:36:21"
+    },
+    {
+      "id": "752532",
+      "openId": "device-9ed9cc9ab86bf21909c0ad2d142ed0cd",
+      "name": "Guest-9ed9cc9a",
+      "email": "device-9ed9cc9ab86bf21909c0ad2d142ed0cd@anonymous.local",
+      "loginMethod": "device",
+      "lastSignedIn": "2026-03-18 21:35:44",
+      "createdAt": "2026-03-18 21:35:44"
+    },
+    {
+      "id": "752531",
+      "openId": "device-45309c106efa09a2adc23316ac9ed740",
+      "name": "Guest-45309c10",
+      "email": "device-45309c106efa09a2adc23316ac9ed740@anonymous.local",
+      "loginMethod": "device",
+      "lastSignedIn": "2026-03-18 21:33:41",
+      "createdAt": "2026-03-18 21:33:41"
+    },
+    {
+      "id": "752516",
+      "openId": "device-f75381dd1e93206e8ca650c9730d8644",
+      "name": "Guest-f75381dd",
+      "email": "device-f75381dd1e93206e8ca650c9730d8644@anonymous.local",
+      "loginMethod": "device",
+      "lastSignedIn": "2026-03-18 21:26:50",
+      "createdAt": "2026-03-18 21:26:50"
+    },
+    {
+      "id": "752514",
+      "openId": "device-cb9ffd3806f9fc8fe136271cb3f06e1c",
+      "name": "Guest-cb9ffd38",
+      "email": "device-cb9ffd3806f9fc8fe136271cb3f06e1c@anonymous.local",
+      "loginMethod": "device",
+      "lastSignedIn": "2026-03-18 21:26:27",
+      "createdAt": "2026-03-18 21:26:27"
+    },
+    {
+      "id": "752512",
+      "openId": "device-7b455cb4a8e2f5d12cf328de9c6559e9",
+      "name": "Guest-7b455cb4",
+      "email": "device-7b455cb4a8e2f5d12cf328de9c6559e9@anonymous.local",
+      "loginMethod": "device",
+      "lastSignedIn": "2026-03-18 21:26:27",
+      "createdAt": "2026-03-18 21:26:27"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topenId\tname\temail\tloginMethod\tlastSignedIn\tcreatedAt\n752562\tdevice-4e5c29200d7f95648ade8bd3afc6efe9\tGuest-4e5c2920\tdevice-4e5c29200d7f95648ade8bd3afc6efe9@anonymous.local\tdevice\t2026-03-18 21:51:21\t2026-03-18 21:51:21\n752561\tdevice-9c72e0d9c07fb714cd36a600f7cfcfc2\tGuest-9c72e0d9\tdevice-9c72e0d9c07fb714cd36a600f7cfcfc2@anonymous.local\tdevice\t2026-03-18 21:49:58\t2026-03-18 21:49:58\n752560\tdevice-2300d6a1ff795c2732bd42c4fa3533e8\tGuest-2300d6a1\tdevice-2300d6a1ff795c2732bd42c4fa3533e8@anonymous.local\tdevice\t2026-03-18 21:48:23\t2026-03-18 21:48:23\n752559\tdevice-2a3084c46bf9d8e45132f85f84ee44da\tGuest-2a3084c4\tdevice-2a3084c46bf9d8e45132f85f84ee44da@anonymous.local\tdevice\t2026-03-18 21:46:32\t2026-03-18 21:46:32\n752533\tdevice-c1828ae05f4f6795a61d23648c06afb3\tGuest-c1828ae0\tdevice-c1828ae05f4f6795a61d23648c06afb3@anonymous.local\tdevice\t2026-03-18 21:36:21\t2026-03-18 21:36:21\n752532\tdevice-9ed9cc9ab86bf21909c0ad2d142ed0cd\tGuest-9ed9cc9a\tdevice-9ed9cc9ab86bf21909c0ad2d142ed0cd@anonymous.local\tdevice\t2026-03-18 21:35:44\t2026-03-18 21:35:44\n752531\tdevice-45309c106efa09a2adc23316ac9ed740\tGuest-45309c10\tdevice-45309c106efa09a2adc23316ac9ed740@anonymous.local\tdevice\t2026-03-18 21:33:41\t2026-03-18 21:33:41\n752516\tdevice-f75381dd1e93206e8ca650c9730d8644\tGuest-f75381dd\tdevice-f75381dd1e93206e8ca650c9730d8644@anonymous.local\tdevice\t2026-03-18 21:26:50\t2026-03-18 21:26:50\n752514\tdevice-cb9ffd3806f9fc8fe136271cb3f06e1c\tGuest-cb9ffd38\tdevice-cb9ffd3806f9fc8fe136271cb3f06e1c@anonymous.local\tdevice\t2026-03-18 21:26:27\t2026-03-18 21:26:27\n752512\tdevice-7b455cb4a8e2f5d12cf328de9c6559e9\tGuest-7b455cb4\tdevice-7b455cb4a8e2f5d12cf328de9c6559e9@anonymous.local\tdevice\t2026-03-18 21:26:27\t2026-03-18 21:26:27\n",
+  "stderr": "",
+  "execution_time_ms": 1632
+}

@@ -8,6 +8,7 @@ import { registerStripeRoutes } from "./stripeHandler";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { trackVisitor, getVisitorStats } from "../visitor-tracking";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -39,6 +40,31 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+
+  // Visitor tracking endpoints
+  app.post("/api/track", async (req, res) => {
+    try {
+      const { fingerprint, page, referrer, screenSize, language } = req.body;
+      if (!fingerprint || !page) {
+        return res.status(400).json({ error: "Missing fingerprint or page" });
+      }
+      const userAgent = req.headers["user-agent"] || "";
+      await trackVisitor({ fingerprint, page, referrer, screenSize, language, userAgent });
+      res.json({ ok: true });
+    } catch {
+      res.status(500).json({ error: "Tracking failed" });
+    }
+  });
+
+  app.get("/api/visitor-stats", async (_req, res) => {
+    try {
+      const stats = await getVisitorStats();
+      res.json(stats);
+    } catch {
+      res.status(500).json({ error: "Stats unavailable" });
+    }
+  });
+
   // tRPC API
   app.use(
     "/api/trpc",

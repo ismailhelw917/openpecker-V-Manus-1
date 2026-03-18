@@ -22,6 +22,7 @@ import { getOrCreateDeviceId } from "./_core/deviceId";
 import { trpc } from "./lib/trpc";
 import { useLocation } from "wouter";
 import { PremiumBanner } from "./components/PremiumBanner";
+import { usePageTracking } from "./hooks/usePageTracking";
 
 function Router() {
   return (
@@ -45,6 +46,9 @@ function Router() {
 }
 
 function App() {
+  // Track page views for analytics
+  usePageTracking();
+
   const [timeLeft, setTimeLeft] = useState(180);
   const [showMaintenance, setShowMaintenance] = useState(() => {
     const stored = localStorage.getItem("openpecker-maintenance");

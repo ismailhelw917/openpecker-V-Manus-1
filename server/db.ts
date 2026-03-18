@@ -707,14 +707,15 @@ export async function getUserAnalytics() {
 
   try {
     // Use raw SQL for reliable results with TiDB
+    // Exclude device-only accounts from total user count to show real sign-ins
     const result = await db.execute(sql`
       SELECT
-        (SELECT COUNT(*) FROM users) as totalUsers,
+        (SELECT COUNT(*) FROM users WHERE loginMethod != 'device' OR loginMethod IS NULL) as totalUsers,
         (SELECT COUNT(*) FROM users WHERE isPremium = 1) as premiumUsers,
         (SELECT COUNT(*) FROM users WHERE role = 'admin') as adminUsers,
         (SELECT COUNT(DISTINCT userId) FROM training_sets WHERE userId IS NOT NULL) as activeUsers,
         (SELECT COUNT(*) FROM training_sets) as totalSessions,
-        (SELECT COUNT(*) FROM users WHERE lastSignedIn >= DATE_SUB(NOW(), INTERVAL 24 HOUR)) as recentSignups
+        (SELECT COUNT(*) FROM users WHERE lastSignedIn >= DATE_SUB(NOW(), INTERVAL 24 HOUR) AND (loginMethod != 'device' OR loginMethod IS NULL)) as recentSignups
     `);
 
     // db.execute returns [rows, fields] - extract first row

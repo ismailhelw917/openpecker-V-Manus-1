@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
+import { useVisitorStats } from "@/hooks/useVisitorStats";
 import {
   Users,
   Puzzle,
@@ -17,6 +18,8 @@ import {
   Clock,
   Flame,
   Target,
+  Eye,
+  Globe,
 } from "lucide-react";
 
 interface PuzzleStats {
@@ -47,6 +50,7 @@ export default function ProAnalytics() {
 
   const statsQuery = trpc.system.getPuzzleStats.useQuery();
   const utils = trpc.useUtils();
+  const { stats: visitorStats, refetch: refetchVisitorStats } = useVisitorStats(30_000);
 
   // Check if user is premium
   useEffect(() => {
@@ -85,6 +89,7 @@ export default function ProAnalytics() {
       await Promise.all([
         utils.system.getPuzzleStats.invalidate(),
         utils.system.getUserAnalytics.invalidate(),
+        refetchVisitorStats(),
       ]);
       await new Promise((resolve) => setTimeout(resolve, 500));
     } finally {
@@ -160,14 +165,70 @@ export default function ProAnalytics() {
                 User Analytics
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* Total Users */}
+              {/* Visitor Traffic Section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                {/* Total Visitors */}
                 <Card className="bg-slate-900/50 border-teal-900/30 p-6 hover:border-teal-700/50 transition-colors">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-slate-400 text-sm font-medium">Total Users</p>
+                      <p className="text-slate-400 text-sm font-medium">Total Visitors</p>
+                      <p className="text-4xl font-bold text-amber-400 mt-2">
+                        {visitorStats.totalVisitors > 0 ? (visitorStats.totalVisitors >= 1000 ? (visitorStats.totalVisitors / 1000).toFixed(1) + 'K' : visitorStats.totalVisitors) : '...'}
+                      </p>
+                      <p className="text-xs text-slate-500 mt-1">Unique visitors tracked</p>
+                    </div>
+                    <Globe className="w-12 h-12 text-amber-400/30" />
+                  </div>
+                </Card>
+
+                {/* Today's Visitors */}
+                <Card className="bg-slate-900/50 border-teal-900/30 p-6 hover:border-teal-700/50 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-slate-400 text-sm font-medium">Today's Visitors</p>
+                      <p className="text-4xl font-bold text-green-400 mt-2">{visitorStats.todayVisitors || '...'}</p>
+                      <p className="text-xs text-slate-500 mt-1">Unique visitors today</p>
+                    </div>
+                    <Eye className="w-12 h-12 text-green-400/30" />
+                  </div>
+                </Card>
+
+                {/* Total Page Views */}
+                <Card className="bg-slate-900/50 border-teal-900/30 p-6 hover:border-teal-700/50 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-slate-400 text-sm font-medium">Total Page Views</p>
+                      <p className="text-4xl font-bold text-teal-400 mt-2">
+                        {visitorStats.totalPageViews > 0 ? (visitorStats.totalPageViews >= 1000 ? (visitorStats.totalPageViews / 1000).toFixed(1) + 'K' : visitorStats.totalPageViews) : '...'}
+                      </p>
+                      <p className="text-xs text-slate-500 mt-1">All page views</p>
+                    </div>
+                    <Activity className="w-12 h-12 text-teal-400/30" />
+                  </div>
+                </Card>
+
+                {/* Online Now */}
+                <Card className="bg-slate-900/50 border-teal-900/30 p-6 hover:border-teal-700/50 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-slate-400 text-sm font-medium">Online Now</p>
+                      <p className="text-4xl font-bold text-cyan-400 mt-2">{visitorStats.recentVisitors || '...'}</p>
+                      <p className="text-xs text-slate-500 mt-1">Active in last 15 min</p>
+                    </div>
+                    <Zap className="w-12 h-12 text-cyan-400/30" />
+                  </div>
+                </Card>
+              </div>
+
+              {/* Registered Users Section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Total Registered */}
+                <Card className="bg-slate-900/50 border-teal-900/30 p-6 hover:border-teal-700/50 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-slate-400 text-sm font-medium">Registered Users</p>
                       <p className="text-4xl font-bold text-amber-400 mt-2">{userStats?.totalUsers ?? '...'}</p>
-                      <p className="text-xs text-slate-500 mt-1">Registered accounts</p>
+                      <p className="text-xs text-slate-500 mt-1">Signed-in accounts</p>
                     </div>
                     <Users className="w-12 h-12 text-amber-400/30" />
                   </div>
@@ -193,9 +254,9 @@ export default function ProAnalytics() {
                 <Card className="bg-slate-900/50 border-teal-900/30 p-6 hover:border-teal-700/50 transition-colors">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-slate-400 text-sm font-medium">Active Sessions</p>
+                      <p className="text-slate-400 text-sm font-medium">Training Sessions</p>
                       <p className="text-4xl font-bold text-green-400 mt-2">{userStats?.totalSessions ?? '...'}</p>
-                      <p className="text-xs text-slate-500 mt-1">Training sessions</p>
+                      <p className="text-xs text-slate-500 mt-1">Completed training sessions</p>
                     </div>
                     <Activity className="w-12 h-12 text-green-400/30" />
                   </div>

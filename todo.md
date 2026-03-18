@@ -775,3 +775,13 @@
 ## Round 72 - Rank Tab Not Showing 400+ Users (DONE)
 - [x] Fix leaderboard to display all 400+ registered users (451 total shown)
 - [x] Verify in browser that all users appear (6 active + 445 registered, 19972px scrollable)
+
+## Round 73 - Fix User Counts and Analytics to Match Real Numbers
+- [x] Add server-side visitor tracking (visitor_tracking table + /api/track + /api/visitor-stats)
+- [x] Add frontend page tracking hook (usePageTracking) to record visits
+- [x] Rewrite leaderboard to only show users with actual puzzle activity (not 450+ empty Guest accounts)
+- [x] Update leaderboard header to show real visitor counts from tracking
+- [x] Update ProAnalytics with visitor traffic section (Total Visitors, Today, Page Views, Online Now)
+- [x] Exclude device-only accounts from registered user counts in getUserAnalytics
+- [x] Fix visitor tracking routes registered in correct server entry point (_core/index.ts)
+- [x] Add vitest tests for visitor tracking module

@@ -1,12 +1,14 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { trpc } from '../lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
+import { useVisitorStats } from '@/hooks/useVisitorStats';
 
 type SortBy = 'accuracy' | 'speed' | 'rating';
 
 export function Leaderboard() {
   const [sortBy, setSortBy] = useState<SortBy>('accuracy');
   const { user } = useAuth();
+  const { stats: visitorStats } = useVisitorStats(30_000);
   
   const { data: leaderboardResult, isLoading, refetch } = trpc.stats.getLeaderboard.useQuery({
     limit: 500,
@@ -15,7 +17,6 @@ export function Leaderboard() {
 
   const entries = leaderboardResult?.entries || [];
   const onlineCount = leaderboardResult?.onlineCount || 0;
-  const totalUsers = leaderboardResult?.totalUsers || 0;
 
   // Auto-refresh every 30 seconds
   useEffect(() => {
@@ -25,14 +26,18 @@ export function Leaderboard() {
     return () => clearInterval(interval);
   }, [refetch]);
 
-  // Split into active (has puzzles) and inactive (no puzzles yet)
-  const { activeEntries, inactiveEntries } = useMemo(() => {
-    const active = entries.filter((e: any) => e.hasActivity);
-    const inactive = entries.filter((e: any) => !e.hasActivity);
-    return { activeEntries: active, inactiveEntries: inactive };
+  // Only show users with actual puzzle activity on the leaderboard
+  const activeEntries = useMemo(() => {
+    return entries.filter((e: any) => e.hasActivity);
   }, [entries]);
 
   const currentUserId = user?.id;
+
+  // Format large numbers nicely
+  const formatCount = (n: number) => {
+    if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+    return n.toString();
+  };
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-24">
@@ -47,13 +52,25 @@ export function Leaderboard() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
               </span>
-              <span className="text-green-400 font-semibold text-sm sm:text-base">{onlineCount}</span>
+              <span className="text-green-400 font-semibold text-sm sm:text-base">
+                {visitorStats.recentVisitors > onlineCount ? visitorStats.recentVisitors : onlineCount}
+              </span>
               <span className="text-slate-400 text-xs sm:text-sm">online</span>
             </div>
           </div>
-          <p className="text-sm sm:text-base text-slate-400">
-            {totalUsers} registered player{totalUsers !== 1 ? 's' : ''} &middot; {activeEntries.length} active
-          </p>
+          <div className="flex flex-wrap gap-x-3 gap-y-1">
+            <p className="text-sm sm:text-base text-slate-400">
+              {activeEntries.length} player{activeEntries.length !== 1 ? 's' : ''} ranked by performance
+            </p>
+            {visitorStats.totalVisitors > 0 && (
+              <p className="text-sm sm:text-base text-slate-500">
+                &middot; {formatCount(visitorStats.totalVisitors)} total visitors
+                {visitorStats.todayVisitors > 0 && (
+                  <span className="text-teal-400/80"> ({formatCount(visitorStats.todayVisitors)} today)</span>
+                )}
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Sort Controls */}
@@ -79,7 +96,7 @@ export function Leaderboard() {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400 mx-auto mb-4"></div>
             <p className="text-slate-400">Loading leaderboard...</p>
           </div>
-        ) : entries.length === 0 ? (
+        ) : activeEntries.length === 0 ? (
           <div className="text-center py-12 bg-slate-900/50 rounded-lg border border-slate-800">
             <p className="text-slate-400 text-lg mb-2">No players yet</p>
             <p className="text-slate-500 text-sm">Start training to appear on the leaderboard!</p>
@@ -295,107 +312,6 @@ export function Leaderboard() {
                 );
               })}
             </div>
-
-            {/* Inactive Players Section */}
-            {inactiveEntries.length > 0 && (
-              <>
-                <div className="mb-3 mt-6">
-                  <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
-                    Registered Players ({inactiveEntries.length})
-                  </h2>
-                  <p className="text-xs text-slate-600 mt-0.5">Haven't started training yet</p>
-                </div>
-
-                {/* Desktop table for inactive */}
-                <div className="hidden sm:block overflow-x-auto">
-                  <table className="w-full">
-                    <tbody>
-                      {inactiveEntries.map((entry: any) => {
-                        const isMe = entry.id === currentUserId && entry.id > 0;
-                        return (
-                          <tr
-                            key={entry.uniqueKey || `inactive-${entry.rank}`}
-                            className={`border-b border-slate-800/30 transition-colors ${
-                              isMe
-                                ? 'bg-amber-900/10 hover:bg-amber-900/20'
-                                : 'hover:bg-slate-900/30'
-                            }`}
-                          >
-                            <td className="py-2.5 px-4">
-                              <span className="text-slate-600 font-medium text-sm">{entry.rank}</span>
-                            </td>
-                            <td className="py-2.5 px-4">
-                              <div className="flex items-center gap-2">
-                                <span className={`text-sm ${isMe ? 'text-amber-300/70' : 'text-slate-500'}`}>
-                                  {entry.name}
-                                </span>
-                                {isMe && (
-                                  <span className="text-[10px] px-1.5 py-0.5 bg-amber-400/10 text-amber-400/60 rounded-full font-bold">
-                                    YOU
-                                  </span>
-                                )}
-                                {entry.isPremium && (
-                                  <span className="text-[10px] px-1.5 py-0.5 bg-amber-500/10 text-amber-400/50 rounded-full">
-                                    PREMIUM
-                                  </span>
-                                )}
-                              </div>
-                            </td>
-                            <td className="py-2.5 px-4 text-center">
-                              <span className="text-slate-600 text-sm">-</span>
-                            </td>
-                            <td className="py-2.5 px-4 text-center">
-                              <span className="text-slate-600 text-sm">-</span>
-                            </td>
-                            <td className="py-2.5 px-4 text-center">
-                              <span className="text-slate-600 text-sm">1200</span>
-                            </td>
-                            <td className="py-2.5 px-4 text-center">
-                              <span className="text-slate-600 text-sm">0</span>
-                            </td>
-                            <td className="py-2.5 px-4 text-center">
-                              <span className="text-slate-600 text-sm">0</span>
-                            </td>
-                            <td className="py-2.5 px-4 text-center">
-                              <span className="text-slate-600 text-sm">-</span>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Mobile list for inactive */}
-                <div className="sm:hidden space-y-1.5">
-                  {inactiveEntries.map((entry: any) => {
-                    const isMe = entry.id === currentUserId && entry.id > 0;
-                    return (
-                      <div
-                        key={entry.uniqueKey || `mobile-inactive-${entry.rank}`}
-                        className={`rounded-lg px-3 py-2 border flex items-center gap-3 ${
-                          isMe
-                            ? 'bg-amber-900/10 border-amber-400/20'
-                            : 'bg-slate-900/30 border-slate-800/50'
-                        }`}
-                      >
-                        <span className="text-slate-600 font-medium text-xs w-6 text-center shrink-0">
-                          {entry.rank}
-                        </span>
-                        <div className="flex-1 min-w-0">
-                          <span className={`text-sm truncate block ${isMe ? 'text-amber-300/70' : 'text-slate-500'}`}>
-                            {entry.name}
-                          </span>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <p className="text-slate-600 text-xs">Rating: 1200</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </>
-            )}
           </>
         )}
       </div>

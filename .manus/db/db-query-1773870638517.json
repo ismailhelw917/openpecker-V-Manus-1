@@ -1,0 +1,25 @@
+{
+  "query": "\nSELECT deviceId, COUNT(*) as attempts, SUM(isCorrect) as correct_attempts\nFROM puzzle_attempts \nWHERE deviceId IS NOT NULL\nGROUP BY deviceId\nORDER BY attempts DESC\nLIMIT 20;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \nSELECT deviceId, COUNT(*) as attempts, SUM(isCorrect) as correct_attempts\nFROM puzzle_attempts \nWHERE deviceId IS NOT NULL\nGROUP BY deviceId\nORDER BY attempts DESC\nLIMIT 20;\n",
+  "rows": [
+    {
+      "deviceId": "Kwz623euJxUuo7-QGHylp",
+      "attempts": "4",
+      "correct_attempts": "0"
+    },
+    {
+      "deviceId": "device-xm3kxcmuk-1773740636211",
+      "attempts": "2",
+      "correct_attempts": "0"
+    },
+    {
+      "deviceId": "36PN_RgYFS_93vsaLLdxU",
+      "attempts": "1",
+      "correct_attempts": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "deviceId\tattempts\tcorrect_attempts\nKwz623euJxUuo7-QGHylp\t4\t0\ndevice-xm3kxcmuk-1773740636211\t2\t0\n36PN_RgYFS_93vsaLLdxU\t1\t1\n",
+  "stderr": "",
+  "execution_time_ms": 1513
+}

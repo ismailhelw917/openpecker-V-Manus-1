@@ -5,6 +5,7 @@ import { appRouter } from "./routers";
 import { createContext } from "./_core/context";
 import { registerOAuthRoutes } from "./_core/oauth";
 import { registerStripeRoutes } from "./_core/stripeHandler";
+import { trackVisitor, getVisitorStats } from "./visitor-tracking";
 
 const app = express();
 
@@ -17,6 +18,32 @@ app.use(express.urlencoded({ extended: true }));
 
 // OAuth routes
 registerOAuthRoutes(app);
+
+// Visitor tracking endpoint - lightweight, fire-and-forget
+app.post("/api/track", async (req, res) => {
+  try {
+    const { fingerprint, page, referrer, screenSize, language } = req.body;
+    if (!fingerprint || !page) {
+      return res.status(400).json({ error: "fingerprint and page required" });
+    }
+    const userAgent = req.headers["user-agent"] || "";
+    // Fire and forget - don't block the response
+    trackVisitor({ fingerprint, page, referrer, screenSize, language, userAgent }).catch(() => {});
+    res.json({ ok: true });
+  } catch {
+    res.json({ ok: true }); // Never fail the tracking endpoint
+  }
+});
+
+// Visitor stats endpoint (public, cached)
+app.get("/api/visitor-stats", async (req, res) => {
+  try {
+    const stats = await getVisitorStats();
+    res.json(stats);
+  } catch {
+    res.json({ totalVisitors: 0, todayVisitors: 0, totalPageViews: 0, todayPageViews: 0 });
+  }
+});
 
 // tRPC routes
 app.use(

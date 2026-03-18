@@ -299,3 +299,25 @@ export const promoRedemptions = mysqlTable("promo_redemptions", {
 
 export type PromoRedemption = typeof promoRedemptions.$inferSelect;
 export type InsertPromoRedemption = typeof promoRedemptions.$inferInsert;
+
+/**
+ * Visitor Tracking - lightweight page view tracking with browser fingerprints
+ * Used for accurate visitor counting (replaces inflated device-based user counts)
+ */
+export const visitorTracking = mysqlTable("visitor_tracking", {
+  id: int("id").autoincrement().primaryKey(),
+  fingerprint: varchar("fingerprint", { length: 64 }).notNull(),
+  page: varchar("page", { length: 255 }).notNull(),
+  referrer: varchar("referrer", { length: 512 }),
+  userAgent: text("userAgent"),
+  screenSize: varchar("screenSize", { length: 20 }),
+  language: varchar("language", { length: 10 }),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+}, (table) => ({
+  fingerprintIdx: index("idx_vt_fingerprint").on(table.fingerprint),
+  timestampIdx: index("idx_vt_timestamp").on(table.timestamp),
+  pageIdx: index("idx_vt_page").on(table.page),
+}));
+
+export type VisitorTracking = typeof visitorTracking.$inferSelect;
+export type InsertVisitorTracking = typeof visitorTracking.$inferInsert;

@@ -1,0 +1,46 @@
+{
+  "query": "\nSELECT id, openId, name, email, loginMethod, isPremium, lastSignedIn \nFROM users \nWHERE name NOT LIKE 'Guest-%' \nORDER BY lastSignedIn DESC;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \nSELECT id, openId, name, email, loginMethod, isPremium, lastSignedIn \nFROM users \nWHERE name NOT LIKE 'Guest-%' \nORDER BY lastSignedIn DESC;\n",
+  "rows": [
+    {
+      "id": "750572",
+      "openId": "BbwcXNdZndZpJWwZMzaaui",
+      "name": "Ismail",
+      "email": "happychesspenguin@gmail.com",
+      "loginMethod": "google",
+      "isPremium": "0",
+      "lastSignedIn": "2026-03-18 21:45:26"
+    },
+    {
+      "id": "750380",
+      "openId": "local_-yehSaVr0EB88sCkvsj_J",
+      "name": "BR",
+      "email": "bagavathiraja29@gmail.com",
+      "loginMethod": "email",
+      "isPremium": "1",
+      "lastSignedIn": "2026-03-18 12:06:34"
+    },
+    {
+      "id": "750255",
+      "openId": "local_3Lbhu1Li_MgrornYsFaaB",
+      "name": "Ayush",
+      "email": "try.ayush019@gmail.com",
+      "loginMethod": "email",
+      "isPremium": "1",
+      "lastSignedIn": "2026-03-18 11:01:43"
+    },
+    {
+      "id": "750215",
+      "openId": "local_Ftb_-pczeEku4-Okeh1BO",
+      "name": "N.Balaji",
+      "email": "pugazhbalaji@gmail.com",
+      "loginMethod": "email",
+      "isPremium": "1",
+      "lastSignedIn": "2026-03-18 10:10:49"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topenId\tname\temail\tloginMethod\tisPremium\tlastSignedIn\n750572\tBbwcXNdZndZpJWwZMzaaui\tIsmail\thappychesspenguin@gmail.com\tgoogle\t0\t2026-03-18 21:45:26\n750380\tlocal_-yehSaVr0EB88sCkvsj_J\tBR\tbagavathiraja29@gmail.com\temail\t1\t2026-03-18 12:06:34\n750255\tlocal_3Lbhu1Li_MgrornYsFaaB\tAyush\ttry.ayush019@gmail.com\temail\t1\t2026-03-18 11:01:43\n750215\tlocal_Ftb_-pczeEku4-Okeh1BO\tN.Balaji\tpugazhbalaji@gmail.com\temail\t1\t2026-03-18 10:10:49\n",
+  "stderr": "",
+  "execution_time_ms": 1501
+}
