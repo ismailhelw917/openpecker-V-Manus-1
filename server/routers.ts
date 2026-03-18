@@ -67,6 +67,25 @@ export const appRouter = router({
         success: true,
       } as const;
     }),
+    giftPremium: protectedProcedure.mutation(async ({ ctx }) => {
+      try {
+        // Update user to premium
+        await upsertUser({
+          ...ctx.user,
+          isPremium: 1,
+        });
+        return {
+          success: true,
+          message: "Premium access granted!",
+        };
+      } catch (error) {
+        console.error("[Gift Premium] Error:", error);
+        return {
+          success: false,
+          error: "Failed to grant premium access",
+        };
+      }
+    }),
     register: publicProcedure
       .input(
         z.object({

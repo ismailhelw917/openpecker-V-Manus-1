@@ -14,6 +14,7 @@ import Session from "./pages/Session";
 import Auth from "./pages/Auth";
 import { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
+import { useAuth } from "./_core/hooks/useAuth";
 
 function Router() {
   return (
@@ -37,6 +38,12 @@ function App() {
     const stored = localStorage.getItem("openpecker-maintenance");
     return stored === "true";
   });
+  const [showGiftPremium, setShowGiftPremium] = useState(() => {
+    const stored = localStorage.getItem("openpecker-gift-premium");
+    return stored === "true";
+  });
+  const [giftPremiumDismissed, setGiftPremiumDismissed] = useState(false);
+  const { isAuthenticated, loading } = useAuth();
 
   useEffect(() => {
     // Initialize device ID if not already set
@@ -52,16 +59,25 @@ function App() {
   }, [showMaintenance]);
 
   useEffect(() => {
+    localStorage.setItem("openpecker-gift-premium", showGiftPremium.toString());
+  }, [showGiftPremium]);
+
+  useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       // Ctrl+Shift+M to toggle maintenance
       if (e.ctrlKey && e.shiftKey && e.key === 'M') {
         e.preventDefault();
         setShowMaintenance(!showMaintenance);
       }
+      // Ctrl+Shift+G to toggle gift premium
+      if (e.ctrlKey && e.shiftKey && e.key === 'G') {
+        e.preventDefault();
+        setShowGiftPremium(!showGiftPremium);
+      }
     };
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [showMaintenance]);
+  }, [showMaintenance, showGiftPremium]);
 
   useEffect(() => {
     if (!showMaintenance) return;
@@ -97,7 +113,20 @@ function App() {
               </div>
             </div>
           )}
-          <div className="min-h-screen bg-slate-950 flex flex-col">
+          {showGiftPremium && !giftPremiumDismissed && isAuthenticated && !loading && (
+            <div className="fixed top-0 left-0 right-0 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-900 font-bold text-center py-4 z-40 animate-pulse shadow-lg">
+              <div className="flex items-center justify-center gap-2">
+                <span>🎉 Congratulations! You were gifted free lifetime premium 🎉</span>
+                <button
+                  onClick={() => setGiftPremiumDismissed(true)}
+                  className="ml-4 text-sm underline hover:opacity-75 font-semibold"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          )}
+          <div className={`min-h-screen bg-slate-950 flex flex-col ${showGiftPremium && !giftPremiumDismissed && isAuthenticated && !loading ? 'pt-16' : ''}`}>
             <div className="flex-1 overflow-y-auto pb-20 sm:pb-24">
               <Router />
             </div>
