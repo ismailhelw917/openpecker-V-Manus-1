@@ -1025,3 +1025,11 @@
 - [x] Display "✨ Premium granted to all online users" message
 - [x] Make watermark dismissible with × button
 - [ ] Create checkpoint
+
+
+## Leaderboard Complete Rebuild (Round 61 - User Request)
+- [x] Delete all entries from players table (cleared 500+ entries)
+- [x] Rebuild players with proper structure: name, id, userId for all (20 test players)
+- [x] Ensure guests have userId assigned (guests have deviceId + userId)
+- [x] Verify leaderboard displays correct data (all names, stats, rankings display correctly)
+- [ ] Create checkpoint
