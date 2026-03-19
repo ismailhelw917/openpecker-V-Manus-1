@@ -114,7 +114,7 @@ export function Leaderboard() {
                   const isMe = entry.id === currentUserId && entry.id > 0;
                   return (
                     <div
-                      key={entry.uniqueKey || `podium-${i}`}
+                      key={`podium-${entry.id}-${i}`}
                       className={`rounded-xl p-4 text-center border-2 transition-all ${
                         isGold
                           ? 'bg-gradient-to-b from-amber-900/40 to-amber-950/20 border-amber-400/60 shadow-lg shadow-amber-400/10 -mt-4'
@@ -156,7 +156,7 @@ export function Leaderboard() {
                   const medal = entry.rank === 1 ? '\u{1F947}' : entry.rank === 2 ? '\u{1F948}' : '\u{1F949}';
                   return (
                     <div
-                      key={entry.uniqueKey || `mobile-top-${entry.rank}`}
+                      key={`mobile-top-${entry.id}`}
                       className={`rounded-xl p-3 border-2 flex items-center gap-3 ${
                         entry.rank === 1
                           ? 'bg-gradient-to-r from-amber-900/40 to-amber-950/20 border-amber-400/60'
@@ -214,7 +214,7 @@ export function Leaderboard() {
                     const isMe = entry.id === currentUserId && entry.id > 0;
                     return (
                       <tr
-                        key={entry.uniqueKey || `row-${entry.rank}`}
+                        key={`row-${entry.id}`}
                         className={`border-b border-slate-800/50 transition-colors ${
                           isMe
                             ? 'bg-amber-900/20 hover:bg-amber-900/30'

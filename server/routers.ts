@@ -423,17 +423,20 @@ export const appRouter = router({
         z.object({
           limit: z.number().default(500),
           sortBy: z.enum(['accuracy', 'speed', 'rating']).default('accuracy'),
-        })
+        }).nullish()
       )
-      .query(async () => {
-        const entries = await getLeaderboardPlayers(500, 'accuracy');
+      .query(async ({ input }) => {
+        const limit = input?.limit ?? 500;
+        const sortBy = (input?.sortBy ?? 'accuracy') as 'accuracy' | 'speed' | 'rating';
+        const entries = await getLeaderboardPlayers(limit, sortBy);
         const onlineCount = await getOnlineCountByPageActivity(5);
         const totalCount = await getTotalPlayerCount();
 
         return {
-          entries: entries.map((e: any) => ({
+          entries: entries.map((e: any, index: number) => ({
             ...e,
             hasActivity: e.totalPuzzles > 0,
+            rank: index + 1,
           })),
           onlineCount,
           totalCount,
