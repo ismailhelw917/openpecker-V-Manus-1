@@ -459,7 +459,7 @@ export const appRouter = router({
         z.object({
           userId: z.number().optional(),
           deviceId: z.string().optional(),
-        }).optional()
+        }).nullish()
       )
       .query(async ({ input, ctx }) => {
         const userId = input?.userId || ctx.user?.id || null;
@@ -480,7 +480,7 @@ export const appRouter = router({
 
     getUserStats: protectedProcedure
       .input(
-        z.object({}).optional()
+        z.object({}).nullish()
       )
       .query(async ({ ctx }) => {
         const stats = await getPuzzleAttemptStats(ctx.user.id, null);
