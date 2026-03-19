@@ -16,41 +16,45 @@ export interface TrackingEvent {
 }
 
 /**
- * Track user events via Counter API
+ * Track user events via Counter API (non-blocking)
  */
 export async function trackEvent(event: TrackingEvent): Promise<boolean> {
-  try {
-    const payload = {
-      key: COUNTER_API_KEY,
-      event: event.action,
-      category: event.category || 'general',
-      value: event.value || 1,
-      userId: event.userId,
-      userName: event.userName,
-      metadata: event.metadata,
-      timestamp: new Date().toISOString(),
-    };
+  // Fire and forget - don't block on Counter API calls
+  setImmediate(async () => {
+    try {
+      const payload = {
+        key: COUNTER_API_KEY,
+        event: event.action,
+        category: event.category || 'general',
+        value: event.value || 1,
+        userId: event.userId,
+        userName: event.userName,
+        metadata: event.metadata,
+        timestamp: new Date().toISOString(),
+      };
 
-    const response = await fetch(COUNTER_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${COUNTER_API_KEY}`,
-      },
-      body: JSON.stringify(payload),
-    });
+      const response = await fetch(COUNTER_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${COUNTER_API_KEY}`,
+        },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(5000), // 5 second timeout
+      });
 
-    if (!response.ok) {
-      console.error(`[Counter API] Error tracking event: ${response.status} ${response.statusText}`);
-      return false;
+      if (!response.ok) {
+        console.error(`[Counter API] Error tracking event: ${response.status} ${response.statusText}`);
+      } else {
+        console.log(`[Counter API] Event tracked: ${event.action}`);
+      }
+    } catch (error) {
+      console.error('[Counter API] Error:', error);
     }
-
-    console.log(`[Counter API] Event tracked: ${event.action}`);
-    return true;
-  } catch (error) {
-    console.error('[Counter API] Error:', error);
-    return false;
-  }
+  });
+  
+  // Always return true immediately - don't block
+  return true;
 }
 
 /**
