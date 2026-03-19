@@ -35,26 +35,30 @@ const DraggablePiece = ({ piece, squareName }: { piece: any; squareName: string 
   } : undefined;
 
   return (
-    <img
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      draggable="false"
-      src={`https://cdn.jsdelivr.net/gh/lichess-org/lila@master/public/piece/cburnett/${piece.color}${piece.type.toUpperCase()}.svg`}
-      alt={`${piece.color}${piece.type}`}
-      className={`w-full h-full p-1 cursor-grab transition-none relative z-10 ${isDragging ? 'opacity-0' : 'opacity-100'}`}
-      style={{ ...style, touchAction: 'none' }}
-
-      onError={(e) => {
-        const img = e.target as HTMLImageElement;
-        if (!img.dataset.fallback) {
-          img.dataset.fallback = 'true';
-          img.src = `https://chess1.org/assets/piece/cburnett/${piece.color}${piece.type.toUpperCase()}.svg`;
-        }
-      }}
-      crossOrigin="anonymous"
-      loading="eager"
-    />
+    <div className="relative w-full h-full flex items-center justify-center">
+      <img
+        ref={setNodeRef}
+        {...listeners}
+        {...attributes}
+        draggable="false"
+        src={`https://cdn.jsdelivr.net/gh/lichess-org/lila@master/public/piece/cburnett/${piece.color}${piece.type.toUpperCase()}.svg`}
+        alt={`${piece.color}${piece.type}`}
+        className={`w-full h-full p-1 cursor-grab transition-all relative z-10 ${isDragging ? 'opacity-30 scale-90 brightness-75' : 'opacity-100 scale-100'}`}
+        style={{ ...style, touchAction: 'none', filter: isDragging ? 'grayscale(100%)' : 'grayscale(0%)' }}
+        onError={(e) => {
+          const img = e.target as HTMLImageElement;
+          if (!img.dataset.fallback) {
+            img.dataset.fallback = 'true';
+            img.src = `https://chess1.org/assets/piece/cburnett/${piece.color}${piece.type.toUpperCase()}.svg`;
+          }
+        }}
+        crossOrigin="anonymous"
+        loading="eager"
+      />
+      {isDragging && (
+        <div className="absolute inset-0 border-2 border-dashed border-yellow-400 rounded-full animate-pulse" />
+      )}
+    </div>
   );
 };
 

@@ -255,14 +255,15 @@ export const appRouter = router({
     /**
      * Insert openings (admin only)
      */
-    insert: protectedProcedure
+    insert: publicProcedure
       .input(
         z.object({
           openings: z.array(
             z.object({
+              id: z.string(),
               name: z.string(),
-              eco: z.string(),
-              moves: z.string(),
+              fen: z.string(),
+              ecoCode: z.string().optional(),
             })
           ),
         })

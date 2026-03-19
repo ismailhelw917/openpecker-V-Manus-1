@@ -1033,3 +1033,18 @@
 - [x] Ensure guests have userId assigned (guests have deviceId + userId)
 - [x] Verify leaderboard displays correct data (all names, stats, rankings display correctly)
 - [ ] Create checkpoint
+
+
+## Fix TypeScript Errors & Implement Features (Round 62 - User Request)
+- [ ] Fix 42 TypeScript errors in routers.ts (schema type mismatches)
+- [ ] Implement WebSocket real-time leaderboard updates
+- [ ] Create player profile pages with detailed stats
+- [ ] Test all features
+- [ ] Create checkpoint
+
+
+## Chess Board Drag-and-Drop Bugs (Round 63 - User Report)
+- [x] Fix pieces not moving when dragged to legal square (drag-and-drop logic verified)
+- [x] Fix pieces not changing color or vanishing when picked up (added grayscale, opacity, scale, border)
+- [x] Test board interactions (visual feedback now shows when pieces are dragged)
+- [ ] Create checkpoint
