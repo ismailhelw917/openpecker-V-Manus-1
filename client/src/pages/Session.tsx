@@ -548,8 +548,8 @@ export default function Session() {
         const puzzleTimeMs = Date.now() - puzzleStartTime;
         recordPuzzleAttempt(false, puzzleTimeMs);
 
-        // Immediately advance to next puzzle (no retry)
-        advanceToNextPuzzle();
+        // Advance to next puzzle after a brief delay to let the move animation complete
+        safePuzzleTimeout(() => advanceToNextPuzzle(), 300);
       }
 
       return true;

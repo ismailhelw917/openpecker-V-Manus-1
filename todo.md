@@ -820,3 +820,10 @@
 - [x] Remove retry logic when puzzle is wrong (removed 1.2s X watermark delay)
 - [x] Make wrong moves immediately advance to next puzzle (now instant)
 - [x] Test and verify behavior (training session loads and responds to moves)
+
+
+## Round 78 - Fix Puzzle FEN Resetting (DONE)
+- [x] Investigate why puzzle FEN resets to starting position during sessions
+- [x] Check if advanceToNextPuzzle is being called incorrectly (was called immediately without delay)
+- [x] Fix FEN state management to prevent resets (added 300ms delay before advancing)
+- [x] Test that puzzle FEN stays stable throughout session (verified - no more resets)
