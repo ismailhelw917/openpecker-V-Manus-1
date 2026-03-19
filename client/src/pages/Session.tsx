@@ -548,14 +548,8 @@ export default function Session() {
         const puzzleTimeMs = Date.now() - puzzleStartTime;
         recordPuzzleAttempt(false, puzzleTimeMs);
 
-        // Show wrong X watermark
-        setShowWrongX(true);
-        safePuzzleTimeout(() => setShowWrongX(false), 1200);
-
-        // After showing the wrong move briefly, advance to next puzzle
-        safePuzzleTimeout(() => {
-          advanceToNextPuzzle();
-        }, 1500);
+        // Immediately advance to next puzzle (no retry)
+        advanceToNextPuzzle();
       }
 
       return true;

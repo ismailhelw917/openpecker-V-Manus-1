@@ -814,3 +814,9 @@
 - [x] Test puzzle playability end-to-end (training session loads and chessboard works)
 - [x] Verify leaderboard displays all 3 players correctly with real names and stats
 - [x] All 5.4M puzzles integrated and accessible
+
+
+## Round 77 - Remove Retry Feature (DONE)
+- [x] Remove retry logic when puzzle is wrong (removed 1.2s X watermark delay)
+- [x] Make wrong moves immediately advance to next puzzle (now instant)
+- [x] Test and verify behavior (training session loads and responds to moves)
