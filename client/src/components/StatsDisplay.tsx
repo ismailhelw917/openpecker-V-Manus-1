@@ -27,6 +27,19 @@ export function StatsDisplay({ stats, isLoading }: StatsDisplayProps) {
   }
 
   // Handle both authenticated and anonymous stats formats
+  if (!stats) {
+    return (
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
+        {[...Array(16)].map((_, i) => (
+          <Card key={i} className="bg-slate-900/50 border-slate-700 p-3 sm:p-4 animate-pulse">
+            <div className="h-6 sm:h-8 bg-slate-700 rounded mb-2"></div>
+            <div className="h-4 sm:h-6 bg-slate-700 rounded w-3/4"></div>
+          </Card>
+        ))}
+      </div>
+    );
+  }
+
   const isAuthenticatedStats = stats?.rating !== undefined;
 
   const sections: { title: string; metrics: MetricItem[] }[] = isAuthenticatedStats

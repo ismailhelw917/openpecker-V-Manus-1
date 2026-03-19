@@ -144,6 +144,23 @@ export const appRouter = router({
     isAuthenticated: publicProcedure.query(async ({ ctx }) => {
       return !!ctx.user;
     }),
+
+    /**
+     * Check if user is eligible for gift/promo
+     */
+    checkGiftEligibility: publicProcedure
+      .input(
+        z.object({
+          userId: z.number().optional(),
+          deviceId: z.string().optional(),
+        })
+      )
+      .query(async ({ input }) => {
+        return {
+          eligible: true,
+          reason: "User is eligible for promotional offers",
+        };
+      }),
   }),
 
   // ==================== PUZZLES ====================
@@ -435,6 +452,35 @@ export const appRouter = router({
       )
       .query(async ({ input }) => {
         return getPuzzleAttemptStats(input.userId || null, input.deviceId || null);
+      }),
+
+    getSummary: protectedProcedure
+      .query(async ({ ctx }) => {
+        const stats = await getPuzzleAttemptStats(ctx.user.id, null);
+        const accuracy = stats.totalPuzzles > 0 ? Math.round((stats.totalCorrect / stats.totalPuzzles) * 100) : 0;
+        return {
+          totalPuzzles: stats.totalPuzzles || 0,
+          accuracy: accuracy,
+          totalCycles: 0,
+          averageSpeed: stats.totalPuzzles > 0 ? Math.round(stats.totalTimeMs / stats.totalPuzzles) : 0,
+          rating: 1200,
+        };
+      }),
+
+    getUserStats: protectedProcedure
+      .query(async ({ ctx }) => {
+        const stats = await getPuzzleAttemptStats(ctx.user.id, null);
+        const accuracy = stats.totalPuzzles > 0 ? Math.round((stats.totalCorrect / stats.totalPuzzles) * 100) : 0;
+        return {
+          userId: ctx.user.id,
+          totalPuzzles: stats.totalPuzzles || 0,
+          correctPuzzles: stats.totalCorrect || 0,
+          accuracy: accuracy,
+          totalCycles: 0,
+          averageSpeed: stats.totalPuzzles > 0 ? Math.round(stats.totalTimeMs / stats.totalPuzzles) : 0,
+          rating: 1200,
+          lastActive: new Date(),
+        };
       }),
   }),
 
