@@ -1,0 +1,1 @@
+ALTER TABLE `online_sessions` MODIFY COLUMN `sessionId` varchar(64);

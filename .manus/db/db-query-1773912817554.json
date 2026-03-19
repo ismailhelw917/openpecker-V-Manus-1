@@ -1,0 +1,15 @@
+{
+  "query": "SELECT COUNT(*) as total_users, COUNT(DISTINCT openId) as unique_open_ids, COUNT(DISTINCT deviceId) as unique_device_ids FROM users;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT COUNT(*) as total_users, COUNT(DISTINCT openId) as unique_open_ids, COUNT(DISTINCT deviceId) as unique_device_ids FROM users;",
+  "rows": [
+    {
+      "total_users": "3297",
+      "unique_open_ids": "3297",
+      "unique_device_ids": "3293"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_users\tunique_open_ids\tunique_device_ids\n3297\t3297\t3293\n",
+  "stderr": "",
+  "execution_time_ms": 1735
+}

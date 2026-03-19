@@ -78,6 +78,13 @@
       "when": 1773896559218,
       "tag": "0010_deep_shard",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1773913039984,
+      "tag": "0011_brave_tomorrow_man",
+      "breakpoints": true
     }
   ]
 }

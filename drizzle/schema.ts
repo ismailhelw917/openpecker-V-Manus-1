@@ -362,7 +362,7 @@ export const onlineSessions = mysqlTable("online_sessions", {
   playerId: int("playerId").notNull(), // FK to players table
   userId: int("userId"), // FK to users table (for quick lookup)
   deviceId: varchar("deviceId", { length: 64 }), // For quick lookup
-  sessionId: varchar("sessionId", { length: 64 }).notNull(), // Training session ID
+  sessionId: varchar("sessionId", { length: 64 }), // Training session ID (optional for general sessions)
   status: mysqlEnum("status", ["active", "paused", "idle"]).default("active").notNull(),
   lastHeartbeat: timestamp("lastHeartbeat").defaultNow().notNull(), // Last activity timestamp
   startedAt: timestamp("startedAt").defaultNow().notNull(),

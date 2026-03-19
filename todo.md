@@ -949,3 +949,22 @@
 - [x] Test Stats page loads without errors (now loading correctly)
 - [x] Fixed stats procedures to match getPuzzleAttemptStats return type
 - [ ] Create checkpoint
+
+
+## User Tracking & Stats Audit (Round 52 - Comprehensive Audit)
+- [ ] Identify all user tracking and stats files
+- [ ] Audit database schema for user merging issues
+- [ ] Review tracking logic in server code
+- [ ] Check frontend tracking implementation
+- [ ] Verify no duplicate user data or merged users
+- [ ] Generate audit report with findings
+
+
+## Priority Fixes from Audit (Round 53 - Critical Fixes)
+- [x] Add deviceId column to players table (already existed in schema)
+- [x] Fix online_sessions sessionId error (made optional via ALTER TABLE)
+- [x] Migrate 1,420 anonymous users to players table (3,314 migrated, total now 5,191)
+- [x] Update getOrCreatePlayer to handle both user types (already working)
+- [x] Test leaderboard shows all 500 players per page (verified, showing 500 instead of 3)
+- [x] Test session tracking heartbeats work (sessionId error fixed)
+- [ ] Create checkpoint
