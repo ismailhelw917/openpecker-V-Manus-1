@@ -987,3 +987,11 @@
 - [x] Test monthly and lifetime subscription flows (both price points accessible)
 - [x] Fix paywall watermark to fit on 1 page (reduced padding, font sizes, spacing)
 - [ ] Create checkpoint
+
+
+## Stats Page Error Fix (Round 56 - Bug Report)
+- [x] Identify tRPC query sending undefined input (Error: "expected object, received undefined")
+- [x] Fix tRPC query to accept undefined or empty object (added .input(z.object({}).optional()))
+- [x] Fix StatsDisplay component "Cannot read properties of undefined" error (used null coalescing)
+- [x] Test Stats page loads without errors (all stats sections displaying correctly)
+- [ ] Create checkpoint

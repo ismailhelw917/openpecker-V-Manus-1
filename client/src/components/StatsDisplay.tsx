@@ -40,57 +40,57 @@ export function StatsDisplay({ stats, isLoading }: StatsDisplayProps) {
     );
   }
 
-  const isAuthenticatedStats = stats?.rating !== undefined;
+  const isAuthenticatedStats = stats?.rating !== undefined && stats?.peakRating !== undefined;
 
   const sections: { title: string; metrics: MetricItem[] }[] = isAuthenticatedStats
     ? [
         {
           title: "Performance",
           metrics: [
-            { label: "RATING", value: stats.rating.toString(), highlight: true },
-            { label: "PEAK RATING", value: stats.peakRating.toString() },
-            { label: "ACCURACY", value: Math.round(stats.accuracy) + "%" },
-            { label: "WIN RATE", value: stats.winRate + "%" },
-            { label: "RATING GAIN", value: "+" + stats.ratingGain.toString() },
-            { label: "CONSISTENCY", value: stats.consistency + "%" },
+            { label: "RATING", value: (stats?.rating ?? 0).toString(), highlight: true },
+            { label: "PEAK RATING", value: (stats?.peakRating ?? 0).toString() },
+            { label: "ACCURACY", value: Math.round(stats?.accuracy ?? 0) + "%" },
+            { label: "WIN RATE", value: (stats?.winRate ?? 0) + "%" },
+            { label: "RATING GAIN", value: "+" + (stats?.ratingGain ?? 0).toString() },
+            { label: "CONSISTENCY", value: (stats?.consistency ?? 0) + "%" },
           ],
         },
         {
           title: "Activity",
           metrics: [
-            { label: "TOTAL PUZZLES", value: stats.totalPuzzles.toString(), highlight: true },
-            { label: "CORRECT", value: (stats.totalCorrect || 0).toString() },
-            { label: "INCORRECT", value: (stats.totalIncorrect || 0).toString() },
-            { label: "TOTAL CYCLES", value: stats.totalCycles.toString() },
-            { label: "PUZ/CYCLE", value: (stats.avgPuzzlesPerCycle || 0).toString() },
-            { label: "FASTEST CYCLE", value: stats.fastestCycleTime || "N/A" },
+            { label: "TOTAL PUZZLES", value: (stats?.totalPuzzles ?? 0).toString(), highlight: true },
+            { label: "CORRECT", value: (stats?.totalCorrect ?? 0).toString() },
+            { label: "INCORRECT", value: (stats?.totalIncorrect ?? 0).toString() },
+            { label: "TOTAL CYCLES", value: (stats?.totalCycles ?? 0).toString() },
+            { label: "PUZ/CYCLE", value: (stats?.avgPuzzlesPerCycle ?? 0).toString() },
+            { label: "FASTEST CYCLE", value: stats?.fastestCycleTime ?? "N/A" },
           ],
         },
         {
           title: "Time",
           metrics: [
-            { label: "STUDY TIME", value: stats.studyTime },
-            { label: "TOTAL HOURS", value: stats.totalTimeHours },
-            { label: "AVG TIME/PUZ", value: stats.avgTimePerPuzzle },
-            { label: "TOTAL MINUTES", value: (stats.totalTimeMinutes || 0) + "m" },
+            { label: "STUDY TIME", value: stats?.studyTime ?? "0h" },
+            { label: "TOTAL HOURS", value: stats?.totalTimeHours ?? "0h" },
+            { label: "AVG TIME/PUZ", value: stats?.avgTimePerPuzzle ?? "0s" },
+            { label: "TOTAL MINUTES", value: (stats?.totalTimeMinutes ?? 0) + "m" },
           ],
         },
         {
           title: "Streaks & Daily",
           metrics: [
-            { label: "CURRENT STREAK", value: stats.currentStreak.toString(), highlight: true },
-            { label: "LONGEST STREAK", value: stats.longestStreak.toString() },
-            { label: "PUZZLES TODAY", value: stats.puzzlesToday.toString() },
-            { label: "CYCLES TODAY", value: stats.cyclesToday.toString() },
-            { label: "AVG PUZ/DAY", value: stats.avgPuzzlesPerDay.toString() },
-            { label: "AVG CYC/DAY", value: stats.avgCyclesPerDay.toString() },
+            { label: "CURRENT STREAK", value: (stats?.currentStreak ?? 0).toString(), highlight: true },
+            { label: "LONGEST STREAK", value: (stats?.longestStreak ?? 0).toString() },
+            { label: "PUZZLES TODAY", value: (stats?.puzzlesToday ?? 0).toString() },
+            { label: "CYCLES TODAY", value: (stats?.cyclesToday ?? 0).toString() },
+            { label: "AVG PUZ/DAY", value: (stats?.avgPuzzlesPerDay ?? 0).toString() },
+            { label: "AVG CYC/DAY", value: (stats?.avgCyclesPerDay ?? 0).toString() },
           ],
         },
         {
           title: "Openings",
           metrics: [
-            { label: "BEST OPENING", value: stats.bestOpening },
-            { label: "WEAKEST OPENING", value: stats.weakestOpening },
+            { label: "BEST OPENING", value: stats?.bestOpening ?? "N/A" },
+            { label: "WEAKEST OPENING", value: stats?.weakestOpening ?? "N/A" },
           ],
         },
       ]
@@ -98,14 +98,14 @@ export function StatsDisplay({ stats, isLoading }: StatsDisplayProps) {
         {
           title: "Overview",
           metrics: [
-            { label: "TOTAL PUZZLES", value: stats.totalPuzzles.toString(), highlight: true },
-            { label: "CORRECT", value: (stats.totalCorrect || 0).toString() },
-            { label: "ACCURACY", value: Math.round(stats.accuracy) + "%" },
-            { label: "COMPLETED CYCLES", value: stats.completedCycles.toString() },
-            { label: "AVG TIME/PUZ", value: stats.averageTimePerPuzzle > 1000 
-                ? (stats.averageTimePerPuzzle / 1000).toFixed(1) + "s"
-                : stats.averageTimePerPuzzle + "ms" },
-            { label: "TOTAL TIME", value: (stats.totalTimeMs / 1000 / 60).toFixed(0) + "m" },
+            { label: "TOTAL PUZZLES", value: (stats?.totalPuzzles ?? 0).toString(), highlight: true },
+            { label: "CORRECT", value: (stats?.totalCorrect ?? 0).toString() },
+            { label: "ACCURACY", value: Math.round(stats?.accuracy ?? 0) + "%" },
+            { label: "COMPLETED CYCLES", value: (stats?.completedCycles ?? 0).toString() },
+            { label: "AVG TIME/PUZ", value: (stats?.averageTimePerPuzzle ?? 0) > 1000 
+                ? ((stats?.averageTimePerPuzzle ?? 0) / 1000).toFixed(1) + "s"
+                : (stats?.averageTimePerPuzzle ?? 0) + "ms" },
+            { label: "TOTAL TIME", value: ((stats?.totalTimeMs ?? 0) / 1000 / 60).toFixed(0) + "m" },
           ],
         },
       ];

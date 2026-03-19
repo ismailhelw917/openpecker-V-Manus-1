@@ -454,31 +454,65 @@ export const appRouter = router({
         return getPuzzleAttemptStats(input.userId || null, input.deviceId || null);
       }),
 
-    getSummary: protectedProcedure
-      .query(async ({ ctx }) => {
-        const stats = await getPuzzleAttemptStats(ctx.user.id, null);
+    getSummary: publicProcedure
+      .input(
+        z.object({
+          userId: z.number().optional(),
+          deviceId: z.string().optional(),
+        }).optional()
+      )
+      .query(async ({ input, ctx }) => {
+        const userId = input?.userId || ctx.user?.id || null;
+        const deviceId = input?.deviceId || null;
+        const stats = await getPuzzleAttemptStats(userId, deviceId);
         const accuracy = stats.totalPuzzles > 0 ? Math.round((stats.totalCorrect / stats.totalPuzzles) * 100) : 0;
         return {
           totalPuzzles: stats.totalPuzzles || 0,
+          totalCorrect: stats.totalCorrect || 0,
           accuracy: accuracy,
           totalCycles: 0,
-          averageSpeed: stats.totalPuzzles > 0 ? Math.round(stats.totalTimeMs / stats.totalPuzzles) : 0,
+          averageTimePerPuzzle: stats.totalPuzzles > 0 ? Math.round(stats.totalTimeMs / stats.totalPuzzles) : 0,
+          totalTimeMs: stats.totalTimeMs || 0,
+          completedCycles: 0,
           rating: 1200,
         };
       }),
 
     getUserStats: protectedProcedure
+      .input(
+        z.object({}).optional()
+      )
       .query(async ({ ctx }) => {
         const stats = await getPuzzleAttemptStats(ctx.user.id, null);
         const accuracy = stats.totalPuzzles > 0 ? Math.round((stats.totalCorrect / stats.totalPuzzles) * 100) : 0;
         return {
           userId: ctx.user.id,
           totalPuzzles: stats.totalPuzzles || 0,
-          correctPuzzles: stats.totalCorrect || 0,
+          totalCorrect: stats.totalCorrect || 0,
           accuracy: accuracy,
           totalCycles: 0,
-          averageSpeed: stats.totalPuzzles > 0 ? Math.round(stats.totalTimeMs / stats.totalPuzzles) : 0,
+          averageTimePerPuzzle: stats.totalPuzzles > 0 ? Math.round(stats.totalTimeMs / stats.totalPuzzles) : 0,
+          totalTimeMs: stats.totalTimeMs || 0,
           rating: 1200,
+          peakRating: 1200,
+          winRate: 0,
+          ratingGain: 0,
+          consistency: 0,
+          totalIncorrect: (stats.totalPuzzles || 0) - (stats.totalCorrect || 0),
+          avgPuzzlesPerCycle: 0,
+          fastestCycleTime: "N/A",
+          studyTime: "0h",
+          totalTimeHours: "0h",
+          avgTimePerPuzzle: "0s",
+          totalTimeMinutes: 0,
+          currentStreak: 0,
+          longestStreak: 0,
+          puzzlesToday: 0,
+          cyclesToday: 0,
+          avgPuzzlesPerDay: 0,
+          avgCyclesPerDay: 0,
+          bestOpening: "N/A",
+          weakestOpening: "N/A",
           lastActive: new Date(),
         };
       }),
