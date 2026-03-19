@@ -8,7 +8,21 @@ const COUNTER_API_KEY = process.env.COUNTER_API_KEY || 'ut_RDvVPl9tOkYq9NfLPSNz8
 const COUNTER_API_URL = 'https://api.counter.dev/v1/events';
 
 /**
- * Upload puzzle batch to Counter API
+ * Insert unique openings into database
+ */
+async function insertOpeningsToDb(openingNames) {
+  try {
+    const { insertOpenings } = await import('./server/db.ts');
+    const openingList = openingNames.map(name => ({ name, fen: '', ecoCode: '' }));
+    await insertOpenings(openingList);
+    console.log(`✅ Inserted ${openingNames.length} unique openings`);
+  } catch (error) {
+    console.error('Error inserting openings:', error.message);
+  }
+}
+
+/**
+ * Upload puzzle batch to Counter API and insert openings
  */
 async function uploadPuzzleBatch(puzzles, batchNumber) {
   try {
@@ -42,6 +56,13 @@ async function uploadPuzzleBatch(puzzles, batchNumber) {
 
     if (response.ok) {
       console.log(`✅ Batch ${batchNumber}: Uploaded ${puzzles.length} puzzles to Counter API`);
+      
+      // Extract unique openings and insert them immediately
+      const uniqueOpeningNames = [...new Set(puzzles.map(p => p.opening))];
+      if (uniqueOpeningNames.length > 0) {
+        await insertOpeningsToDb(uniqueOpeningNames);
+      }
+      
       return true;
     } else {
       console.error(`❌ Batch ${batchNumber}: Failed to upload (${response.status})`);
