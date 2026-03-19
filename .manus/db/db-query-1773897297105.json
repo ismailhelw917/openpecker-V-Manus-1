@@ -1,0 +1,666 @@
+{
+  "query": "-- Find opening names that differ only by apostrophe or spacing\nSELECT openingName, COUNT(*) as count \nFROM puzzles \nWHERE openingName IS NOT NULL \nGROUP BY openingName \nORDER BY openingName;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute -- Find opening names that differ only by apostrophe or spacing\nSELECT openingName, COUNT(*) as count \nFROM puzzles \nWHERE openingName IS NOT NULL \nGROUP BY openingName \nORDER BY openingName;\n",
+  "rows": [
+    {
+      "openingName": "Advanced Openings",
+      "count": "78697"
+    },
+    {
+      "openingName": "Alekhine Defense",
+      "count": "585"
+    },
+    {
+      "openingName": "Alekhines Defense",
+      "count": "1859"
+    },
+    {
+      "openingName": "Amar Opening",
+      "count": "5"
+    },
+    {
+      "openingName": "Amazon Attack",
+      "count": "6"
+    },
+    {
+      "openingName": "Anderssens Opening",
+      "count": "39"
+    },
+    {
+      "openingName": "Australian Defense",
+      "count": "3"
+    },
+    {
+      "openingName": "Barnes Defense",
+      "count": "14"
+    },
+    {
+      "openingName": "Barnes Opening",
+      "count": "24"
+    },
+    {
+      "openingName": "Beginner Openings",
+      "count": "18907"
+    },
+    {
+      "openingName": "Benko Gambit",
+      "count": "36"
+    },
+    {
+      "openingName": "Benko Gambit Accepted",
+      "count": "37"
+    },
+    {
+      "openingName": "Benko Gambit Declined",
+      "count": "8"
+    },
+    {
+      "openingName": "Benoni Defense",
+      "count": "7443"
+    },
+    {
+      "openingName": "Bird Opening",
+      "count": "511"
+    },
+    {
+      "openingName": "Bird's Opening",
+      "count": "207636"
+    },
+    {
+      "openingName": "Birds Opening",
+      "count": "69495"
+    },
+    {
+      "openingName": "Bishops Opening",
+      "count": "994"
+    },
+    {
+      "openingName": "Blackmar-Diemer Gambit",
+      "count": "259"
+    },
+    {
+      "openingName": "Blackmar-Diemer Gambit Accepted",
+      "count": "113"
+    },
+    {
+      "openingName": "Blackmar-Diemer Gambit Declined",
+      "count": "37"
+    },
+    {
+      "openingName": "Blumenfeld Countergambit",
+      "count": "14"
+    },
+    {
+      "openingName": "Blumenfeld Countergambit Accepted",
+      "count": "3"
+    },
+    {
+      "openingName": "Bogo-Indian Defense",
+      "count": "40"
+    },
+    {
+      "openingName": "Bongcloud Attack",
+      "count": "1"
+    },
+    {
+      "openingName": "Borg Defense",
+      "count": "34"
+    },
+    {
+      "openingName": "Bronstein Gambit",
+      "count": "2"
+    },
+    {
+      "openingName": "Canard Opening",
+      "count": "19"
+    },
+    {
+      "openingName": "Caro-Kann Defense",
+      "count": "81339"
+    },
+    {
+      "openingName": "Carr Defense",
+      "count": "10"
+    },
+    {
+      "openingName": "Catalan Opening",
+      "count": "89"
+    },
+    {
+      "openingName": "Center Game",
+      "count": "365"
+    },
+    {
+      "openingName": "Center Game Accepted",
+      "count": "8"
+    },
+    {
+      "openingName": "Clemenz Opening",
+      "count": "17"
+    },
+    {
+      "openingName": "Crab Opening",
+      "count": "2"
+    },
+    {
+      "openingName": "Creepy Crawly Formation",
+      "count": "1"
+    },
+    {
+      "openingName": "Czech Defense",
+      "count": "64"
+    },
+    {
+      "openingName": "Danish Gambit",
+      "count": "161"
+    },
+    {
+      "openingName": "Danish Gambit Accepted",
+      "count": "201"
+    },
+    {
+      "openingName": "Danish Gambit Declined",
+      "count": "44"
+    },
+    {
+      "openingName": "Dory Defense",
+      "count": "1"
+    },
+    {
+      "openingName": "Duras Gambit",
+      "count": "83"
+    },
+    {
+      "openingName": "Dutch Defense",
+      "count": "55755"
+    },
+    {
+      "openingName": "East Indian Defense",
+      "count": "52"
+    },
+    {
+      "openingName": "Elephant Gambit",
+      "count": "277"
+    },
+    {
+      "openingName": "Endgame Tactics",
+      "count": "1123228"
+    },
+    {
+      "openingName": "English Defense",
+      "count": "241"
+    },
+    {
+      "openingName": "English Opening",
+      "count": "391857"
+    },
+    {
+      "openingName": "English Orangutan",
+      "count": "1"
+    },
+    {
+      "openingName": "Englund Gambit",
+      "count": "561"
+    },
+    {
+      "openingName": "Englund Gambit Complex",
+      "count": "285"
+    },
+    {
+      "openingName": "Englund Gambit Complex Declined",
+      "count": "59"
+    },
+    {
+      "openingName": "Englund Gambit Declined",
+      "count": "122"
+    },
+    {
+      "openingName": "Evans Gambit",
+      "count": "411"
+    },
+    {
+      "openingName": "Expert Openings",
+      "count": "70597"
+    },
+    {
+      "openingName": "Four Knights Game",
+      "count": "1054"
+    },
+    {
+      "openingName": "French Defense",
+      "count": "58956"
+    },
+    {
+      "openingName": "Fried Fox Defense",
+      "count": "4"
+    },
+    {
+      "openingName": "Gedults Opening",
+      "count": "12"
+    },
+    {
+      "openingName": "Giuoco Piano",
+      "count": "37"
+    },
+    {
+      "openingName": "Global Opening",
+      "count": "2"
+    },
+    {
+      "openingName": "Goldsmith Defense",
+      "count": "16"
+    },
+    {
+      "openingName": "Grob Opening",
+      "count": "193"
+    },
+    {
+      "openingName": "Grunfeld Defense",
+      "count": "226"
+    },
+    {
+      "openingName": "Guatemala Defense",
+      "count": "1"
+    },
+    {
+      "openingName": "Gunderam Defense",
+      "count": "13"
+    },
+    {
+      "openingName": "Hippopotamus Defense",
+      "count": "6"
+    },
+    {
+      "openingName": "Horwitz Defense",
+      "count": "550"
+    },
+    {
+      "openingName": "Hungarian Opening",
+      "count": "319"
+    },
+    {
+      "openingName": "Indian Defense",
+      "count": "16931"
+    },
+    {
+      "openingName": "Intermediate Openings",
+      "count": "44187"
+    },
+    {
+      "openingName": "Italian Game",
+      "count": "8522"
+    },
+    {
+      "openingName": "Kadas Opening",
+      "count": "45"
+    },
+    {
+      "openingName": "Kangaroo Defense",
+      "count": "7"
+    },
+    {
+      "openingName": "King's Indian Defense",
+      "count": "50815"
+    },
+    {
+      "openingName": "King's Pawn Opening",
+      "count": "57708"
+    },
+    {
+      "openingName": "Kings Gambit",
+      "count": "217"
+    },
+    {
+      "openingName": "Kings Gambit Accepted",
+      "count": "1928"
+    },
+    {
+      "openingName": "Kings Gambit Declined",
+      "count": "559"
+    },
+    {
+      "openingName": "Kings Indian Attack",
+      "count": "72826"
+    },
+    {
+      "openingName": "Kings Indian Defense",
+      "count": "3636"
+    },
+    {
+      "openingName": "Kings Knight Opening",
+      "count": "146"
+    },
+    {
+      "openingName": "Kings Pawn",
+      "count": "6"
+    },
+    {
+      "openingName": "Kings Pawn Game",
+      "count": "969"
+    },
+    {
+      "openingName": "Kings Pawn Opening",
+      "count": "38751"
+    },
+    {
+      "openingName": "Lasker Simul Special",
+      "count": "8"
+    },
+    {
+      "openingName": "Latvian Gambit",
+      "count": "63"
+    },
+    {
+      "openingName": "Latvian Gambit Accepted",
+      "count": "66"
+    },
+    {
+      "openingName": "Lemming Defense",
+      "count": "3"
+    },
+    {
+      "openingName": "Lion Defense",
+      "count": "22"
+    },
+    {
+      "openingName": "London System",
+      "count": "7004"
+    },
+    {
+      "openingName": "London System with Bd3",
+      "count": "1"
+    },
+    {
+      "openingName": "London System with Be2",
+      "count": "1"
+    },
+    {
+      "openingName": "Marienbad System",
+      "count": "4"
+    },
+    {
+      "openingName": "Mexican Defense",
+      "count": "30"
+    },
+    {
+      "openingName": "Middlegame Tactics",
+      "count": "610785"
+    },
+    {
+      "openingName": "Mieses Opening",
+      "count": "120"
+    },
+    {
+      "openingName": "Mikenas Defense",
+      "count": "61"
+    },
+    {
+      "openingName": "Miscellaneous Opening",
+      "count": "342437"
+    },
+    {
+      "openingName": "Modern Defense",
+      "count": "27228"
+    },
+    {
+      "openingName": "Montevideo Defense",
+      "count": "1"
+    },
+    {
+      "openingName": "Neo-Grunfeld Defense",
+      "count": "35"
+    },
+    {
+      "openingName": "Nimzo-Indian Defense",
+      "count": "5469"
+    },
+    {
+      "openingName": "Nimzo-Larsen Attack",
+      "count": "68013"
+    },
+    {
+      "openingName": "Nimzowitsch Defense",
+      "count": "636"
+    },
+    {
+      "openingName": "Old Indian Defense",
+      "count": "14832"
+    },
+    {
+      "openingName": "Open Game",
+      "count": "120042"
+    },
+    {
+      "openingName": "Owen Defense",
+      "count": "559"
+    },
+    {
+      "openingName": "Paleface Attack",
+      "count": "16"
+    },
+    {
+      "openingName": "Petrov Defense",
+      "count": "887"
+    },
+    {
+      "openingName": "Petrovs Defense",
+      "count": "442"
+    },
+    {
+      "openingName": "Philidor Defense",
+      "count": "15700"
+    },
+    {
+      "openingName": "Pirc Defense",
+      "count": "89859"
+    },
+    {
+      "openingName": "Polish Defense",
+      "count": "19"
+    },
+    {
+      "openingName": "Polish Opening",
+      "count": "228"
+    },
+    {
+      "openingName": "Ponziani Opening",
+      "count": "281"
+    },
+    {
+      "openingName": "Portuguese Opening",
+      "count": "15"
+    },
+    {
+      "openingName": "Pseudo Queens Indian Defense",
+      "count": "14"
+    },
+    {
+      "openingName": "Pterodactyl Defense",
+      "count": "33"
+    },
+    {
+      "openingName": "Queen's Gambit",
+      "count": "1143"
+    },
+    {
+      "openingName": "Queen's Gambit Declined",
+      "count": "3331"
+    },
+    {
+      "openingName": "Queen's Indian Defense",
+      "count": "3781"
+    },
+    {
+      "openingName": "Queen's Pawn Game",
+      "count": "415273"
+    },
+    {
+      "openingName": "Queens Gambit",
+      "count": "435"
+    },
+    {
+      "openingName": "Queens Gambit Accepted",
+      "count": "4060"
+    },
+    {
+      "openingName": "Queens Gambit Declined",
+      "count": "3815"
+    },
+    {
+      "openingName": "Queens Indian Accelerated",
+      "count": "14"
+    },
+    {
+      "openingName": "Queens Indian Defense",
+      "count": "671"
+    },
+    {
+      "openingName": "Queens Pawn Game",
+      "count": "148389"
+    },
+    {
+      "openingName": "Rapport-Jobava System",
+      "count": "221"
+    },
+    {
+      "openingName": "Rapport-Jobava System with e6",
+      "count": "24"
+    },
+    {
+      "openingName": "Rat Defense",
+      "count": "238"
+    },
+    {
+      "openingName": "Reti Opening",
+      "count": "277276"
+    },
+    {
+      "openingName": "Richter-Veresov Attack",
+      "count": "67"
+    },
+    {
+      "openingName": "Robatsch Defense",
+      "count": "3"
+    },
+    {
+      "openingName": "Rubinstein Opening",
+      "count": "22"
+    },
+    {
+      "openingName": "Russian Game",
+      "count": "1099"
+    },
+    {
+      "openingName": "Ruy Lopez",
+      "count": "2795"
+    },
+    {
+      "openingName": "Saragossa Opening",
+      "count": "67"
+    },
+    {
+      "openingName": "Scandinavian Defense",
+      "count": "9885"
+    },
+    {
+      "openingName": "Scotch Game",
+      "count": "2718"
+    },
+    {
+      "openingName": "Semi-Slav Defense",
+      "count": "376"
+    },
+    {
+      "openingName": "Semi-Slav Defense Accepted",
+      "count": "9"
+    },
+    {
+      "openingName": "Sicilian Defense",
+      "count": "111866"
+    },
+    {
+      "openingName": "Slav Defense",
+      "count": "2684"
+    },
+    {
+      "openingName": "Slav Indian",
+      "count": "25"
+    },
+    {
+      "openingName": "Sodium Attack",
+      "count": "4"
+    },
+    {
+      "openingName": "St George Defense",
+      "count": "68"
+    },
+    {
+      "openingName": "Tarrasch Defense",
+      "count": "132"
+    },
+    {
+      "openingName": "Three Knights Opening",
+      "count": "272"
+    },
+    {
+      "openingName": "Torre Attack",
+      "count": "79"
+    },
+    {
+      "openingName": "Trompowsky Attack",
+      "count": "211"
+    },
+    {
+      "openingName": "Uncommon Opening",
+      "count": "642596"
+    },
+    {
+      "openingName": "Valencia Opening",
+      "count": "3"
+    },
+    {
+      "openingName": "Van Geet Opening",
+      "count": "155"
+    },
+    {
+      "openingName": "Vant Kruijs Opening",
+      "count": "406"
+    },
+    {
+      "openingName": "Vienna Gambit with Max Lange Defense",
+      "count": "58"
+    },
+    {
+      "openingName": "Vienna Game",
+      "count": "3405"
+    },
+    {
+      "openingName": "Vulture Defense",
+      "count": "2"
+    },
+    {
+      "openingName": "Wade Defense",
+      "count": "10"
+    },
+    {
+      "openingName": "Ware Defense",
+      "count": "15"
+    },
+    {
+      "openingName": "Ware Opening",
+      "count": "20"
+    },
+    {
+      "openingName": "Yusupov-Rubinstein System",
+      "count": "41"
+    },
+    {
+      "openingName": "Zukertort Opening",
+      "count": "1028"
+    }
+  ],
+  "messages": [],
+  "stdout": "openingName\tcount\nAdvanced Openings\t78697\nAlekhine Defense\t585\nAlekhines Defense\t1859\nAmar Opening\t5\nAmazon Attack\t6\nAnderssens Opening\t39\nAustralian Defense\t3\nBarnes Defense\t14\nBarnes Opening\t24\nBeginner Openings\t18907\nBenko Gambit\t36\nBenko Gambit Accepted\t37\nBenko Gambit Declined\t8\nBenoni Defense\t7443\nBird Opening\t511\nBird's Opening\t207636\nBirds Opening\t69495\nBishops Opening\t994\nBlackmar-Diemer Gambit\t259\nBlackmar-Diemer Gambit Accepted\t113\nBlackmar-Diemer Gambit Declined\t37\nBlumenfeld Countergambit\t14\nBlumenfeld Countergambit Accepted\t3\nBogo-Indian Defense\t40\nBongcloud Attack\t1\nBorg Defense\t34\nBronstein Gambit\t2\nCanard Opening\t19\nCaro-Kann Defense\t81339\nCarr Defense\t10\nCatalan Opening\t89\nCenter Game\t365\nCenter Game Accepted\t8\nClemenz Opening\t17\nCrab Opening\t2\nCreepy Crawly Formation\t1\nCzech Defense\t64\nDanish Gambit\t161\nDanish Gambit Accepted\t201\nDanish Gambit Declined\t44\nDory Defense\t1\nDuras Gambit\t83\nDutch Defense\t55755\nEast Indian Defense\t52\nElephant Gambit\t277\nEndgame Tactics\t1123228\nEnglish Defense\t241\nEnglish Opening\t391857\nEnglish Orangutan\t1\nEnglund Gambit\t561\nEnglund Gambit Complex\t285\nEnglund Gambit Complex Declined\t59\nEnglund Gambit Declined\t122\nEvans Gambit\t411\nExpert Openings\t70597\nFour Knights Game\t1054\nFrench Defense\t58956\nFried Fox Defense\t4\nGedults Opening\t12\nGiuoco Piano\t37\nGlobal Opening\t2\nGoldsmith Defense\t16\nGrob Opening\t193\nGrunfeld Defense\t226\nGuatemala Defense\t1\nGunderam Defense\t13\nHippopotamus Defense\t6\nHorwitz Defense\t550\nHungarian Opening\t319\nIndian Defense\t16931\nIntermediate Openings\t44187\nItalian Game\t8522\nKadas Opening\t45\nKangaroo Defense\t7\nKing's Indian Defense\t50815\nKing's Pawn Opening\t57708\nKings Gambit\t217\nKings Gambit Accepted\t1928\nKings Gambit Declined\t559\nKings Indian Attack\t72826\nKings Indian Defense\t3636\nKings Knight Opening\t146\nKings Pawn\t6\nKings Pawn Game\t969\nKings Pawn Opening\t38751\nLasker Simul Special\t8\nLatvian Gambit\t63\nLatvian Gambit Accepted\t66\nLemming Defense\t3\nLion Defense\t22\nLondon System\t7004\nLondon System with Bd3\t1\nLondon System with Be2\t1\nMarienbad System\t4\nMexican Defense\t30\nMiddlegame Tactics\t610785\nMieses Opening\t120\nMikenas Defense\t61\nMiscellaneous Opening\t342437\nModern Defense\t27228\nMontevideo Defense\t1\nNeo-Grunfeld Defense\t35\nNimzo-Indian Defense\t5469\nNimzo-Larsen Attack\t68013\nNimzowitsch Defense\t636\nOld Indian Defense\t14832\nOpen Game\t120042\nOwen Defense\t559\nPaleface Attack\t16\nPetrov Defense\t887\nPetrovs Defense\t442\nPhilidor Defense\t15700\nPirc Defense\t89859\nPolish Defense\t19\nPolish Opening\t228\nPonziani Opening\t281\nPortuguese Opening\t15\nPseudo Queens Indian Defense\t14\nPterodactyl Defense\t33\nQueen's Gambit\t1143\nQueen's Gambit Declined\t3331\nQueen's Indian Defense\t3781\nQueen's Pawn Game\t415273\nQueens Gambit\t435\nQueens Gambit Accepted\t4060\nQueens Gambit Declined\t3815\nQueens Indian Accelerated\t14\nQueens Indian Defense\t671\nQueens Pawn Game\t148389\nRapport-Jobava System\t221\nRapport-Jobava System with e6\t24\nRat Defense\t238\nReti Opening\t277276\nRichter-Veresov Attack\t67\nRobatsch Defense\t3\nRubinstein Opening\t22\nRussian Game\t1099\nRuy Lopez\t2795\nSaragossa Opening\t67\nScandinavian Defense\t9885\nScotch Game\t2718\nSemi-Slav Defense\t376\nSemi-Slav Defense Accepted\t9\nSicilian Defense\t111866\nSlav Defense\t2684\nSlav Indian\t25\nSodium Attack\t4\nSt George Defense\t68\nTarrasch Defense\t132\nThree Knights Opening\t272\nTorre Attack\t79\nTrompowsky Attack\t211\nUncommon Opening\t642596\nValencia Opening\t3\nVan Geet Opening\t155\nVant Kruijs Opening\t406\nVienna Gambit with Max Lange Defense\t58\nVienna Game\t3405\nVulture Defense\t2\nWade Defense\t10\nWare Defense\t15\nWare Opening\t20\nYusupov-Rubinstein System\t41\nZukertort Opening\t1028\n",
+  "stderr": "",
+  "execution_time_ms": 5566
+}

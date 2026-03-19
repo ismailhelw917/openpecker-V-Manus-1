@@ -321,3 +321,59 @@ export const visitorTracking = mysqlTable("visitor_tracking", {
 
 export type VisitorTracking = typeof visitorTracking.$inferSelect;
 export type InsertVisitorTracking = typeof visitorTracking.$inferInsert;
+
+/**
+ * Unified Players Table - single source of truth for all players (registered + anonymous)
+ * Replaces fragmented user/device tracking across multiple tables
+ */
+export const players = mysqlTable("players", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId"), // FK to users table (NULL for anonymous)
+  deviceId: varchar("deviceId", { length: 64 }), // For anonymous players
+  name: varchar("name", { length: 255 }).notNull(), // Real name or 'Guest-xxxxx'
+  email: varchar("email", { length: 320 }), // Only for registered players
+  type: mysqlEnum("type", ["registered", "anonymous"]).notNull(), // 'registered' = OAuth, 'anonymous' = device-based
+  isPremium: int("isPremium").default(0).notNull(),
+  totalPuzzles: int("totalPuzzles").default(0).notNull(),
+  totalCorrect: int("totalCorrect").default(0).notNull(),
+  totalTimeMs: int("totalTimeMs").default(0).notNull(),
+  completedCycles: int("completedCycles").default(0).notNull(),
+  accuracy: decimal("accuracy", { precision: 5, scale: 2 }).default("0"),
+  rating: int("rating").default(1200).notNull(),
+  lastActivityAt: timestamp("lastActivityAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("idx_players_userId").on(table.userId),
+  deviceIdIdx: index("idx_players_deviceId").on(table.deviceId),
+  typeIdx: index("idx_players_type").on(table.type),
+  lastActivityIdx: index("idx_players_lastActivity").on(table.lastActivityAt),
+}));
+
+export type Player = typeof players.$inferSelect;
+export type InsertPlayer = typeof players.$inferInsert;
+
+/**
+ * Online Sessions - tracks currently active players in real-time
+ * Used for accurate "online now" count
+ */
+export const onlineSessions = mysqlTable("online_sessions", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  playerId: int("playerId").notNull(), // FK to players table
+  userId: int("userId"), // FK to users table (for quick lookup)
+  deviceId: varchar("deviceId", { length: 64 }), // For quick lookup
+  sessionId: varchar("sessionId", { length: 64 }).notNull(), // Training session ID
+  status: mysqlEnum("status", ["active", "paused", "idle"]).default("active").notNull(),
+  lastHeartbeat: timestamp("lastHeartbeat").defaultNow().notNull(), // Last activity timestamp
+  startedAt: timestamp("startedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  playerIdIdx: index("idx_online_playerId").on(table.playerId),
+  userIdIdx: index("idx_online_userId").on(table.userId),
+  deviceIdIdx: index("idx_online_deviceId").on(table.deviceId),
+  lastHeartbeatIdx: index("idx_online_lastHeartbeat").on(table.lastHeartbeat),
+  statusIdx: index("idx_online_status").on(table.status),
+}));
+
+export type OnlineSession = typeof onlineSessions.$inferSelect;
+export type InsertOnlineSession = typeof onlineSessions.$inferInsert;

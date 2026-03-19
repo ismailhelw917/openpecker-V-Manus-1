@@ -38,6 +38,12 @@ import {
   getUserRedemptions,
 } from "./db";
 import {
+  getOnlineCount,
+  getOnlineCountByPageActivity,
+  getTotalPlayerCount,
+  getLeaderboardPlayers,
+} from "./players";
+import {
   getOrCreateAnonymousUser,
   linkDeviceToUser,
   getUserByDeviceId,
@@ -468,7 +474,7 @@ export const appRouter = router({
               themes: z.array(z.string()),
               color: z.string().optional(),
               openingName: z.string().optional(),
-              openingVariation: z.string().optional(),
+              openingVariation: z.string().nullable().optional(),
             })
           ),
         })
@@ -569,7 +575,7 @@ export const appRouter = router({
                 themes,
                 color: p.color,
                 openingName: p.openingName,
-                openingVariation: p.openingVariation,
+                openingVariation: p.openingVariation || "",
               };
             }),
           };
@@ -644,7 +650,7 @@ export const appRouter = router({
                 themes,
                 color: p.color,
                 openingName: p.openingName,
-                openingVariation: p.openingVariation,
+                      openingVariation: p.openingVariation || "",
               };
             }),
           };
@@ -1124,222 +1130,67 @@ export const appRouter = router({
     getLeaderboard: publicProcedure
       .input(
         z.object({
-          limit: z.number().default(500),
+          limit: z.number().max(1000).default(500),
           sortBy: z.enum(["accuracy", "speed", "rating"]).default("accuracy"),
         })
       )
       .query(async ({ input }) => {
         try {
-          const db = await getDb();
-          if (!db) {
-            console.log('[LEADERBOARD] Database not available');
-            return { entries: [], onlineCount: 0, totalUsers: 0 };
-          }
-          console.log('[LEADERBOARD] Starting query with sortBy:', input.sortBy);
+          console.log('[LEADERBOARD] Fetching leaderboard with sortBy:', input.sortBy);
 
-          // Get online player count (users with active training sessions in last 30 minutes)
-          // This counts actual players, not just page visitors
-          const onlineResult = await db.execute(`
-            SELECT COUNT(DISTINCT COALESCE(ts.userId, ts.deviceId)) as cnt 
-            FROM training_sets ts
-            WHERE ts.status IN ('active', 'paused')
-              AND ts.updatedAt >= DATE_SUB(NOW(), INTERVAL 30 MINUTE)
-          `) as any;
-          // Normalize the result - db.execute returns [rows, fields] format
-          const onlineRows = Array.isArray(onlineResult)
-            ? (Array.isArray(onlineResult[0]) ? onlineResult[0] : onlineResult)
-            : [];
-          const onlineCount = Number(onlineRows[0]?.cnt || 0);
+          // Get online count (players with page activity in last 5 minutes)
+          const onlineCount = await getOnlineCountByPageActivity(5);
+          console.log('[LEADERBOARD] Online count:', onlineCount);
 
-          // Get total unique players (all users with any training activity)
-          const totalResult = await db.execute(`
-            SELECT COUNT(DISTINCT COALESCE(ts.userId, ts.deviceId)) as cnt 
-            FROM training_sets ts
-            WHERE ts.userId IS NOT NULL OR ts.deviceId IS NOT NULL
-          `) as any;
-          // Normalize the result - db.execute returns [rows, fields] format
-          const totalRows = Array.isArray(totalResult)
-            ? (Array.isArray(totalResult[0]) ? totalResult[0] : totalResult)
-            : [];
-          const totalUsers = Number(totalRows[0]?.cnt || 0);
+          // Get total player count
+          const totalPlayers = await getTotalPlayerCount();
+          console.log('[LEADERBOARD] Total players:', totalPlayers);
 
-          // Step 1: Get ONLY users who have actual puzzle activity
-          // This avoids loading 450+ empty device accounts
-          // Query users who have cycle_history or puzzle_attempts
-          const activeUsersResult = await db.execute(`
-            SELECT 
-              u.id as userId,
-              u.name,
-              u.isPremium,
-              u.lastSignedIn,
-              COALESCE(ch.completedCycles, 0) as completedCycles,
-              COALESCE(ch.totalPuzzles, 0) as chPuzzles,
-              COALESCE(ch.totalCorrect, 0) as chCorrect,
-              COALESCE(ch.totalTimeMs, 0) as chTimeMs,
-              COALESCE(pa.paPuzzles, 0) as paPuzzles,
-              COALESCE(pa.paCorrect, 0) as paCorrect,
-              COALESCE(pa.paTimeMs, 0) as paTimeMs
-            FROM users u
-            LEFT JOIN (
-              SELECT userId, COUNT(*) as completedCycles, 
-                     SUM(totalPuzzles) as totalPuzzles, 
-                     SUM(correctCount) as totalCorrect, 
-                     SUM(totalTimeMs) as totalTimeMs
-              FROM cycle_history 
-              WHERE userId IS NOT NULL AND userId > 0
-              GROUP BY userId
-            ) ch ON u.id = ch.userId
-            LEFT JOIN (
-              SELECT userId, COUNT(*) as paPuzzles, 
-                     SUM(isCorrect) as paCorrect, 
-                     SUM(timeMs) as paTimeMs
-              FROM puzzle_attempts 
-              WHERE userId IS NOT NULL AND userId > 0
-              GROUP BY userId
-            ) pa ON u.id = pa.userId
-            WHERE (ch.completedCycles IS NOT NULL AND ch.completedCycles > 0)
-               OR (pa.paPuzzles IS NOT NULL AND pa.paPuzzles > 0)
-            ORDER BY COALESCE(ch.totalPuzzles, 0) + COALESCE(pa.paPuzzles, 0) DESC
-            LIMIT ${input.limit}
-          `) as any;
-          // Normalize the result - db.execute returns [rows, fields] format
-          let activeUserRows = Array.isArray(activeUsersResult) 
-            ? (Array.isArray(activeUsersResult[0]) ? activeUsersResult[0] : activeUsersResult)
-            : [];
-          console.log('[LEADERBOARD] Active users result type:', typeof activeUsersResult, 'is array:', Array.isArray(activeUsersResult));
-          console.log('[LEADERBOARD] Active user rows count:', activeUserRows.length);
-          if (activeUserRows.length > 0) {
-            console.log('[LEADERBOARD] First active user:', activeUserRows[0]);
-          }
+          // Get leaderboard entries from unified players table
+          const players = await getLeaderboardPlayers(input.limit, input.sortBy);
+          console.log('[LEADERBOARD] Leaderboard entries count:', players.length);
 
-          // Step 2: Get guest entries with activity (not linked to any user)
-          const guestResult = await db.execute(`
-            SELECT 
-              ch.deviceId,
-              CONCAT('Guest-', LEFT(ch.deviceId, 8)) as name,
-              0 as isPremium,
-              COUNT(*) as completedCycles,
-              SUM(ch.totalPuzzles) as totalPuzzles,
-              SUM(ch.correctCount) as totalCorrect,
-              SUM(ch.totalTimeMs) as totalTimeMs
-            FROM cycle_history ch
-            WHERE (ch.userId IS NULL OR ch.userId = 0)
-              AND ch.deviceId IS NOT NULL AND ch.deviceId != ''
-            GROUP BY ch.deviceId
-            HAVING SUM(ch.totalPuzzles) > 0
-            ORDER BY SUM(ch.totalPuzzles) DESC
-            LIMIT 50
-          `) as any;
-          // Normalize the result - db.execute returns [rows, fields] format
-          let guestRows = Array.isArray(guestResult)
-            ? (Array.isArray(guestResult[0]) ? guestResult[0] : guestResult)
-            : [];
+          // Transform to leaderboard format
+          const entries = (players as any[]).map((player: any, index: number) => {
+            const totalPuzzles = Number(player.totalPuzzles || 0);
+            const totalCorrect = Number(player.totalCorrect || 0);
+            const totalTimeMs = Number(player.totalTimeMs || 0);
+            const completedCycles = Number(player.completedCycles || 0);
 
-          // Step 3: Build entries
-          const entries: any[] = [];
-
-          for (const row of activeUserRows) {
-            const completedCycles = Number(row.completedCycles || 0);
-            const totalPuzzles = completedCycles > 0 
-              ? Number(row.chPuzzles || 0) 
-              : Number(row.paPuzzles || 0);
-            const totalCorrect = completedCycles > 0 
-              ? Number(row.chCorrect || 0) 
-              : Number(row.paCorrect || 0);
-            const totalTimeMs = completedCycles > 0 
-              ? Number(row.chTimeMs || 0) 
-              : Number(row.paTimeMs || 0);
-
-            entries.push({
-              userId: Number(row.userId),
-              name: row.name || 'Player',
-              isPremium: Number(row.isPremium || 0),
-              completedCycles,
-              totalPuzzles,
-              totalCorrect,
-              totalTimeMs,
-              hasActivity: true,
-            });
-          }
-
-          for (const row of guestRows) {
-            entries.push({
-              userId: 0,
-              deviceId: row.deviceId,
-              name: row.name || 'Guest',
-              isPremium: 0,
-              completedCycles: Number(row.completedCycles || 0),
-              totalPuzzles: Number(row.totalPuzzles || 0),
-              totalCorrect: Number(row.totalCorrect || 0),
-              totalTimeMs: Number(row.totalTimeMs || 0),
-              hasActivity: true,
-            });
-          }
-
-          // Step 4: Build leaderboard entries with computed stats
-          const leaderboardData = entries.map((row: any) => {
-            const totalPuzzles = row.totalPuzzles;
-            const totalCorrect = row.totalCorrect;
-            const totalTimeMs = row.totalTimeMs;
-            const completedCycles = row.completedCycles;
             const accuracy = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 100) : 0;
-            const avgTimePerPuzzle = totalPuzzles > 0 ? Math.round(totalTimeMs / totalPuzzles / 1000) : 0;
-            const baseRating = 1200;
-            const ratingGain = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 200) : 0;
-            const rating = baseRating + ratingGain;
-            const totalTimeMin = Math.round(totalTimeMs / 1000 / 60);
+            const speed = totalPuzzles > 0 ? Math.round(totalTimeMs / totalPuzzles / 1000) : 0;
+            const rating = Number(player.rating || 1200);
 
             return {
-              id: row.userId,
-              uniqueKey: row.userId > 0 ? `user-${row.userId}` : `guest-${row.deviceId || 'unknown'}`,
-              name: row.name,
-              isPremium: Number(row.isPremium) === 1,
+              rank: index + 1,
+              id: player.id,
+              userId: player.userId,
+              deviceId: player.deviceId,
+              name: player.name,
+              email: player.email,
+              type: player.type,
+              isPremium: Number(player.isPremium) === 1,
               accuracy,
-              speed: avgTimePerPuzzle,
+              speed,
               rating,
               totalPuzzles,
               totalCorrect,
               completedCycles,
-              totalTimeMin,
-              hasActivity: true,
+              totalTimeMin: Math.round(totalTimeMs / 1000 / 60),
+              hasActivity: totalPuzzles > 0 || completedCycles > 0,
             };
           });
 
-          // Step 5: Sort by selected metric
-          leaderboardData.sort((a: any, b: any) => {
-            if (input.sortBy === "accuracy") {
-              if (b.accuracy === a.accuracy) return b.totalPuzzles - a.totalPuzzles;
-              return b.accuracy - a.accuracy;
-            } else if (input.sortBy === "speed") {
-              if (a.speed === 0) return 1;
-              if (b.speed === 0) return -1;
-              if (a.speed === b.speed) return b.totalPuzzles - a.totalPuzzles;
-              return a.speed - b.speed;
-            } else {
-              if (b.rating === a.rating) return b.totalPuzzles - a.totalPuzzles;
-              return b.rating - a.rating;
-            }
-          });
+          console.log('[LEADERBOARD] Returning', entries.length, 'entries with online:', onlineCount, 'total:', totalPlayers);
 
-          // Return with rank and metadata
-          const rankedEntries = leaderboardData.map((entry: any, index: number) => ({
-            ...entry,
-            rank: index + 1,
-          }));
-
-          console.log('[LEADERBOARD] Final entries count:', rankedEntries.length);
-          console.log('[LEADERBOARD] Online count:', onlineCount, 'Total users:', totalUsers);
-          if (rankedEntries.length > 0) {
-            console.log('[LEADERBOARD] First entry:', rankedEntries[0]);
-          }
           return {
-            entries: rankedEntries,
+            entries,
             onlineCount,
-            totalUsers,
+            totalUsers: totalPlayers,
           };
         } catch (error) {
-          console.error("[LEADERBOARD ERROR]", error);
-          console.error("[LEADERBOARD ERROR] Stack:", (error as any)?.stack);
+          console.error('[LEADERBOARD ERROR]', error);
+          console.error('[LEADERBOARD ERROR] Stack:', (error as any)?.stack);
           return { entries: [], onlineCount: 0, totalUsers: 0 };
         }
     }),

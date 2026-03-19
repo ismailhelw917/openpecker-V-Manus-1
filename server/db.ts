@@ -185,7 +185,7 @@ export async function getUniqueOpenings() {
   try {
     // Use raw SQL to get distinct opening names
     const result = await db.execute(
-      sql`SELECT DISTINCT openingName FROM puzzles WHERE openingName IS NOT NULL AND openingName != '' ORDER BY openingName ASC`
+      `SELECT DISTINCT openingName FROM puzzles WHERE openingName IS NOT NULL AND openingName != '' ORDER BY openingName ASC`
     );
     
     // Extract opening names from result

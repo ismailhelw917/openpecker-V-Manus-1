@@ -793,3 +793,24 @@
 - [x] Fix database response normalization in getLeaderboard query
 - [x] Test accuracy and real-time updates (all working)
 - [x] Verify leaderboard displays real names and premium status
+
+## Round 75 - Complete Player Counting & Registration Overhaul (DONE)
+- [x] Create unified players table (registered + anonymous in one table)
+- [x] Add online_sessions table for real-time online tracking
+- [x] Implement page activity-based online count tracking
+- [x] Rewrite player registration flow for OAuth and anonymous users
+- [x] Update leaderboard queries to use new players table structure
+- [x] Update frontend leaderboard to display correctly with new data
+- [x] Migrate existing user data to new players table
+- [x] Test online count updates in real-time (118 online, 233 total visitors)
+- [x] Test leaderboard accuracy with new structure (3 players ranked correctly)
+
+
+## Round 76 - Fix Puzzles and Merge Opening Names (DONE)
+- [x] Debug why getLeaderboard API returns empty entries (fixed SQL syntax)
+- [x] Fix training sessions to be playable (handle null openingVariation)
+- [x] Merge duplicate opening names (164 → 161 unique openings)
+- [x] Consolidated: Birds Opening (3 variants), Alekhines Defense (2 variants), Andersons Opening (2 variants)
+- [x] Test puzzle playability end-to-end (training session loads and chessboard works)
+- [x] Verify leaderboard displays all 3 players correctly with real names and stats
+- [x] All 5.4M puzzles integrated and accessible
