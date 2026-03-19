@@ -176,8 +176,6 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
   };
 
   const handleDragEnd = async (event: any) => {
-    setActivePiece(null);
-    setActiveSquare(null);
     const { active, over } = event;
     
     // Safety check: ensure we have valid drag data
@@ -211,7 +209,13 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
       return false;
     }
     
+    // Try the move - only clear state if it succeeds
     const result = await onPieceDrop?.(active.id, over.id);
+    if (result) {
+      setActivePiece(null);
+      setActiveSquare(null);
+    }
+    // If move failed, keep piece visible and selected
     return result || false;
   };
 
@@ -289,21 +293,23 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
 
       <DragOverlay>
         {activePiece ? (
-          <img
-            src={`https://cdn.jsdelivr.net/gh/lichess-org/lila@master/public/piece/cburnett/${activePiece.color}${activePiece.type.toUpperCase()}.svg`}
-            alt={`${activePiece.color}${activePiece.type}`}
-            className="w-full h-full p-1 cursor-grabbing transition-none"
-            draggable="false"
-            onError={(e) => {
-              const img = e.target as HTMLImageElement;
-              if (!img.dataset.fallback) {
-                img.dataset.fallback = 'true';
-                img.src = `https://chess1.org/assets/piece/cburnett/${activePiece.color}${activePiece.type.toUpperCase()}.svg`;
-              }
-            }}
-            crossOrigin="anonymous"
-            loading="eager"
-          />
+          <div className="w-16 h-16 flex items-center justify-center">
+            <img
+              src={`https://cdn.jsdelivr.net/gh/lichess-org/lila@master/public/piece/cburnett/${activePiece.color}${activePiece.type.toUpperCase()}.svg`}
+              alt={`${activePiece.color}${activePiece.type}`}
+              className="w-full h-full p-1 cursor-grabbing transition-none"
+              draggable="false"
+              onError={(e) => {
+                const img = e.target as HTMLImageElement;
+                if (!img.dataset.fallback) {
+                  img.dataset.fallback = 'true';
+                  img.src = `https://chess1.org/assets/piece/cburnett/${activePiece.color}${activePiece.type.toUpperCase()}.svg`;
+                }
+              }}
+              crossOrigin="anonymous"
+              loading="eager"
+            />
+          </div>
         ) : null}
       </DragOverlay>
     </DndContext>

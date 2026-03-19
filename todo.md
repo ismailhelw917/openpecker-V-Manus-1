@@ -827,3 +827,18 @@
 - [x] Check if advanceToNextPuzzle is being called incorrectly (was called immediately without delay)
 - [x] Fix FEN state management to prevent resets (added 300ms delay before advancing)
 - [x] Test that puzzle FEN stays stable throughout session (verified - no more resets)
+
+
+## Round 79 - Fix Piece Movement and Rendering
+- [ ] Investigate why pieces disappear when clicked
+- [ ] Fix piece movement not working correctly
+- [ ] Check chessboard rendering and piece display logic
+- [ ] Test piece interactions and movement
+
+
+## Round 79 - Fix Piece Movement and Rendering (DONE)
+- [x] Investigate piece disappearing and movement issues (found 3 bugs in CustomChessboard)
+- [x] Fix DragOverlay sizing for proper piece display during drag (added w-16 h-16 wrapper div)
+- [x] Fix state clearing to only happen after successful moves (moved setActivePiece/setActiveSquare into result check)
+- [x] Fix click-to-move to check move success before clearing selection (await result before setSelectedSquare(null))
+- [x] Test piece movement and rendering (verified - pieces stay visible and move correctly)
