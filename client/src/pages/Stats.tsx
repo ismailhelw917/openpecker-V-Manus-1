@@ -11,6 +11,7 @@ import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, R
 import { trpc } from "@/lib/trpc";
 
 type Tab = "overview" | "trends" | "openings" | "analytics";
+type TimeRange = "7d" | "30d" | "all";
 
 const PREMIUM_FEATURES = [
   "Unlimited puzzle access (5.8M+ puzzles)",
@@ -61,6 +62,8 @@ const MOCK_CYCLES_PER_DAY = [
 export default function Stats() {
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
+  const [timeRange, setTimeRange] = useState<TimeRange>("all");
+  const [selectedSet, setSelectedSet] = useState<string>("all");
   const { user } = useAuth();
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -253,16 +256,37 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
 
           {/* Controls */}
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-            <select className="bg-slate-800 border border-slate-700 text-white px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm">
-              <option>ALL SETS</option>
+            <select 
+              value={selectedSet}
+              onChange={(e) => setSelectedSet(e.target.value)}
+              className="bg-slate-800 border border-slate-700 text-white px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm">
+              <option value="all">ALL SETS</option>
             </select>
-            <button className="px-2 sm:px-3 py-1.5 sm:py-2 rounded text-slate-400 hover:text-white text-xs sm:text-sm transition-colors">
+            <button 
+              onClick={() => setTimeRange("7d")}
+              className={`px-2 sm:px-3 py-1.5 sm:py-2 rounded text-xs sm:text-sm transition-colors ${
+                timeRange === "7d" 
+                  ? "bg-amber-400 text-slate-900 font-semibold" 
+                  : "text-slate-400 hover:text-white"
+              }`}>
               7D
             </button>
-            <button className="px-2 sm:px-3 py-1.5 sm:py-2 rounded text-slate-400 hover:text-white text-xs sm:text-sm transition-colors">
+            <button 
+              onClick={() => setTimeRange("30d")}
+              className={`px-2 sm:px-3 py-1.5 sm:py-2 rounded text-xs sm:text-sm transition-colors ${
+                timeRange === "30d" 
+                  ? "bg-amber-400 text-slate-900 font-semibold" 
+                  : "text-slate-400 hover:text-white"
+              }`}>
               30D
             </button>
-            <button className="px-3 sm:px-4 py-1.5 sm:py-2 rounded bg-amber-400 text-slate-900 font-semibold text-xs sm:text-sm hover:bg-amber-500 transition-colors">
+            <button 
+              onClick={() => setTimeRange("all")}
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded text-xs sm:text-sm transition-colors ${
+                timeRange === "all" 
+                  ? "bg-amber-400 text-slate-900 font-semibold" 
+                  : "text-slate-400 hover:text-white"
+              }`}>
               ALL
             </button>
             <button className="text-slate-400 hover:text-white transition-colors">

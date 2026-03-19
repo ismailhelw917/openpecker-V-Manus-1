@@ -68,6 +68,40 @@ export default function Home() {
 
 
 
+        {/* Chess Board Preview */}
+        <div className="mb-8 sm:mb-12 bg-slate-900 rounded-lg p-4 sm:p-6 shadow-xl" style={{ maxWidth: '300px' }}>
+          <div className="grid grid-cols-8 gap-0 border-2 border-slate-700">
+            {Array.from({ length: 64 }).map((_, i) => {
+              const row = Math.floor(i / 8);
+              const col = i % 8;
+              const isLight = (row + col) % 2 === 0;
+              return (
+                <div
+                  key={i}
+                  className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-lg font-bold ${
+                    isLight ? 'bg-amber-100' : 'bg-amber-700'
+                  }`}
+                >
+                  {/* Show starting position pieces */}
+                  {row === 0 && (col === 0 || col === 7) && '♖'}
+                  {row === 0 && (col === 1 || col === 6) && '♘'}
+                  {row === 0 && (col === 2 || col === 5) && '♗'}
+                  {row === 0 && col === 3 && '♕'}
+                  {row === 0 && col === 4 && '♔'}
+                  {row === 1 && '♙'}
+                  {row === 6 && '♟'}
+                  {row === 7 && (col === 0 || col === 7) && '♜'}
+                  {row === 7 && (col === 1 || col === 6) && '♞'}
+                  {row === 7 && (col === 2 || col === 5) && '♝'}
+                  {row === 7 && col === 3 && '♛'}
+                  {row === 7 && col === 4 && '♚'}
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-center text-amber-300 text-xs mt-2 font-semibold">Master Every Opening</p>
+        </div>
+
         {/* CTA Buttons */}
         <div className="space-y-3 mb-6">
           <Button
@@ -85,8 +119,18 @@ export default function Home() {
               Sign In / Register
             </Button>
           ) : (
-            <div className="text-slate-700 text-sm">
-              Welcome, <span className="text-teal-600 font-semibold">{user?.name || user?.email}</span>
+            <div className="space-y-2">
+              <div className="text-slate-700 text-sm">
+                Welcome, <span className="text-teal-600 font-semibold">{user?.name || user?.email}</span>
+              </div>
+              {!user?.isPremium && (
+                <Button
+                  onClick={() => setLocation("/stats")}
+                  className="w-full max-w-sm bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg transition-all"
+                >
+                  ⭐ Upgrade to Premium
+                </Button>
+              )}
             </div>
           )}
         </div>
