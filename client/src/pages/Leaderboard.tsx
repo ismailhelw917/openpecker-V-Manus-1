@@ -26,9 +26,9 @@ export function Leaderboard() {
     return () => clearInterval(interval);
   }, [refetch]);
 
-  // Only show users with actual puzzle activity on the leaderboard
+  // Show all online players on the leaderboard
   const activeEntries = useMemo(() => {
-    return entries.filter((e: any) => e.hasActivity);
+    return entries; // Show all players, not just those with activity
   }, [entries]);
 
   const currentUserId = user?.id;

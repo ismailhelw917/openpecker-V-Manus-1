@@ -78,54 +78,24 @@ export async function updatePlayerStats(playerId: number) {
         SELECT COUNT(*) FROM cycle_history 
         WHERE (userId = ${userId} OR deviceId = ${deviceId}) AND (userId IS NOT NULL OR deviceId IS NOT NULL)
       ), 0),
-      accuracy = ROUND(
-        COALESCE(SUM(correctCount), 0) / NULLIF(COALESCE(SUM(totalPuzzles), 0), 0) * 100, 2
-      ),
-      lastActivityAt = COALESCE((
-        SELECT MAX(completedAt) FROM cycle_history 
-        WHERE (userId = ${userId} OR deviceId = ${deviceId}) AND (userId IS NOT NULL OR deviceId IS NOT NULL)
-      ), NOW())
+      accuracy = CASE 
+        WHEN COALESCE((SELECT SUM(totalPuzzles) FROM cycle_history WHERE (userId = ${userId} OR deviceId = ${deviceId}) AND (userId IS NOT NULL OR deviceId IS NOT NULL)), 0) = 0 THEN 0
+        ELSE ROUND((COALESCE((SELECT SUM(correctCount) FROM cycle_history WHERE (userId = ${userId} OR deviceId = ${deviceId}) AND (userId IS NOT NULL OR deviceId IS NOT NULL)), 0) / COALESCE((SELECT SUM(totalPuzzles) FROM cycle_history WHERE (userId = ${userId} OR deviceId = ${deviceId}) AND (userId IS NOT NULL OR deviceId IS NOT NULL)), 1)) * 100)
+      END,
+      lastActivityAt = NOW()
     WHERE id = ${playerId}
   `);
-}
-
-export async function createOnlineSession(playerId: number, userId: number | null, deviceId: string | null, sessionId: string) {
-  const db = await getDb();
-  if (!db) throw new Error('Database not available');
-
-  const sessionUuid = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
-  await db.execute(sql`
-    INSERT INTO online_sessions (id, playerId, userId, deviceId, sessionId, status, lastHeartbeat, startedAt)
-     VALUES (${sessionUuid}, ${playerId}, ${userId || null}, ${deviceId || null}, ${sessionId}, 'active', NOW(), NOW())
-  `);
-
-  return sessionUuid;
-}
-
-export async function updateOnlineSessionHeartbeat(sessionId: string, status: 'active' | 'paused' | 'idle' = 'active') {
-  const db = await getDb();
-  if (!db) throw new Error('Database not available');
-
-  await db.execute(sql`
-    UPDATE online_sessions SET lastHeartbeat = NOW(), status = ${status} WHERE id = ${sessionId}
-  `);
-}
-
-export async function endOnlineSession(sessionId: string) {
-  const db = await getDb();
-  if (!db) throw new Error('Database not available');
-
-  await db.execute(sql`DELETE FROM online_sessions WHERE id = ${sessionId}`);
 }
 
 export async function getOnlineCount() {
   const db = await getDb();
   if (!db) throw new Error('Database not available');
 
-  // Count unique players with active sessions right now
+  // Count unique players with page activity
   const result = await db.execute(sql`
-    SELECT COUNT(DISTINCT playerId) as cnt FROM online_sessions WHERE status IN ('active', 'paused')
+    SELECT COUNT(DISTINCT playerId) as cnt FROM online_sessions 
+    WHERE lastHeartbeat >= DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+    AND status IN ('active', 'paused')
   `);
   const rows = Array.isArray(result) ? (Array.isArray(result[0]) ? result[0] : result) : [];
   return Number(rows[0]?.cnt || 0);
@@ -135,10 +105,7 @@ export async function getTotalPlayerCount() {
   const db = await getDb();
   if (!db) throw new Error('Database not available');
 
-  // Count only players with puzzle activity (not just created)
-  const result = await db.execute(sql`
-    SELECT COUNT(*) as cnt FROM players WHERE totalPuzzles > 0
-  `);
+  const result = await db.execute(sql`SELECT COUNT(*) as cnt FROM players`);
   const rows = Array.isArray(result) ? (Array.isArray(result[0]) ? result[0] : result) : [];
   return Number(rows[0]?.cnt || 0);
 }
@@ -161,6 +128,7 @@ export async function getLeaderboardPlayers(limit: number = 500, sortBy: 'accura
   const db = await getDb();
   if (!db) throw new Error('Database not available');
 
+  // Build ORDER BY clause based on sort preference
   let orderBy = 'CASE WHEN totalPuzzles = 0 THEN 0 ELSE ROUND((totalCorrect / totalPuzzles) * 100) END DESC, totalPuzzles DESC';
   if (sortBy === 'speed') {
     orderBy = 'CASE WHEN totalPuzzles = 0 THEN 999999 ELSE ROUND(totalTimeMs / totalPuzzles / 1000) END ASC, totalPuzzles DESC';
@@ -168,10 +136,16 @@ export async function getLeaderboardPlayers(limit: number = 500, sortBy: 'accura
     orderBy = 'CASE WHEN rating IS NULL THEN 1200 ELSE rating END DESC, totalPuzzles DESC';
   }
 
+  // Get all players ranked by performance (show all players, not just those with activity)
   const result = await db.execute(sql`
     SELECT 
       id, userId, deviceId, name, email, type, isPremium,
-      totalPuzzles, totalCorrect, totalTimeMs, completedCycles, accuracy, rating,
+      COALESCE(totalPuzzles, 0) as totalPuzzles, 
+      COALESCE(totalCorrect, 0) as totalCorrect, 
+      COALESCE(totalTimeMs, 0) as totalTimeMs, 
+      COALESCE(completedCycles, 0) as completedCycles, 
+      COALESCE(accuracy, 0) as accuracy, 
+      COALESCE(rating, 1200) as rating,
       lastActivityAt, createdAt
     FROM players
     ORDER BY ${sql.raw(orderBy)}

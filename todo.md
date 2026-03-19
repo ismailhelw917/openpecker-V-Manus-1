@@ -913,4 +913,8 @@
 - [x] Ensure all players with activity are included (1,877 total players, 3 with activity)
 - [x] Test leaderboard with multiple players (correctly showing 3 active players)
 - [x] Removed WHERE totalPuzzles > 0 filter and improved sorting logic
+- [x] Fixed frontend filter that was hiding inactive players
+- [x] Updated getLeaderboardPlayers to return all players from database
+- [x] Leaderboard now shows 500 players ranked by performance (Accuracy, Speed, Rating)
+- [x] Active players appear first, inactive players ranked below
 - [ ] Create checkpoint
