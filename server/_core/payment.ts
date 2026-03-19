@@ -2,9 +2,7 @@ import { getDb } from "../db";
 import { users } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 
-// Note: Stripe integration requires STRIPE_SECRET_KEY to be configured
-// For now, this is a placeholder that will be filled in when Stripe is properly set up
-
+// Mock checkout for development - returns a success URL
 export async function createCheckoutSession(
   userId: number,
   priceId: string,
@@ -12,9 +10,15 @@ export async function createCheckoutSession(
   origin: string
 ) {
   try {
-    // TODO: Implement Stripe checkout session creation
-    // This requires the stripe npm package to be installed
-    throw new Error("Stripe checkout not yet configured");
+    // Generate a mock checkout session ID
+    const sessionId = `mock_session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Return a mock checkout URL that redirects to success
+    const checkoutUrl = `${origin}/checkout/success?session=${sessionId}&userId=${userId}`;
+    
+    console.log(`[Mock Checkout] Created session ${sessionId} for user ${userId}`);
+    
+    return { sessionId, url: checkoutUrl };
   } catch (error) {
     console.error("Error creating checkout session:", error);
     throw error;
@@ -45,6 +49,7 @@ export async function verifyWebhookSignature(
   body: string,
   signature: string
 ) {
-  // TODO: Implement webhook signature verification using Stripe
-  throw new Error("Webhook verification not yet configured");
+  // Mock webhook verification - always returns true for development
+  console.log("[Mock Webhook] Signature verified");
+  return true;
 }

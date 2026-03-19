@@ -724,6 +724,47 @@ export const appRouter = router({
         return getOnlineSessionCount();
       }),
   }),
+
+  // ==================== PAYMENT ====================
+  payment: router({
+    /**
+     * Create a checkout session
+     */
+    createCheckout: publicProcedure
+      .input(
+        z.object({
+          userId: z.number().optional(),
+          email: z.string().email(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const { createCheckoutSession } = await import("./_core/payment");
+        const origin = ctx.req?.headers.origin || "https://openpecker.com";
+        
+        return createCheckoutSession(
+          input.userId || ctx.user?.id || 0,
+          "price_premium",
+          input.email,
+          origin
+        );
+      }),
+
+    /**
+     * Handle payment success
+     */
+    handleSuccess: publicProcedure
+      .input(
+        z.object({
+          userId: z.number(),
+          sessionId: z.string(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const { handlePaymentSuccess } = await import("./_core/payment");
+        await handlePaymentSuccess(input.userId);
+        return { success: true };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
