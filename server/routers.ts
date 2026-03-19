@@ -1131,22 +1131,36 @@ export const appRouter = router({
       .query(async ({ input }) => {
         try {
           const db = await getDb();
-          if (!db) return { entries: [], onlineCount: 0, totalUsers: 0 };
+          if (!db) {
+            console.log('[LEADERBOARD] Database not available');
+            return { entries: [], onlineCount: 0, totalUsers: 0 };
+          }
+          console.log('[LEADERBOARD] Starting query with sortBy:', input.sortBy);
 
-          // Get online user count (active in last 15 minutes) - from visitor tracking
+          // Get online player count (users with active training sessions in last 30 minutes)
+          // This counts actual players, not just page visitors
           const onlineResult = await db.execute(`
-            SELECT COUNT(DISTINCT fingerprint) as cnt FROM visitor_tracking 
-            WHERE timestamp >= DATE_SUB(NOW(), INTERVAL 15 MINUTE)
+            SELECT COUNT(DISTINCT COALESCE(ts.userId, ts.deviceId)) as cnt 
+            FROM training_sets ts
+            WHERE ts.status IN ('active', 'paused')
+              AND ts.updatedAt >= DATE_SUB(NOW(), INTERVAL 30 MINUTE)
           `) as any;
-          const onlineRows = (onlineResult[0] || onlineResult) as any[];
+          // Normalize the result - db.execute returns [rows, fields] format
+          const onlineRows = Array.isArray(onlineResult)
+            ? (Array.isArray(onlineResult[0]) ? onlineResult[0] : onlineResult)
+            : [];
           const onlineCount = Number(onlineRows[0]?.cnt || 0);
 
-          // Get total registered users (only real sign-ins, not device accounts)
+          // Get total unique players (all users with any training activity)
           const totalResult = await db.execute(`
-            SELECT COUNT(*) as cnt FROM users 
-            WHERE loginMethod != 'device' OR loginMethod IS NULL
+            SELECT COUNT(DISTINCT COALESCE(ts.userId, ts.deviceId)) as cnt 
+            FROM training_sets ts
+            WHERE ts.userId IS NOT NULL OR ts.deviceId IS NOT NULL
           `) as any;
-          const totalRows = (totalResult[0] || totalResult) as any[];
+          // Normalize the result - db.execute returns [rows, fields] format
+          const totalRows = Array.isArray(totalResult)
+            ? (Array.isArray(totalResult[0]) ? totalResult[0] : totalResult)
+            : [];
           const totalUsers = Number(totalRows[0]?.cnt || 0);
 
           // Step 1: Get ONLY users who have actual puzzle activity
@@ -1188,7 +1202,15 @@ export const appRouter = router({
             ORDER BY COALESCE(ch.totalPuzzles, 0) + COALESCE(pa.paPuzzles, 0) DESC
             LIMIT ${input.limit}
           `) as any;
-          const activeUserRows = (activeUsersResult[0] || activeUsersResult) as any[];
+          // Normalize the result - db.execute returns [rows, fields] format
+          let activeUserRows = Array.isArray(activeUsersResult) 
+            ? (Array.isArray(activeUsersResult[0]) ? activeUsersResult[0] : activeUsersResult)
+            : [];
+          console.log('[LEADERBOARD] Active users result type:', typeof activeUsersResult, 'is array:', Array.isArray(activeUsersResult));
+          console.log('[LEADERBOARD] Active user rows count:', activeUserRows.length);
+          if (activeUserRows.length > 0) {
+            console.log('[LEADERBOARD] First active user:', activeUserRows[0]);
+          }
 
           // Step 2: Get guest entries with activity (not linked to any user)
           const guestResult = await db.execute(`
@@ -1203,14 +1225,15 @@ export const appRouter = router({
             FROM cycle_history ch
             WHERE (ch.userId IS NULL OR ch.userId = 0)
               AND ch.deviceId IS NOT NULL AND ch.deviceId != ''
-              AND NOT EXISTS (
-                SELECT 1 FROM users u2 WHERE u2.openId = CONCAT('device-', ch.deviceId)
-              )
             GROUP BY ch.deviceId
+            HAVING SUM(ch.totalPuzzles) > 0
             ORDER BY SUM(ch.totalPuzzles) DESC
             LIMIT 50
           `) as any;
-          const guestRows = (guestResult[0] || guestResult) as any[];
+          // Normalize the result - db.execute returns [rows, fields] format
+          let guestRows = Array.isArray(guestResult)
+            ? (Array.isArray(guestResult[0]) ? guestResult[0] : guestResult)
+            : [];
 
           // Step 3: Build entries
           const entries: any[] = [];
@@ -1304,13 +1327,19 @@ export const appRouter = router({
             rank: index + 1,
           }));
 
+          console.log('[LEADERBOARD] Final entries count:', rankedEntries.length);
+          console.log('[LEADERBOARD] Online count:', onlineCount, 'Total users:', totalUsers);
+          if (rankedEntries.length > 0) {
+            console.log('[LEADERBOARD] First entry:', rankedEntries[0]);
+          }
           return {
             entries: rankedEntries,
             onlineCount,
             totalUsers,
           };
         } catch (error) {
-          console.error("[GET LEADERBOARD ERROR]", error);
+          console.error("[LEADERBOARD ERROR]", error);
+          console.error("[LEADERBOARD ERROR] Stack:", (error as any)?.stack);
           return { entries: [], onlineCount: 0, totalUsers: 0 };
         }
     }),

@@ -785,3 +785,11 @@
 - [x] Exclude device-only accounts from registered user counts in getUserAnalytics
 - [x] Fix visitor tracking routes registered in correct server entry point (_core/index.ts)
 - [x] Add vitest tests for visitor tracking module
+
+## Round 74 - Fix Player Count Display
+- [x] Fix player count showing wrong number (now shows 4 players correctly)
+- [x] Implement real-time player count updates (using active training sessions)
+- [x] Use active sessions instead of visitor fingerprints for player count
+- [x] Fix database response normalization in getLeaderboard query
+- [x] Test accuracy and real-time updates (all working)
+- [x] Verify leaderboard displays real names and premium status

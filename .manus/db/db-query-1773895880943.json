@@ -1,0 +1,31 @@
+{
+  "query": "SELECT \n  u.id as userId,\n  u.name,\n  u.isPremium,\n  COALESCE(ch.completedCycles, 0) as completedCycles,\n  COALESCE(ch.totalPuzzles, 0) as chPuzzles\nFROM users u\nLEFT JOIN (\n  SELECT userId, COUNT(*) as completedCycles, \n         SUM(totalPuzzles) as totalPuzzles\n  FROM cycle_history \n  WHERE userId IS NOT NULL AND userId > 0\n  GROUP BY userId\n) ch ON u.id = ch.userId\nWHERE (ch.completedCycles IS NOT NULL AND ch.completedCycles > 0)\nLIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT \n  u.id as userId,\n  u.name,\n  u.isPremium,\n  COALESCE(ch.completedCycles, 0) as completedCycles,\n  COALESCE(ch.totalPuzzles, 0) as chPuzzles\nFROM users u\nLEFT JOIN (\n  SELECT userId, COUNT(*) as completedCycles, \n         SUM(totalPuzzles) as totalPuzzles\n  FROM cycle_history \n  WHERE userId IS NOT NULL AND userId > 0\n  GROUP BY userId\n) ch ON u.id = ch.userId\nWHERE (ch.completedCycles IS NOT NULL AND ch.completedCycles > 0)\nLIMIT 10;",
+  "rows": [
+    {
+      "userId": "750215",
+      "name": "N.Balaji",
+      "isPremium": "1",
+      "completedCycles": "10",
+      "chPuzzles": "75"
+    },
+    {
+      "userId": "750255",
+      "name": "Ayush",
+      "isPremium": "1",
+      "completedCycles": "10",
+      "chPuzzles": "75"
+    },
+    {
+      "userId": "750380",
+      "name": "BR",
+      "isPremium": "1",
+      "completedCycles": "10",
+      "chPuzzles": "75"
+    }
+  ],
+  "messages": [],
+  "stdout": "userId\tname\tisPremium\tcompletedCycles\tchPuzzles\n750215\tN.Balaji\t1\t10\t75\n750255\tAyush\t1\t10\t75\n750380\tBR\t1\t10\t75\n",
+  "stderr": "",
+  "execution_time_ms": 1667
+}
