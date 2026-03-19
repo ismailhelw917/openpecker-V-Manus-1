@@ -105,7 +105,6 @@ export const appRouter = router({
             openId: userInfo.openId,
             name: userInfo.name,
             email: userInfo.email,
-            avatar: userInfo.avatar,
           });
 
           // Create session token

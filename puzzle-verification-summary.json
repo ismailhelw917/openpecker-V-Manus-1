@@ -1,0 +1,11 @@
+{
+  "total": 5415000,
+  "working": 0,
+  "broken": 5415000,
+  "workingPercentage": 0,
+  "brokenPercentage": 100,
+  "durationSeconds": 726.441,
+  "durationMinutes": "12.11",
+  "averageSpeed": "7454",
+  "timestamp": "2026-03-19T10:56:43.719Z"
+}
