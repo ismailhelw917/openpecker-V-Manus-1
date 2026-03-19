@@ -226,7 +226,13 @@
 - [x] Add better error handling for illegal moves
 - [x] Add legal moves calculation and display
 - [x] Test move validation with legal move indicators
-- [ ] Save checkpoint
+- [x] Save checkpoint
+
+## Bug Fix (Round 18 - Session Creation Navigation)
+- [x] Fix Train.tsx to handle setId string response from API
+- [x] Updated response handler to check for string response directly
+- [x] Test session creation flow end-to-end
+- [x] Verified navigation to session page works correctly
 
 ## Puzzle & Board Improvements (Round 18 - User Request)
 - [x] Remove legal move indicators from board display

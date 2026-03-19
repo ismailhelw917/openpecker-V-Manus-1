@@ -91,7 +91,10 @@ export default function Train() {
         puzzleCount: puzzles.length,
       });
 
-      if (result.success && result.setId) {
+      if (result && typeof result === 'string') {
+        toast.success("Training session started!");
+        setLocation(`/session/${result}`);
+      } else if (result && typeof result === 'object' && 'setId' in result) {
         toast.success("Training session started!");
         setLocation(`/session/${result.setId}`);
       } else {

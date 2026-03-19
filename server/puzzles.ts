@@ -39,15 +39,26 @@ export async function getPuzzlesByOpening(
     
     return {
       success: true,
-      puzzles: result.map(p => ({
-        id: p.id,
-        fen: p.fen,
-        moves: p.moves,
-        rating: p.rating,
-        themes: typeof p.themes === 'string' ? JSON.parse(p.themes) : p.themes || [],
-        openingName: p.openingName || openingName,
-        color: p.color || 'both',
-      })),
+      puzzles: result.map(p => {
+        let themes = [];
+        if (p.themes) {
+          try {
+            themes = typeof p.themes === 'string' ? JSON.parse(p.themes) : p.themes;
+          } catch (e) {
+            // If themes is a plain string like "strategy", wrap it in an array
+            themes = typeof p.themes === 'string' ? [p.themes] : [];
+          }
+        }
+        return {
+          id: p.id,
+          fen: p.fen,
+          moves: p.moves,
+          rating: p.rating,
+          themes,
+          openingName: p.openingName || openingName,
+          color: p.color || 'both',
+        };
+      }),
       count: result.length,
     };
   } catch (error) {
