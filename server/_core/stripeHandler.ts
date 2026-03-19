@@ -49,6 +49,13 @@ export function registerStripeRoutes(app: express.Express) {
 
       // Create Stripe checkout session
       const stripe = getStripe();
+      
+      // Determine mode based on the price ID
+      // Note: Both monthly and lifetime use 'payment' mode since the prices are configured as one-time payments
+      // For true subscriptions, you would need to use recurring prices configured in Stripe
+      const isMonthly = priceId === "price_monthly" || actualPriceId === STRIPE_PRICES.price_monthly;
+      const mode = "payment"; // Use payment mode for both plans
+      
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         line_items: [
@@ -57,7 +64,7 @@ export function registerStripeRoutes(app: express.Express) {
             quantity: 1,
           },
         ],
-        mode: actualPriceId === STRIPE_PRICES.price_monthly ? "subscription" : "payment",
+        mode,
         success_url: `${origin}/settings?payment=success&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/settings?payment=cancelled`,
         customer_email: email,
@@ -66,7 +73,7 @@ export function registerStripeRoutes(app: express.Express) {
         metadata: {
           userId: userId.toString(),
           email,
-          plan: actualPriceId === STRIPE_PRICES.price_monthly ? "monthly" : "lifetime",
+          plan: isMonthly ? "monthly" : "lifetime",
         },
       });
 
