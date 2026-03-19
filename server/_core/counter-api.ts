@@ -124,3 +124,84 @@ export async function trackPageView(userId: number, page: string) {
     },
   });
 }
+
+/**
+ * Track user registration
+ */
+export async function trackUserRegistration(userId: number, userName: string, email: string) {
+  return trackEvent({
+    userId,
+    userName,
+    action: 'user_registration',
+    category: 'auth',
+    metadata: {
+      email,
+      timestamp: new Date().toISOString(),
+    },
+  });
+}
+
+/**
+ * Track leaderboard player name
+ */
+export async function trackLeaderboardPlayer(userId: number, userName: string, rating: number, accuracy: number) {
+  return trackEvent({
+    userId,
+    userName,
+    action: 'leaderboard_update',
+    category: 'leaderboard',
+    value: rating,
+    metadata: {
+      rating,
+      accuracy,
+      timestamp: new Date().toISOString(),
+    },
+  });
+}
+
+/**
+ * Track daily website visitor
+ */
+export async function trackDailyVisitor(userId: number | null, sessionId: string) {
+  return trackEvent({
+    userId: userId || undefined,
+    action: 'daily_visit',
+    category: 'analytics',
+    metadata: {
+      sessionId,
+      date: new Date().toISOString().split('T')[0],
+    },
+  });
+}
+
+/**
+ * Track online user session
+ */
+export async function trackOnlineUser(userId: number, userName: string) {
+  return trackEvent({
+    userId,
+    userName,
+    action: 'user_online',
+    category: 'online',
+    metadata: {
+      timestamp: new Date().toISOString(),
+    },
+  });
+}
+
+/**
+ * Track puzzle by opening category
+ */
+export async function trackPuzzleByOpening(puzzleId: string, openingName: string, rating: number) {
+  return trackEvent({
+    action: 'puzzle_categorized',
+    category: 'puzzle_opening',
+    value: rating,
+    metadata: {
+      puzzleId,
+      opening: openingName,
+      rating,
+      timestamp: new Date().toISOString(),
+    },
+  });
+}

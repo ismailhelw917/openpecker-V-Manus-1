@@ -1081,3 +1081,41 @@ export async function updatePlayerName(userId: number, name: string) {
     console.error("[Database] Error updating player name:", error);
   }
 }
+
+/**
+ * Get count of currently online players
+ */
+export async function getOnlineCount(): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+
+  try {
+    const result = await db
+      .select({ count: count() })
+      .from(onlineSessions);
+    
+    return result[0]?.count || 0;
+  } catch (error) {
+    console.error("[Database] Error getting online count:", error);
+    return 0;
+  }
+}
+
+/**
+ * Get total number of registered players
+ */
+export async function getTotalPlayerCount(): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+
+  try {
+    const result = await db
+      .select({ count: count() })
+      .from(players);
+    
+    return result[0]?.count || 0;
+  } catch (error) {
+    console.error("[Database] Error getting total player count:", error);
+    return 0;
+  }
+}

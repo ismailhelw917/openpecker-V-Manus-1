@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, Zap, Shield, Loader } from "lucide-react";
+import { Download, Zap, Shield, Loader, Users, TrendingUp } from "lucide-react";
 import { StatsDisplay } from "@/components/StatsDisplay";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "@/_core/deviceId";
@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { trpc } from "@/lib/trpc";
 
-type Tab = "overview" | "trends" | "openings";
+type Tab = "overview" | "trends" | "openings" | "analytics";
 
 const PREMIUM_FEATURES = [
   "Unlimited puzzle access (5.8M+ puzzles)",
@@ -95,6 +95,7 @@ export default function Stats() {
     }
   };
   const utils = trpc.useUtils();
+const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
 
 
 
@@ -109,6 +110,21 @@ export default function Stats() {
     { userId: user?.id, deviceId: deviceId || undefined },
     { enabled: !!deviceId || !!user }
   );
+
+  // Fetch Counter API metrics
+  const { data: onlineData } = trpc.system.getOnlineCount.useQuery();
+  const { data: totalPlayersData } = trpc.system.getTotalPlayerCount.useQuery();
+
+  // Track user online status
+  useEffect(() => {
+    if (user || deviceId) {
+      trackOnlineMutation.mutate({
+        userId: user?.id,
+        userName: user?.name,
+        sessionId: deviceId || 'anonymous',
+      });
+    }
+  }, [user, deviceId, trackOnlineMutation]);
 
   // Auto-refresh stats every 5 seconds
   useEffect(() => {

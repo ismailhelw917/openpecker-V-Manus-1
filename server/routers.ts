@@ -6,7 +6,7 @@ import { z } from "zod";
 import { nanoid } from "nanoid";
 import bcrypt from "bcrypt";
 import { sdk } from "./_core/sdk";
-import { trackUserLogin } from "./_core/counter-api";
+import { trackUserLogin, trackUserRegistration, trackLeaderboardPlayer, trackDailyVisitor, trackOnlineUser, trackPuzzleByOpening } from "./_core/counter-api";
 import {
   getDb,
   getPuzzlesByThemeAndRating,
@@ -116,6 +116,11 @@ export const appRouter = router({
             if (user.id) {
               await updatePlayerName(user.id, user.name);
             }
+          }
+
+          // Track registration if this is a new user
+          if (user && user.id && user.name && userInfo.email) {
+            await trackUserRegistration(user.id, user.name, userInfo.email);
           }
 
           // Create session token

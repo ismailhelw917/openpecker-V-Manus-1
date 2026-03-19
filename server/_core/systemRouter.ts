@@ -1,7 +1,8 @@
 import { notifyOwner } from "./notification";
 import { adminProcedure, publicProcedure, router } from "./trpc";
-import { getGlobalSettings, updateGlobalSettings, getUserAnalytics } from "../db";
+import { getGlobalSettings, updateGlobalSettings, getUserAnalytics, getOnlineCount, getTotalPlayerCount } from "../db";
 import { classifyNullPuzzles, getPuzzleClassificationStats } from "../classify-puzzles-db";
+import { trackOnlineUser, trackDailyVisitor } from "./counter-api";
 import { z } from "zod";
 
 export const systemRouter = router({
@@ -72,4 +73,39 @@ export const systemRouter = router({
     const analytics = await getUserAnalytics();
     return analytics;
   }),
+
+  /**
+   * Get online user count
+   */
+  getOnlineCount: publicProcedure.query(async () => {
+    const count = await getOnlineCount();
+    return { onlineCount: count };
+  }),
+
+  /**
+   * Get total player count
+   */
+  getTotalPlayerCount: publicProcedure.query(async () => {
+    const count = await getTotalPlayerCount();
+    return { totalPlayers: count };
+  }),
+
+  /**
+   * Track user online status and daily visit
+   */
+  trackUserOnline: publicProcedure
+    .input(
+      z.object({
+        userId: z.number().optional(),
+        userName: z.string().optional(),
+        sessionId: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      if (input.userId && input.userName) {
+        await trackOnlineUser(input.userId, input.userName);
+      }
+      await trackDailyVisitor(input.userId || null, input.sessionId);
+      return { success: true };
+    }),
 });
