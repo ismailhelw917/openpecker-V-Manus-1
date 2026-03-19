@@ -68,38 +68,6 @@ export default function Home() {
 
 
 
-        {/* Army of Pawns Led by King Background */}
-        <div className="mb-8 sm:mb-12 relative w-full max-w-2xl h-48 sm:h-64 rounded-lg overflow-hidden shadow-xl" style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)' }}>
-          {/* King at the front center */}
-          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-8xl sm:text-9xl z-10 drop-shadow-lg">♔</div>
-          
-          {/* Army of pawns in formation */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            {/* Back rows of pawns */}
-            <div className="absolute top-8 left-0 right-0 flex justify-center gap-2 sm:gap-4 px-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={`back-${i}`} className="text-4xl sm:text-5xl opacity-60 drop-shadow-lg">♟</div>
-              ))}
-            </div>
-            
-            {/* Middle rows of pawns */}
-            <div className="absolute top-24 left-0 right-0 flex justify-center gap-1 sm:gap-3 px-4">
-              {Array.from({ length: 10 }).map((_, i) => (
-                <div key={`mid-${i}`} className="text-3xl sm:text-4xl opacity-70 drop-shadow-lg">♟</div>
-              ))}
-            </div>
-            
-            {/* Front rows of pawns */}
-            <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-1 sm:gap-2 px-4 flex-wrap">
-              {Array.from({ length: 12 }).map((_, i) => (
-                <div key={`front-${i}`} className="text-2xl sm:text-3xl opacity-80 drop-shadow-lg">♟</div>
-              ))}
-            </div>
-          </div>
-          
-          <p className="absolute bottom-3 left-0 right-0 text-center text-amber-300 text-xs sm:text-sm font-semibold drop-shadow-lg">Master Every Opening</p>
-        </div>
-
         {/* CTA Buttons */}
         <div className="space-y-3 mb-6">
           <Button
