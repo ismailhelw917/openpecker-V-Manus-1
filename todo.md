@@ -1017,4 +1017,11 @@
 - [x] Identify which tRPC query on leaderboard is sending undefined input (getLeaderboard query)
 - [x] Fix query to stabilize input with useMemo to prevent reference changes
 - [x] Test leaderboard loads without errors (page displaying correctly)
+- [x] Create checkpoint
+
+## Premium Grant to Online Users (Round 60 - User Request)
+- [x] Update all 75 online users to isPremium=1 in database
+- [x] Add watermark notification banner in App.tsx
+- [x] Display "✨ Premium granted to all online users" message
+- [x] Make watermark dismissible with × button
 - [ ] Create checkpoint

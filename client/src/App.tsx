@@ -61,6 +61,7 @@ function App() {
   const [showGiftPremium, setShowGiftPremium] = useState(true);
   const [giftPremiumDismissed, setGiftPremiumDismissed] = useState(false);
   const [premiumBannerDismissed, setPremiumBannerDismissed] = useState(false);
+  const [showPremiumWatermark, setShowPremiumWatermark] = useState(true);
   const { isAuthenticated, loading, user } = useAuth();
   const [, setLocation] = useLocation();
   const { data: giftEligibility } = trpc.auth.checkGiftEligibility.useQuery();
@@ -130,6 +131,14 @@ function App() {
             {/* Premium Banner for unregistered users */}
             {!isAuthenticated && showGiftPremium && !premiumBannerDismissed && (
               <PremiumBanner onDismiss={() => setPremiumBannerDismissed(true)} />
+            )}
+
+            {/* Premium Watermark for online users */}
+            {showPremiumWatermark && user?.isPremium === 1 && (
+              <div className="fixed top-4 right-4 bg-amber-500/20 border border-amber-400 rounded-lg px-4 py-2 text-sm text-amber-300 z-50 flex items-center gap-2">
+                <span>✨ Premium granted to all online users</span>
+                <button onClick={() => setShowPremiumWatermark(false)} className="ml-2 text-amber-300 hover:text-amber-200">×</button>
+              </div>
             )}
 
             {/* Routes */}
