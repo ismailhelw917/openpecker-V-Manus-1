@@ -13,7 +13,7 @@ export default function SavedSets() {
   const deviceId = getOrCreateDeviceId();
 
   // Fetch saved sets - pass both userId and deviceId for comprehensive lookup
-  const setsQuery = trpc.trainingSets.list.useQuery(
+  const setsQuery = trpc.trainingSets.getByUser.useQuery(
     {
       userId: user?.id,
       deviceId: deviceId || undefined,

@@ -30,7 +30,7 @@ export default function Train() {
   const [puzzleCount, setPuzzleCount] = useState(50);
 
   // Fetch available openings using tRPC
-  const getOpeningsQuery = trpc.openings.getNames.useQuery();
+  const getOpeningsQuery = trpc.openings.getNames.useQuery({});
 
   useEffect(() => {
     if (getOpeningsQuery.data && Array.isArray(getOpeningsQuery.data)) {
