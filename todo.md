@@ -842,3 +842,9 @@
 - [x] Fix state clearing to only happen after successful moves (moved setActivePiece/setActiveSquare into result check)
 - [x] Fix click-to-move to check move success before clearing selection (await result before setSelectedSquare(null))
 - [x] Test piece movement and rendering (verified - pieces stay visible and move correctly)
+
+
+## Round 80 - Add Checkmark and Fix Puzzle Reverting (DONE)
+- [x] Checkmark already implemented (shows green checkmark after correct solutions)
+- [x] Fix puzzle reverting to first puzzle (changed useEffect dependency from getTrainingSet.data to getTrainingSet.data?.id)
+- [x] Test both fixes (verified - puzzles advance correctly without reverting)

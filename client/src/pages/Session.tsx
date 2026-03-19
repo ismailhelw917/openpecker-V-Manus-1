@@ -275,7 +275,7 @@ export default function Session() {
       console.error("Error loading puzzles:", error);
       setIsLoading(false);
     }
-  }, [getTrainingSet.data]);
+  }, [getTrainingSet.data?.id]); // Only depend on training set ID to prevent re-initialization
 
   // Advance to next puzzle
   const advanceToNextPuzzle = useCallback(() => {
