@@ -36,6 +36,11 @@ import {
   redeemPromoCode,
   getAllPromoCodes,
   getUserRedemptions,
+  createOrUpdateOnlineSession,
+  updateSessionHeartbeat,
+  getOnlineSessionCount,
+  endOnlineSession,
+  cleanupStaleOnlineSessions,
 } from "./db";
 import {
   getOnlineCount,

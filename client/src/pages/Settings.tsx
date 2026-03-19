@@ -461,9 +461,9 @@ export default function Settings() {
               <button
                 onClick={() => handleCheckout("price_monthly", "Monthly")}
                 disabled={loading}
-                className="w-full p-4 rounded-lg border-2 border-slate-700 bg-slate-800/50 hover:border-amber-400 hover:bg-amber-400/5 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full p-4 rounded-lg border-2 border-slate-700 bg-slate-800/50 hover:border-amber-400 hover:bg-amber-400/5 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed pointer-events-auto cursor-pointer"
               >
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between pointer-events-none">
                   <div>
                     <p className="text-slate-400 text-sm">MONTHLY</p>
                     <p className="text-white font-bold text-xl">€4.99 <span className="text-sm text-slate-400">/month</span></p>
@@ -476,9 +476,9 @@ export default function Settings() {
               <button
                 onClick={() => handleCheckout("price_lifetime", "Lifetime")}
                 disabled={loading}
-                className="w-full p-4 rounded-lg border-2 border-amber-400/40 bg-amber-400/10 hover:border-amber-400 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full p-4 rounded-lg border-2 border-amber-400/40 bg-amber-400/10 hover:border-amber-400 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed pointer-events-auto cursor-pointer"
               >
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between pointer-events-none">
                   <div>
                     <p className="text-amber-400 font-semibold text-sm">LIFETIME ACCESS</p>
                     <p className="text-white font-bold text-xl">€49 <span className="text-sm text-slate-400">/once</span></p>

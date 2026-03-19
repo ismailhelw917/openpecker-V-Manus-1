@@ -888,3 +888,19 @@
 - [x] Fix paywall button functionality (changed Stripe checkout mode from subscription to payment)
 - [x] Test all paywall buttons (MONTHLY and LIFETIME buttons now redirect to Stripe checkout)
 - [ ] Create checkpoint
+
+
+## Paywall Button Mobile Fix (Round 47 - User Report)
+- [x] Fix unclickable paywall buttons on mobile (CSS/pointer-events issue)
+- [x] Test buttons on mobile and desktop
+- [x] Ensure proper button click handlers
+
+## Online User Tracking System (Round 47 - User Request)
+- [x] Create database schema for online_sessions table (already exists in schema.ts)
+- [x] Add database functions for session tracking in db.ts
+- [ ] Implement cookie-based session tracking in routers
+- [ ] Add session heartbeat mechanism
+- [ ] Create API endpoints for tracking online users
+- [ ] Update leaderboard to use database data sources
+- [ ] Test online user tracking
+- [ ] Create checkpoint

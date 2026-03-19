@@ -1,4 +1,4 @@
-import { eq, and, or, gte, lte, desc, asc, sql, count, sum, inArray } from "drizzle-orm";
+import { eq, and, or, gte, lte, lt, desc, asc, sql, count, sum, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, 
@@ -19,6 +19,7 @@ import {
   InsertPromoCode,
   promoRedemptions,
   InsertPromoRedemption,
+  onlineSessions,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -917,5 +918,120 @@ export async function getUserRedemptions(userId: number | null, deviceId: string
   } catch (error) {
     console.error("Error getting user redemptions:", error);
     return [];
+  }
+}
+
+
+/**
+ * Online session tracking functions
+ */
+
+export async function createOrUpdateOnlineSession(
+  playerId: number,
+  userId: number | null,
+  deviceId: string | null,
+  sessionId: string
+) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  try {
+    const result = await db.insert(onlineSessions).values({
+      id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      playerId,
+      userId,
+      deviceId,
+      sessionId,
+      status: "active",
+      lastHeartbeat: new Date(),
+      startedAt: new Date(),
+      createdAt: new Date(),
+    }).onDuplicateKeyUpdate({
+      set: {
+        lastHeartbeat: new Date(),
+        status: "active",
+      },
+    });
+
+    return result;
+  } catch (error) {
+    console.error("[Database] Error creating/updating online session:", error);
+    return undefined;
+  }
+}
+
+export async function updateSessionHeartbeat(playerId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  try {
+    const result = await db
+      .update(onlineSessions)
+      .set({ lastHeartbeat: new Date() })
+      .where(eq(onlineSessions.playerId, playerId));
+
+    return result;
+  } catch (error) {
+    console.error("[Database] Error updating session heartbeat:", error);
+    return undefined;
+  }
+}
+
+export async function getOnlineSessionCount(minutesActive: number = 5) {
+  const db = await getDb();
+  if (!db) return 0;
+
+  try {
+    const cutoffTime = new Date(Date.now() - minutesActive * 60 * 1000);
+    
+    const result = await db
+      .select({ count: sql<number>`COUNT(DISTINCT playerId)` })
+      .from(onlineSessions)
+      .where(
+        and(
+          eq(onlineSessions.status, "active"),
+          gte(onlineSessions.lastHeartbeat, cutoffTime)
+        )
+      );
+
+    return result[0]?.count || 0;
+  } catch (error) {
+    console.error("[Database] Error getting online session count:", error);
+    return 0;
+  }
+}
+
+export async function endOnlineSession(playerId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  try {
+    const result = await db
+      .update(onlineSessions)
+      .set({ status: "idle" })
+      .where(eq(onlineSessions.playerId, playerId));
+
+    return result;
+  } catch (error) {
+    console.error("[Database] Error ending online session:", error);
+    return undefined;
+  }
+}
+
+export async function cleanupStaleOnlineSessions(minutesInactive: number = 30) {
+  const db = await getDb();
+  if (!db) return 0;
+
+  try {
+    const cutoffTime = new Date(Date.now() - minutesInactive * 60 * 1000);
+    
+    const result = await db
+      .delete(onlineSessions)
+      .where(lt(onlineSessions.lastHeartbeat, cutoffTime));
+
+    return result;
+  } catch (error) {
+    console.error("[Database] Error cleaning up stale sessions:", error);
+    return 0;
   }
 }
