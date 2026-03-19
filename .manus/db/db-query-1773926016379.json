@@ -1,0 +1,35 @@
+{
+  "query": "SELECT DISTINCT openingName, COUNT(*) as puzzle_count, AVG(rating) as avg_rating FROM puzzles WHERE openingName IS NOT NULL GROUP BY openingName ORDER BY puzzle_count DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT DISTINCT openingName, COUNT(*) as puzzle_count, AVG(rating) as avg_rating FROM puzzles WHERE openingName IS NOT NULL GROUP BY openingName ORDER BY puzzle_count DESC;",
+  "rows": [
+    {
+      "openingName": "Sicilian Defense",
+      "puzzle_count": "1",
+      "avg_rating": "1500.0000"
+    },
+    {
+      "openingName": "Italian Game",
+      "puzzle_count": "1",
+      "avg_rating": "1400.0000"
+    },
+    {
+      "openingName": "Four Knights",
+      "puzzle_count": "1",
+      "avg_rating": "1800.0000"
+    },
+    {
+      "openingName": "Sicilian Najdorf",
+      "puzzle_count": "1",
+      "avg_rating": "1700.0000"
+    },
+    {
+      "openingName": "French Defense",
+      "puzzle_count": "1",
+      "avg_rating": "1600.0000"
+    }
+  ],
+  "messages": [],
+  "stdout": "openingName\tpuzzle_count\tavg_rating\nSicilian Defense\t1\t1500.0000\nItalian Game\t1\t1400.0000\nFour Knights\t1\t1800.0000\nSicilian Najdorf\t1\t1700.0000\nFrench Defense\t1\t1600.0000\n",
+  "stderr": "",
+  "execution_time_ms": 3030
+}

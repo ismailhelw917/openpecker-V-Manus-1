@@ -271,8 +271,22 @@ export const appRouter = router({
      * Get opening names only (for dropdown selection)
      */
     getNames: publicProcedure.query(async () => {
-      const allOpenings = await getAllOpenings();
-      return allOpenings.map((opening) => opening.name).filter((name) => name);
+      const { getOpeningsWithPuzzleCounts } = await import("./db");
+      try {
+        const openingsWithCounts = await getOpeningsWithPuzzleCounts();
+        console.log("[getNames] openingsWithCounts:", openingsWithCounts);
+        if (!openingsWithCounts || openingsWithCounts.length === 0) {
+          return [];
+        }
+        return openingsWithCounts.map((opening: any) => ({
+          name: opening.openingName || opening.name || '',
+          puzzleCount: parseInt(opening.puzzle_count) || 0,
+          avgRating: parseFloat(opening.avg_rating) || 1500,
+        })).filter((o: any) => o.name);
+      } catch (error) {
+        console.error("[getNames] Error:", error);
+        return [];
+      }
     }),
 
     /**

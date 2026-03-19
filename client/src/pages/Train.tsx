@@ -33,7 +33,9 @@ export default function Train() {
   const getOpeningsQuery = trpc.openings.getNames.useQuery({});
 
   useEffect(() => {
+    console.log("[Train] getOpeningsQuery.data:", getOpeningsQuery.data);
     if (getOpeningsQuery.data && Array.isArray(getOpeningsQuery.data)) {
+      console.log("[Train] Setting openings:", getOpeningsQuery.data);
       setOpenings(getOpeningsQuery.data);
     }
   }, [getOpeningsQuery.data]);
@@ -103,14 +105,20 @@ export default function Train() {
     }
   };
 
+  // Extract opening names from the API response
+  const openingNames = openings
+    .map((opening: any) => typeof opening === 'string' ? opening : opening.name)
+    .filter((name: string) => name && typeof name === 'string');
+  
   // Group openings by parent name and extract variations
-  const groupedOpenings = openings.reduce((acc, opening) => {
-    const parts = opening.split(' ');
-    let parentName = opening;
+  const groupedOpenings = openingNames.reduce((acc, openingName: string) => {
+    if (!openingName) return acc;
+    const parts = openingName.split(' ');
+    let parentName = openingName;
     
     // Check if this is a variation (contains keywords like Accepted, Declined, etc.)
     const variationKeywords = ['Accepted', 'Declined', 'Variation', 'System', 'Line'];
-    const isVariation = variationKeywords.some(keyword => opening.endsWith(keyword));
+    const isVariation = variationKeywords.some(keyword => openingName.endsWith(keyword));
     
     if (isVariation && parts.length > 1) {
       // Remove the last word (variation keyword)
@@ -125,8 +133,8 @@ export default function Train() {
     }
     
     // Add this opening as a variation if it's different from parent
-    if (opening !== parentName) {
-      parent.variations.push(opening);
+    if (openingName !== parentName) {
+      parent.variations.push(openingName);
     }
     
     return acc;
@@ -136,9 +144,10 @@ export default function Train() {
   const filteredGroupedOpenings = groupedOpenings
     .map(group => ({
       ...group,
-      variations: group.variations.filter(v =>
-        v.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+      variations: group.variations.filter(v => {
+        const varName = typeof v === 'string' ? v : (v as any).name || '';
+        return varName.toLowerCase().includes(searchQuery.toLowerCase());
+      })
     }))
     .filter(group =>
       group.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

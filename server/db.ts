@@ -1119,3 +1119,20 @@ export async function getTotalPlayerCount(): Promise<number> {
     return 0;
   }
 }
+
+export async function getOpeningsWithPuzzleCounts() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  // Get unique openings from puzzles table with counts
+  const result = await db.execute(sql`
+    SELECT DISTINCT openingName, COUNT(*) as puzzle_count, AVG(rating) as avg_rating 
+    FROM puzzles 
+    WHERE openingName IS NOT NULL 
+    GROUP BY openingName 
+    ORDER BY puzzle_count DESC
+  `);
+  
+  // Extract rows from result - db.execute returns [rows, fields]
+  return Array.isArray(result) ? result[0] : result.rows || [];
+}
