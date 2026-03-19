@@ -64,7 +64,7 @@ function App() {
   const [showPremiumWatermark, setShowPremiumWatermark] = useState(true);
   const { isAuthenticated, loading, user } = useAuth();
   const [, setLocation] = useLocation();
-  const { data: giftEligibility } = trpc.auth.checkGiftEligibility.useQuery();
+  const { data: giftEligibility } = trpc.auth.checkGiftEligibility.useQuery({});
   const { data: globalSettings } = trpc.system.getGlobalSettings.useQuery();
 
   // Initialize device ID and create anonymous account
