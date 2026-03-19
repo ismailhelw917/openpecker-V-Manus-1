@@ -239,6 +239,8 @@ export default function Settings() {
           planName,
           userId: user.id,
           email: user.email,
+          promoCode: validationResult?.valid ? promoCode : undefined,
+          discountPercent: validationResult?.valid ? validationResult.discountPercent : 0,
         }),
       });
 
@@ -439,8 +441,7 @@ export default function Settings() {
             {/* Header */}
             <div className="text-center pt-4 sm:pt-6 pb-3 sm:pb-4 px-3 sm:px-4 bg-gradient-to-b from-amber-900/20 to-transparent">
               <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/openpecker-premium-logo-LPhYmaC6iM2uaYuZkpHQpR.webp" alt="OpenPecker Premium" className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2 sm:mb-2 object-contain" />
-              <h2 className="text-xl sm:text-2xl font-bold text-amber-100 mb-1">OpenPecker Premium</h2>
-              <p className="text-amber-200/70 text-xs sm:text-sm">Master every opening. No limits.</p>
+              <h2 className="text-xl sm:text-2xl font-bold text-amber-100">OpenPecker Premium</h2>
             </div>
 
             {/* Features */}
@@ -453,6 +454,29 @@ export default function Settings() {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Promo Code */}
+            <div className="px-3 sm:px-4 py-3 sm:py-4 border-t border-amber-400/20">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Enter promo code"
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value)}
+                  className="flex-1 px-3 py-2 bg-slate-800 border border-slate-700 rounded text-white text-sm placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                />
+                <button
+                  onClick={handleValidate}
+                  disabled={isValidating}
+                  className="px-3 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm rounded font-semibold disabled:opacity-50 transition-colors"
+                >
+                  {isValidating ? "..." : "Apply"}
+                </button>
+              </div>
+              {validationResult?.valid && (
+                <p className="text-teal-400 text-xs mt-2">✓ {validationResult.discountPercent}% off applied</p>
+              )}
             </div>
 
             {/* Pricing */}

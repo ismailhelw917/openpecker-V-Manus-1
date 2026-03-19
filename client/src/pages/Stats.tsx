@@ -99,7 +99,7 @@ export default function Stats() {
 
 
   // Fetch real user stats using tRPC
-  const { data: stats, isLoading: statsLoading, refetch: refetchStats } = trpc.stats.getUserStats.useQuery(undefined, {
+  const { data: stats, isLoading: statsLoading, refetch: refetchStats } = trpc.stats.getUserStats.useQuery({}, {
     enabled: Boolean(user),
   });
 

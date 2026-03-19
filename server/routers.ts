@@ -252,6 +252,14 @@ export const appRouter = router({
     }),
 
     /**
+     * Get opening names only (for dropdown selection)
+     */
+    getNames: publicProcedure.query(async () => {
+      const allOpenings = await getAllOpenings();
+      return allOpenings.map((opening) => opening.name).filter((name) => name);
+    }),
+
+    /**
      * Insert openings (admin only)
      */
     insert: publicProcedure
