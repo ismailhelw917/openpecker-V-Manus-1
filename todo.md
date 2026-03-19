@@ -1011,3 +1011,10 @@
 - [x] Update player stats table automatically when users complete puzzles
 - [x] Verify leaderboard will show actual player statistics (real accuracy, speed, rating)
 - [ ] Create checkpoint
+
+
+## Leaderboard Validation Error Fix (Round 59 - Bug Report)
+- [x] Identify which tRPC query on leaderboard is sending undefined input (getLeaderboard query)
+- [x] Fix query to stabilize input with useMemo to prevent reference changes
+- [x] Test leaderboard loads without errors (page displaying correctly)
+- [ ] Create checkpoint

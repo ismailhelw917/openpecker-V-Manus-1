@@ -10,10 +10,13 @@ export function Leaderboard() {
   const { user } = useAuth();
   const { stats: visitorStats } = useVisitorStats(30_000);
   
-  const { data: leaderboardResult, isLoading, refetch } = trpc.stats.getLeaderboard.useQuery({
+  // Stabilize query input to prevent infinite re-renders
+  const queryInput = useMemo(() => ({
     limit: 500,
-    sortBy,
-  });
+    sortBy: sortBy || 'accuracy',
+  }), [sortBy]);
+  
+  const { data: leaderboardResult, isLoading, refetch } = trpc.stats.getLeaderboard.useQuery(queryInput);
 
   const entries = leaderboardResult?.entries || [];
   const onlineCount = leaderboardResult?.onlineCount || 0;
