@@ -109,12 +109,12 @@ function PromoCodeSection() {
         PROMO CODE
       </h2>
 
-      <Card className="bg-slate-900/50 border-teal-900/30 p-6">
-        <p className="text-slate-400 text-sm mb-4">
+      <Card className="bg-slate-900/50 border-teal-900/30 p-4 sm:p-6">
+        <p className="text-slate-400 text-xs sm:text-sm mb-4 leading-relaxed">
           Have a promo code? Enter it below to unlock special benefits.
         </p>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
           <input
             type="text"
             value={promoCode}
@@ -123,12 +123,12 @@ function PromoCodeSection() {
               setValidationResult(null);
             }}
             placeholder="Enter promo code"
-            className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 font-mono text-lg tracking-wider"
+            className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-white placeholder-slate-500 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 font-mono text-sm sm:text-lg tracking-wider"
           />
           <Button
             onClick={handleValidate}
             disabled={isValidating || !promoCode.trim()}
-            className="bg-teal-500 hover:bg-teal-600 text-white font-semibold px-6"
+            className="bg-teal-500 hover:bg-teal-600 text-white font-semibold px-4 sm:px-6 py-2 sm:py-3 whitespace-nowrap"
           >
             {isValidating ? <Loader className="w-4 h-4 animate-spin" /> : "Apply"}
           </Button>
@@ -426,49 +426,49 @@ export default function Settings() {
 
       {/* Premium Modal */}
       {showPremiumModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <Card className="bg-gradient-to-b from-amber-950 via-slate-900 to-slate-950 border-amber-400/30 max-w-lg w-full max-h-[90vh] overflow-y-auto relative">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3">
+          <Card className="bg-gradient-to-b from-amber-950 via-slate-900 to-slate-950 border-amber-400/30 max-w-lg w-full max-h-[95vh] overflow-y-auto relative">
             {/* Close Button */}
             <button
               onClick={() => setShowPremiumModal(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
+              className="absolute top-2 right-2 text-slate-400 hover:text-white transition-colors text-xl"
             >
               ✕
             </button>
 
             {/* Header */}
-            <div className="text-center pt-8 sm:pt-12 pb-6 sm:pb-8 px-4 sm:px-6 bg-gradient-to-b from-amber-900/20 to-transparent">
-              <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/openpecker-premium-logo-LPhYmaC6iM2uaYuZkpHQpR.webp" alt="OpenPecker Premium" className="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-3 sm:mb-4 object-contain" />
-              <h2 className="text-2xl sm:text-3xl font-bold text-amber-100 mb-2">OpenPecker Premium</h2>
-              <p className="text-amber-200/70">Master every opening. No limits.</p>
+            <div className="text-center pt-4 sm:pt-6 pb-3 sm:pb-4 px-3 sm:px-4 bg-gradient-to-b from-amber-900/20 to-transparent">
+              <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/openpecker-premium-logo-LPhYmaC6iM2uaYuZkpHQpR.webp" alt="OpenPecker Premium" className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2 sm:mb-2 object-contain" />
+              <h2 className="text-xl sm:text-2xl font-bold text-amber-100 mb-1">OpenPecker Premium</h2>
+              <p className="text-amber-200/70 text-xs sm:text-sm">Master every opening. No limits.</p>
             </div>
 
             {/* Features */}
-            <div className="px-4 sm:px-6 py-6 sm:py-8 border-t border-b border-amber-400/20">
-              <div className="space-y-4">
+            <div className="px-3 sm:px-4 py-3 sm:py-4 border-t border-b border-amber-400/20">
+              <div className="space-y-2">
                 {PREMIUM_FEATURES.map((feature, idx) => (
-                  <div key={idx} className="flex items-start gap-3">
-                    <span className="text-teal-400 mt-1">✓</span>
-                    <span className="text-white">{feature}</span>
+                  <div key={idx} className="flex items-start gap-2">
+                    <span className="text-teal-400 mt-0.5 text-sm">✓</span>
+                    <span className="text-white text-xs sm:text-sm">{feature}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Pricing */}
-            <div className="px-4 sm:px-6 py-6 sm:py-8 space-y-3 sm:space-y-4">
+            <div className="px-3 sm:px-4 py-3 sm:py-4 space-y-2 sm:space-y-3">
               {/* Monthly */}
               <button
                 onClick={() => handleCheckout("price_monthly", "Monthly")}
                 disabled={loading}
-                className="w-full p-4 rounded-lg border-2 border-slate-700 bg-slate-800/50 hover:border-amber-400 hover:bg-amber-400/5 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed pointer-events-auto cursor-pointer"
+                className="w-full p-3 rounded-lg border-2 border-slate-700 bg-slate-800/50 hover:border-amber-400 hover:bg-amber-400/5 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed pointer-events-auto cursor-pointer"
               >
                 <div className="flex items-center justify-between pointer-events-none">
                   <div>
-                    <p className="text-slate-400 text-sm">MONTHLY</p>
-                    <p className="text-white font-bold text-xl">€4.99 <span className="text-sm text-slate-400">/month</span></p>
+                    <p className="text-slate-400 text-xs">MONTHLY</p>
+                    <p className="text-white font-bold text-lg">€4.99 <span className="text-xs text-slate-400">/month</span></p>
                   </div>
-                  {loading ? <Loader className="w-6 h-6 text-amber-400 animate-spin" /> : <Zap className="w-6 h-6 text-amber-400" />}
+                  {loading ? <Loader className="w-5 h-5 text-amber-400 animate-spin" /> : <Zap className="w-5 h-5 text-amber-400" />}
                 </div>
               </button>
 
@@ -476,20 +476,20 @@ export default function Settings() {
               <button
                 onClick={() => handleCheckout("price_lifetime", "Lifetime")}
                 disabled={loading}
-                className="w-full p-4 rounded-lg border-2 border-amber-400/40 bg-amber-400/10 hover:border-amber-400 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed pointer-events-auto cursor-pointer"
+                className="w-full p-3 rounded-lg border-2 border-amber-400/40 bg-amber-400/10 hover:border-amber-400 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed pointer-events-auto cursor-pointer"
               >
                 <div className="flex items-center justify-between pointer-events-none">
                   <div>
-                    <p className="text-amber-400 font-semibold text-sm">LIFETIME ACCESS</p>
-                    <p className="text-white font-bold text-xl">€49 <span className="text-sm text-slate-400">/once</span></p>
+                    <p className="text-amber-400 font-semibold text-xs">LIFETIME ACCESS</p>
+                    <p className="text-white font-bold text-lg">€49 <span className="text-xs text-slate-400">/once</span></p>
                   </div>
-                  {loading ? <Loader className="w-6 h-6 text-amber-400 animate-spin" /> : <Shield className="w-6 h-6 text-amber-400" />}
+                  {loading ? <Loader className="w-5 h-5 text-amber-400 animate-spin" /> : <Shield className="w-5 h-5 text-amber-400" />}
                 </div>
               </button>
             </div>
 
             {/* Footer */}
-            <div className="px-4 sm:px-6 py-4 sm:py-6 bg-amber-900/10">
+            <div className="px-3 sm:px-4 py-2 bg-amber-900/10">
               <p className="text-amber-200/60 text-xs text-center">
                 Secure payments powered by Stripe. Cancel anytime.
               </p>
