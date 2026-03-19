@@ -1048,3 +1048,22 @@
 - [x] Fix pieces not changing color or vanishing when picked up (added grayscale, opacity, scale, border)
 - [x] Test board interactions (visual feedback now shows when pieces are dragged)
 - [ ] Create checkpoint
+
+
+## Puzzle Verification System (Round 64 - User Request)
+- [ ] Create puzzle verification script
+- [ ] Implement Chess.js validation for each puzzle
+- [ ] Test all puzzles in database
+- [ ] Generate verification report with statistics
+- [ ] Identify broken puzzles for deletion
+- [ ] Create checkpoint
+
+
+## SQL Puzzles Accessibility & Counter API Integration (Round 65 - User Request)
+- [x] Verify SQL puzzles load in session screen (created getPuzzlesByOpening function)
+- [x] Ensure puzzles appear in training selection screen (added fetchPuzzlesByOpening tRPC procedure)
+- [x] Add proper puzzle naming/display (puzzles include openingName, rating, themes)
+- [x] Integrate Counter API with key: ut_RDvVPl9tOkYq9NfLPSNz8lZmOSI6pUTI0iXa7pAb (created counter-api.ts)
+- [x] Implement user tracking via Counter API (trackUserLogin, trackPuzzleAttempt, trackSessionComplete)
+- [x] Test both features (Counter API tests passed, procedures implemented)
+- [ ] Create checkpoint

@@ -1,0 +1,277 @@
+
+╔════════════════════════════════════════════════════════════╗
+║         PUZZLE VERIFICATION REPORT                         ║
+╚════════════════════════════════════════════════════════════╝
+
+📊 STATISTICS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Total Puzzles Tested:     10000
+✅ Working Puzzles:       0 (0.00%)
+❌ Broken Puzzles:        10000 (100.00%)
+⏱️  Verification Time:     2.64 seconds
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔴 BROKEN PUZZLES (First 50)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Puzzle ID: 00008
+   Reason: Invalid FEN
+   FEN: r6k/pp2r2p/4Rp1Q/3p4/8/1N1P2R1/PqP2bPP/7K b - - 0 24
+   Moves: f2g3 e6e7 b2b1 b3c1 b1c1 h6c1
+
+2. Puzzle ID: 0000D
+   Reason: Invalid FEN
+   FEN: 5rk1/1p3ppp/pq3b2/8/8/1P1Q1N2/P4PPP/3R2K1 w - - 2 27
+   Moves: d3d6 f8d8 d6d8 f6d8
+
+3. Puzzle ID: 0008Q
+   Reason: Invalid FEN
+   FEN: 8/4R3/1p2P3/p4r2/P6p/1P3Pk1/4K3/8 w - - 1 64
+   Moves: e7f7 f5e5 e2f1 e5e6
+
+4. Puzzle ID: 0009B
+   Reason: Invalid FEN
+   FEN: r2qr1k1/b1p2ppp/pp4n1/P1P1p3/4P1n1/B2P2Pb/3NBP1P/RN1QR1K1 b - - 1 16
+   Moves: b6c5 e2g4 h3g4 d1g4
+
+5. Puzzle ID: 000Pw
+   Reason: Invalid FEN
+   FEN: 6k1/5p1p/4p3/4q3/3nN3/2Q3P1/PP3P1P/6K1 w - - 2 37
+   Moves: e4d2 d4e2 g1f1 e2c3
+
+6. Puzzle ID: 000Sa
+   Reason: Invalid FEN
+   FEN: 2Q2bk1/5p1p/p5p1/2p3P1/2r1B3/7P/qPQ2P2/2K4R b - - 0 32
+   Moves: c4c2 e4c2 a2a1 c2b1
+
+7. Puzzle ID: 000VW
+   Reason: Invalid FEN
+   FEN: r4r2/1p3pkp/p5p1/3R1N1Q/3P4/8/P1q2P2/3R2K1 b - - 3 25
+   Moves: g6f5 d5c5 c2e4 h5g5 g7h8 g5f6
+
+8. Puzzle ID: 000Vc
+   Reason: Invalid FEN
+   FEN: 8/8/4k1p1/2KpP2p/5PP1/8/8/8 w - - 0 53
+   Moves: g4h5 g6h5 f4f5 e6e5 f5f6 e5f6
+
+9. Puzzle ID: 000Zo
+   Reason: Invalid FEN
+   FEN: 4r3/1k6/pp3r2/1b2P2p/3R1p2/P1R2P2/1P4PP/6K1 w - - 0 35
+   Moves: e5f6 e8e1 g1f2 e1f1
+
+10. Puzzle ID: 000aY
+   Reason: Invalid FEN
+   FEN: r4rk1/pp3ppp/2n1b3/q1pp2B1/8/P1Q2NP1/1PP1PP1P/2KR3R w - - 0 15
+   Moves: g5e7 a5c3 b2c3 c6e7
+
+11. Puzzle ID: 000h0
+   Reason: Invalid FEN
+   FEN: 5rk1/p5p1/3bpr1p/1Pp4q/3pR3/1P1Q1N2/P4PPP/4R1K1 w - - 4 22
+   Moves: e4e6 f6f3 g2f3 h5h2 g1f1 h2h3 f1e2 h3e6
+
+12. Puzzle ID: 000hf
+   Reason: Invalid FEN
+   FEN: r1bqk2r/pp1nbNp1/2p1p2p/8/2BP4/1PN3P1/P3QP1P/3R1RK1 b kq - 0 19
+   Moves: e8f7 e2e6 f7f8 e6f7
+
+13. Puzzle ID: 000jr
+   Reason: Invalid FEN
+   FEN: 5k2/1p4pp/p5n1/5Q2/3BpP2/1P2PP1K/P1q4P/7r b - - 1 33
+   Moves: f8g8 f5d5 g8f8 d4c5 c2c5 d5c5
+
+14. Puzzle ID: 000lC
+   Reason: Invalid FEN
+   FEN: 3r3r/pQNk1ppp/1qnb1n2/1B6/8/8/PPP3PP/3R1R1K w - - 5 19
+   Moves: d1d6 d7d6 b7b6 a7b6
+
+15. Puzzle ID: 000mr
+   Reason: Invalid FEN
+   FEN: 5r1k/5rp1/p7/1b2B2p/1P1P1Pq1/2R1Q3/P3p1P1/2R3K1 w - - 0 41
+   Moves: e3g3 f7f4 e5f4 f8f4
+
+16. Puzzle ID: 000o3
+   Reason: Invalid FEN
+   FEN: 8/2p1k3/6p1/1p1P1p2/1P3P2/3K2Pp/7P/8 b - - 1 43
+   Moves: e7d6 d3d4 g6g5 f4g5
+
+17. Puzzle ID: 000qP
+   Reason: Invalid FEN
+   FEN: 8/7R/8/5p2/4bk1P/8/2r2K2/6R1 w - - 7 51
+   Moves: f2f1 f4f3 f1e1 c2c1 e1d2 c1g1
+
+18. Puzzle ID: 000rO
+   Reason: Invalid FEN
+   FEN: 3R4/8/K7/pB2b3/1p6/1P2k3/3p4/8 w - - 4 58
+   Moves: a6a5 e5c7 a5b4 c7d8
+
+19. Puzzle ID: 000rZ
+   Reason: Invalid FEN
+   FEN: 2kr1b1r/p1p2pp1/2pqb3/7p/3N2n1/2NPB3/PPP2PPP/R2Q1RK1 w - - 2 13
+   Moves: d4e6 d6h2
+
+20. Puzzle ID: 00143
+   Reason: Invalid FEN
+   FEN: r2q1rk1/5ppp/1np5/p1b5/2p1B3/P7/1P3PPP/R1BQ1RK1 b - - 1 17
+   Moves: d8f6 d1h5 h7h6 h5c5
+
+21. Puzzle ID: 0017R
+   Reason: Invalid FEN
+   FEN: r2qk2r/pp2ppbp/1n1p2p1/3Pn3/2P5/2NBBP1P/PP3P2/R2QK2R b KQkq - 0 12
+   Moves: e5c4 d3c4 b6c4 d1a4 d8d7 a4c4
+
+22. Puzzle ID: 0018P
+   Reason: Invalid FEN
+   FEN: 5R2/1p6/p1p5/2P1rk2/2K3p1/2P1p1P1/1P5P/8 b - - 1 44
+   Moves: f5e6 f8e8 e6f5 e8e5 f5e5 c4d3 e5d5 d3e3 a6a5 e3f4 d5c4 f4g4
+
+23. Puzzle ID: 0018S
+   Reason: Invalid FEN
+   FEN: 2kr3r/pp3p2/4p2p/1N1p2p1/3Q4/1P1P4/2q2PPP/5RK1 b - - 1 20
+   Moves: b7b6 d4a1 a7a5 f1c1
+
+24. Puzzle ID: 001Fg
+   Reason: Invalid FEN
+   FEN: 2R2r1k/pQ4pp/5rp1/3B4/q2n4/7P/P4PP1/5RK1 w - - 3 30
+   Moves: c8c7 d4e2 g1h2 a4f4 h2h1 e2g3 f2g3 f4f1
+
+25. Puzzle ID: 001Hi
+   Reason: Invalid FEN
+   FEN: 6k1/pp1r1pp1/1qp1p2p/4P2P/5Q2/1P4R1/P1Pr1PP1/R5K1 b - - 4 23
+   Moves: b6d4 f4f6 d4f2 f6f2 d2f2 g1f2
+
+26. Puzzle ID: 001KR
+   Reason: Invalid FEN
+   FEN: 6Qk/p1p3pp/4N3/1p6/2q1r1n1/2B5/PP4PP/3R1R1K b - - 0 28
+   Moves: h8g8 f1f8
+
+27. Puzzle ID: 001Oo
+   Reason: Invalid FEN
+   FEN: 6k1/4p1bp/6p1/1p1pP3/1PpPp3/2P1P3/Q2B1KPP/3q4 b - - 2 23
+   Moves: d1a4 a2a4 b5a4 b4b5 g8f7 b5b6
+
+28. Puzzle ID: 001Wz
+   Reason: Invalid FEN
+   FEN: 4r1k1/5ppp/r1p5/p1n1RP2/8/2P2N1P/2P3P1/3R2K1 b - - 0 21
+   Moves: e8e5 d1d8 e5e8 d8e8
+
+29. Puzzle ID: 001XA
+   Reason: Invalid FEN
+   FEN: 1qr2rk1/pb2bppp/8/8/2p1N3/P1Bn2P1/2Q2PBP/1R3RK1 b - - 3 23
+   Moves: b8c7 b1b7 c7b7 e4f6 e7f6 g2b7
+
+30. Puzzle ID: 001aK
+   Reason: Invalid FEN
+   FEN: 6k1/5p2/4p3/P1B5/2P4P/4Pnp1/Rb1rN3/5K2 b - - 1 33
+   Moves: d2e2 f1e2 g3g2 e3e4 f3d4 e2f2
+
+31. Puzzle ID: 001cr
+   Reason: Invalid FEN
+   FEN: 8/3B2pp/p5k1/2p3P1/1p1p1K2/8/1P6/8 b - - 0 38
+   Moves: c5c4 d7e8
+
+32. Puzzle ID: 001gi
+   Reason: Invalid FEN
+   FEN: r6r/1pNk1ppp/2np4/b3p3/4P1b1/N1Q5/P4PPP/R3KB1R w KQ - 3 18
+   Moves: c7a8 a5c3
+
+33. Puzzle ID: 001h8
+   Reason: Invalid FEN
+   FEN: 2r3k1/2r4p/4p1p1/1p1q1pP1/p1bP1P1Q/P6R/5B2/2R3K1 b - - 5 34
+   Moves: c4e2 h4h7 c7h7 c1c8 g8g7 c8c7
+
+34. Puzzle ID: 001kG
+   Reason: Invalid FEN
+   FEN: rnbq3r/1p2bkpp/p4n2/8/2pNP3/2N5/PPP3PP/R1BQ1RK1 b - - 1 11
+   Moves: e7c5 d1h5 f7g8 h5c5
+
+35. Puzzle ID: 001m3
+   Reason: Invalid FEN
+   FEN: 7r/6k1/2b1pp2/8/P1N3p1/5nP1/4RP2/Q4K2 w - - 2 38
+   Moves: e2e6 h8h1 f1e2 h1a1
+
+36. Puzzle ID: 001om
+   Reason: Invalid FEN
+   FEN: 5r1k/pp4pp/5p2/1BbQp1r1/6K1/7P/1PP3P1/3R3R w - - 2 26
+   Moves: g4h4 c5f2 g2g3 f2g3
+
+37. Puzzle ID: 001pC
+   Reason: Invalid FEN
+   FEN: r4rk1/pp3ppp/3b4/2p1pPB1/7N/2PP3n/PP4PP/R2Q1RqK w - - 5 18
+   Moves: f1g1 h3f2
+
+38. Puzzle ID: 001u3
+   Reason: Invalid FEN
+   FEN: 2r3k1/p1q2pp1/Q3p2p/b1Np4/2nP1P2/4P1P1/5K1P/2B1N3 b - - 3 33
+   Moves: c7b6 a6c8 g8h7 c8b7
+
+39. Puzzle ID: 001uD
+   Reason: Invalid FEN
+   FEN: 6k1/1p3pp1/1p5p/2r1p3/2n5/r3PN2/2RnNPPP/2R3K1 b - - 1 32
+   Moves: f7f6 f3d2 c4d2 c2d2 c5c1 e2c1
+
+40. Puzzle ID: 001w5
+   Reason: Invalid FEN
+   FEN: 1rb2rk1/q5P1/4p2p/3p3p/3P1P2/2P5/2QK3P/3R2R1 b - - 0 29
+   Moves: f8f7 c2h7 g8h7 g7g8q
+
+41. Puzzle ID: 001wR
+   Reason: Invalid FEN
+   FEN: 6nr/pp3p1p/k1p5/8/1QN5/2P1P3/4KPqP/8 b - - 5 26
+   Moves: b7b5 b4a5 a6b7 c4d6 b7b8 a5d8
+
+42. Puzzle ID: 001wb
+   Reason: Invalid FEN
+   FEN: r3k2r/pb1p1ppp/1b4q1/1Q2P3/8/2NP1Pn1/PP4PP/R1B2R1K w kq - 1 17
+   Moves: h2g3 g6h5
+
+43. Puzzle ID: 001wr
+   Reason: Invalid FEN
+   FEN: r4rk1/p3ppbp/Pp1q1np1/3PpbB1/2B5/2N5/1PPQ1PPP/3RR1K1 w - - 4 18
+   Moves: f2f3 d6c5 g1h1 c5c4
+
+44. Puzzle ID: 001xO
+   Reason: Invalid FEN
+   FEN: k1r1b3/p1r1nppp/1p1qpn2/2Np4/1P1P4/PQRBPN2/5PPP/2R3K1 w - - 0 19
+   Moves: d3a6 b6c5 a6c8 c5c4
+
+45. Puzzle ID: 001xl
+   Reason: Invalid FEN
+   FEN: 8/4R1k1/p5pp/3B4/5q2/8/5P1P/6K1 b - - 5 40
+   Moves: g7f6 e7f7 f6e5 f7f4
+
+46. Puzzle ID: 002CP
+   Reason: Invalid FEN
+   FEN: r5k1/pp4pp/4p1q1/4p3/3n4/P5P1/1PP2Q1P/2KR1R2 w - - 4 24
+   Moves: f2e3 g6c2
+
+47. Puzzle ID: 002Ds
+   Reason: Invalid FEN
+   FEN: 8/1pp5/p2p4/P2Pk2p/1PP1p2P/2n1K2P/3N4/8 b - - 0 45
+   Moves: b7b6 b4b5 c3d1 e3e2 a6b5 a5a6
+
+48. Puzzle ID: 002GQ
+   Reason: Invalid FEN
+   FEN: 5rk1/5ppp/4p3/4N3/8/1Pn5/5PPP/5RK1 w - - 0 28
+   Moves: f1c1 c3e2 g1f1 e2c1
+
+49. Puzzle ID: 002HE
+   Reason: Invalid FEN
+   FEN: 1qr2rk1/1p1p1ppp/pB2p1n1/7n/2P1P3/1Q2NP1P/PP2B1Pb/3R1RK1 w - - 1 20
+   Moves: g1f2 b8g3
+
+50. Puzzle ID: 002Hv
+   Reason: Invalid FEN
+   FEN: 8/8/8/3N2p1/5b2/3p3P/5kP1/3K4 w - - 16 56
+   Moves: d5f4 g5f4 h3h4 f2g2 h4h5 f4f3 d1d2 f3f2
+
+
+... and 9950 more broken puzzles
+
+
+📋 RECOMMENDATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Delete 10000 broken puzzles from database
+2. Keep 0 working puzzles
+3. Success Rate: 0.00%
+
+Generated: 2026-03-19T10:42:05.967Z

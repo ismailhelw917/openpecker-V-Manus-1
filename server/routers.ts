@@ -357,6 +357,27 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         return deleteTrainingSet(input.id);
       }),
+
+    fetchPuzzlesByOpening: publicProcedure
+      .input(
+        z.object({
+          opening: z.string(),
+          minRating: z.number().default(0),
+          maxRating: z.number().default(3000),
+          count: z.number().default(50),
+          colorFilter: z.enum(['white', 'black', 'both']).default('both'),
+        })
+      )
+      .query(async ({ input }) => {
+        const { getPuzzlesByOpening } = await import('./puzzles');
+        return getPuzzlesByOpening(
+          input.opening,
+          input.minRating,
+          input.maxRating,
+          input.count,
+          input.colorFilter
+        );
+      }),
   }),
 
   // ==================== CYCLES ====================
