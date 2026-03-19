@@ -161,11 +161,11 @@ export async function getLeaderboardPlayers(limit: number = 500, sortBy: 'accura
   const db = await getDb();
   if (!db) throw new Error('Database not available');
 
-  let orderBy = 'accuracy DESC, totalPuzzles DESC';
+  let orderBy = 'CASE WHEN totalPuzzles = 0 THEN 0 ELSE ROUND((totalCorrect / totalPuzzles) * 100) END DESC, totalPuzzles DESC';
   if (sortBy === 'speed') {
     orderBy = 'CASE WHEN totalPuzzles = 0 THEN 999999 ELSE ROUND(totalTimeMs / totalPuzzles / 1000) END ASC, totalPuzzles DESC';
   } else if (sortBy === 'rating') {
-    orderBy = 'rating DESC, totalPuzzles DESC';
+    orderBy = 'CASE WHEN rating IS NULL THEN 1200 ELSE rating END DESC, totalPuzzles DESC';
   }
 
   const result = await db.execute(sql`
@@ -174,7 +174,6 @@ export async function getLeaderboardPlayers(limit: number = 500, sortBy: 'accura
       totalPuzzles, totalCorrect, totalTimeMs, completedCycles, accuracy, rating,
       lastActivityAt, createdAt
     FROM players
-    WHERE totalPuzzles > 0
     ORDER BY ${sql.raw(orderBy)}
     LIMIT ${limit}
   `);

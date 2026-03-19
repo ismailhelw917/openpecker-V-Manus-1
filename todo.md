@@ -904,3 +904,13 @@
 - [ ] Update leaderboard to use database data sources
 - [ ] Test online user tracking
 - [ ] Create checkpoint
+
+
+## Leaderboard Ranking Issue (Round 48 - Bug Report)
+- [x] Investigate why only 3 players are showing in leaderboard
+- [x] Check getLeaderboardPlayers function in players.ts
+- [x] Verify player filtering and sorting logic
+- [x] Ensure all players with activity are included (1,877 total players, 3 with activity)
+- [x] Test leaderboard with multiple players (correctly showing 3 active players)
+- [x] Removed WHERE totalPuzzles > 0 filter and improved sorting logic
+- [ ] Create checkpoint
