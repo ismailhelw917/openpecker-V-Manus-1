@@ -1,0 +1,58 @@
+{
+  "query": "SELECT DISTINCT openingName, COUNT(*) as count FROM puzzles GROUP BY openingName ORDER BY count DESC LIMIT 20",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT DISTINCT openingName, COUNT(*) as count FROM puzzles GROUP BY openingName ORDER BY count DESC LIMIT 20",
+  "rows": [
+    {
+      "openingName": "Opening",
+      "count": "2607"
+    },
+    {
+      "openingName": "Sicilian Defense",
+      "count": "2"
+    },
+    {
+      "openingName": "Italian Game",
+      "count": "2"
+    },
+    {
+      "openingName": "French Defense",
+      "count": "2"
+    },
+    {
+      "openingName": "Sicilian Najdorf",
+      "count": "2"
+    },
+    {
+      "openingName": "Sicilian Accelerated Dragon",
+      "count": "1"
+    },
+    {
+      "openingName": "Four Knights Game",
+      "count": "1"
+    },
+    {
+      "openingName": "Italian Game Giuoco Piano",
+      "count": "1"
+    },
+    {
+      "openingName": "Four Knights",
+      "count": "1"
+    },
+    {
+      "openingName": "Italian Game Two Knights Defense",
+      "count": "1"
+    },
+    {
+      "openingName": "Sicilian Closed",
+      "count": "1"
+    },
+    {
+      "openingName": "Four Knights Scotch",
+      "count": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "openingName\tcount\nOpening\t2607\nSicilian Defense\t2\nItalian Game\t2\nFrench Defense\t2\nSicilian Najdorf\t2\nSicilian Accelerated Dragon\t1\nFour Knights Game\t1\nItalian Game Giuoco Piano\t1\nFour Knights\t1\nItalian Game Two Knights Defense\t1\nSicilian Closed\t1\nFour Knights Scotch\t1\n",
+  "stderr": "",
+  "execution_time_ms": 1636
+}

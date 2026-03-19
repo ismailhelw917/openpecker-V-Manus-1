@@ -1,0 +1,70 @@
+{
+  "query": "SELECT openingName, COUNT(*) as count, ROUND(AVG(rating), 0) as avg_rating FROM puzzles GROUP BY openingName ORDER BY count DESC",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT openingName, COUNT(*) as count, ROUND(AVG(rating), 0) as avg_rating FROM puzzles GROUP BY openingName ORDER BY count DESC",
+  "rows": [
+    {
+      "openingName": "Sicilian Defense",
+      "count": "2177",
+      "avg_rating": "1605"
+    },
+    {
+      "openingName": "Opening",
+      "count": "432",
+      "avg_rating": "1602"
+    },
+    {
+      "openingName": "Sicilian Najdorf",
+      "count": "2",
+      "avg_rating": "1550"
+    },
+    {
+      "openingName": "French Defense",
+      "count": "2",
+      "avg_rating": "1475"
+    },
+    {
+      "openingName": "Italian Game",
+      "count": "2",
+      "avg_rating": "1450"
+    },
+    {
+      "openingName": "Four Knights Game",
+      "count": "1",
+      "avg_rating": "1800"
+    },
+    {
+      "openingName": "Four Knights",
+      "count": "1",
+      "avg_rating": "1800"
+    },
+    {
+      "openingName": "Sicilian Accelerated Dragon",
+      "count": "1",
+      "avg_rating": "1300"
+    },
+    {
+      "openingName": "Four Knights Scotch",
+      "count": "1",
+      "avg_rating": "1900"
+    },
+    {
+      "openingName": "Italian Game Giuoco Piano",
+      "count": "1",
+      "avg_rating": "1700"
+    },
+    {
+      "openingName": "Italian Game Two Knights Defense",
+      "count": "1",
+      "avg_rating": "1600"
+    },
+    {
+      "openingName": "Sicilian Closed",
+      "count": "1",
+      "avg_rating": "1100"
+    }
+  ],
+  "messages": [],
+  "stdout": "openingName\tcount\tavg_rating\nSicilian Defense\t2177\t1605\nOpening\t432\t1602\nSicilian Najdorf\t2\t1550\nFrench Defense\t2\t1475\nItalian Game\t2\t1450\nFour Knights Game\t1\t1800\nFour Knights\t1\t1800\nSicilian Accelerated Dragon\t1\t1300\nFour Knights Scotch\t1\t1900\nItalian Game Giuoco Piano\t1\t1700\nItalian Game Two Knights Defense\t1\t1600\nSicilian Closed\t1\t1100\n",
+  "stderr": "",
+  "execution_time_ms": 2409
+}

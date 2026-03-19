@@ -1,26 +1,31 @@
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { ArrowLeft, Search, Lock, Loader2 } from "lucide-react";
+import { ArrowLeft, Search, Lock, Loader2, ChevronRight } from "lucide-react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "@/_core/deviceId";
 import { toast } from "sonner";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
-type Step = "opening-selection" | "configuration";
+type Step = "opening-selection" | "subset-selection" | "variation-selection" | "configuration";
 
 const PUZZLE_COUNT_OPTIONS = [50, 100, 150, 200, 250];
+
+interface HierarchyItem {
+  opening: string | null;
+  subset: string | null;
+  variation: string | null;
+}
 
 export default function Train() {
   const [, setLocation] = useLocation();
   const { user } = useAuth();
   const [step, setStep] = useState<Step>("opening-selection");
   const [selectedOpening, setSelectedOpening] = useState<string | null>(null);
+  const [selectedSubset, setSelectedSubset] = useState<string | null>(null);
+  const [selectedVariation, setSelectedVariation] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isFetchingPuzzles, setIsFetchingPuzzles] = useState(false);
-  const [openings, setOpenings] = useState<string[]>([]);
 
   // Configuration state
   const [minRating, setMinRating] = useState(1000);
@@ -29,29 +34,80 @@ export default function Train() {
   const [colorFilter, setColorFilter] = useState<"white" | "black" | "both">("both");
   const [puzzleCount, setPuzzleCount] = useState(50);
 
-  // Fetch available openings using tRPC
-  const getOpeningsQuery = trpc.openings.getNames.useQuery({});
+  // Fetch opening hierarchy using tRPC
+  const getHierarchyQuery = trpc.openings.getHierarchy.useQuery({});
 
-  useEffect(() => {
-    console.log("[Train] getOpeningsQuery.data:", getOpeningsQuery.data);
-    if (getOpeningsQuery.data && Array.isArray(getOpeningsQuery.data)) {
-      console.log("[Train] Setting openings:", getOpeningsQuery.data);
-      setOpenings(getOpeningsQuery.data);
-    }
-  }, [getOpeningsQuery.data]);
+  const hierarchy = useMemo(() => {
+    if (!getHierarchyQuery.data) return [];
+    return getHierarchyQuery.data as HierarchyItem[];
+  }, [getHierarchyQuery.data]);
 
-  useEffect(() => {
-    setIsLoading(getOpeningsQuery.isLoading);
-  }, [getOpeningsQuery.isLoading]);
+  // Get unique openings
+  const uniqueOpenings = useMemo(() => {
+    const openings = new Set<string>();
+    hierarchy.forEach(item => {
+      if (item.opening) openings.add(item.opening);
+    });
+    return Array.from(openings).sort();
+  }, [hierarchy]);
 
-  useEffect(() => {
-    if (getOpeningsQuery.error) {
-      toast.error("Failed to load openings");
-    }
-  }, [getOpeningsQuery.error]);
+  // Get subsets for selected opening
+  const subsets = useMemo(() => {
+    if (!selectedOpening) return [];
+    const subsetSet = new Set<string>();
+    hierarchy.forEach(item => {
+      if (item.opening === selectedOpening && item.subset) {
+        subsetSet.add(item.subset);
+      }
+    });
+    return Array.from(subsetSet).sort();
+  }, [selectedOpening, hierarchy]);
+
+  // Get variations for selected opening and subset
+  const variations = useMemo(() => {
+    if (!selectedOpening || !selectedSubset) return [];
+    const variationSet = new Set<string>();
+    hierarchy.forEach(item => {
+      if (item.opening === selectedOpening && item.subset === selectedSubset && item.variation) {
+        variationSet.add(item.variation);
+      }
+    });
+    return Array.from(variationSet).sort();
+  }, [selectedOpening, selectedSubset, hierarchy]);
+
+  // Filter openings by search query
+  const filteredOpenings = useMemo(() => {
+    return uniqueOpenings.filter(opening =>
+      opening.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [uniqueOpenings, searchQuery]);
+
+  // Filter subsets by search query
+  const filteredSubsets = useMemo(() => {
+    return subsets.filter(subset =>
+      subset.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [subsets, searchQuery]);
+
+  // Filter variations by search query
+  const filteredVariations = useMemo(() => {
+    return variations.filter(variation =>
+      variation.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [variations, searchQuery]);
+
+  // Get puzzle count for current selection
+  const puzzleCountForSelection = useMemo(() => {
+    const matching = hierarchy.filter(item => {
+      if (selectedOpening && item.opening !== selectedOpening) return false;
+      if (selectedSubset && item.subset !== selectedSubset) return false;
+      if (selectedVariation && item.variation !== selectedVariation) return false;
+      return true;
+    });
+    return matching.length;
+  }, [selectedOpening, selectedSubset, selectedVariation, hierarchy]);
 
   const createTrainingSet = trpc.trainingSets.create.useMutation();
-  const fetchPuzzlesMutation = trpc.trainingSets.fetchPuzzlesByOpening.useMutation();
 
   const handleStartSession = async () => {
     if (!selectedOpening) {
@@ -61,34 +117,20 @@ export default function Train() {
 
     setIsFetchingPuzzles(true);
     try {
-      // Get or create device ID (ensures it's always available)
       const deviceId = getOrCreateDeviceId();
 
-      // Fetch puzzles for the selected opening using tRPC mutation
-      const puzzlesResponse = await fetchPuzzlesMutation.mutateAsync({
-        opening: selectedOpening,
-        minRating,
-        maxRating,
-        count: puzzleCount,
-        colorFilter,
-      });
-
-      const puzzles = puzzlesResponse.puzzles || [];
-      if (!puzzles || puzzles.length === 0) {
-        toast.error(`No puzzles found for ${selectedOpening} with selected filters`);
-        setIsFetchingPuzzles(false);
-        return;
-      }
-
-      // Create training set with fetched puzzles
+      // Create training set with hierarchy parameters
       const result = await createTrainingSet.mutateAsync({
         userId: user?.id,
         deviceId,
-        name: `${selectedOpening} - ${puzzles.length} puzzles`,
         opening: selectedOpening,
+        subset: selectedSubset || undefined,
+        variation: selectedVariation || undefined,
         minRating,
         maxRating,
-        puzzleCount: puzzles.length,
+        puzzleCount,
+        color: colorFilter,
+        cycles: targetCycles,
       });
 
       if (result && typeof result === 'string') {
@@ -108,233 +150,254 @@ export default function Train() {
     }
   };
 
-  // Extract opening names from the API response
-  const openingNames = openings
-    .map((opening: any) => typeof opening === 'string' ? opening : opening.name)
-    .filter((name: string) => name && typeof name === 'string');
-  
-  // Group openings by parent name and extract variations
-  const groupedOpenings = openingNames.reduce((acc, openingName: string) => {
-    if (!openingName) return acc;
-    const parts = openingName.split(' ');
-    let parentName = openingName;
-    
-    // Check if this is a variation (contains keywords like Accepted, Declined, etc.)
-    const variationKeywords = ['Accepted', 'Declined', 'Variation', 'System', 'Line'];
-    const isVariation = variationKeywords.some(keyword => openingName.endsWith(keyword));
-    
-    if (isVariation && parts.length > 1) {
-      // Remove the last word (variation keyword)
-      parentName = parts.slice(0, -1).join(' ');
+  const handleBack = () => {
+    if (step === "configuration") {
+      setStep("variation-selection");
+    } else if (step === "variation-selection") {
+      setStep("subset-selection");
+    } else if (step === "subset-selection") {
+      setStep("opening-selection");
     }
-    
-    // Find or create parent group
-    let parent = acc.find(g => g.name === parentName);
-    if (!parent) {
-      parent = { name: parentName, variations: [] };
-      acc.push(parent);
+  };
+
+  const handleSelectOpening = (opening: string) => {
+    setSelectedOpening(opening);
+    setSelectedSubset(null);
+    setSelectedVariation(null);
+    setSearchQuery("");
+    if (subsets.length > 0) {
+      setStep("subset-selection");
+    } else {
+      setStep("configuration");
     }
-    
-    // Add this opening as a variation if it's different from parent
-    if (openingName !== parentName) {
-      parent.variations.push(openingName);
+  };
+
+  const handleSelectSubset = (subset: string) => {
+    setSelectedSubset(subset);
+    setSelectedVariation(null);
+    setSearchQuery("");
+    if (variations.length > 0) {
+      setStep("variation-selection");
+    } else {
+      setStep("configuration");
     }
-    
-    return acc;
-  }, [] as Array<{ name: string; variations: string[] }>);
-  
-  // Filter grouped openings
-  const filteredGroupedOpenings = groupedOpenings
-    .map(group => ({
-      ...group,
-      variations: group.variations.filter(v => {
-        const varName = typeof v === 'string' ? v : (v as any).name || '';
-        return varName.toLowerCase().includes(searchQuery.toLowerCase());
-      })
-    }))
-    .filter(group =>
-      group.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      group.variations.length > 0
+  };
+
+  const handleSelectVariation = (variation: string) => {
+    setSelectedVariation(variation);
+    setSearchQuery("");
+    setStep("configuration");
+  };
+
+  if (isLoading || getHierarchyQuery.isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
+      </div>
     );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 overflow-y-auto pb-24">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-slate-900/80 backdrop-blur border-b border-slate-700">
-        <div className="max-w-4xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center gap-2 sm:gap-3">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4 pb-24">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-4xl font-bold text-white">Train</h1>
           {step !== "opening-selection" && (
             <button
-              onClick={() => {
-                setStep("opening-selection");
-                setSelectedOpening(null);
-              }}
-              className="p-2 hover:bg-slate-800 rounded-lg transition"
+              onClick={handleBack}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 transition-colors text-white"
             >
-              <ArrowLeft className="w-5 h-5 text-amber-400" />
+              <ArrowLeft className="w-4 h-4" />
+              Back
             </button>
           )}
-          <h1 className="text-lg sm:text-2xl font-bold text-amber-400">
-            {step === "opening-selection" ? "Select Opening" : "Configure Session"}
-          </h1>
         </div>
-      </div>
 
-      <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
-        {step === "opening-selection" ? (
-          <>
-            {/* Search Bar */}
-            <div className="mb-6">
-              <div className="relative">
-                <Search className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="Search openings..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-amber-400"
-                />
-              </div>
+        {/* Opening Selection */}
+        {step === "opening-selection" && (
+          <div className="space-y-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search openings..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              />
             </div>
 
-            {/* Openings Grid */}
-            {isLoading ? (
-              <div className="flex justify-center items-center py-12">
-                <Loader2 className="w-8 h-8 text-amber-400 animate-spin" />
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {filteredGroupedOpenings.length > 0 ? (
-                  filteredGroupedOpenings.map((group, groupIndex) => {
-                    const isLocked = groupIndex % 10 >= 3;
-                    const canAccess = !isLocked || user?.isPremium;
-                    return (
-                      <div key={group.name}>
-                        {/* Parent Opening */}
-                        <Card
-                          onClick={() => {
-                            if (!canAccess) {
-                              toast.error("Unlock this opening with a premium account", {
-                                action: { label: "Upgrade", onClick: () => setLocation("/settings") },
-                              });
-                              return;
-                            }
-                            setSelectedOpening(group.name);
-                            setStep("configuration");
-                          }}
-                          className={`p-4 cursor-pointer transition border-2 relative ${
-                            selectedOpening === group.name
-                              ? "border-amber-400 bg-amber-400/10"
-                              : "border-slate-700 hover:border-amber-400 bg-slate-800/50"
-                          } ${!canAccess ? "opacity-60" : ""}`}
-                        >
-                          <h3 className="font-semibold text-white text-sm sm:text-lg pr-6">{group.name}</h3>
-                          <p className="text-sm text-slate-400 mt-1">
-                            {group.variations.length > 0 ? `${group.variations.length} variations` : "Click to select"}
+            {/* Scrollable opening list */}
+            <div className="max-h-[60vh] overflow-y-auto space-y-2 pr-2">
+              {filteredOpenings.length > 0 ? (
+                filteredOpenings.map(opening => {
+                  const puzzleCount = hierarchy.filter(h => h.opening === opening).length;
+                  return (
+                    <div
+                      key={opening}
+                      onClick={() => handleSelectOpening(opening)}
+                      className="p-4 bg-slate-700 hover:bg-slate-600 rounded-lg cursor-pointer transition-all hover:shadow-lg hover:shadow-teal-500/20 border border-slate-600 hover:border-teal-500 group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-white group-hover:text-teal-400 transition-colors">{opening}</h3>
+                          <p className="text-sm text-slate-400">
+                            {puzzleCount} puzzle{puzzleCount !== 1 ? 's' : ''}
                           </p>
-                          {isLocked && !user?.isPremium && (
-                            <div className="absolute top-2 right-2">
-                              <Lock className="w-5 h-5 text-amber-400" />
-                            </div>
-                          )}
-                        </Card>
-
-                        {/* Subvariations */}
-                        {group.variations.length > 0 && (
-                          <div className="ml-4 mt-2 space-y-2 border-l-2 border-slate-700 pl-4">
-                            {group.variations.map((variation, varIndex) => {
-                              // If parent is locked, all subsets are also locked
-                              const varIsLocked = isLocked || ((groupIndex * 10 + varIndex) % 10 >= 3);
-                              const varCanAccess = !varIsLocked || user?.isPremium;
-                              return (
-                                <Card
-                                  key={variation}
-                                  onClick={() => {
-                                    if (!varCanAccess) {
-                                      toast.error("Unlock this variation with a premium account", {
-                                        action: { label: "Upgrade", onClick: () => setLocation("/settings") },
-                                      });
-                                      return;
-                                    }
-                                    setSelectedOpening(variation);
-                                    setStep("configuration");
-                                  }}
-                                  className={`p-3 cursor-pointer transition border-2 relative ${
-                                    selectedOpening === variation
-                                      ? "border-amber-400 bg-amber-400/10"
-                                      : "border-slate-700 hover:border-amber-400 bg-slate-800/30"
-                                  } ${!varCanAccess ? "opacity-60" : ""}`}
-                                >
-                                  <h4 className="font-medium text-slate-200 text-sm">{variation}</h4>
-                                  {varIsLocked && !user?.isPremium && (
-                                    <div className="absolute top-2 right-2">
-                                      <Lock className="w-4 h-4 text-amber-400" />
-                                    </div>
-                                  )}
-                                </Card>
-                              );
-                            })}
-                          </div>
-                        )}
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-teal-400 transition-colors" />
                       </div>
-                    );
-                  })
-                ) : (
-                  <div className="text-center py-12">
-                    <p className="text-slate-400">No openings found</p>
-                  </div>
-                )}
-              </div>
-            )}
-          </>
-        ) : (
-          <>
-            {/* Configuration */}
-            <Card className="bg-slate-800 border-slate-700 p-4 sm:p-6 mb-4 sm:mb-6">
-              <h2 className="text-base sm:text-xl font-semibold text-white mb-4 sm:mb-6 break-words">
-                {selectedOpening}
-              </h2>
+                    </div>
+                  );
+                })
+              ) : (
+                <p className="text-center text-slate-400 py-12">No openings found</p>
+              )}
+            </div>
+          </div>
+        )}
 
-              {/* Rating Range */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Rating Range
-                </label>
-                <div className="flex gap-4">
-                  <div className="flex-1">
-                    <input
-                      type="number"
-                      value={minRating}
-                      onChange={(e) => setMinRating(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white"
-                      placeholder="Min"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <input
-                      type="number"
-                      value={maxRating}
-                      onChange={(e) => setMaxRating(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white"
-                      placeholder="Max"
-                    />
-                  </div>
-                </div>
-              </div>
+        {/* Subset Selection */}
+        {step === "subset-selection" && (
+          <div className="space-y-4">
+            <div className="bg-teal-900/30 border border-teal-700 rounded-lg p-4">
+              <p className="text-sm text-teal-300">
+                <span className="font-semibold">Opening:</span> {selectedOpening}
+              </p>
+            </div>
 
+            <div className="relative">
+              <Search className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search subsets..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Scrollable subset list */}
+            <div className="max-h-[60vh] overflow-y-auto space-y-2 pr-2">
+              {filteredSubsets.length > 0 ? (
+                filteredSubsets.map(subset => {
+                  const puzzleCount = hierarchy.filter(h => h.opening === selectedOpening && h.subset === subset).length;
+                  return (
+                    <div
+                      key={subset}
+                      onClick={() => handleSelectSubset(subset)}
+                      className="p-4 bg-slate-700 hover:bg-slate-600 rounded-lg cursor-pointer transition-all hover:shadow-lg hover:shadow-teal-500/20 border border-slate-600 hover:border-teal-500 group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-white group-hover:text-teal-400 transition-colors">{subset}</h3>
+                          <p className="text-sm text-slate-400">
+                            {puzzleCount} puzzle{puzzleCount !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-teal-400 transition-colors" />
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <p className="text-center text-slate-400 py-12">No subsets found</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Variation Selection */}
+        {step === "variation-selection" && (
+          <div className="space-y-4">
+            <div className="bg-teal-900/30 border border-teal-700 rounded-lg p-4 space-y-2">
+              <p className="text-sm text-teal-300">
+                <span className="font-semibold">Opening:</span> {selectedOpening}
+              </p>
+              <p className="text-sm text-teal-300">
+                <span className="font-semibold">Subset:</span> {selectedSubset}
+              </p>
+            </div>
+
+            <div className="relative">
+              <Search className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search variations..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Scrollable variation list */}
+            <div className="max-h-[60vh] overflow-y-auto space-y-2 pr-2">
+              {filteredVariations.length > 0 ? (
+                filteredVariations.map(variation => {
+                  const puzzleCount = hierarchy.filter(h => h.opening === selectedOpening && h.subset === selectedSubset && h.variation === variation).length;
+                  return (
+                    <div
+                      key={variation}
+                      onClick={() => handleSelectVariation(variation)}
+                      className="p-4 bg-slate-700 hover:bg-slate-600 rounded-lg cursor-pointer transition-all hover:shadow-lg hover:shadow-teal-500/20 border border-slate-600 hover:border-teal-500 group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-white group-hover:text-teal-400 transition-colors">{variation}</h3>
+                          <p className="text-sm text-slate-400">
+                            {puzzleCount} puzzle{puzzleCount !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-teal-400 transition-colors" />
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <p className="text-center text-slate-400 py-12">No variations found</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Configuration */}
+        {step === "configuration" && (
+          <div className="space-y-6">
+            <div className="bg-teal-900/30 border border-teal-700 rounded-lg p-4 space-y-2">
+              <p className="text-sm text-teal-300">
+                <span className="font-semibold">Opening:</span> {selectedOpening}
+              </p>
+              {selectedSubset && (
+                <p className="text-sm text-teal-300">
+                  <span className="font-semibold">Subset:</span> {selectedSubset}
+                </p>
+              )}
+              {selectedVariation && (
+                <p className="text-sm text-teal-300">
+                  <span className="font-semibold">Variation:</span> {selectedVariation}
+                </p>
+              )}
+              <p className="text-sm text-teal-300 pt-2 border-t border-teal-700">
+                <span className="font-semibold">Available Puzzles:</span> {puzzleCountForSelection}
+              </p>
+            </div>
+
+            <div className="bg-slate-700 rounded-lg p-6 space-y-6 border border-slate-600">
               {/* Puzzle Count */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+              <div>
+                <label className="block text-sm font-semibold text-white mb-3">
                   Puzzles per Session
                 </label>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                  {PUZZLE_COUNT_OPTIONS.map((count) => (
+                <div className="grid grid-cols-5 gap-2">
+                  {PUZZLE_COUNT_OPTIONS.map(count => (
                     <button
                       key={count}
                       onClick={() => setPuzzleCount(count)}
-                      className={`py-2 px-3 rounded transition ${
+                      className={`py-2 px-3 rounded-lg font-medium transition-all ${
                         puzzleCount === count
-                          ? "bg-amber-400 text-slate-900 font-semibold"
-                          : "bg-slate-700 text-slate-300 hover:bg-slate-600"
+                          ? 'bg-teal-600 text-white shadow-lg shadow-teal-600/50'
+                          : 'bg-slate-600 text-slate-300 hover:bg-slate-500'
                       }`}
                     >
                       {count}
@@ -343,35 +406,71 @@ export default function Train() {
                 </div>
               </div>
 
-              {/* Target Cycles */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Target Cycles
+              {/* Rating Range */}
+              <div>
+                <label className="block text-sm font-semibold text-white mb-3">
+                  Rating Range
                 </label>
-                <input
-                  type="number"
-                  value={targetCycles}
-                  onChange={(e) => setTargetCycles(Number(e.target.value))}
-                  min="1"
-                  max="10"
-                  className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white text-center"
-                />
+                <div className="space-y-2">
+                  <div className="flex gap-4">
+                    <div className="flex-1">
+                      <label className="text-xs text-slate-400">Min</label>
+                      <input
+                        type="number"
+                        value={minRating}
+                        onChange={(e) => setMinRating(parseInt(e.target.value))}
+                        className="w-full px-3 py-2 rounded-lg bg-slate-600 border border-slate-500 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label className="text-xs text-slate-400">Max</label>
+                      <input
+                        type="number"
+                        value={maxRating}
+                        onChange={(e) => setMaxRating(parseInt(e.target.value))}
+                        className="w-full px-3 py-2 rounded-lg bg-slate-600 border border-slate-500 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Cycles */}
+              <div>
+                <label className="block text-sm font-semibold text-white mb-3">
+                  Training Cycles
+                </label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map(cycle => (
+                    <button
+                      key={cycle}
+                      onClick={() => setTargetCycles(cycle)}
+                      className={`py-2 px-4 rounded-lg font-medium transition-all ${
+                        targetCycles === cycle
+                          ? 'bg-teal-600 text-white shadow-lg shadow-teal-600/50'
+                          : 'bg-slate-600 text-slate-300 hover:bg-slate-500'
+                      }`}
+                    >
+                      {cycle}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Color Filter */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+              <div>
+                <label className="block text-sm font-semibold text-white mb-3">
                   Color
                 </label>
-                <div className="flex gap-2">
-                  {["both", "white", "black"].map((color: any) => (
+                <div className="grid grid-cols-3 gap-2">
+                  {(['white', 'black', 'both'] as const).map(color => (
                     <button
                       key={color}
-                      onClick={() => setColorFilter(color as "white" | "black" | "both")}
-                      className={`flex-1 py-2 px-3 rounded transition capitalize ${
+                      onClick={() => setColorFilter(color)}
+                      className={`py-2 px-3 rounded-lg font-medium transition-all capitalize ${
                         colorFilter === color
-                          ? "bg-amber-400 text-slate-900 font-semibold"
-                          : "bg-slate-700 text-slate-300 hover:bg-slate-600"
+                          ? 'bg-teal-600 text-white shadow-lg shadow-teal-600/50'
+                          : 'bg-slate-600 text-slate-300 hover:bg-slate-500'
                       }`}
                     >
                       {color}
@@ -379,24 +478,24 @@ export default function Train() {
                   ))}
                 </div>
               </div>
-            </Card>
 
-            {/* Start Button */}
-            <Button
-              onClick={handleStartSession}
-              disabled={isFetchingPuzzles}
-              className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-3 rounded-lg transition"
-            >
-              {isFetchingPuzzles ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Loading Puzzles...
-                </>
-              ) : (
-                "Start Session →"
-              )}
-            </Button>
-          </>
+              {/* Start Button */}
+              <button
+                onClick={handleStartSession}
+                disabled={isFetchingPuzzles}
+                className="w-full py-3 px-4 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-600 text-white font-semibold rounded-lg transition-all hover:shadow-lg hover:shadow-teal-600/50 disabled:shadow-none flex items-center justify-center gap-2"
+              >
+                {isFetchingPuzzles ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Starting Session...
+                  </>
+                ) : (
+                  'Start Session'
+                )}
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>

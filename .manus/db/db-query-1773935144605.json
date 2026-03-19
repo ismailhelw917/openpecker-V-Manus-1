@@ -1,0 +1,75 @@
+{
+  "query": "SELECT opening, subset, COUNT(*) as count FROM puzzles GROUP BY opening, subset ORDER BY count DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT opening, subset, COUNT(*) as count FROM puzzles GROUP BY opening, subset ORDER BY count DESC;",
+  "rows": [
+    {
+      "opening": "Opening",
+      "subset": "Unclassified",
+      "count": "1748"
+    },
+    {
+      "opening": "Opening",
+      "subset": "Opening",
+      "count": "432"
+    },
+    {
+      "opening": "Sicilian Defense",
+      "subset": "Sicilian",
+      "count": "429"
+    },
+    {
+      "opening": "Sicilian Defense",
+      "subset": "Sicilian Najdorf",
+      "count": "2"
+    },
+    {
+      "opening": "Italian Game",
+      "subset": "Italian Game",
+      "count": "2"
+    },
+    {
+      "opening": "French Defense",
+      "subset": "French Defense",
+      "count": "2"
+    },
+    {
+      "opening": "Italian Game",
+      "subset": "Italian Game Giuoco Piano",
+      "count": "1"
+    },
+    {
+      "opening": "Sicilian Defense",
+      "subset": "Sicilian Accelerated Dragon",
+      "count": "1"
+    },
+    {
+      "opening": "Italian Game",
+      "subset": "Italian Game Two Knights Defense",
+      "count": "1"
+    },
+    {
+      "opening": "Four Knights",
+      "subset": "Four Knights Scotch",
+      "count": "1"
+    },
+    {
+      "opening": "Sicilian Defense",
+      "subset": "Sicilian Closed",
+      "count": "1"
+    },
+    {
+      "opening": "Four Knights",
+      "subset": "Four Knights",
+      "count": "1"
+    },
+    {
+      "opening": "Four Knights",
+      "subset": "Four Knights Game",
+      "count": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "opening\tsubset\tcount\nOpening\tUnclassified\t1748\nOpening\tOpening\t432\nSicilian Defense\tSicilian\t429\nSicilian Defense\tSicilian Najdorf\t2\nItalian Game\tItalian Game\t2\nFrench Defense\tFrench Defense\t2\nItalian Game\tItalian Game Giuoco Piano\t1\nSicilian Defense\tSicilian Accelerated Dragon\t1\nItalian Game\tItalian Game Two Knights Defense\t1\nFour Knights\tFour Knights Scotch\t1\nSicilian Defense\tSicilian Closed\t1\nFour Knights\tFour Knights\t1\nFour Knights\tFour Knights Game\t1\n",
+  "stderr": "",
+  "execution_time_ms": 1952
+}

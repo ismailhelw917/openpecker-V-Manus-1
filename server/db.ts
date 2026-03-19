@@ -23,6 +23,7 @@ import {
   players,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
+import { eq, ne, and, or, gte, lte, asc, desc, count, sum, inArray, sql } from 'drizzle-orm';
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -1135,4 +1136,169 @@ export async function getOpeningsWithPuzzleCounts() {
   
   // Extract rows from result - db.execute returns [rows, fields]
   return Array.isArray(result) ? result[0] : result.rows || [];
+}
+
+
+/**
+ * Classify all puzzles by opening variations
+ * Creates Opening → Subset → Variation hierarchy
+ */
+export async function classifyAllPuzzlesByVariation() {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot classify puzzles: database not available");
+    return { processed: 0, updated: 0, error: 'Database not available' };
+  }
+
+  try {
+    // Opening classification hierarchy
+    const openingHierarchy: Record<string, Record<string, string>> = {
+      'Sicilian Defense': {
+        'Sicilian Najdorf': 'Najdorf Variation',
+        'Sicilian Accelerated Dragon': 'Accelerated Dragon',
+        'Sicilian Closed': 'Closed Variation',
+        'Sicilian': 'Main Line',
+      },
+      'Italian Game': {
+        'Italian Game Giuoco Piano': 'Giuoco Piano',
+        'Italian Game Two Knights Defense': 'Two Knights Defense',
+        'Italian Game': 'Main Line',
+      },
+      'French Defense': {
+        'French Defense': 'Main Line',
+      },
+      'Four Knights': {
+        'Four Knights Game': 'Four Knights Game',
+        'Four Knights Scotch': 'Scotch Game',
+        'Four Knights': 'Main Line',
+      },
+      'Opening': {
+        'Opening': 'Unclassified',
+      },
+    };
+
+    // Function to classify a puzzle
+    const classifyOpening = (openingName: string | null) => {
+      if (!openingName) {
+        return { opening: 'Opening', subset: 'Unclassified', variation: 'Unknown' };
+      }
+
+      // Check if opening name matches any known hierarchy
+      for (const [mainOpening, subsets] of Object.entries(openingHierarchy)) {
+        if (openingName.includes(mainOpening)) {
+          // Try to find the most specific subset match
+          for (const [subsetName, variation] of Object.entries(subsets)) {
+            if (openingName.includes(subsetName)) {
+              return { opening: mainOpening, subset: subsetName, variation };
+            }
+          }
+          // If no subset match, use main opening
+          return { opening: mainOpening, subset: mainOpening, variation: 'Main Line' };
+        }
+      }
+
+      // Default classification
+      return { opening: 'Opening', subset: 'Unclassified', variation: openingName || 'Unknown' };
+    };
+
+    // Get all puzzles using raw SQL
+    const result = await db.execute(sql`SELECT id, openingName FROM puzzles`);
+    const allPuzzles = Array.isArray(result) ? result[0] : result.rows || [];
+    let updated = 0;
+
+    // Process each puzzle
+    for (const puzzle of allPuzzles) {
+      const classification = classifyOpening(puzzle.openingName);
+      
+      // Update puzzle with classification using raw SQL
+      await db.execute(sql`
+        UPDATE puzzles 
+        SET opening = ${classification.opening}, 
+            subset = ${classification.subset}, 
+            variation = ${classification.variation}
+        WHERE id = ${puzzle.id}
+      `);
+      
+      updated++;
+      
+      if (updated % 500 === 0) {
+        console.log(`[Classify] Processed ${updated}/${allPuzzles.length} puzzles`);
+      }
+    }
+
+    console.log(`[Classify] Classified ${updated} puzzles`);
+    return { processed: allPuzzles.length, updated, error: null };
+  } catch (error) {
+    console.error('[Database] Error classifying puzzles:', error);
+    return { processed: 0, updated: 0, error: String(error) };
+  }
+}
+
+/**
+ * Get all unique opening hierarchies (Opening → Subset → Variation)
+ */
+export async function getOpeningHierarchy() {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    // Use raw SQL for reliable distinct results
+    const result = await db.execute(sql`
+      SELECT DISTINCT opening, subset, variation
+      FROM puzzles
+      WHERE opening IS NOT NULL 
+        AND opening != ''
+        AND subset IS NOT NULL 
+        AND subset != ''
+        AND variation IS NOT NULL 
+        AND variation != ''
+      ORDER BY opening ASC, subset ASC, variation ASC
+    `);
+
+    // Extract rows from result
+    const rows = Array.isArray(result) ? result[0] : result.rows || [];
+    return rows;
+  } catch (error) {
+    console.error('[Database] Error getting opening hierarchy:', error);
+    return [];
+  }
+}
+
+/**
+ * Get puzzles by opening hierarchy level
+ */
+export async function getPuzzlesByOpeningHierarchy(
+  opening?: string,
+  subset?: string,
+  variation?: string,
+  count: number = 50,
+  minRating: number = 1000,
+  maxRating: number = 2000
+) {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    // Build WHERE clause dynamically
+    let whereConditions = [];
+    whereConditions.push(gte(puzzles.rating, minRating));
+    whereConditions.push(lte(puzzles.rating, maxRating));
+
+    if (opening) whereConditions.push(eq(puzzles.opening, opening));
+    if (subset) whereConditions.push(eq(puzzles.subset, subset));
+    if (variation) whereConditions.push(eq(puzzles.variation, variation));
+
+    const result = await db
+      .select()
+      .from(puzzles)
+      .where(and(...whereConditions))
+      .orderBy(sql`RAND()`)
+      .limit(count);
+
+    console.log(`[getPuzzlesByOpeningHierarchy] Found ${result.length} puzzles for:`, { opening, subset, variation });
+    return result;
+  } catch (error) {
+    console.error('[Database] Error fetching puzzles by hierarchy:', error);
+    return [];
+  }
 }

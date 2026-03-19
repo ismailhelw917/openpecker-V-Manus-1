@@ -11,6 +11,7 @@ import {
   getDb,
   getPuzzlesByThemeAndRating,
   getRandomPuzzlesByThemeAndRating,
+  getRandomPuzzlesByOpeningAndRating,
   getPuzzleById,
   insertPuzzles,
   createTrainingSet,
@@ -43,6 +44,9 @@ import {
   endOnlineSession,
   cleanupStaleOnlineSessions,
   updatePlayerName,
+  classifyAllPuzzlesByVariation,
+  getOpeningHierarchy,
+  getPuzzlesByOpeningHierarchy,
 } from "./db";
 import {
   getOnlineCount,
@@ -308,6 +312,47 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         return insertOpenings(input.openings);
       }),
+
+    /**
+     * Classify all puzzles by opening variations
+     */
+    classifyVariations: publicProcedure
+      .mutation(async () => {
+        return await classifyAllPuzzlesByVariation();
+      }),
+
+    /**
+     * Get opening hierarchy (Opening -> Subset -> Variation)
+     */
+    getHierarchy: publicProcedure
+      .query(async () => {
+        return await getOpeningHierarchy();
+      }),
+
+    /**
+     * Get puzzles by opening hierarchy level
+     */
+    getPuzzlesByHierarchy: publicProcedure
+      .input(
+        z.object({
+          opening: z.string().optional(),
+          subset: z.string().optional(),
+          variation: z.string().optional(),
+          count: z.number().default(50),
+          minRating: z.number().default(1000),
+          maxRating: z.number().default(2000),
+        })
+      )
+      .query(async ({ input }) => {
+        return await getPuzzlesByOpeningHierarchy(
+          input.opening,
+          input.subset,
+          input.variation,
+          input.count,
+          input.minRating,
+          input.maxRating
+        );
+      }),
   }),
 
   // ==================== TRAINING SETS ====================
@@ -315,30 +360,70 @@ export const appRouter = router({
     /**
      * Create a new training set
      */
-    create: publicProcedure
+    create: protectedProcedure
       .input(
         z.object({
           userId: z.number().optional(),
           deviceId: z.string().optional(),
           opening: z.string(),
+          subset: z.string().optional(),
+          variation: z.string().optional(),
           minRating: z.number().default(1000),
           maxRating: z.number().default(2000),
           puzzleCount: z.number().default(50),
+          color: z.string().optional(),
+          cycles: z.number().default(3),
         })
       )
       .mutation(async ({ input }) => {
         const setId = `set_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        return createTrainingSet({
-          id: setId,
-          userId: input.userId || null,
-          deviceId: input.deviceId || null,
-          openingName: input.opening,
-          themes: JSON.stringify([input.opening]),
-          minRating: input.minRating,
-          maxRating: input.maxRating,
-          puzzleCount: input.puzzleCount,
-          puzzlesJson: JSON.stringify([]),
-        });
+        
+        try {
+          console.log(`[trainingSets.create] Fetching puzzles for hierarchy:`, {
+            opening: input.opening,
+            subset: input.subset,
+            variation: input.variation,
+          });
+          
+          const puzzleList = await getPuzzlesByOpeningHierarchy(
+            input.opening,
+            input.subset,
+            input.variation,
+            input.puzzleCount,
+            input.minRating,
+            input.maxRating
+          );
+          
+          console.log(`[trainingSets.create] Found ${puzzleList.length} puzzles`);
+          
+          const puzzlesForSession = puzzleList.map(p => ({
+            id: p.id,
+            fen: p.fen,
+            moves: p.moves,
+            rating: p.rating,
+            themes: p.themes,
+            openingName: p.openingName,
+          }));
+          
+          const result = await createTrainingSet({
+            id: setId,
+            userId: input.userId || null,
+            deviceId: input.deviceId || null,
+            openingName: input.opening,
+            themes: JSON.stringify([input.opening]),
+            minRating: input.minRating,
+            maxRating: input.maxRating,
+            puzzleCount: input.puzzleCount,
+            targetCycles: input.cycles,
+            puzzlesJson: JSON.stringify(puzzlesForSession),
+          });
+          
+          console.log(`[trainingSets.create] Training set created with ID: ${result}`);
+          return result;
+        } catch (error) {
+          console.error(`[trainingSets.create] Error:`, error);
+          throw error;
+        }
       }),
 
     /**

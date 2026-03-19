@@ -1,0 +1,14 @@
+{
+  "query": "SELECT COUNT(*) as total_puzzles, COUNT(DISTINCT openingName) as unique_openings FROM puzzles",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT COUNT(*) as total_puzzles, COUNT(DISTINCT openingName) as unique_openings FROM puzzles",
+  "rows": [
+    {
+      "total_puzzles": "1013",
+      "unique_openings": "12"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_puzzles\tunique_openings\n1013\t12\n",
+  "stderr": "",
+  "execution_time_ms": 1612
+}

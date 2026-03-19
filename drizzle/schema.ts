@@ -46,6 +46,9 @@ export const puzzles = mysqlTable("puzzles", {
   openingVariation: varchar("openingVariation", { length: 255 }), // Opening variation (e.g., 'Najdorf Variation')
   ecoCode: varchar("ecoCode", { length: 10 }), // ECO code (e.g., 'C20', 'E94')
   puzzleData: text("puzzleData"), // Full puzzle object as JSON
+  opening: varchar("opening", { length: 255 }), // Hierarchical opening (e.g., 'Sicilian Defense')
+  subset: varchar("subset", { length: 255 }), // Hierarchical subset (e.g., 'Sicilian Najdorf')
+  variation: varchar("variation", { length: 255 }), // Hierarchical variation (e.g., 'Najdorf Variation')
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table) => ({
   ratingIdx: index("idx_rating").on(table.rating),

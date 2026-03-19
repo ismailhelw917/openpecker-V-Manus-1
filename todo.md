@@ -1073,3 +1073,21 @@
 - [x] Implement user tracking via Counter API (trackUserLogin, trackPuzzleAttempt, trackSessionComplete)
 - [x] Test both features (Counter API tests passed, procedures implemented)
 - [ ] Create checkpoint
+
+
+## Feature: Hierarchical Opening Classification (Round 39)
+- [ ] Classify puzzles by opening variations (Opening → Subset → Variation)
+- [ ] Update database schema to store opening hierarchy (opening, subset, variation)
+- [ ] Extract variation names from FEN and moves using chess opening library
+- [ ] Build hierarchical selector UI in Train tab with three-level selection
+- [ ] Implement search/filter interface for opening tree navigation
+- [ ] Support multi-level selection (opening only, or opening+subset, or all three)
+- [ ] Test hierarchical selection flow end-to-end
+- [ ] Save checkpoint
+
+
+## Bug Fix (Round 19 - Train Tab Design and Scrolling)
+- [x] Improve Train tab visual design with better styling
+- [x] Add scrolling functionality to opening list
+- [x] Ensure responsive design on different screen sizes
+- [x] Test hierarchical selector on mobile devices
