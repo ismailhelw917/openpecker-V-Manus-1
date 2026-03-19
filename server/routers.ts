@@ -306,26 +306,24 @@ export const appRouter = router({
         z.object({
           userId: z.number().optional(),
           deviceId: z.string().optional(),
-          name: z.string(),
-          description: z.string().optional(),
           opening: z.string(),
-          minRating: z.number().default(0),
-          maxRating: z.number().default(3000),
+          minRating: z.number().default(1000),
+          maxRating: z.number().default(2000),
           puzzleCount: z.number().default(50),
-          isPublic: z.boolean().default(false),
         })
       )
       .mutation(async ({ input }) => {
+        const setId = `set_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         return createTrainingSet({
+          id: setId,
           userId: input.userId || null,
           deviceId: input.deviceId || null,
-          name: input.name,
-          description: input.description || null,
-          opening: input.opening,
+          openingName: input.opening,
+          themes: JSON.stringify([input.opening]),
           minRating: input.minRating,
           maxRating: input.maxRating,
           puzzleCount: input.puzzleCount,
-          isPublic: input.isPublic,
+          puzzlesJson: JSON.stringify([]),
         });
       }),
 
@@ -391,7 +389,7 @@ export const appRouter = router({
           colorFilter: z.enum(['white', 'black', 'both']).default('both'),
         })
       )
-      .query(async ({ input }) => {
+      .mutation(async ({ input }) => {
         const { getPuzzlesByOpening } = await import('./puzzles');
         return getPuzzlesByOpening(
           input.opening,

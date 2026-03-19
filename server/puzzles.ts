@@ -23,25 +23,19 @@ export async function getPuzzlesByOpening(
       };
     }
 
-    let query = db
-      .select({
-        id: puzzles.id,
-        fen: puzzles.fen,
-        moves: puzzles.moves,
-        rating: puzzles.rating,
-        themes: puzzles.themes,
-        openingName: puzzles.openingName,
-        openingFen: puzzles.openingFen,
-      })
+    const { and, gte, lte, like } = await import('drizzle-orm');
+    
+    const result = await db
+      .select()
       .from(puzzles)
       .where(
-        sql`${puzzles.openingName} LIKE ${`%${openingName}%`} 
-            AND ${puzzles.rating} >= ${minRating} 
-            AND ${puzzles.rating} <= ${maxRating}`
+        and(
+          like(puzzles.openingName, `%${openingName}%`),
+          gte(puzzles.rating, minRating),
+          lte(puzzles.rating, maxRating)
+        )
       )
       .limit(count);
-
-    const result = await query;
     
     return {
       success: true,
@@ -50,9 +44,9 @@ export async function getPuzzlesByOpening(
         fen: p.fen,
         moves: p.moves,
         rating: p.rating,
-        themes: p.themes || [],
+        themes: typeof p.themes === 'string' ? JSON.parse(p.themes) : p.themes || [],
         openingName: p.openingName || openingName,
-        openingFen: p.openingFen || '',
+        color: p.color || 'both',
       })),
       count: result.length,
     };
@@ -89,6 +83,13 @@ export async function getAvailableOpenings() {
       .where(sql`${puzzles.openingName} IS NOT NULL AND ${puzzles.openingName} != ''`)
       .limit(500);
 
+    if (!result) {
+      return {
+        success: true,
+        openings: [],
+      };
+    }
+
     return {
       success: true,
       openings: result
@@ -119,6 +120,8 @@ export async function getPuzzleStatsByOpening(openingName: string) {
       };
     }
 
+    const { like } = await import('drizzle-orm');
+    
     const result = await db
       .select({
         count: sql<number>`COUNT(*)`,
@@ -127,7 +130,7 @@ export async function getPuzzleStatsByOpening(openingName: string) {
         maxRating: sql<number>`MAX(${puzzles.rating})`,
       })
       .from(puzzles)
-      .where(sql`${puzzles.openingName} LIKE ${`%${openingName}%`}`);
+      .where(like(puzzles.openingName, `%${openingName}%`));
 
     const stats = result[0] || { count: 0, avgRating: 0, minRating: 0, maxRating: 0 };
 

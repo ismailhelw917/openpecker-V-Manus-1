@@ -82,15 +82,11 @@ export default function Train() {
       const result = await createTrainingSet.mutateAsync({
         userId: user?.id,
         deviceId,
-        openingName: selectedOpening,
-        openingFen: "",
-        themes: [selectedOpening],
+        name: `${selectedOpening} - ${puzzles.length} puzzles`,
+        opening: selectedOpening,
         minRating,
         maxRating,
         puzzleCount: puzzles.length,
-        targetCycles,
-        colorFilter,
-        puzzles,
       });
 
       if (result.success && result.setId) {
