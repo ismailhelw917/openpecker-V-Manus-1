@@ -930,18 +930,19 @@ export async function createOrUpdateOnlineSession(
   playerId: number,
   userId: number | null,
   deviceId: string | null,
-  sessionId: string
+  sessionId?: string
 ) {
   const db = await getDb();
   if (!db) return undefined;
 
   try {
+    const finalSessionId = sessionId || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const result = await db.insert(onlineSessions).values({
       id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       playerId,
       userId,
       deviceId,
-      sessionId,
+      sessionId: finalSessionId,
       status: "active",
       lastHeartbeat: new Date(),
       startedAt: new Date(),

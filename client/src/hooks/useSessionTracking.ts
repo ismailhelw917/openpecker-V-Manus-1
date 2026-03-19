@@ -10,6 +10,7 @@ export function useSessionTracking() {
   const { user } = useAuth();
   const sessionIdRef = useRef<number | null>(null);
   const heartbeatIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const initializeRef = useRef(false);
 
   const trackMutation = trpc.session.track.useMutation();
   const heartbeatMutation = trpc.session.heartbeat.useMutation();
@@ -18,6 +19,10 @@ export function useSessionTracking() {
   useEffect(() => {
     // Only track if user exists
     if (!user?.id) return;
+
+    // Prevent double initialization
+    if (initializeRef.current) return;
+    initializeRef.current = true;
 
     // Initialize session tracking
     const initializeSession = async () => {
@@ -89,7 +94,7 @@ export function useSessionTracking() {
         }
       }
     };
-  }, [user?.id, trackMutation, heartbeatMutation, endSessionMutation]);
+  }, [user?.id]); // Only depend on user.id to prevent infinite loops
 
   return {
     sessionId: sessionIdRef.current,
