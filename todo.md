@@ -1003,3 +1003,11 @@
 - [x] Fix tRPC leaderboard query to accept optional/nullish input (added .nullish() and input parameter)
 - [x] Test leaderboard page loads without errors (all 500 players displaying with correct rankings)
 - [ ] Create checkpoint
+
+
+## Leaderboard Real Data Fix (Round 58 - User Report)
+- [x] Identify that COALESCE defaults are being used instead of real player stats
+- [x] Fix recordPuzzleAttempt to call updatePlayerStats after recording attempt
+- [x] Update player stats table automatically when users complete puzzles
+- [x] Verify leaderboard will show actual player statistics (real accuracy, speed, rating)
+- [ ] Create checkpoint

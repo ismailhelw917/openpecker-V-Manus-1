@@ -431,6 +431,33 @@ export async function recordPuzzleAttempt(attempt: InsertPuzzleAttempt) {
   const db = await getDb();
   if (!db) return undefined;
   const result = await db.insert(puzzleAttempts).values(attempt);
+  
+  // Update player stats after recording attempt
+  if (attempt.userId || attempt.deviceId) {
+    try {
+      // Get player ID
+      let playerQuery;
+      if (attempt.userId) {
+        playerQuery = sql`SELECT id FROM players WHERE userId = ${attempt.userId} LIMIT 1`;
+      } else {
+        playerQuery = sql`SELECT id FROM players WHERE deviceId = ${attempt.deviceId} AND type = 'anonymous' LIMIT 1`;
+      }
+      
+      const playerResult = await db.execute(playerQuery);
+      const playerRows = Array.isArray(playerResult) ? (Array.isArray(playerResult[0]) ? playerResult[0] : playerResult) : [];
+      const player = playerRows[0];
+      
+      if (player?.id) {
+        // Import and call updatePlayerStats from players.ts
+        const { updatePlayerStats } = await import('./players');
+        await updatePlayerStats(player.id);
+      }
+    } catch (error) {
+      console.warn('[Database] Failed to update player stats after puzzle attempt:', error);
+      // Don't throw - we still want to return the puzzle attempt result
+    }
+  }
+  
   return result;
 }
 
