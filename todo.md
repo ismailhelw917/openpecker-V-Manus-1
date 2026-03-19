@@ -872,3 +872,10 @@
 - [x] Confirm auto-skip logic working for problematic puzzles
 - [x] All tests passing (47+ tests)
 - [x] Ready for deployment
+
+
+## Session Display Update (Round 45 - User Request)
+- [x] Replace "Correct" counter with "Puzzles Solved" on session page
+- [x] Update Session.tsx header display
+- [x] Test session page display
+- [ ] Create checkpoint

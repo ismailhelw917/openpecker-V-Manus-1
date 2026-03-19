@@ -592,8 +592,8 @@ export default function Session() {
           </div>
         </div>
         <div className="text-right text-sm">
-          <p className="text-amber-400 font-bold">{correctCount}/{puzzles.length}</p>
-          <p className="text-slate-400 text-xs">Correct</p>
+          <p className="text-amber-400 font-bold">{currentPuzzleIndex}/{puzzles.length}</p>
+          <p className="text-slate-400 text-xs">Puzzles Solved</p>
         </div>
       </div>
 
