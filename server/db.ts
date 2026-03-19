@@ -20,6 +20,7 @@ import {
   promoRedemptions,
   InsertPromoRedemption,
   onlineSessions,
+  players,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -1061,5 +1062,22 @@ export async function cleanupStaleOnlineSessions(minutesInactive: number = 30) {
   } catch (error) {
     console.error("[Database] Error cleaning up stale sessions:", error);
     return 0;
+  }
+}
+
+/**
+ * Update player name in the players table (for registered users)
+ */
+export async function updatePlayerName(userId: number, name: string) {
+  const db = await getDb();
+  if (!db) return;
+
+  try {
+    await db
+      .update(players)
+      .set({ name })
+      .where(eq(players.userId, userId));
+  } catch (error) {
+    console.error("[Database] Error updating player name:", error);
   }
 }

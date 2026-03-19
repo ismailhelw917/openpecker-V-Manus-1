@@ -1,0 +1,110 @@
+{
+  "query": "SELECT id, userId, name, type, rating, accuracy, totalPuzzles, isPremium FROM players WHERE userId IS NOT NULL ORDER BY rating DESC LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT id, userId, name, type, rating, accuracy, totalPuzzles, isPremium FROM players WHERE userId IS NOT NULL ORDER BY rating DESC LIMIT 10;",
+  "rows": [
+    {
+      "id": "30001",
+      "userId": "1",
+      "name": "Ayush",
+      "type": "registered",
+      "rating": "1450",
+      "accuracy": "73.33",
+      "totalPuzzles": "75",
+      "isPremium": "1"
+    },
+    {
+      "id": "30002",
+      "userId": "2",
+      "name": "N.Balaji",
+      "type": "registered",
+      "rating": "1420",
+      "accuracy": "73.33",
+      "totalPuzzles": "75",
+      "isPremium": "1"
+    },
+    {
+      "id": "30003",
+      "userId": "3",
+      "name": "BR",
+      "type": "registered",
+      "rating": "1400",
+      "accuracy": "73.33",
+      "totalPuzzles": "75",
+      "isPremium": "1"
+    },
+    {
+      "id": "30008",
+      "userId": "8",
+      "name": "Guest-005",
+      "type": "anonymous",
+      "rating": "1310",
+      "accuracy": "63.33",
+      "totalPuzzles": "60",
+      "isPremium": "0"
+    },
+    {
+      "id": "30013",
+      "userId": "13",
+      "name": "Guest-010",
+      "type": "anonymous",
+      "rating": "1305",
+      "accuracy": "62.07",
+      "totalPuzzles": "58",
+      "isPremium": "0"
+    },
+    {
+      "id": "30019",
+      "userId": "19",
+      "name": "Guest-016",
+      "type": "anonymous",
+      "rating": "1300",
+      "accuracy": "62.50",
+      "totalPuzzles": "56",
+      "isPremium": "0"
+    },
+    {
+      "id": "30007",
+      "userId": "7",
+      "name": "Guest-004",
+      "type": "anonymous",
+      "rating": "1300",
+      "accuracy": "63.64",
+      "totalPuzzles": "55",
+      "isPremium": "0"
+    },
+    {
+      "id": "30016",
+      "userId": "16",
+      "name": "Guest-013",
+      "type": "anonymous",
+      "rating": "1295",
+      "accuracy": "62.96",
+      "totalPuzzles": "54",
+      "isPremium": "0"
+    },
+    {
+      "id": "30011",
+      "userId": "11",
+      "name": "Guest-008",
+      "type": "anonymous",
+      "rating": "1290",
+      "accuracy": "63.46",
+      "totalPuzzles": "52",
+      "isPremium": "0"
+    },
+    {
+      "id": "30005",
+      "userId": "5",
+      "name": "Guest-002",
+      "type": "anonymous",
+      "rating": "1280",
+      "accuracy": "64.00",
+      "totalPuzzles": "50",
+      "isPremium": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\tname\ttype\trating\taccuracy\ttotalPuzzles\tisPremium\n30001\t1\tAyush\tregistered\t1450\t73.33\t75\t1\n30002\t2\tN.Balaji\tregistered\t1420\t73.33\t75\t1\n30003\t3\tBR\tregistered\t1400\t73.33\t75\t1\n30008\t8\tGuest-005\tanonymous\t1310\t63.33\t60\t0\n30013\t13\tGuest-010\tanonymous\t1305\t62.07\t58\t0\n30019\t19\tGuest-016\tanonymous\t1300\t62.50\t56\t0\n30007\t7\tGuest-004\tanonymous\t1300\t63.64\t55\t0\n30016\t16\tGuest-013\tanonymous\t1295\t62.96\t54\t0\n30011\t11\tGuest-008\tanonymous\t1290\t63.46\t52\t0\n30005\t5\tGuest-002\tanonymous\t1280\t64.00\t50\t0\n",
+  "stderr": "",
+  "execution_time_ms": 1625
+}

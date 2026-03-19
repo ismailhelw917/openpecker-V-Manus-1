@@ -6,6 +6,7 @@ import { z } from "zod";
 import { nanoid } from "nanoid";
 import bcrypt from "bcrypt";
 import { sdk } from "./_core/sdk";
+import { trackUserLogin } from "./_core/counter-api";
 import {
   getDb,
   getPuzzlesByThemeAndRating,
@@ -41,6 +42,7 @@ import {
   getOnlineSessionCount,
   endOnlineSession,
   cleanupStaleOnlineSessions,
+  updatePlayerName,
 } from "./db";
 import {
   getOnlineCount,
@@ -106,6 +108,15 @@ export const appRouter = router({
             name: userInfo.name,
             email: userInfo.email,
           });
+
+          // Track user login with Counter API (record name for leaderboard)
+          if (user && user.id && user.name) {
+            await trackUserLogin(user.id, user.name);
+            // Also update player name in players table for leaderboard display
+            if (user.id) {
+              await updatePlayerName(user.id, user.name);
+            }
+          }
 
           // Create session token
           const sessionToken = nanoid();
