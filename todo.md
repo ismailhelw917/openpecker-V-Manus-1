@@ -1357,3 +1357,11 @@
 - [ ] DEBUG: Fix puzzle loading - getRandomPuzzlesByOpeningAndRating returning empty array
 - [ ] Add console logging to identify root cause (opening name mismatch vs DB query issue)
 - [ ] Test all three features end-to-end
+
+## Bug Fix (Round 21 - Chessboard CSS and Piece Rendering)
+- [x] Import Chessground CSS files properly
+- [x] Fix board layout and piece positioning
+- [x] Ensure pieces display correctly on squares
+- [x] Test board interactivity and piece movement
+- [x] Added autoPieces configuration to Chessground
+- [x] Chessboard rendering with dark brown theme
