@@ -1,0 +1,22 @@
+{
+  "query": "SELECT DISTINCT openingName FROM puzzles WHERE openingName LIKE '%Alekhine%' OR openingName LIKE '%French%' OR openingName LIKE '%Caro%' LIMIT 10",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT DISTINCT openingName FROM puzzles WHERE openingName LIKE '%Alekhine%' OR openingName LIKE '%French%' OR openingName LIKE '%Caro%' LIMIT 10",
+  "rows": [
+    {
+      "openingName": "Alekhine"
+    },
+    {
+      "openingName": "Caro-Kann"
+    },
+    {
+      "openingName": "French"
+    },
+    {
+      "openingName": "French Defense"
+    }
+  ],
+  "messages": [],
+  "stdout": "openingName\nAlekhine\nCaro-Kann\nFrench\nFrench Defense\n",
+  "stderr": "",
+  "execution_time_ms": 14959
+}

@@ -1248,3 +1248,14 @@
 - [x] Reduced unique openings from ~120 to 102
 - [x] Verified Amsterdam (1), Colle (3), etc. are removed
 - [x] Save checkpoint
+
+
+## Fix Opening Names and Hierarchy Structure (User Feedback)
+- [x] Updated generate-hierarchy.mjs with 61-entry opening name mapping
+- [x] Restructured hierarchy from 3 levels to 2 levels (Opening → Variation only)
+- [x] Mapped abbreviated names to proper chess notation
+- [x] Regenerated hierarchy.json with 101 openings, 1,392 variations
+- [x] Rewrote Train.tsx to display 2-level hierarchy
+- [x] Verified opening names: Alekhine's Defence, French Defence, Caro-Kann Defence, etc.
+- [x] Tested full flow: Opening → Variation → Configuration
+- [x] Save checkpoint
