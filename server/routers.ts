@@ -47,6 +47,9 @@ import {
   classifyAllPuzzlesByVariation,
   getOpeningHierarchy,
   getPuzzlesByOpeningHierarchy,
+  getPuzzlesByDifficultyRange,
+  getOpeningDifficultyStats,
+  getPuzzleSuccessRate,
 } from "./db";
 import {
   getOnlineCount,
@@ -259,6 +262,64 @@ export const appRouter = router({
       )
       .mutation(async ({ input }) => {
         return insertPuzzles(input.puzzles);
+      }),
+
+    /**
+     * Get puzzle with variations
+     */
+    getWithVariations: publicProcedure
+      .input(z.object({ id: z.string() }))
+      .query(async ({ input }) => {
+        const { loadPuzzleWithVariations } = await import('./puzzle-service');
+        try {
+          return await loadPuzzleWithVariations(input.id);
+        } catch (error) {
+          console.error('Error loading puzzle with variations:', error);
+          return null;
+        }
+      }),
+
+    /**
+     * Get puzzles by difficulty range
+     */
+    getByDifficulty: publicProcedure
+      .input(
+        z.object({
+          minDifficulty: z.number().default(500),
+          maxDifficulty: z.number().default(2500),
+          limit: z.number().default(20),
+        })
+      )
+      .query(async ({ input }) => {
+        const { getPuzzlesByDifficultyRange } = await import('./db');
+        return getPuzzlesByDifficultyRange(
+          input.minDifficulty,
+          input.maxDifficulty,
+          input.limit
+        );
+      }),
+  }),
+
+  // ==================== PUZZLE ANALYSIS ====================
+  analysis: router({
+    /**
+     * Get puzzle difficulty statistics for an opening
+     */
+    getOpeningDifficultyStats: publicProcedure
+      .input(z.object({ opening: z.string() }))
+      .query(async ({ input }) => {
+        const { getOpeningDifficultyStats } = await import('./db');
+        return getOpeningDifficultyStats(input.opening);
+      }),
+
+    /**
+     * Get puzzle success rate
+     */
+    getPuzzleSuccessRate: publicProcedure
+      .input(z.object({ puzzleId: z.string() }))
+      .query(async ({ input }) => {
+        const { getPuzzleSuccessRate } = await import('./db');
+        return getPuzzleSuccessRate(input.puzzleId);
       }),
   }),
 
