@@ -185,6 +185,13 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
     const { active, over } = event;
     console.log('[CustomChessboard] active:', active?.id, 'over:', over?.id);
     
+    // Debug logging
+    if (over) {
+      console.log('[CustomChessboard] Move attempt:', active?.id, '->', over?.id);
+    } else {
+      console.log('[CustomChessboard] No drop target (over is null)');
+    }
+    
     // Safety check: ensure we have valid drag data
     if (!active?.data?.current?.piece || !over) {
       console.log('[CustomChessboard] Drag validation failed');
