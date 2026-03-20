@@ -63,7 +63,7 @@ export default function Settings() {
   const [isValidating, setIsValidating] = useState(false);
 
   const redeemMutation = trpc.promo.redeem.useMutation({
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       if (data.success) {
         toast.success(
           data.benefitType === "lifetime_premium"

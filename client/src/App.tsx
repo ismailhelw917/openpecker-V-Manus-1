@@ -77,7 +77,7 @@ function App() {
   useEffect(() => {
     if (globalSettings && !globalSettings.showGiftPremiumBanner) {
       setShowGiftPremium(false);
-    } else if (giftEligibility && !giftEligibility.isEligible && showGiftPremium) {
+    } else if (giftEligibility && !giftEligibility.eligible && showGiftPremium) {
       // 100 users reached - auto-disable banner in global settings
       setShowGiftPremium(false);
       updateGlobalSettingsMutation.mutate({ showGiftPremiumBanner: 0 });

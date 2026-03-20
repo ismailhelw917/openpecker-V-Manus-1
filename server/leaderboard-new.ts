@@ -11,7 +11,7 @@ export const leaderboardRouter = {
   getLeaderboard: publicProcedure
     .input(
       z.object({
-        limit: z.number().default(500).max(1000),
+        limit: z.number().max(1000).default(500),
         sortBy: z.enum(['accuracy', 'speed', 'rating']).default('accuracy'),
       })
     )

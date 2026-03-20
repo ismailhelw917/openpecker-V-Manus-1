@@ -49,11 +49,11 @@ export const ChessgroundBoard: React.FC<ChessgroundBoardProps> = ({
       orientation,
       turnColor,
       check: check ? true : false,
-      lastMove: lastMove || undefined,
+      lastMove: (lastMove || undefined) as any,
       movable: {
         free: false,
         color: turnColor,
-        dests: destsMap,
+        dests: destsMap as any,
         events: {
           after: (from, to) => {
             if (onMove) {

@@ -22,36 +22,30 @@ export default function Profile() {
     newPassword: "",
     confirmPassword: "",
   });
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [message, setMessage] = useState<{ type: "success" | "error" | "info"; text: string } | null>(null);
 
   // Get user stats
   const userStats = trpc.stats.getUserStats.useQuery(undefined, {
     enabled: !!user?.id,
   });
 
-  // Update profile mutation
-  const updateProfileMutation = trpc.auth.updateProfile.useMutation({
-    onSuccess: () => {
-      setMessage({ type: "success", text: "Profile updated successfully" });
-      setIsEditing(false);
+  // Update profile mutation (placeholder - uses OAuth, no direct profile editing)
+  const updateProfileMutation = {
+    mutate: (_data: any) => {
+      setMessage({ type: "info" as const, text: "Profile is managed through your login provider" });
       setTimeout(() => setMessage(null), 3000);
     },
-    onError: (error: any) => {
-      setMessage({ type: "error", text: error.message || "Failed to update profile" });
-    },
-  });
+    isPending: false,
+  };
 
-  // Change password mutation
-  const changePasswordMutation = trpc.auth.changePassword.useMutation({
-    onSuccess: () => {
-      setMessage({ type: "success", text: "Password changed successfully" });
-      setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
+  // Change password mutation (placeholder - uses OAuth, no password management)
+  const changePasswordMutation = {
+    mutate: (_data: any) => {
+      setMessage({ type: "info" as const, text: "Password is managed through your login provider" });
       setTimeout(() => setMessage(null), 3000);
     },
-    onError: (error: any) => {
-      setMessage({ type: "error", text: error.message || "Failed to change password" });
-    },
-  });
+    isPending: false,
+  };
 
   const handleSaveProfile = () => {
     if (!user?.id) return;
@@ -328,7 +322,7 @@ export default function Profile() {
               <div className="bg-slate-700/30 rounded-lg p-3 sm:p-4">
                 <p className="text-xs sm:text-sm text-slate-400">Loss Rate</p>
                 <p className="text-lg sm:text-2xl font-bold text-red-400">
-                  {userStats.data?.lossRate || 0}%
+                  {userStats.data ? (100 - (userStats.data.winRate || 0)).toFixed(1) : 0}%
                 </p>
               </div>
             </div>

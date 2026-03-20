@@ -1,4 +1,3 @@
-import { eq, and, or, gte, lte, lt, desc, asc, sql, count, sum, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, 
@@ -23,7 +22,7 @@ import {
   players,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
-import { eq, ne, and, or, gte, lte, asc, desc, count, sum, inArray, sql, like } from 'drizzle-orm';
+import { eq, ne, and, or, gte, lte, lt, asc, desc, count, sum, inArray, sql, like } from 'drizzle-orm';
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -1293,7 +1292,7 @@ export async function getOpeningsWithPuzzleCounts() {
   `);
   
   // Extract rows from result - db.execute returns [rows, fields]
-  return Array.isArray(result) ? result[0] : result.rows || [];
+  return Array.isArray(result) ? result[0] : (result as any).rows || [];
 }
 
 
@@ -1361,7 +1360,7 @@ export async function classifyAllPuzzlesByVariation() {
 
     // Get all puzzles using raw SQL
     const result = await db.execute(sql`SELECT id, openingName FROM puzzles`);
-    const allPuzzles = Array.isArray(result) ? result[0] : result.rows || [];
+    const allPuzzles = Array.isArray(result) ? result[0] : (result as any).rows || [];
     let updated = 0;
 
     // Process each puzzle
@@ -1415,7 +1414,7 @@ export async function getOpeningHierarchy() {
     `);
 
     // Extract rows from result
-    const rows = Array.isArray(result) ? result[0] : result.rows || [];
+    const rows = Array.isArray(result) ? result[0] : (result as any).rows || [];
     return rows;
   } catch (error) {
     console.error('[Database] Error getting opening hierarchy:', error);

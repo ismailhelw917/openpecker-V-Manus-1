@@ -93,19 +93,29 @@ export const appRouter = router({
           }
 
           // Exchange code for token
-          const tokenResponse = await sdk.oauth.exchangeCode({
-            code,
-            redirectUri: `${redirectOrigin}/api/oauth/callback`,
-          });
+          let tokenResponse: any;
+          try {
+            tokenResponse = await sdk.exchangeCodeForToken(code, state || '');
+          } catch (err) {
+            console.error('OAuth token exchange failed:', err);
+            return { success: false, error: 'Token exchange failed' };
+          }
 
-          if (!tokenResponse.success) {
-            return { success: false, error: tokenResponse.error };
+          if (!tokenResponse?.accessToken) {
+            return { success: false, error: 'No access token received' };
           }
 
           // Get user info
-          const userInfo = await sdk.oauth.getUserInfo(tokenResponse.accessToken);
-          if (!userInfo.success) {
-            return { success: false, error: "Failed to get user info" };
+          let userInfo: any;
+          try {
+            userInfo = await sdk.getUserInfo(tokenResponse.accessToken);
+          } catch (err) {
+            console.error('Failed to get user info:', err);
+            return { success: false, error: 'Failed to get user info' };
+          }
+
+          if (!userInfo?.openId) {
+            return { success: false, error: 'Failed to get user info' };
           }
 
           // Upsert user in database

@@ -123,7 +123,7 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
     if (user || deviceId) {
       trackOnlineMutation.mutate({
         userId: user?.id,
-        userName: user?.name,
+        userName: user?.name ?? undefined,
         sessionId: deviceId || 'anonymous',
       });
     }

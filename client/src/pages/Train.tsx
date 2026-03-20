@@ -137,11 +137,6 @@ export default function Train() {
   };
 
   const handleStartSession = async () => {
-    if (!user) {
-      toast.error("You must be logged in to start a session");
-      return;
-    }
-
     if (!selectedOpening) {
       toast.error("Please select an opening");
       return;

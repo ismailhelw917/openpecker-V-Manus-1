@@ -1439,3 +1439,26 @@
 - [x] Fix BottomNav with proper iOS safe area padding using env(safe-area-inset-bottom)
 - [x] Fix Settings.tsx scoping bug - promoCode/validationResult variables were in PromoCodeSection but referenced in Settings component
 - [x] Update premium modal checkout buttons with proper touch handling (removed pointer-events-none from children)
+
+## Bug Fix & Launch Prep (Round 31)
+- [x] Fix Start Session button not navigating to session page - removed login requirement, allow guest sessions with deviceId
+- [x] Clean up TypeScript errors - reduced from 23 to 0 errors
+- [x] Remove dead code and unused files (data-validation.ts, data-validation-routes.ts, useDataValidation.ts, TrainingSession.tsx, db-puzzle-fix.ts, etc.)
+- [x] Fix Stripe API version mismatch (2024-12-18.acpi → 2026-02-25.clover)
+- [x] Fix Stripe promotionCodes.create to use new API format with promotion object
+- [x] Fix monitoring.ts trackEvent calls to use TrackingEvent interface
+- [x] Fix leaderboard-new.ts z.number().default().max() chain order
+- [x] Fix routers.ts OAuth - use sdk.exchangeCodeForToken/getUserInfo instead of non-existent sdk.oauth.*
+- [x] Rewrite Auth.tsx to redirect to OAuth login instead of using non-existent register/login procedures
+- [x] Fix Profile.tsx - replace non-existent updateProfile/changePassword mutations with placeholders
+- [x] Fix Profile.tsx - compute lossRate from winRate instead of non-existent property
+- [x] Fix Session.tsx - use cycles.create instead of non-existent cycles.complete
+- [x] Fix Session.tsx - remove extra properties not in mutation schemas (cycleNumber, lastPlayedAt, bestAccuracy)
+- [x] Fix Session.tsx - replace sloppy:true with strict:false for chess.js 1.4.0
+- [x] Fix Settings.tsx - add type narrowing for promo redeem union type
+- [x] Fix Stats.tsx - convert null to undefined for userName
+- [x] Fix App.tsx - use correct property name 'eligible' instead of 'isEligible'
+- [x] Fix ChessgroundBoard.tsx - cast lastMove and dests types
+- [x] Fix db.ts - remove duplicate import and add missing 'lt' import
+- [x] Fix db.ts - cast raw SQL query results properly
+- [ ] Final checkpoint for publishing

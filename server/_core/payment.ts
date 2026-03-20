@@ -6,7 +6,7 @@ import { ENV } from "./env";
 
 // Initialize Stripe with secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2024-12-18.acpi",
+  apiVersion: "2026-02-25.clover",
 });
 
 // Premium product price ID (should be configured in Stripe dashboard)
@@ -171,7 +171,7 @@ export async function createStripeCoupon(
 
     // Create a promotion code that uses this coupon
     const promoCode = await stripe.promotionCodes.create({
-      coupon: coupon.id,
+      promotion: { type: 'coupon', coupon: coupon.id },
       code: code.toLowerCase(),
     });
 
@@ -213,7 +213,7 @@ export async function createFreePremiumCoupon(
 
     // Create a promotion code that uses this coupon
     const promoCode = await stripe.promotionCodes.create({
-      coupon: coupon.id,
+      promotion: { type: 'coupon', coupon: coupon.id },
       code: code.toLowerCase(),
     });
 

@@ -83,7 +83,7 @@ export default function Session() {
 
   // Cycle recording mutation
   const utils = trpc.useUtils();
-  const completeCycleMutation = trpc.cycles.complete.useMutation({
+  const completeCycleMutation = trpc.cycles.create.useMutation({
     onSuccess: () => {
       utils.stats.getUserStats.invalidate();
       utils.stats.getLeaderboard.invalidate();
@@ -122,16 +122,12 @@ export default function Session() {
       userId: user?.id,
       deviceId,
       trainingSetId: sessionId,
-      cycleNumber: currentCycle,
       puzzleId: currentPuzzle?.id || `puzzle-${currentPuzzleIndex}`,
       isCorrect,
       timeMs,
-      attemptNumber: 1,
     });
     updateTrainingSetMutation.mutate({
       id: sessionId,
-      lastPlayedAt: new Date(),
-      totalAttempts: (getTrainingSet.data?.totalAttempts || 0) + 1,
     });
   }, [puzzles, currentPuzzleIndex, user, sessionId, currentCycle, getTrainingSet.data?.totalAttempts]);
 
@@ -153,7 +149,7 @@ export default function Session() {
     
     for (const move of algebraicMoves) {
       try {
-        let moveObj = game.move(move, { sloppy: true });
+        let moveObj = game.move(move, { strict: false });
         if (moveObj) {
           const uci = `${moveObj.from}${moveObj.to}${moveObj.promotion || ''}`;
           uciMoves.push(uci);
@@ -166,7 +162,7 @@ export default function Session() {
           
           try {
             game = new Chess(flippedFen);
-            moveObj = game.move(move, { sloppy: true });
+            moveObj = game.move(move, { strict: false });
             if (moveObj) {
               const uci = `${moveObj.from}${moveObj.to}${moveObj.promotion || ''}`;
               uciMoves.push(uci);
@@ -343,18 +339,14 @@ export default function Session() {
           userId: user?.id,
           deviceId: getOrCreateDeviceId(),
           trainingSetId: sessionId,
-          cycleNumber: currentCycle,
           totalPuzzles: puzzles.length,
           correctCount,
           totalTimeMs: sessionTime * 1000,
+          accuracy,
         });
 
         updateTrainingSetMutation.mutate({
           id: sessionId,
-          bestAccuracy: accuracy,
-          lastPlayedAt: new Date(),
-          cyclesCompleted: currentCycle,
-          totalAttempts: puzzles.length,
         });
 
         // Aggregate stats after cycle completion
