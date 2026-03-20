@@ -1,0 +1,15 @@
+{
+  "query": "SELECT id, fen, moves FROM puzzles LIMIT 1",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT id, fen, moves FROM puzzles LIMIT 1",
+  "rows": [
+    {
+      "id": "00001",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "e5 d4 d5 exd5"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tfen\tmoves\n00001\tr1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4\te5 d4 d5 exd5\n",
+  "stderr": "",
+  "execution_time_ms": 1721
+}

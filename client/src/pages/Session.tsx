@@ -178,8 +178,15 @@ export default function Session() {
     if (Array.isArray(puzzle.moves)) return puzzle.moves;
     if (typeof puzzle.moves === 'string') {
       const moves = puzzle.moves.split(' ').filter((m: string) => m.length > 0);
-      // Check if moves are in algebraic notation (contain letters like N, B, R, Q, K, O)
-      const isAlgebraic = moves.some((m: string) => /^[NBRQK]|^O-O/.test(m));
+      // Check if moves are in algebraic notation
+      // UCI format is always 4-5 chars: e2e4, e7e5, e2e1q
+      // Algebraic can be: e4, Nf3, exd5, O-O, Bxc6, etc.
+      const isAlgebraic = moves.some((m: string) => {
+        // If it matches UCI pattern (4-5 chars of lowercase letters and numbers), it's UCI
+        if (/^[a-h][1-8][a-h][1-8][qrbn]?$/.test(m)) return false;
+        // Otherwise it's algebraic
+        return true;
+      });
       
       if (isAlgebraic && puzzle.fen) {
         return convertAlgebraicToUCI(moves, puzzle.fen);
