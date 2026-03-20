@@ -1127,3 +1127,10 @@
 - [ ] Test puzzle solving end-to-end
 - [ ] Add scrolling button to train page opening selection
 - [ ] Save checkpoint with fixes
+
+
+## Bug Fix: React Hooks Error (Round 41 - User Report)
+- [x] Identify hook order issue in Session.tsx
+- [x] Reorganize all hooks: useState → useRef → useCallback → useEffect
+- [x] Test Session page loads without React hooks error
+- [ ] Save checkpoint with bug fix

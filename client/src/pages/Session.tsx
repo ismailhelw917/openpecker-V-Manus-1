@@ -13,6 +13,7 @@ export default function Session() {
   const sessionId = params?.id as string;
   const { user } = useAuth();
 
+  // ===== ALL useState HOOKS (must come first) =====
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
   const [puzzles, setPuzzles] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -21,21 +22,31 @@ export default function Session() {
   const [currentCycle, setCurrentCycle] = useState(1);
   const [targetCycles, setTargetCycles] = useState(3);
   const [boardSize, setBoardSize] = useState(400);
-
-  // Chess game instance - kept as ref to avoid re-renders
-  const gameRef = useRef(new Chess());
-  const [gameFen, setGameFen] = useState(gameRef.current.fen());
-
-  // FIX #1: Store board orientation at puzzle init, not derived from game.turn()
-  // This prevents the board from flipping during auto-solve or opponent moves
+  const [gameFen, setGameFen] = useState(() => new Chess().fen());
   const [boardOrientation, setBoardOrientation] = useState<'white' | 'black'>('white');
+  const [userMoveIndex, setUserMoveIndex] = useState(1);
+  const [autoSolveMove, setAutoSolveMove] = useState<{ from: string; to: string } | null>(null);
+  const [isAutoSolving, setIsAutoSolving] = useState(false);
+  const [boardTheme, setBoardTheme] = useState<'classic' | 'green' | 'blue' | 'purple'>(() => {
+    const saved = localStorage.getItem('board-theme');
+    return (saved as 'classic' | 'green' | 'blue' | 'purple') || 'classic';
+  });
+  const [sessionTime, setSessionTime] = useState(0);
+  const [showCorrectCheckmark, setShowCorrectCheckmark] = useState(false);
+  const [showWrongX, setShowWrongX] = useState(false);
+  const [captureAnimation, setCaptureAnimation] = useState<{
+    piece: { type: string; color: string };
+    from: string;
+    to: string;
+  } | null>(null);
+  const [puzzleStartTime, setPuzzleStartTime] = useState<number>(Date.now());
 
-  // Puzzle generation counter - increments on each puzzle change to cancel stale timeouts
+  // ===== ALL useRef HOOKS =====
+  const gameRef = useRef(new Chess());
   const puzzleGenRef = useRef(0);
-  // Track all active timeouts so we can cancel them
   const activeTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
-  // Safe setTimeout that auto-cancels if puzzle generation has changed
+  // ===== ALL useCallback HOOKS =====
   const safePuzzleTimeout = useCallback((fn: () => void, delay: number) => {
     const gen = puzzleGenRef.current;
     const id = setTimeout(() => {
@@ -48,51 +59,10 @@ export default function Session() {
     return id;
   }, []);
 
-  // Cancel all pending puzzle-related timeouts
   const cancelAllPuzzleTimeouts = useCallback(() => {
     activeTimeoutsRef.current.forEach(id => clearTimeout(id));
     activeTimeoutsRef.current = [];
   }, []);
-
-  // Track which move in the puzzle sequence the user needs to play
-  // In Lichess format: moves[0]=setup, moves[1]=user, moves[2]=opponent, moves[3]=user, etc.
-  const [userMoveIndex, setUserMoveIndex] = useState(1);
-
-  // Calculate responsive board size
-  useEffect(() => {
-    const calculateBoardSize = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-
-      if (width < 640) {
-        const mobileSize = Math.min(width - 32, height - 280);
-        setBoardSize(Math.max(mobileSize, 250));
-      } else {
-        setBoardSize(400);
-      }
-    };
-
-    calculateBoardSize();
-    window.addEventListener("resize", calculateBoardSize);
-    return () => window.removeEventListener("resize", calculateBoardSize);
-  }, []);
-
-  const [autoSolveMove, setAutoSolveMove] = useState<{ from: string; to: string } | null>(null);
-  const [isAutoSolving, setIsAutoSolving] = useState(false);
-  const [boardTheme, setBoardTheme] = useState<'classic' | 'green' | 'blue' | 'purple'>(() => {
-    const saved = localStorage.getItem('board-theme');
-    return (saved as 'classic' | 'green' | 'blue' | 'purple') || 'classic';
-  });
-  const [sessionTime, setSessionTime] = useState(0);
-  const [showCorrectCheckmark, setShowCorrectCheckmark] = useState(false);
-  const [showWrongX, setShowWrongX] = useState(false);
-
-  // FIX #3: Capture animation state - tracks the piece being captured and its movement
-  const [captureAnimation, setCaptureAnimation] = useState<{
-    piece: { type: string; color: string };
-    from: string;
-    to: string;
-  } | null>(null);
 
   // Board theme definitions
   const themeColors = {
@@ -132,10 +102,6 @@ export default function Session() {
     },
   });
 
-  // Track puzzle start time
-  const [puzzleStartTime, setPuzzleStartTime] = useState<number>(Date.now());
-
-  // Helper to record a puzzle attempt
   const recordPuzzleAttempt = useCallback((isCorrect: boolean, timeMs: number) => {
     const deviceId = getOrCreateDeviceId();
     const currentPuzzle = puzzles[currentPuzzleIndex];
