@@ -1,0 +1,184 @@
+{
+  "puzzles": [
+    {
+      "id": "four_knights_1",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "e5 d4 d5 exd5 Qxd5 Qxd5 Nxd5",
+      "rating": 1200,
+      "opening_name": "Four Knights Game",
+      "opening_variation": "C48",
+      "themes": "tactics,opening"
+    },
+    {
+      "id": "four_knights_2",
+      "fen": "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "Ng5 d5 exd5 Na5 Bb5 c6 dxc6 bxc6 Bxc6 Bd6",
+      "rating": 1400,
+      "opening_name": "Four Knights Game",
+      "opening_variation": "C48",
+      "themes": "tactics,opening"
+    },
+    {
+      "id": "four_knights_3",
+      "fen": "r1bqkb1r/pppp1ppp/2n2n2/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 2 4",
+      "moves": "Ng5 d6 d4 exd4 Qxd4 Nxd4",
+      "rating": 1300,
+      "opening_name": "Four Knights Game",
+      "opening_variation": "C48",
+      "themes": "tactics,opening"
+    },
+    {
+      "id": "four_knights_4",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "d4 exd4 e5 d5 exd5 Qxd5 Qxd5 Nxd5",
+      "rating": 1250,
+      "opening_name": "Four Knights Game",
+      "opening_variation": "C48",
+      "themes": "tactics,opening"
+    },
+    {
+      "id": "four_knights_5",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "Ng5 d5 exd5 Na5 Bb5 c6 dxc6 bxc6 Bxc6 Nxc6 Nxc6 Bd6",
+      "rating": 1350,
+      "opening_name": "Four Knights Game",
+      "opening_variation": "C48",
+      "themes": "tactics,opening"
+    },
+    {
+      "id": "four_knights_6",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "d4 exd4 e5 d5 exd5 Qxd5 Qxd5 Nxd5 Nc3 Nxc3 bxc3",
+      "rating": 1280,
+      "opening_name": "Four Knights Game",
+      "opening_variation": "C48",
+      "themes": "tactics,opening"
+    },
+    {
+      "id": "four_knights_7",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "Ng5 d6 d4 exd4 Qxd4 Nxd4 Qxd4 c6 Bxc6 bxc6",
+      "rating": 1320,
+      "opening_name": "Four Knights Game",
+      "opening_variation": "C48",
+      "themes": "tactics,opening"
+    },
+    {
+      "id": "four_knights_8",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "d4 exd4 e5 d5 exd5 Qxd5 Qxd5 Nxd5 Nc3 Nxc3 bxc3 Bd6",
+      "rating": 1290,
+      "opening_name": "Four Knights Game",
+      "opening_variation": "C48",
+      "themes": "tactics,opening"
+    },
+    {
+      "id": "four_knights_9",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "Ng5 d5 exd5 Na5 Bb5 c6 dxc6 bxc6 Bxc6 Bd6 Nxc6 Bxc6",
+      "rating": 1310,
+      "opening_name": "Four Knights Game",
+      "opening_variation": "C48",
+      "themes": "tactics,opening"
+    },
+    {
+      "id": "four_knights_10",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "d4 exd4 e5 d5 exd5 Qxd5 Qxd5 Nxd5 Nc3 Nxc3 bxc3 Bd6 Bxd6",
+      "rating": 1270,
+      "opening_name": "Four Knights Game",
+      "opening_variation": "C48",
+      "themes": "tactics,opening"
+    },
+    {
+      "id": "italian_game_1",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "d4 exd4 e5 dxe5 Nxe5 Nxe5 Qxd8 Kxd8",
+      "rating": 1400,
+      "opening_name": "Italian Game",
+      "opening_variation": "C50",
+      "themes": "tactics,opening"
+    },
+    {
+      "id": "italian_game_2",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "Ng5 d5 exd5 Na5 Bb5 c6 dxc6 bxc6 Bxc6 Bd6",
+      "rating": 1450,
+      "opening_name": "Italian Game",
+      "opening_variation": "C50",
+      "themes": "tactics,opening"
+    },
+    {
+      "id": "italian_game_3",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "d4 exd4 e5 dxe5 Nxe5 Nxe5 Qxd8 Kxd8 Nc3 Bd6",
+      "rating": 1420,
+      "opening_name": "Italian Game",
+      "opening_variation": "C50",
+      "themes": "tactics,opening"
+    },
+    {
+      "id": "italian_game_4",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "Ng5 d5 exd5 Na5 Bb5 c6 dxc6 bxc6 Bxc6 Nxc6 Nxc6 Bd6",
+      "rating": 1470,
+      "opening_name": "Italian Game",
+      "opening_variation": "C50",
+      "themes": "tactics,opening"
+    },
+    {
+      "id": "italian_game_5",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "d4 exd4 e5 dxe5 Nxe5 Nxe5 Qxd8 Kxd8 Nc3 Bd6 Bxd6",
+      "rating": 1410,
+      "opening_name": "Italian Game",
+      "opening_variation": "C50",
+      "themes": "tactics,opening"
+    },
+    {
+      "id": "italian_game_6",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "Ng5 d5 exd5 Na5 Bb5 c6 dxc6 bxc6 Bxc6 Bd6 Nxc6 Bxc6",
+      "rating": 1480,
+      "opening_name": "Italian Game",
+      "opening_variation": "C50",
+      "themes": "tactics,opening"
+    },
+    {
+      "id": "italian_game_7",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "d4 exd4 e5 dxe5 Nxe5 Nxe5 Qxd8 Kxd8 Nc3 Bd6 Bxd6 cxd6",
+      "rating": 1430,
+      "opening_name": "Italian Game",
+      "opening_variation": "C50",
+      "themes": "tactics,opening"
+    },
+    {
+      "id": "italian_game_8",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "Ng5 d5 exd5 Na5 Bb5 c6 dxc6 bxc6 Bxc6 Nxc6 Nxc6 Bd6 Nxd8",
+      "rating": 1490,
+      "opening_name": "Italian Game",
+      "opening_variation": "C50",
+      "themes": "tactics,opening"
+    },
+    {
+      "id": "italian_game_9",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "d4 exd4 e5 dxe5 Nxe5 Nxe5 Qxd8 Kxd8 Nc3 Bd6 Bxd6 cxd6 O-O",
+      "rating": 1440,
+      "opening_name": "Italian Game",
+      "opening_variation": "C50",
+      "themes": "tactics,opening"
+    },
+    {
+      "id": "italian_game_10",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 1 4",
+      "moves": "Ng5 d5 exd5 Na5 Bb5 c6 dxc6 bxc6 Bxc6 Bd6 Nxc6 Bxc6 Qxd8 Kxd8",
+      "rating": 1500,
+      "opening_name": "Italian Game",
+      "opening_variation": "C50",
+      "themes": "tactics,opening"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE `puzzles` ADD `puzzleName` varchar(255);\nALTER TABLE `puzzles` ADD `subVariation` varchar(255);\nALTER TABLE `puzzles` ADD `difficulty` int DEFAULT 1500;\nALTER TABLE `puzzles` ADD `variations` text;\nALTER TABLE `puzzles` ADD `numAttempts` int DEFAULT 0;\nALTER TABLE `puzzles` ADD `numSolved` int DEFAULT 0;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute ALTER TABLE `puzzles` ADD `puzzleName` varchar(255);\nALTER TABLE `puzzles` ADD `subVariation` varchar(255);\nALTER TABLE `puzzles` ADD `difficulty` int DEFAULT 1500;\nALTER TABLE `puzzles` ADD `variations` text;\nALTER TABLE `puzzles` ADD `numAttempts` int DEFAULT 0;\nALTER TABLE `puzzles` ADD `numSolved` int DEFAULT 0;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 6354
+}

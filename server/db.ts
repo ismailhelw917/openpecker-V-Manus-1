@@ -40,7 +40,7 @@ export async function getDb() {
   return _db;
 }
 
-export async function upsertUser(user: InsertUser): Promise<void> {
+export async function upsertUser(user: InsertUser) {
   if (!user.openId) {
     throw new Error("User openId is required for upsert");
   }
@@ -48,7 +48,7 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   const db = await getDb();
   if (!db) {
     console.warn("[Database] Cannot upsert user: database not available");
-    return;
+    return null;
   }
 
   try {
@@ -105,6 +105,10 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     await db.insert(users).values(values).onDuplicateKeyUpdate({
       set: updateSet,
     });
+    
+    // Fetch and return the upserted user
+    const result = await db.select().from(users).where(eq(users.openId, user.openId)).limit(1);
+    return result.length > 0 ? result[0] : null;
   } catch (error) {
     console.error("[Database] Failed to upsert user:", error);
     throw error;
@@ -1299,6 +1303,187 @@ export async function getPuzzlesByOpeningHierarchy(
     return result;
   } catch (error) {
     console.error('[Database] Error fetching puzzles by hierarchy:', error);
+    return [];
+  }
+}
+
+
+// ============================================================================
+// Puzzle Difficulty and Variation Management
+// ============================================================================
+
+/**
+ * Update puzzle difficulty rating
+ */
+export async function updatePuzzleDifficulty(puzzleId: string, difficulty: number) {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.update(puzzles).set({ difficulty }).where(eq(puzzles.id, puzzleId));
+}
+
+/**
+ * Update puzzle variations (stored as JSON)
+ */
+export async function updatePuzzleVariations(puzzleId: string, variations: any) {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.update(puzzles).set({ variations }).where(eq(puzzles.id, puzzleId));
+}
+
+/**
+ * Get puzzles by difficulty range
+ */
+export async function getPuzzlesByDifficultyRange(
+  minDifficulty: number,
+  maxDifficulty: number,
+  limit: number = 20
+) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db
+    .select()
+    .from(puzzles)
+    .where(
+      and(
+        gte(puzzles.difficulty, minDifficulty),
+        lte(puzzles.difficulty, maxDifficulty)
+      )
+    )
+    .limit(limit);
+}
+
+/**
+ * Get puzzle difficulty statistics for an opening
+ */
+export async function getOpeningDifficultyStats(openingName: string) {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const result = await db.execute(
+      sql`SELECT 
+        AVG(difficulty) as avgDifficulty,
+        MIN(difficulty) as minDifficulty,
+        MAX(difficulty) as maxDifficulty,
+        COUNT(*) as puzzleCount
+      FROM puzzles 
+      WHERE openingName = ${openingName} AND difficulty IS NOT NULL`
+    );
+    
+    if (Array.isArray(result) && result.length > 0 && Array.isArray(result[0]) && result[0].length > 0) {
+      return result[0][0];
+    }
+    return null;
+  } catch (error) {
+    console.error("Error getting opening difficulty stats:", error);
+    return null;
+  }
+}
+
+/**
+ * Get puzzle variations by ID
+ */
+export async function getPuzzleVariations(puzzleId: string) {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const puzzle = await getPuzzleById(puzzleId);
+    if (puzzle && puzzle.variations) {
+      return JSON.parse(puzzle.variations);
+    }
+    return null;
+  } catch (error) {
+    console.error("Error parsing puzzle variations:", error);
+    return null;
+  }
+}
+
+/**
+ * Get puzzles with most variations (good for training)
+ */
+export async function getPuzzlesWithMostVariations(limit: number = 20) {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    const result = await db.execute(
+      sql`SELECT * FROM puzzles 
+        WHERE variations IS NOT NULL 
+        ORDER BY JSON_LENGTH(variations) DESC 
+        LIMIT ${limit}`
+    );
+    
+    if (Array.isArray(result) && result.length > 0 && Array.isArray(result[0])) {
+      return result[0];
+    }
+    return [];
+  } catch (error) {
+    console.error("Error getting puzzles with variations:", error);
+    return [];
+  }
+}
+
+/**
+ * Update puzzle attempt statistics
+ */
+export async function updatePuzzleAttemptStats(puzzleId: string, solved: boolean) {
+  const db = await getDb();
+  if (!db) return;
+
+  const puzzle = await getPuzzleById(puzzleId);
+  if (!puzzle) return;
+
+  const currentAttempts = puzzle.numAttempts || 0;
+  const currentSolved = puzzle.numSolved || 0;
+
+  await db.update(puzzles).set({
+    numAttempts: currentAttempts + 1,
+    numSolved: solved ? currentSolved + 1 : currentSolved,
+  }).where(eq(puzzles.id, puzzleId));
+}
+
+/**
+ * Get puzzle success rate
+ */
+export async function getPuzzleSuccessRate(puzzleId: string): Promise<number> {
+  const puzzle = await getPuzzleById(puzzleId);
+  if (!puzzle || !puzzle.numAttempts || puzzle.numAttempts === 0) {
+    return 0;
+  }
+  return (puzzle.numSolved || 0) / puzzle.numAttempts;
+}
+
+/**
+ * Get puzzles by success rate (for difficulty assessment)
+ */
+export async function getPuzzlesBySuccessRate(
+  minRate: number,
+  maxRate: number,
+  limit: number = 20
+) {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    // Use raw SQL to calculate success rate
+    const result = await db.execute(
+      sql`SELECT * FROM puzzles 
+        WHERE numAttempts > 0 
+        AND (numSolved / numAttempts) BETWEEN ${minRate} AND ${maxRate}
+        ORDER BY RAND()
+        LIMIT ${limit}`
+    );
+    
+    if (Array.isArray(result) && result.length > 0 && Array.isArray(result[0])) {
+      return result[0];
+    }
+    return [];
+  } catch (error) {
+    console.error("Error getting puzzles by success rate:", error);
     return [];
   }
 }

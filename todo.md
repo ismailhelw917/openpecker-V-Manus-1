@@ -1168,3 +1168,25 @@
 - [x] Update handleMove to use fresh Chess(gameFen) instead of stale gameRef.current
 - [x] Test pieces can now move and capture
 - [ ] Save checkpoint
+
+
+## Puzzle Database Replacement (Round 46 - User Request)
+- [ ] Identify top 50 chess openings by popularity
+- [ ] Source 10 quality puzzles for each opening from Lichess API
+- [ ] Validate all 500 puzzles are in correct format with UCI moves
+- [ ] Clear existing puzzle database
+- [ ] Populate database with new 500 puzzles
+- [ ] Test puzzle loading and playability across all openings
+- [ ] Save checkpoint with new puzzle database
+
+
+## Puzzle Research Implementation (Round 45 - User Request)
+- [ ] Update database schema with puzzle_name, sub_variation, and metadata fields
+- [ ] Implement ChessMove tree structure for puzzle variations
+- [ ] Add difficulty calculation using harmonic mean of move evaluations
+- [ ] Implement PGN parsing with variation support
+- [ ] Create puzzle rating system based on difficulty
+- [ ] Update frontend to display puzzle variations hierarchically
+- [ ] Add puzzle sorting by name and sub_variation
+- [ ] Test puzzle loading with variations
+- [ ] Save checkpoint with puzzle research implementation

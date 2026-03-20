@@ -38,7 +38,7 @@ export type InsertUser = typeof users.$inferInsert;
 export const puzzles = mysqlTable("puzzles", {
   id: varchar("id", { length: 64 }).primaryKey(),
   fen: text("fen").notNull(),
-  moves: text("moves").notNull(), // JSON array of moves
+  moves: text("moves").notNull(), // JSON array of moves or space-separated UCI moves
   rating: int("rating"),
   themes: text("themes").notNull(), // JSON array of theme strings
   color: varchar("color", { length: 10 }), // 'white' or 'black'
@@ -49,6 +49,12 @@ export const puzzles = mysqlTable("puzzles", {
   opening: varchar("opening", { length: 255 }), // Hierarchical opening (e.g., 'Sicilian Defense')
   subset: varchar("subset", { length: 255 }), // Hierarchical subset (e.g., 'Sicilian Najdorf')
   variation: varchar("variation", { length: 255 }), // Hierarchical variation (e.g., 'Najdorf Variation')
+  puzzleName: varchar("puzzleName", { length: 255 }), // Puzzle name (e.g., 'Mate in 2', 'Fork Discovery')
+  subVariation: varchar("subVariation", { length: 255 }), // Sub-variation or theme (e.g., 'Queen Sacrifice', 'Back Rank Mate')
+  difficulty: int("difficulty").default(1500), // Calculated difficulty rating (0-2000+)
+  variations: text("variations"), // JSON tree structure of puzzle variations
+  numAttempts: int("numAttempts").default(0), // Number of times puzzle has been attempted
+  numSolved: int("numSolved").default(0), // Number of times puzzle has been solved
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table) => ({
   ratingIdx: index("idx_rating").on(table.rating),
