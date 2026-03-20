@@ -1109,3 +1109,11 @@
 - [x] Ensure all puzzles are playable end-to-end
 - [x] Test across all 6 openings with puzzle data
 - [x] Confirmed end-to-end puzzle playability working
+
+
+## Feature: Add Opening Puzzles from Lichess (Round 21)
+- [ ] Fetch puzzles from Lichess API for 150 openings
+- [ ] Store fetched Lichess puzzles locally in JSON file
+- [ ] Generate synthetic puzzles from opening positions
+- [ ] Combine Lichess and synthetic puzzles into database
+- [ ] Test puzzle loading and playability with new data

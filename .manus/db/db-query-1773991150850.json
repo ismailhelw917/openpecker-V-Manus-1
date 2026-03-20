@@ -1,0 +1,760 @@
+{
+  "query": "SELECT id, name, ecoCode FROM openings ORDER BY name LIMIT 150;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT id, name, ecoCode FROM openings ORDER BY name LIMIT 150;",
+  "rows": [
+    {
+      "id": "opening_b02",
+      "name": "Alekhine Defense",
+      "ecoCode": "B02"
+    },
+    {
+      "id": "opening_b10",
+      "name": "Caro-Kann Defense",
+      "ecoCode": "B10"
+    },
+    {
+      "id": "opening_c00",
+      "name": "French Defense",
+      "ecoCode": "C00"
+    },
+    {
+      "id": "opening_c50",
+      "name": "Italian Game",
+      "ecoCode": "C50"
+    },
+    {
+      "id": "opening_var010",
+      "name": "Opening Variation 10",
+      "ecoCode": "VAR010"
+    },
+    {
+      "id": "opening_var100",
+      "name": "Opening Variation 100",
+      "ecoCode": "VAR100"
+    },
+    {
+      "id": "opening_var101",
+      "name": "Opening Variation 101",
+      "ecoCode": "VAR101"
+    },
+    {
+      "id": "opening_var102",
+      "name": "Opening Variation 102",
+      "ecoCode": "VAR102"
+    },
+    {
+      "id": "opening_var103",
+      "name": "Opening Variation 103",
+      "ecoCode": "VAR103"
+    },
+    {
+      "id": "opening_var104",
+      "name": "Opening Variation 104",
+      "ecoCode": "VAR104"
+    },
+    {
+      "id": "opening_var105",
+      "name": "Opening Variation 105",
+      "ecoCode": "VAR105"
+    },
+    {
+      "id": "opening_var106",
+      "name": "Opening Variation 106",
+      "ecoCode": "VAR106"
+    },
+    {
+      "id": "opening_var107",
+      "name": "Opening Variation 107",
+      "ecoCode": "VAR107"
+    },
+    {
+      "id": "opening_var108",
+      "name": "Opening Variation 108",
+      "ecoCode": "VAR108"
+    },
+    {
+      "id": "opening_var109",
+      "name": "Opening Variation 109",
+      "ecoCode": "VAR109"
+    },
+    {
+      "id": "opening_var011",
+      "name": "Opening Variation 11",
+      "ecoCode": "VAR011"
+    },
+    {
+      "id": "opening_var110",
+      "name": "Opening Variation 110",
+      "ecoCode": "VAR110"
+    },
+    {
+      "id": "opening_var111",
+      "name": "Opening Variation 111",
+      "ecoCode": "VAR111"
+    },
+    {
+      "id": "opening_var112",
+      "name": "Opening Variation 112",
+      "ecoCode": "VAR112"
+    },
+    {
+      "id": "opening_var113",
+      "name": "Opening Variation 113",
+      "ecoCode": "VAR113"
+    },
+    {
+      "id": "opening_var114",
+      "name": "Opening Variation 114",
+      "ecoCode": "VAR114"
+    },
+    {
+      "id": "opening_var115",
+      "name": "Opening Variation 115",
+      "ecoCode": "VAR115"
+    },
+    {
+      "id": "opening_var116",
+      "name": "Opening Variation 116",
+      "ecoCode": "VAR116"
+    },
+    {
+      "id": "opening_var117",
+      "name": "Opening Variation 117",
+      "ecoCode": "VAR117"
+    },
+    {
+      "id": "opening_var118",
+      "name": "Opening Variation 118",
+      "ecoCode": "VAR118"
+    },
+    {
+      "id": "opening_var119",
+      "name": "Opening Variation 119",
+      "ecoCode": "VAR119"
+    },
+    {
+      "id": "opening_var012",
+      "name": "Opening Variation 12",
+      "ecoCode": "VAR012"
+    },
+    {
+      "id": "opening_var120",
+      "name": "Opening Variation 120",
+      "ecoCode": "VAR120"
+    },
+    {
+      "id": "opening_var121",
+      "name": "Opening Variation 121",
+      "ecoCode": "VAR121"
+    },
+    {
+      "id": "opening_var122",
+      "name": "Opening Variation 122",
+      "ecoCode": "VAR122"
+    },
+    {
+      "id": "opening_var123",
+      "name": "Opening Variation 123",
+      "ecoCode": "VAR123"
+    },
+    {
+      "id": "opening_var124",
+      "name": "Opening Variation 124",
+      "ecoCode": "VAR124"
+    },
+    {
+      "id": "opening_var125",
+      "name": "Opening Variation 125",
+      "ecoCode": "VAR125"
+    },
+    {
+      "id": "opening_var126",
+      "name": "Opening Variation 126",
+      "ecoCode": "VAR126"
+    },
+    {
+      "id": "opening_var127",
+      "name": "Opening Variation 127",
+      "ecoCode": "VAR127"
+    },
+    {
+      "id": "opening_var128",
+      "name": "Opening Variation 128",
+      "ecoCode": "VAR128"
+    },
+    {
+      "id": "opening_var129",
+      "name": "Opening Variation 129",
+      "ecoCode": "VAR129"
+    },
+    {
+      "id": "opening_var013",
+      "name": "Opening Variation 13",
+      "ecoCode": "VAR013"
+    },
+    {
+      "id": "opening_var130",
+      "name": "Opening Variation 130",
+      "ecoCode": "VAR130"
+    },
+    {
+      "id": "opening_var131",
+      "name": "Opening Variation 131",
+      "ecoCode": "VAR131"
+    },
+    {
+      "id": "opening_var132",
+      "name": "Opening Variation 132",
+      "ecoCode": "VAR132"
+    },
+    {
+      "id": "opening_var133",
+      "name": "Opening Variation 133",
+      "ecoCode": "VAR133"
+    },
+    {
+      "id": "opening_var134",
+      "name": "Opening Variation 134",
+      "ecoCode": "VAR134"
+    },
+    {
+      "id": "opening_var135",
+      "name": "Opening Variation 135",
+      "ecoCode": "VAR135"
+    },
+    {
+      "id": "opening_var136",
+      "name": "Opening Variation 136",
+      "ecoCode": "VAR136"
+    },
+    {
+      "id": "opening_var137",
+      "name": "Opening Variation 137",
+      "ecoCode": "VAR137"
+    },
+    {
+      "id": "opening_var138",
+      "name": "Opening Variation 138",
+      "ecoCode": "VAR138"
+    },
+    {
+      "id": "opening_var139",
+      "name": "Opening Variation 139",
+      "ecoCode": "VAR139"
+    },
+    {
+      "id": "opening_var014",
+      "name": "Opening Variation 14",
+      "ecoCode": "VAR014"
+    },
+    {
+      "id": "opening_var140",
+      "name": "Opening Variation 140",
+      "ecoCode": "VAR140"
+    },
+    {
+      "id": "opening_var141",
+      "name": "Opening Variation 141",
+      "ecoCode": "VAR141"
+    },
+    {
+      "id": "opening_var142",
+      "name": "Opening Variation 142",
+      "ecoCode": "VAR142"
+    },
+    {
+      "id": "opening_var143",
+      "name": "Opening Variation 143",
+      "ecoCode": "VAR143"
+    },
+    {
+      "id": "opening_var144",
+      "name": "Opening Variation 144",
+      "ecoCode": "VAR144"
+    },
+    {
+      "id": "opening_var145",
+      "name": "Opening Variation 145",
+      "ecoCode": "VAR145"
+    },
+    {
+      "id": "opening_var146",
+      "name": "Opening Variation 146",
+      "ecoCode": "VAR146"
+    },
+    {
+      "id": "opening_var147",
+      "name": "Opening Variation 147",
+      "ecoCode": "VAR147"
+    },
+    {
+      "id": "opening_var148",
+      "name": "Opening Variation 148",
+      "ecoCode": "VAR148"
+    },
+    {
+      "id": "opening_var149",
+      "name": "Opening Variation 149",
+      "ecoCode": "VAR149"
+    },
+    {
+      "id": "opening_var015",
+      "name": "Opening Variation 15",
+      "ecoCode": "VAR015"
+    },
+    {
+      "id": "opening_var150",
+      "name": "Opening Variation 150",
+      "ecoCode": "VAR150"
+    },
+    {
+      "id": "opening_var016",
+      "name": "Opening Variation 16",
+      "ecoCode": "VAR016"
+    },
+    {
+      "id": "opening_var017",
+      "name": "Opening Variation 17",
+      "ecoCode": "VAR017"
+    },
+    {
+      "id": "opening_var018",
+      "name": "Opening Variation 18",
+      "ecoCode": "VAR018"
+    },
+    {
+      "id": "opening_var019",
+      "name": "Opening Variation 19",
+      "ecoCode": "VAR019"
+    },
+    {
+      "id": "opening_var020",
+      "name": "Opening Variation 20",
+      "ecoCode": "VAR020"
+    },
+    {
+      "id": "opening_var021",
+      "name": "Opening Variation 21",
+      "ecoCode": "VAR021"
+    },
+    {
+      "id": "opening_var022",
+      "name": "Opening Variation 22",
+      "ecoCode": "VAR022"
+    },
+    {
+      "id": "opening_var023",
+      "name": "Opening Variation 23",
+      "ecoCode": "VAR023"
+    },
+    {
+      "id": "opening_var024",
+      "name": "Opening Variation 24",
+      "ecoCode": "VAR024"
+    },
+    {
+      "id": "opening_var025",
+      "name": "Opening Variation 25",
+      "ecoCode": "VAR025"
+    },
+    {
+      "id": "opening_var026",
+      "name": "Opening Variation 26",
+      "ecoCode": "VAR026"
+    },
+    {
+      "id": "opening_var027",
+      "name": "Opening Variation 27",
+      "ecoCode": "VAR027"
+    },
+    {
+      "id": "opening_var028",
+      "name": "Opening Variation 28",
+      "ecoCode": "VAR028"
+    },
+    {
+      "id": "opening_var029",
+      "name": "Opening Variation 29",
+      "ecoCode": "VAR029"
+    },
+    {
+      "id": "opening_var030",
+      "name": "Opening Variation 30",
+      "ecoCode": "VAR030"
+    },
+    {
+      "id": "opening_var031",
+      "name": "Opening Variation 31",
+      "ecoCode": "VAR031"
+    },
+    {
+      "id": "opening_var032",
+      "name": "Opening Variation 32",
+      "ecoCode": "VAR032"
+    },
+    {
+      "id": "opening_var033",
+      "name": "Opening Variation 33",
+      "ecoCode": "VAR033"
+    },
+    {
+      "id": "opening_var034",
+      "name": "Opening Variation 34",
+      "ecoCode": "VAR034"
+    },
+    {
+      "id": "opening_var035",
+      "name": "Opening Variation 35",
+      "ecoCode": "VAR035"
+    },
+    {
+      "id": "opening_var036",
+      "name": "Opening Variation 36",
+      "ecoCode": "VAR036"
+    },
+    {
+      "id": "opening_var037",
+      "name": "Opening Variation 37",
+      "ecoCode": "VAR037"
+    },
+    {
+      "id": "opening_var038",
+      "name": "Opening Variation 38",
+      "ecoCode": "VAR038"
+    },
+    {
+      "id": "opening_var039",
+      "name": "Opening Variation 39",
+      "ecoCode": "VAR039"
+    },
+    {
+      "id": "opening_var040",
+      "name": "Opening Variation 40",
+      "ecoCode": "VAR040"
+    },
+    {
+      "id": "opening_var041",
+      "name": "Opening Variation 41",
+      "ecoCode": "VAR041"
+    },
+    {
+      "id": "opening_var042",
+      "name": "Opening Variation 42",
+      "ecoCode": "VAR042"
+    },
+    {
+      "id": "opening_var043",
+      "name": "Opening Variation 43",
+      "ecoCode": "VAR043"
+    },
+    {
+      "id": "opening_var044",
+      "name": "Opening Variation 44",
+      "ecoCode": "VAR044"
+    },
+    {
+      "id": "opening_var045",
+      "name": "Opening Variation 45",
+      "ecoCode": "VAR045"
+    },
+    {
+      "id": "opening_var046",
+      "name": "Opening Variation 46",
+      "ecoCode": "VAR046"
+    },
+    {
+      "id": "opening_var047",
+      "name": "Opening Variation 47",
+      "ecoCode": "VAR047"
+    },
+    {
+      "id": "opening_var048",
+      "name": "Opening Variation 48",
+      "ecoCode": "VAR048"
+    },
+    {
+      "id": "opening_var049",
+      "name": "Opening Variation 49",
+      "ecoCode": "VAR049"
+    },
+    {
+      "id": "opening_var050",
+      "name": "Opening Variation 50",
+      "ecoCode": "VAR050"
+    },
+    {
+      "id": "opening_var051",
+      "name": "Opening Variation 51",
+      "ecoCode": "VAR051"
+    },
+    {
+      "id": "opening_var052",
+      "name": "Opening Variation 52",
+      "ecoCode": "VAR052"
+    },
+    {
+      "id": "opening_var053",
+      "name": "Opening Variation 53",
+      "ecoCode": "VAR053"
+    },
+    {
+      "id": "opening_var054",
+      "name": "Opening Variation 54",
+      "ecoCode": "VAR054"
+    },
+    {
+      "id": "opening_var055",
+      "name": "Opening Variation 55",
+      "ecoCode": "VAR055"
+    },
+    {
+      "id": "opening_var056",
+      "name": "Opening Variation 56",
+      "ecoCode": "VAR056"
+    },
+    {
+      "id": "opening_var057",
+      "name": "Opening Variation 57",
+      "ecoCode": "VAR057"
+    },
+    {
+      "id": "opening_var058",
+      "name": "Opening Variation 58",
+      "ecoCode": "VAR058"
+    },
+    {
+      "id": "opening_var059",
+      "name": "Opening Variation 59",
+      "ecoCode": "VAR059"
+    },
+    {
+      "id": "opening_var060",
+      "name": "Opening Variation 60",
+      "ecoCode": "VAR060"
+    },
+    {
+      "id": "opening_var061",
+      "name": "Opening Variation 61",
+      "ecoCode": "VAR061"
+    },
+    {
+      "id": "opening_var062",
+      "name": "Opening Variation 62",
+      "ecoCode": "VAR062"
+    },
+    {
+      "id": "opening_var063",
+      "name": "Opening Variation 63",
+      "ecoCode": "VAR063"
+    },
+    {
+      "id": "opening_var064",
+      "name": "Opening Variation 64",
+      "ecoCode": "VAR064"
+    },
+    {
+      "id": "opening_var065",
+      "name": "Opening Variation 65",
+      "ecoCode": "VAR065"
+    },
+    {
+      "id": "opening_var066",
+      "name": "Opening Variation 66",
+      "ecoCode": "VAR066"
+    },
+    {
+      "id": "opening_var067",
+      "name": "Opening Variation 67",
+      "ecoCode": "VAR067"
+    },
+    {
+      "id": "opening_var068",
+      "name": "Opening Variation 68",
+      "ecoCode": "VAR068"
+    },
+    {
+      "id": "opening_var069",
+      "name": "Opening Variation 69",
+      "ecoCode": "VAR069"
+    },
+    {
+      "id": "opening_var070",
+      "name": "Opening Variation 70",
+      "ecoCode": "VAR070"
+    },
+    {
+      "id": "opening_var071",
+      "name": "Opening Variation 71",
+      "ecoCode": "VAR071"
+    },
+    {
+      "id": "opening_var072",
+      "name": "Opening Variation 72",
+      "ecoCode": "VAR072"
+    },
+    {
+      "id": "opening_var073",
+      "name": "Opening Variation 73",
+      "ecoCode": "VAR073"
+    },
+    {
+      "id": "opening_var074",
+      "name": "Opening Variation 74",
+      "ecoCode": "VAR074"
+    },
+    {
+      "id": "opening_var075",
+      "name": "Opening Variation 75",
+      "ecoCode": "VAR075"
+    },
+    {
+      "id": "opening_var076",
+      "name": "Opening Variation 76",
+      "ecoCode": "VAR076"
+    },
+    {
+      "id": "opening_var077",
+      "name": "Opening Variation 77",
+      "ecoCode": "VAR077"
+    },
+    {
+      "id": "opening_var078",
+      "name": "Opening Variation 78",
+      "ecoCode": "VAR078"
+    },
+    {
+      "id": "opening_var079",
+      "name": "Opening Variation 79",
+      "ecoCode": "VAR079"
+    },
+    {
+      "id": "opening_var080",
+      "name": "Opening Variation 80",
+      "ecoCode": "VAR080"
+    },
+    {
+      "id": "opening_var081",
+      "name": "Opening Variation 81",
+      "ecoCode": "VAR081"
+    },
+    {
+      "id": "opening_var082",
+      "name": "Opening Variation 82",
+      "ecoCode": "VAR082"
+    },
+    {
+      "id": "opening_var083",
+      "name": "Opening Variation 83",
+      "ecoCode": "VAR083"
+    },
+    {
+      "id": "opening_var084",
+      "name": "Opening Variation 84",
+      "ecoCode": "VAR084"
+    },
+    {
+      "id": "opening_var085",
+      "name": "Opening Variation 85",
+      "ecoCode": "VAR085"
+    },
+    {
+      "id": "opening_var086",
+      "name": "Opening Variation 86",
+      "ecoCode": "VAR086"
+    },
+    {
+      "id": "opening_var087",
+      "name": "Opening Variation 87",
+      "ecoCode": "VAR087"
+    },
+    {
+      "id": "opening_var088",
+      "name": "Opening Variation 88",
+      "ecoCode": "VAR088"
+    },
+    {
+      "id": "opening_var089",
+      "name": "Opening Variation 89",
+      "ecoCode": "VAR089"
+    },
+    {
+      "id": "opening_var090",
+      "name": "Opening Variation 90",
+      "ecoCode": "VAR090"
+    },
+    {
+      "id": "opening_var091",
+      "name": "Opening Variation 91",
+      "ecoCode": "VAR091"
+    },
+    {
+      "id": "opening_var092",
+      "name": "Opening Variation 92",
+      "ecoCode": "VAR092"
+    },
+    {
+      "id": "opening_var093",
+      "name": "Opening Variation 93",
+      "ecoCode": "VAR093"
+    },
+    {
+      "id": "opening_var094",
+      "name": "Opening Variation 94",
+      "ecoCode": "VAR094"
+    },
+    {
+      "id": "opening_var095",
+      "name": "Opening Variation 95",
+      "ecoCode": "VAR095"
+    },
+    {
+      "id": "opening_var096",
+      "name": "Opening Variation 96",
+      "ecoCode": "VAR096"
+    },
+    {
+      "id": "opening_var097",
+      "name": "Opening Variation 97",
+      "ecoCode": "VAR097"
+    },
+    {
+      "id": "opening_var098",
+      "name": "Opening Variation 98",
+      "ecoCode": "VAR098"
+    },
+    {
+      "id": "opening_var099",
+      "name": "Opening Variation 99",
+      "ecoCode": "VAR099"
+    },
+    {
+      "id": "opening_b06",
+      "name": "Pirc Defense",
+      "ecoCode": "B06"
+    },
+    {
+      "id": "opening_c80",
+      "name": "Ruy Lopez",
+      "ecoCode": "C80"
+    },
+    {
+      "id": "opening_b01",
+      "name": "Scandinavian Defense",
+      "ecoCode": "B01"
+    },
+    {
+      "id": "opening_b20",
+      "name": "Sicilian Defense",
+      "ecoCode": "B20"
+    },
+    {
+      "id": "opening_c60",
+      "name": "Spanish Opening",
+      "ecoCode": "C60"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tecoCode\nopening_b02\tAlekhine Defense\tB02\nopening_b10\tCaro-Kann Defense\tB10\nopening_c00\tFrench Defense\tC00\nopening_c50\tItalian Game\tC50\nopening_var010\tOpening Variation 10\tVAR010\nopening_var100\tOpening Variation 100\tVAR100\nopening_var101\tOpening Variation 101\tVAR101\nopening_var102\tOpening Variation 102\tVAR102\nopening_var103\tOpening Variation 103\tVAR103\nopening_var104\tOpening Variation 104\tVAR104\nopening_var105\tOpening Variation 105\tVAR105\nopening_var106\tOpening Variation 106\tVAR106\nopening_var107\tOpening Variation 107\tVAR107\nopening_var108\tOpening Variation 108\tVAR108\nopening_var109\tOpening Variation 109\tVAR109\nopening_var011\tOpening Variation 11\tVAR011\nopening_var110\tOpening Variation 110\tVAR110\nopening_var111\tOpening Variation 111\tVAR111\nopening_var112\tOpening Variation 112\tVAR112\nopening_var113\tOpening Variation 113\tVAR113\nopening_var114\tOpening Variation 114\tVAR114\nopening_var115\tOpening Variation 115\tVAR115\nopening_var116\tOpening Variation 116\tVAR116\nopening_var117\tOpening Variation 117\tVAR117\nopening_var118\tOpening Variation 118\tVAR118\nopening_var119\tOpening Variation 119\tVAR119\nopening_var012\tOpening Variation 12\tVAR012\nopening_var120\tOpening Variation 120\tVAR120\nopening_var121\tOpening Variation 121\tVAR121\nopening_var122\tOpening Variation 122\tVAR122\nopening_var123\tOpening Variation 123\tVAR123\nopening_var124\tOpening Variation 124\tVAR124\nopening_var125\tOpening Variation 125\tVAR125\nopening_var126\tOpening Variation 126\tVAR126\nopening_var127\tOpening Variation 127\tVAR127\nopening_var128\tOpening Variation 128\tVAR128\nopening_var129\tOpening Variation 129\tVAR129\nopening_var013\tOpening Variation 13\tVAR013\nopening_var130\tOpening Variation 130\tVAR130\nopening_var131\tOpening Variation 131\tVAR131\nopening_var132\tOpening Variation 132\tVAR132\nopening_var133\tOpening Variation 133\tVAR133\nopening_var134\tOpening Variation 134\tVAR134\nopening_var135\tOpening Variation 135\tVAR135\nopening_var136\tOpening Variation 136\tVAR136\nopening_var137\tOpening Variation 137\tVAR137\nopening_var138\tOpening Variation 138\tVAR138\nopening_var139\tOpening Variation 139\tVAR139\nopening_var014\tOpening Variation 14\tVAR014\nopening_var140\tOpening Variation 140\tVAR140\nopening_var141\tOpening Variation 141\tVAR141\nopening_var142\tOpening Variation 142\tVAR142\nopening_var143\tOpening Variation 143\tVAR143\nopening_var144\tOpening Variation 144\tVAR144\nopening_var145\tOpening Variation 145\tVAR145\nopening_var146\tOpening Variation 146\tVAR146\nopening_var147\tOpening Variation 147\tVAR147\nopening_var148\tOpening Variation 148\tVAR148\nopening_var149\tOpening Variation 149\tVAR149\nopening_var015\tOpening Variation 15\tVAR015\nopening_var150\tOpening Variation 150\tVAR150\nopening_var016\tOpening Variation 16\tVAR016\nopening_var017\tOpening Variation 17\tVAR017\nopening_var018\tOpening Variation 18\tVAR018\nopening_var019\tOpening Variation 19\tVAR019\nopening_var020\tOpening Variation 20\tVAR020\nopening_var021\tOpening Variation 21\tVAR021\nopening_var022\tOpening Variation 22\tVAR022\nopening_var023\tOpening Variation 23\tVAR023\nopening_var024\tOpening Variation 24\tVAR024\nopening_var025\tOpening Variation 25\tVAR025\nopening_var026\tOpening Variation 26\tVAR026\nopening_var027\tOpening Variation 27\tVAR027\nopening_var028\tOpening Variation 28\tVAR028\nopening_var029\tOpening Variation 29\tVAR029\nopening_var030\tOpening Variation 30\tVAR030\nopening_var031\tOpening Variation 31\tVAR031\nopening_var032\tOpening Variation 32\tVAR032\nopening_var033\tOpening Variation 33\tVAR033\nopening_var034\tOpening Variation 34\tVAR034\nopening_var035\tOpening Variation 35\tVAR035\nopening_var036\tOpening Variation 36\tVAR036\nopening_var037\tOpening Variation 37\tVAR037\nopening_var038\tOpening Variation 38\tVAR038\nopening_var039\tOpening Variation 39\tVAR039\nopening_var040\tOpening Variation 40\tVAR040\nopening_var041\tOpening Variation 41\tVAR041\nopening_var042\tOpening Variation 42\tVAR042\nopening_var043\tOpening Variation 43\tVAR043\nopening_var044\tOpening Variation 44\tVAR044\nopening_var045\tOpening Variation 45\tVAR045\nopening_var046\tOpening Variation 46\tVAR046\nopening_var047\tOpening Variation 47\tVAR047\nopening_var048\tOpening Variation 48\tVAR048\nopening_var049\tOpening Variation 49\tVAR049\nopening_var050\tOpening Variation 50\tVAR050\nopening_var051\tOpening Variation 51\tVAR051\nopening_var052\tOpening Variation 52\tVAR052\nopening_var053\tOpening Variation 53\tVAR053\nopening_var054\tOpening Variation 54\tVAR054\nopening_var055\tOpening Variation 55\tVAR055\nopening_var056\tOpening Variation 56\tVAR056\nopening_var057\tOpening Variation 57\tVAR057\nopening_var058\tOpening Variation 58\tVAR058\nopening_var059\tOpening Variation 59\tVAR059\nopening_var060\tOpening Variation 60\tVAR060\nopening_var061\tOpening Variation 61\tVAR061\nopening_var062\tOpening Variation 62\tVAR062\nopening_var063\tOpening Variation 63\tVAR063\nopening_var064\tOpening Variation 64\tVAR064\nopening_var065\tOpening Variation 65\tVAR065\nopening_var066\tOpening Variation 66\tVAR066\nopening_var067\tOpening Variation 67\tVAR067\nopening_var068\tOpening Variation 68\tVAR068\nopening_var069\tOpening Variation 69\tVAR069\nopening_var070\tOpening Variation 70\tVAR070\nopening_var071\tOpening Variation 71\tVAR071\nopening_var072\tOpening Variation 72\tVAR072\nopening_var073\tOpening Variation 73\tVAR073\nopening_var074\tOpening Variation 74\tVAR074\nopening_var075\tOpening Variation 75\tVAR075\nopening_var076\tOpening Variation 76\tVAR076\nopening_var077\tOpening Variation 77\tVAR077\nopening_var078\tOpening Variation 78\tVAR078\nopening_var079\tOpening Variation 79\tVAR079\nopening_var080\tOpening Variation 80\tVAR080\nopening_var081\tOpening Variation 81\tVAR081\nopening_var082\tOpening Variation 82\tVAR082\nopening_var083\tOpening Variation 83\tVAR083\nopening_var084\tOpening Variation 84\tVAR084\nopening_var085\tOpening Variation 85\tVAR085\nopening_var086\tOpening Variation 86\tVAR086\nopening_var087\tOpening Variation 87\tVAR087\nopening_var088\tOpening Variation 88\tVAR088\nopening_var089\tOpening Variation 89\tVAR089\nopening_var090\tOpening Variation 90\tVAR090\nopening_var091\tOpening Variation 91\tVAR091\nopening_var092\tOpening Variation 92\tVAR092\nopening_var093\tOpening Variation 93\tVAR093\nopening_var094\tOpening Variation 94\tVAR094\nopening_var095\tOpening Variation 95\tVAR095\nopening_var096\tOpening Variation 96\tVAR096\nopening_var097\tOpening Variation 97\tVAR097\nopening_var098\tOpening Variation 98\tVAR098\nopening_var099\tOpening Variation 99\tVAR099\nopening_b06\tPirc Defense\tB06\nopening_c80\tRuy Lopez\tC80\nopening_b01\tScandinavian Defense\tB01\nopening_b20\tSicilian Defense\tB20\nopening_c60\tSpanish Opening\tC60\n",
+  "stderr": "",
+  "execution_time_ms": 1712
+}
