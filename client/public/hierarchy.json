@@ -376,15 +376,15 @@
     "puzzleCount": 110504,
     "variations": [
       {
-        "variation": "Queens Pawn Game Accelerated London System",
+        "variation": "Game Accelerated London System",
         "puzzleCount": 13444
       },
       {
-        "variation": "Queens Pawn Game Other variations",
+        "variation": "Game Other variations",
         "puzzleCount": 11532
       },
       {
-        "variation": "Queens Pawn Game Chigorin Variation",
+        "variation": "Game Chigorin Variation",
         "puzzleCount": 6702
       },
       {
@@ -396,15 +396,15 @@
         "puzzleCount": 5890
       },
       {
-        "variation": "Queens Pawn Game London System",
+        "variation": "Game London System",
         "puzzleCount": 4777
       },
       {
-        "variation": "Queens Pawn Game Zukertort Variation",
+        "variation": "Game Zukertort Variation",
         "puzzleCount": 4766
       },
       {
-        "variation": "Queens Pawn Game Colle System",
+        "variation": "Game Colle System",
         "puzzleCount": 4313
       },
       {
@@ -420,7 +420,7 @@
         "puzzleCount": 2635
       },
       {
-        "variation": "Queens Pawn Game Symmetrical Variation",
+        "variation": "Game Symmetrical Variation",
         "puzzleCount": 2582
       },
       {
@@ -456,11 +456,11 @@
         "puzzleCount": 1570
       },
       {
-        "variation": "Queens Pawn Game Modern Defense",
+        "variation": "Game Modern Defense",
         "puzzleCount": 1554
       },
       {
-        "variation": "Queens Pawn Game Mason Variation",
+        "variation": "Game Mason Variation",
         "puzzleCount": 1515
       },
       {
@@ -468,11 +468,11 @@
         "puzzleCount": 1427
       },
       {
-        "variation": "Queens Pawn Game Levitsky Attack",
+        "variation": "Game Levitsky Attack",
         "puzzleCount": 1412
       },
       {
-        "variation": "Queens Pawn Game Krause Variation",
+        "variation": "Game Krause Variation",
         "puzzleCount": 1302
       },
       {
@@ -484,19 +484,19 @@
         "puzzleCount": 1222
       },
       {
-        "variation": "Queens Pawn Game Steinitz Countergambit",
+        "variation": "Game Steinitz Countergambit",
         "puzzleCount": 959
       },
       {
-        "variation": "Queens Pawn Game Torre Attack",
+        "variation": "Game Torre Attack",
         "puzzleCount": 923
       },
       {
-        "variation": "Queens Pawn Game Stonewall Attack",
+        "variation": "Game Stonewall Attack",
         "puzzleCount": 874
       },
       {
-        "variation": "Queens Pawn Game Anti-Torre",
+        "variation": "Game Anti-Torre",
         "puzzleCount": 868
       },
       {
@@ -520,11 +520,11 @@
         "puzzleCount": 673
       },
       {
-        "variation": "Queens Pawn Game Mason Attack",
+        "variation": "Game Mason Attack",
         "puzzleCount": 666
       },
       {
-        "variation": "Queens Pawn Game Veresov Attack",
+        "variation": "Game Veresov Attack",
         "puzzleCount": 600
       },
       {
@@ -548,7 +548,7 @@
         "puzzleCount": 338
       },
       {
-        "variation": "Queens Pawn Game Anglo-Slav Opening",
+        "variation": "Game Anglo-Slav Opening",
         "puzzleCount": 309
       },
       {
@@ -616,7 +616,7 @@
         "puzzleCount": 136
       },
       {
-        "variation": "Queens Pawn Game Hubsch Gambit",
+        "variation": "Game Hubsch Gambit",
         "puzzleCount": 130
       },
       {
@@ -628,11 +628,11 @@
         "puzzleCount": 116
       },
       {
-        "variation": "Queens Pawn Game Franco-Sicilian Defense",
+        "variation": "Game Franco-Sicilian Defense",
         "puzzleCount": 113
       },
       {
-        "variation": "Queens Pawn Game Veresov",
+        "variation": "Game Veresov",
         "puzzleCount": 110
       },
       {
@@ -640,7 +640,7 @@
         "puzzleCount": 105
       },
       {
-        "variation": "Queens Pawn Game Barry Attack",
+        "variation": "Game Barry Attack",
         "puzzleCount": 102
       },
       {
@@ -700,7 +700,7 @@
         "puzzleCount": 30
       },
       {
-        "variation": "Queens Pawn Game Morris Countergambit",
+        "variation": "Game Morris Countergambit",
         "puzzleCount": 26
       },
       {
@@ -736,7 +736,7 @@
         "puzzleCount": 15
       },
       {
-        "variation": "Queens Pawn Game Liedmann Gambit",
+        "variation": "Game Liedmann Gambit",
         "puzzleCount": 15
       },
       {
@@ -744,7 +744,7 @@
         "puzzleCount": 14
       },
       {
-        "variation": "Queens Pawn Game Chandler Gambit",
+        "variation": "Game Chandler Gambit",
         "puzzleCount": 13
       },
       {
@@ -752,7 +752,7 @@
         "puzzleCount": 12
       },
       {
-        "variation": "Queens Pawn Game Zurich Gambit",
+        "variation": "Game Zurich Gambit",
         "puzzleCount": 10
       },
       {
@@ -1284,7 +1284,7 @@
         "puzzleCount": 2876
       },
       {
-        "variation": "Kings Pawn Game Busch-Gass Gambit",
+        "variation": "Game Busch-Gass Gambit",
         "puzzleCount": 2566
       },
       {
@@ -1292,7 +1292,7 @@
         "puzzleCount": 2387
       },
       {
-        "variation": "Kings Pawn Game Leonardis Variation",
+        "variation": "Game Leonardis Variation",
         "puzzleCount": 2256
       },
       {
@@ -1312,7 +1312,7 @@
         "puzzleCount": 1778
       },
       {
-        "variation": "Kings Pawn Game McConnell Defense",
+        "variation": "Game McConnell Defense",
         "puzzleCount": 1506
       },
       {
@@ -1324,7 +1324,7 @@
         "puzzleCount": 1341
       },
       {
-        "variation": "Kings Pawn Game Wayward Queen Attack",
+        "variation": "Game Wayward Queen Attack",
         "puzzleCount": 1283
       },
       {
@@ -1360,7 +1360,7 @@
         "puzzleCount": 690
       },
       {
-        "variation": "Kings Pawn Game Other variations",
+        "variation": "Game Other variations",
         "puzzleCount": 686
       },
       {
@@ -1368,7 +1368,7 @@
         "puzzleCount": 674
       },
       {
-        "variation": "Kings Pawn Game Macleod Attack",
+        "variation": "Game Macleod Attack",
         "puzzleCount": 662
       },
       {
@@ -1376,11 +1376,11 @@
         "puzzleCount": 660
       },
       {
-        "variation": "Kings Pawn Game Napoleon Attack",
+        "variation": "Game Napoleon Attack",
         "puzzleCount": 590
       },
       {
-        "variation": "Kings Pawn Game Maroczy Defense",
+        "variation": "Game Maroczy Defense",
         "puzzleCount": 541
       },
       {
@@ -1388,7 +1388,7 @@
         "puzzleCount": 537
       },
       {
-        "variation": "Kings Pawn Game Damiano Defense",
+        "variation": "Game Damiano Defense",
         "puzzleCount": 512
       },
       {
@@ -1412,7 +1412,7 @@
         "puzzleCount": 408
       },
       {
-        "variation": "Kings Pawn Opening Other variations",
+        "variation": "Opening Other variations",
         "puzzleCount": 387
       },
       {
@@ -1420,11 +1420,11 @@
         "puzzleCount": 366
       },
       {
-        "variation": "Kings Pawn Game MacLeod Attack",
+        "variation": "Game MacLeod Attack",
         "puzzleCount": 358
       },
       {
-        "variation": "Kings Pawn Game Tayler Opening",
+        "variation": "Game Tayler Opening",
         "puzzleCount": 358
       },
       {
@@ -1448,7 +1448,7 @@
         "puzzleCount": 301
       },
       {
-        "variation": "Kings Pawn Game Gunderam Gambit",
+        "variation": "Game Gunderam Gambit",
         "puzzleCount": 287
       },
       {
@@ -1456,7 +1456,7 @@
         "puzzleCount": 276
       },
       {
-        "variation": "Kings Pawn Game Kings Head Opening",
+        "variation": "Game Kings Head Opening",
         "puzzleCount": 276
       },
       {
@@ -1472,7 +1472,7 @@
         "puzzleCount": 229
       },
       {
-        "variation": "Kings Pawn Game Beyer Gambit",
+        "variation": "Game Beyer Gambit",
         "puzzleCount": 227
       },
       {
@@ -1480,7 +1480,7 @@
         "puzzleCount": 222
       },
       {
-        "variation": "Kings Pawn Game Alapin Opening",
+        "variation": "Game Alapin Opening",
         "puzzleCount": 219
       },
       {
@@ -1496,7 +1496,7 @@
         "puzzleCount": 184
       },
       {
-        "variation": "Kings Pawn Game Dresden Opening",
+        "variation": "Game Dresden Opening",
         "puzzleCount": 177
       },
       {
@@ -1504,7 +1504,7 @@
         "puzzleCount": 166
       },
       {
-        "variation": "Kings Pawn Game Mengarinis Opening",
+        "variation": "Game Mengarinis Opening",
         "puzzleCount": 161
       },
       {
@@ -1592,7 +1592,7 @@
         "puzzleCount": 67
       },
       {
-        "variation": "Kings Pawn Game Clam Variation",
+        "variation": "Game Clam Variation",
         "puzzleCount": 65
       },
       {
@@ -1620,7 +1620,7 @@
         "puzzleCount": 49
       },
       {
-        "variation": "Kings Pawn Game Tortoise Opening",
+        "variation": "Game Tortoise Opening",
         "puzzleCount": 43
       },
       {
@@ -1636,7 +1636,7 @@
         "puzzleCount": 37
       },
       {
-        "variation": "Kings Pawn Game Schulze-Muller Gambit",
+        "variation": "Game Schulze-Muller Gambit",
         "puzzleCount": 35
       },
       {
@@ -1656,7 +1656,7 @@
         "puzzleCount": 25
       },
       {
-        "variation": "Kings Pawn Game Weber Gambit",
+        "variation": "Game Weber Gambit",
         "puzzleCount": 25
       },
       {
@@ -1696,7 +1696,7 @@
         "puzzleCount": 8
       },
       {
-        "variation": "Kings Pawn Game Pachman Wing Gambit",
+        "variation": "Game Pachman Wing Gambit",
         "puzzleCount": 7
       },
       {
@@ -1744,7 +1744,7 @@
         "puzzleCount": 3
       },
       {
-        "variation": "Kings Pawn Game Philidor Gambit",
+        "variation": "Game Philidor Gambit",
         "puzzleCount": 3
       },
       {
@@ -1756,15 +1756,15 @@
         "puzzleCount": 2
       },
       {
-        "variation": "Kings Pawn Game Bavarian Gambit",
+        "variation": "Game Bavarian Gambit",
         "puzzleCount": 2
       },
       {
-        "variation": "Kings Pawn Game La Bourdonnais Gambit",
+        "variation": "Game La Bourdonnais Gambit",
         "puzzleCount": 2
       },
       {
-        "variation": "Kings Pawn Opening Van Hooydoon Gambit",
+        "variation": "Opening Van Hooydoon Gambit",
         "puzzleCount": 2
       },
       {
@@ -1788,7 +1788,7 @@
         "puzzleCount": 1
       },
       {
-        "variation": "Kings Pawn Opening Speers",
+        "variation": "Opening Speers",
         "puzzleCount": 1
       }
     ]
@@ -2196,7 +2196,7 @@
         "puzzleCount": 8663
       },
       {
-        "variation": "Scotch Gambit",
+        "variation": "Gambit",
         "puzzleCount": 5763
       },
       {
@@ -2488,7 +2488,7 @@
         "puzzleCount": 228
       },
       {
-        "variation": "Philidor Countergambit",
+        "variation": "Countergambit",
         "puzzleCount": 197
       },
       {
@@ -2508,7 +2508,7 @@
         "puzzleCount": 70
       },
       {
-        "variation": "Philidor Gambit",
+        "variation": "Gambit",
         "puzzleCount": 20
       },
       {
@@ -2726,7 +2726,7 @@
         "puzzleCount": 68
       },
       {
-        "variation": "Modern Pterodactyl",
+        "variation": "Pterodactyl",
         "puzzleCount": 63
       },
       {
@@ -2930,7 +2930,7 @@
     "puzzleCount": 14695,
     "variations": [
       {
-        "variation": "Vienna Gambit",
+        "variation": "Gambit",
         "puzzleCount": 4555
       },
       {
@@ -3102,7 +3102,7 @@
         "puzzleCount": 379
       },
       {
-        "variation": "Slav Gambit",
+        "variation": "Gambit",
         "puzzleCount": 276
       },
       {
@@ -3384,7 +3384,7 @@
         "puzzleCount": 4426
       },
       {
-        "variation": "Benoni Gambit Accepted",
+        "variation": "Accepted",
         "puzzleCount": 1819
       },
       {
@@ -3436,7 +3436,7 @@
         "puzzleCount": 40
       },
       {
-        "variation": "Benoni Gambit",
+        "variation": "Gambit",
         "puzzleCount": 35
       },
       {
@@ -4606,7 +4606,7 @@
         "puzzleCount": 425
       },
       {
-        "variation": "Ponziani Countergambit",
+        "variation": "Countergambit",
         "puzzleCount": 110
       },
       {
@@ -5016,7 +5016,7 @@
         "puzzleCount": 1316
       },
       {
-        "variation": "Grob Gambit",
+        "variation": "Gambit",
         "puzzleCount": 757
       },
       {
@@ -5024,7 +5024,7 @@
         "puzzleCount": 297
       },
       {
-        "variation": "Grob Gambit Declined",
+        "variation": "Declined",
         "puzzleCount": 123
       },
       {
@@ -5192,7 +5192,7 @@
         "puzzleCount": 2
       },
       {
-        "variation": "Tarrasch Gambit",
+        "variation": "Gambit",
         "puzzleCount": 2
       }
     ]
@@ -5266,7 +5266,7 @@
     "puzzleCount": 1663,
     "variations": [
       {
-        "variation": "Reti Accepted",
+        "variation": "Accepted",
         "puzzleCount": 649
       },
       {
@@ -5286,7 +5286,7 @@
         "puzzleCount": 102
       },
       {
-        "variation": "Reti Gambit",
+        "variation": "Gambit",
         "puzzleCount": 21
       },
       {
@@ -5786,7 +5786,7 @@
         "puzzleCount": 4
       },
       {
-        "variation": "Kadas Gambit",
+        "variation": "Gambit",
         "puzzleCount": 2
       },
       {
@@ -5808,7 +5808,7 @@
         "puzzleCount": 275
       },
       {
-        "variation": "Borg Gambit",
+        "variation": "Gambit",
         "puzzleCount": 154
       },
       {
@@ -6010,7 +6010,7 @@
         "puzzleCount": 141
       },
       {
-        "variation": "Portuguese Gambit",
+        "variation": "Gambit",
         "puzzleCount": 6
       }
     ]

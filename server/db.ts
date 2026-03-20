@@ -23,7 +23,7 @@ import {
   players,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
-import { eq, ne, and, or, gte, lte, asc, desc, count, sum, inArray, sql } from 'drizzle-orm';
+import { eq, ne, and, or, gte, lte, asc, desc, count, sum, inArray, sql, like } from 'drizzle-orm';
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -280,35 +280,162 @@ export async function getPuzzlesByOpeningAndRating(
   return result;
 }
 
-// Get random puzzles by opening name and rating
+// Reverse mapping: display name → database name
+const DISPLAY_TO_DB_OPENING = {
+  "Alekhine's Defence": 'Alekhine',
+  'Amar Opening': 'Amar',
+  'Amazon Attack': 'Amazon',
+  "Anderssen's Opening": 'Anderssens',
+  'Australian Opening': 'Australian',
+  "Barnes Opening": 'Barnes',
+  'Benko Gambit': 'Benko',
+  'Benoni Defence': 'Benoni',
+  "Bird's Opening": 'Bird',
+  'Bishops Opening': 'Bishops',
+  'Blackmar-Diemer Gambit': 'Blackmar-Diemer',
+  'Blumenfeld Gambit': 'Blumenfeld',
+  'Bogo-Indian Defence': 'Bogo-Indian',
+  'Borg Opening': 'Borg',
+  'Canard Opening': 'Canard',
+  'Caro-Kann Defence': 'Caro-Kann',
+  'Carr Opening': 'Carr',
+  'Catalan Opening': 'Catalan',
+  'Center Game': 'Center',
+  'Clemenz Opening': 'Clemenz',
+  'Crab Opening': 'Crab',
+  'Creepy Opening': 'Creepy',
+  'Czech Defence': 'Czech',
+  'Danish Gambit': 'Danish',
+  'Duras Opening': 'Duras',
+  'Dutch Defence': 'Dutch',
+  'East Indian Defence': 'East',
+  'Elephant Gambit': 'Elephant',
+  'English Opening': 'English',
+  'Englund Gambit': 'Englund',
+  'Four Knights Game': 'Four',
+  'French Defence': 'French',
+  'Fried Liver Attack': 'Fried',
+  'Gedults Opening': 'Gedults',
+  'Giuoco Piano': 'Giuoco',
+  'Goldsmith Game': 'Goldsmith',
+  "Grob's Attack": 'Grob',
+  'Grunfeld Defence': 'Grunfeld',
+  'Guatemala Opening': 'Guatemala',
+  'Gunderam Opening': 'Gunderam',
+  'Hippopotamus Defence': 'Hippopotamus',
+  'Horwitz Defence': 'Horwitz',
+  'Hungarian Opening': 'Hungarian',
+  'Indian Defence': 'Indian',
+  'Italian Game': 'Italian',
+  'Kadas Opening': 'Kadas',
+  'Kangaroo Opening': 'Kangaroo',
+  "King's Indian Defence": 'Kings',
+  "Lasker's Opening": 'Lasker',
+  'Latvian Gambit': 'Latvian',
+  'Lemming Defence': 'Lemming',
+  'Lion Opening': 'Lion',
+  'London System': 'London',
+  'Mexican Opening': 'Mexican',
+  "Mieses' Opening": 'Mieses',
+  "Mikenas' Opening": 'Mikenas',
+  'Modern Defence': 'Modern',
+  'Neo-Grunfeld Defence': 'Neo-Grunfeld',
+  'Nimzo-Indian Defence': 'Nimzo-Indian',
+  'Nimzo-Larsen Attack': 'Nimzo-Larsen',
+  'Nimzowitsch Defence': 'Nimzowitsch',
+  'Old Indian Defence': 'Old',
+  "Owen's Defence": 'Owen',
+  'Paleface Opening': 'Paleface',
+  "Petrov's Defence": 'Petrovs',
+  "Philidor's Defence": 'Philidor',
+  "Pirc's Defence": 'Pirc',
+  'Polish Opening': 'Polish',
+  'Ponziani Opening': 'Ponziani',
+  'Portuguese Opening': 'Portuguese',
+  'Pseudo-Benoni': 'Pseudo',
+  'Pterodactyl Defence': 'Pterodactyl',
+  "Queen's Gambit": 'Queens',
+  'Rapport-Jobava System': 'Rapport-Jobava',
+  'Rat Defence': 'Rat',
+  'Reti Opening': 'Reti',
+  'Richter-Veresov Attack': 'Richter-Veresov',
+  'Robatsch Defence': 'Robatsch',
+  "Rubinstein's Opening": 'Rubinstein',
+  'Russian Game': 'Russian',
+  'Ruy López': 'Ruy',
+  'Saragossa Opening': 'Saragossa',
+  'Scandinavian Defence': 'Scandinavian',
+  'Scotch Game': 'Scotch',
+  'Semi-Slav Defence': 'Semi-Slav',
+  'Sicilian Defence': 'Sicilian',
+  'Slav Defence': 'Slav',
+  'Sodium Attack': 'Sodium',
+  'St. George Defence': 'St',
+  'Tarrasch Defence': 'Tarrasch',
+  'Three Knights Game': 'Three',
+  'Torre Attack': 'Torre',
+  'Trompowsky Attack': 'Trompowsky',
+  'Unclassified': 'Unclassified',
+  'Valencia Opening': 'Valencia',
+  "Van't Kruijs Opening": 'Van',
+  'Vienna Game': 'Vienna',
+  'Wade Defence': 'Wade',
+  'Ware Opening': 'Ware',
+  'Yusupov-Rubinstein System': 'Yusupov-Rubinstein',
+  "Zukertort's Opening": 'Zukertort',
+};
+
 export async function getRandomPuzzlesByOpeningAndRating(
   openingName: string,
   minRating: number,
   maxRating: number,
-  limit: number = 20,
+  puzzleCount: number,
+  variation?: string,
   color?: string
 ) {
   const db = await getDb();
-  if (!db) return [];
+  if (!db) {
+    console.error('[getRandomPuzzlesByOpeningAndRating] Database not available');
+    return [];
+  }
+
+  console.log('[getRandomPuzzlesByOpeningAndRating] Searching:', { openingName, variation, minRating, maxRating, puzzleCount, color });
+
+  // Convert display name to database name using reverse map
+  // e.g., "Sicilian Defence" → "Sicilian"
+  const dbOpeningName = DISPLAY_TO_DB_OPENING[openingName as keyof typeof DISPLAY_TO_DB_OPENING] || openingName;
+  console.log('[getRandomPuzzlesByOpeningAndRating] Converted opening name to:', dbOpeningName);
+  console.log('[getRandomPuzzlesByOpeningAndRating] Looking for puzzles with openingName =', dbOpeningName);
 
   let whereConditions = and(
-    eq(puzzles.openingName, openingName),
+    eq(puzzles.openingName, dbOpeningName),
     gte(puzzles.rating, minRating),
     lte(puzzles.rating, maxRating)
   );
+
+  // Add variation filter using LIKE to match database variation format
+  if (variation && variation.trim()) {
+    console.log('[getRandomPuzzlesByOpeningAndRating] Filtering by variation:', variation);
+    whereConditions = and(whereConditions, like(puzzles.variation, `%${variation}%`));
+  }
 
   if (color && color !== 'both') {
     whereConditions = and(whereConditions, eq(puzzles.color, color));
   }
 
-  // Use selectDistinct to prevent duplicate puzzle IDs
-  // This ensures each puzzle appears only once in the result set
-  return db
-    .selectDistinct()
-    .from(puzzles)
-    .where(whereConditions)
-    .orderBy(sql`RAND()`)
-    .limit(limit);
+  try {
+    const result = await db
+      .selectDistinct()
+      .from(puzzles)
+      .where(whereConditions)
+      .orderBy(sql`RAND()`)
+      .limit(limit);
+    console.log('[getRandomPuzzlesByOpeningAndRating] Found:', result.length, 'puzzles');
+    return result;
+  } catch (error) {
+    console.error('[getRandomPuzzlesByOpeningAndRating] Error:', error);
+    return [];
+  }
 }
 
 export async function getPuzzleById(id: string) {

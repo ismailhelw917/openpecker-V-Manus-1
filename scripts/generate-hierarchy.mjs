@@ -119,7 +119,12 @@ const OPENING_NAME_MAP = {
 };
 
 function normalizeOpeningName(name) {
-  return OPENING_NAME_MAP[name] || name;
+  // First convert snake_case to space-separated (e.g., "Sicilian_Defense" → "Sicilian Defense")
+  const spaced = name.replace(/_/g, ' ');
+  // Then apply the mapping
+  // Extract the first word to look up in the map
+  const firstWord = spaced.split(' ')[0];
+  return OPENING_NAME_MAP[firstWord] || spaced;
 }
 
 function parseVariationName(openingVariation, openingName) {
@@ -141,17 +146,32 @@ function parseVariationName(openingVariation, openingName) {
     }
   }
   
-  // Remove the opening name from the beginning
+  // Remove the opening name from the beginning (may appear multiple times)
   // Try both the original name and normalized name
   const names = [openingName, normalizeOpeningName(openingName)];
   for (const name of names) {
-    if (text.toLowerCase().startsWith(name.toLowerCase() + ' ')) {
-      text = text.substring(name.length + 1).trim();
-      break;
+    // Remove all occurrences of the opening name with optional type word prefix
+    let found = true;
+    while (found) {
+      found = false;
+      // Try with type word prefix first
+      for (const typeWord of typeWords) {
+        const pattern = typeWord + ' ' + name + ' ';
+        if (text.toLowerCase().startsWith(pattern.toLowerCase())) {
+          text = text.substring(pattern.length).trim();
+          found = true;
+          break;
+        }
+      }
+      // Try without type word prefix
+      if (!found && text.toLowerCase().startsWith(name.toLowerCase() + ' ')) {
+        text = text.substring(name.length + 1).trim();
+        found = true;
+      }
     }
   }
   
-  // Remove any remaining leading type word after opening name
+  // Remove any remaining leading type word
   for (const typeWord of typeWords) {
     if (text.startsWith(typeWord + ' ')) {
       text = text.substring(typeWord.length + 1).trim();

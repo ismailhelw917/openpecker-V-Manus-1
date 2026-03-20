@@ -542,6 +542,31 @@ export const appRouter = router({
       .mutation(async ({ input, ctx }) => {
         try {
           const trainingSetId = nanoid();
+          console.log('[puzzleSession.create] Fetching puzzles with:', {
+            opening: input.opening,
+            minRating: input.minRating,
+            maxRating: input.maxRating,
+            puzzleCount: input.puzzleCount,
+            colorFilter: input.colorFilter,
+          });
+          const fetchedPuzzles = await getRandomPuzzlesByOpeningAndRating(
+            input.opening,
+            input.minRating,
+            input.maxRating,
+            input.puzzleCount,
+            input.colorFilter !== 'both' ? input.colorFilter : undefined,
+            input.variation
+          );
+          console.log('[puzzleSession.create] Fetched puzzles count:', fetchedPuzzles.length);
+          const puzzlesJson = JSON.stringify(fetchedPuzzles.map(p => ({
+            id: p.id,
+            fen: p.fen,
+            moves: typeof p.moves === 'string' ? p.moves.split(' ') : p.moves,
+            rating: p.rating,
+            themes: typeof p.themes === 'string' ? JSON.parse(p.themes) : p.themes,
+            color: p.color,
+            openingName: p.openingName,
+          })));
           const trainingSet = await createTrainingSet({
             id: trainingSetId,
             userId: ctx.user?.id || null,
@@ -554,12 +579,11 @@ export const appRouter = router({
             puzzleCount: input.puzzleCount,
             targetCycles: input.targetCycles,
             colorFilter: input.colorFilter,
-            puzzlesJson: JSON.stringify([]),
+            puzzlesJson: puzzlesJson,
           });
-
           return {
             id: trainingSetId,
-            ...trainingSet,
+            puzzles: fetchedPuzzles,
           };
         } catch (error) {
           console.error('Error creating puzzle session:', error);

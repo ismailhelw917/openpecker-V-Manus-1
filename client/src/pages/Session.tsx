@@ -3,7 +3,7 @@ import { useRoute, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Chess } from "chess.js";
 import { ChevronLeft } from "lucide-react";
-import { CustomChessboard } from "@/components/CustomChessboard";
+import { ChessgroundBoard } from "@/components/ChessgroundBoard";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "@/_core/deviceId";
 
@@ -636,15 +636,12 @@ export default function Session() {
       {/* Board Container - Centered */}
       <div className="flex-1 flex items-center justify-center p-2 sm:p-4 overflow-hidden">
         <div style={{ width: boardSize, height: boardSize }} className="relative">
-          <CustomChessboard
-            key={gameFen}
-            game={new Chess(gameFen)}
-            onPieceDrop={handleMove}
-            boardColors={themeColors[boardTheme]}
+          <ChessgroundBoard
+            fen={gameFen}
+            onMove={handleMove}
             orientation={boardOrientation}
-            autoSolveMove={autoSolveMove}
-            isAutoSolving={isAutoSolving}
-            captureAnimation={captureAnimation}
+            boardSize={boardSize}
+            theme="brown"
           />
 
           {/* Green Checkmark Watermark for Correct Solutions */}

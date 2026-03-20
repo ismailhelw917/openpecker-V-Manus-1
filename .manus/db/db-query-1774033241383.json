@@ -1,0 +1,25 @@
+{
+  "query": "SELECT DISTINCT openingName FROM puzzles WHERE openingName LIKE '%Sicilian%' LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT DISTINCT openingName FROM puzzles WHERE openingName LIKE '%Sicilian%' LIMIT 5;",
+  "rows": [
+    {
+      "openingName": "Sicilian"
+    },
+    {
+      "openingName": "Sicilian Accelerated Dragon"
+    },
+    {
+      "openingName": "Sicilian Closed"
+    },
+    {
+      "openingName": "Sicilian Defense"
+    },
+    {
+      "openingName": "Sicilian Najdorf"
+    }
+  ],
+  "messages": [],
+  "stdout": "openingName\nSicilian\nSicilian Accelerated Dragon\nSicilian Closed\nSicilian Defense\nSicilian Najdorf\n",
+  "stderr": "",
+  "execution_time_ms": 9704
+}

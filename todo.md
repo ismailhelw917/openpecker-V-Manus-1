@@ -1333,3 +1333,12 @@
 - [ ] Test leaderboard rankings
 - [ ] Verify stats aggregation
 - [ ] Save checkpoint
+
+
+## Critical Implementation (Round 24 - User Request)
+- [x] Load puzzles into training sessions from database (mutation implemented, but puzzles not displaying)
+- [x] Create Stripe checkout UI with promo code validation (already implemented)
+- [x] Implement interactive chessboard puzzle solver (already implemented)
+- [ ] DEBUG: Fix puzzle loading - getRandomPuzzlesByOpeningAndRating returning empty array
+- [ ] Add console logging to identify root cause (opening name mismatch vs DB query issue)
+- [ ] Test all three features end-to-end
