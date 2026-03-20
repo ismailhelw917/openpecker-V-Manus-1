@@ -1,0 +1,28 @@
+{
+  "query": "SELECT id, code, benefitType, discountPercent, maxUses, currentUses, isActive FROM promo_codes WHERE code IN ('openpecker50', 'openpecker80');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT id, code, benefitType, discountPercent, maxUses, currentUses, isActive FROM promo_codes WHERE code IN ('openpecker50', 'openpecker80');",
+  "rows": [
+    {
+      "id": "30001",
+      "code": "openpecker50",
+      "benefitType": "lifetime_premium",
+      "discountPercent": "100",
+      "maxUses": "100",
+      "currentUses": "0",
+      "isActive": "1"
+    },
+    {
+      "id": "30002",
+      "code": "openpecker80",
+      "benefitType": "discount",
+      "discountPercent": "80",
+      "maxUses": "400",
+      "currentUses": "0",
+      "isActive": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tcode\tbenefitType\tdiscountPercent\tmaxUses\tcurrentUses\tisActive\n30001\topenpecker50\tlifetime_premium\t100\t100\t0\t1\n30002\topenpecker80\tdiscount\t80\t400\t0\t1\n",
+  "stderr": "",
+  "execution_time_ms": 1601
+}

@@ -951,6 +951,7 @@ export const appRouter = router({
         z.object({
           userId: z.number().optional(),
           email: z.string().email(),
+          promoCode: z.string().optional(),
         })
       )
       .mutation(async ({ input, ctx }) => {
@@ -961,7 +962,8 @@ export const appRouter = router({
           input.userId || ctx.user?.id || 0,
           "price_premium",
           input.email,
-          origin
+          origin,
+          input.promoCode
         );
       }),
 
