@@ -1207,3 +1207,9 @@
 - [ ] Apply analytics schema migration
 - [ ] Apply puzzle indexes
 - [ ] Run ChessPuzzleKit migration (5M puzzles)
+
+## Best Moves Index (Stockfish Centipawn Loss Filter)
+- [x] Create best_moves table filtered by centipawn loss ≤ 2.00
+- [x] Populate from puzzles table using Stockfish evaluation (running ~24h, PID 5811, 55.8/s)
+- [x] Create indexes on smaller best_moves table (created with table)
+- [ ] Save checkpoint

@@ -1,0 +1,21 @@
+{
+  "query": "SELECT 'tables' as info, GROUP_CONCAT(table_name) as names FROM information_schema.tables WHERE table_schema=DATABASE();\nSELECT COUNT(*) as puzzle_count FROM puzzles;\nSELECT COUNT(*) as player_events_count FROM player_events;\nSELECT COUNT(*) as player_stats_count FROM player_stats;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT 'tables' as info, GROUP_CONCAT(table_name) as names FROM information_schema.tables WHERE table_schema=DATABASE();\nSELECT COUNT(*) as puzzle_count FROM puzzles;\nSELECT COUNT(*) as player_events_count FROM player_events;\nSELECT COUNT(*) as player_stats_count FROM player_stats;",
+  "rows": [
+    {
+      "info": "tables",
+      "names": "visitor_tracking,users,training_sets,site_snapshots,sessions,session_analytics,puzzles_raw,puzzles,puzzle_attempts,promo_redemptions,promo_codes,players,player_stats,player_events,pageViews,openings,opening_performance,online_sessions,leaderboard_cache,global_settings,events,difficulty_performance,dailyStats,cycle_history,__drizzle_migrations"
+    }
+  ],
+  "messages": [
+    "puzzle_count",
+    "4826780",
+    "player_events_count",
+    "0",
+    "player_stats_count",
+    "0"
+  ],
+  "stdout": "info\tnames\ntables\tvisitor_tracking,users,training_sets,site_snapshots,sessions,session_analytics,puzzles_raw,puzzles,puzzle_attempts,promo_redemptions,promo_codes,players,player_stats,player_events,pageViews,openings,opening_performance,online_sessions,leaderboard_cache,global_settings,events,difficulty_performance,dailyStats,cycle_history,__drizzle_migrations\npuzzle_count\n4826780\nplayer_events_count\n0\nplayer_stats_count\n0\n",
+  "stderr": "",
+  "execution_time_ms": 5926
+}
