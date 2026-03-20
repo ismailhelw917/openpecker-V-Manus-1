@@ -546,15 +546,15 @@ export const appRouter = router({
             id: trainingSetId,
             userId: ctx.user?.id || null,
             deviceId: input.deviceId || null,
-            name: `${input.opening} - ${input.variation}`,
-            description: `Training session for ${input.opening} ${input.variation}`,
-            opening: input.opening,
-            variation: input.variation,
-            targetCycles: input.targetCycles,
-            puzzleCount: input.puzzleCount,
+            openingName: input.opening,
+            openingFen: '',
+            themes: JSON.stringify([]),
             minRating: input.minRating,
             maxRating: input.maxRating,
+            puzzleCount: input.puzzleCount,
+            targetCycles: input.targetCycles,
             colorFilter: input.colorFilter,
+            puzzlesJson: JSON.stringify([]),
           });
 
           return {
