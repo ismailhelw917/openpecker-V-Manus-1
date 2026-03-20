@@ -1152,3 +1152,19 @@
 - [x] Fix the root cause - changed game={new Chess(gameFen)} to game={gameRef.current}
 - [x] Add key={gameFen} to force re-render on board updates
 - [x] Test pieces can move and capture
+
+
+## Feature: Enable Piece Dragging (Round 44 - User Request)
+- [ ] Test piece dragging on chessboard
+- [ ] Verify drag handlers are triggered
+- [ ] Check if moves are being processed
+- [ ] Enable full piece interactivity
+
+
+## Bug Fix: Pieces Not Moving (Round 45 - User Report)
+- [x] Diagnose why pieces snap back instead of moving
+- [x] Identify droppable squares have no w-full h-full classes
+- [x] Fix collision detection by adding w-full h-full to DroppableSquare
+- [x] Update handleMove to use fresh Chess(gameFen) instead of stale gameRef.current
+- [x] Test pieces can now move and capture
+- [ ] Save checkpoint

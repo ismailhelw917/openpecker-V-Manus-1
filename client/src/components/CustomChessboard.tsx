@@ -70,7 +70,7 @@ const DroppableSquare = ({ squareName, isDark, children, onDrop, boardColors }: 
   return (
     <div
       ref={setNodeRef}
-      className={`relative flex items-center justify-center ${isOver ? 'ring-2 ring-yellow-400' : ''}`}
+      className={`relative w-full h-full flex items-center justify-center ${isOver ? 'ring-2 ring-yellow-400' : ''}`}
       style={{ backgroundColor: isDark ? boardColors.dark : boardColors.light }}
       onClick={() => onDrop(squareName)}
     >
@@ -167,6 +167,7 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
   };
 
   const handleDragStart = (event: any) => {
+    console.log('[CustomChessboard] handleDragStart triggered:', event.active.id);
     const piece = event.active.data.current.piece;
     const currentTurn = game.turn();
     
@@ -180,10 +181,13 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
   };
 
   const handleDragEnd = async (event: any) => {
+    console.log('[CustomChessboard] handleDragEnd triggered');
     const { active, over } = event;
+    console.log('[CustomChessboard] active:', active?.id, 'over:', over?.id);
     
     // Safety check: ensure we have valid drag data
     if (!active?.data?.current?.piece || !over) {
+      console.log('[CustomChessboard] Drag validation failed');
       return false;
     }
     

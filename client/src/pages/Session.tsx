@@ -467,6 +467,7 @@ export default function Session() {
   };
 
   const handleMove = (sourceSquare: string, targetSquare: string) => {
+    console.log('[handleMove] Called with:', { sourceSquare, targetSquare, solved, isAutoSolving });
     if (solved || isAutoSolving) return false;
 
     const currentPuzzle = puzzles[currentPuzzleIndex];
@@ -481,7 +482,8 @@ export default function Session() {
     }
 
     try {
-      const game = gameRef.current;
+      // Create a fresh game instance from current FEN to ensure we're validating against the latest state
+      const game = new Chess(gameFen);
 
       // Pre-validate: check if source square has a piece
       const piece = game.get(sourceSquare as any);
@@ -614,7 +616,7 @@ export default function Session() {
         <div style={{ width: boardSize, height: boardSize }} className="relative">
           <CustomChessboard
             key={gameFen}
-            game={gameRef.current}
+            game={new Chess(gameFen)}
             onPieceDrop={handleMove}
             boardColors={themeColors[boardTheme]}
             orientation={boardOrientation}
