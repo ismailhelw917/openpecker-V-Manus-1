@@ -4,7 +4,6 @@ import { trpc } from "@/lib/trpc";
 import { Chess } from "chess.js";
 import { ChevronLeft } from "lucide-react";
 import { CustomChessboard } from "@/components/CustomChessboard";
-import { PuzzleVariationTree, ChessMoveNode } from "@/components/PuzzleVariationTree";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "@/_core/deviceId";
 
@@ -41,9 +40,6 @@ export default function Session() {
     to: string;
   } | null>(null);
   const [puzzleStartTime, setPuzzleStartTime] = useState<number>(Date.now());
-  const [variationTree, setVariationTree] = useState<ChessMoveNode | null>(null);
-  const [selectedVariation, setSelectedVariation] = useState<string[]>([]);
-  const [showVariations, setShowVariations] = useState(false);
 
   // ===== ALL useRef HOOKS =====
   const gameRef = useRef(new Chess());
@@ -251,12 +247,6 @@ export default function Session() {
     setCaptureAnimation(null);
     setPuzzleStartTime(Date.now());
 
-    // Build variation tree from moves
-    const tree = buildVariationTree(movesList);
-    setVariationTree(tree);
-    setSelectedVariation([]);
-    setShowVariations(false);
-
     console.log('Puzzle initialized:', {
       id: puzzle.id,
       originalFen: puzzle.fen,
@@ -266,41 +256,8 @@ export default function Session() {
       orientation: userColor,
       expectedUserMove: movesList[1],
       totalMoves: movesList.length,
-      hasVariations: tree !== null,
     });
-  }, [parseMovesList, playUCIMove, cancelAllPuzzleTimeouts, buildVariationTree]);
-
-  // Build variation tree from move sequence (must be defined before initializePuzzle)
-  const buildVariationTree = useCallback((moves: string[]): ChessMoveNode | null => {
-    if (moves.length === 0) return null;
-    
-    const root: ChessMoveNode = {
-      algebraicMove: moves[0],
-      isBestMove: true,
-      nextMoves: [],
-    };
-    
-    let current = root;
-    for (let i = 1; i < moves.length; i++) {
-      const newNode: ChessMoveNode = {
-        algebraicMove: moves[i],
-        isBestMove: i === 1,
-        nextMoves: [],
-      };
-      current.nextMoves = [newNode];
-      current = newNode;
-    }
-    
-    return root;
-  }, []);
-
-  // Handle variation selection
-  const handleVariationSelect = useCallback((movePath: string[]) => {
-    setSelectedVariation(movePath);
-    console.log('Selected variation:', movePath);
-    // Could use this to navigate to specific variation in puzzle
-    // For now, just tracking the selection for UI display
-  }, []);
+  }, [parseMovesList, playUCIMove, cancelAllPuzzleTimeouts]);
 
   // Load puzzles from training set
   useEffect(() => {
@@ -661,28 +618,8 @@ export default function Session() {
         </div>
       </div>
 
-      {/* Board and Variations Container */}
-      <div className="flex-1 flex items-center justify-center p-2 sm:p-4 overflow-hidden gap-4">
-        {/* Variations Panel */}
-        {variationTree && (
-          <div className="hidden lg:flex flex-col w-64 max-h-full overflow-y-auto">
-            <button
-              onClick={() => setShowVariations(!showVariations)}
-              className="mb-2 px-3 py-2 bg-teal-900/50 hover:bg-teal-800/50 text-teal-200 rounded text-sm font-semibold transition-colors"
-            >
-              {showVariations ? '▼ Hide Variations' : '▶ Show Variations'}
-            </button>
-            {showVariations && (
-              <PuzzleVariationTree
-                rootMove={variationTree}
-                onMoveSelect={handleVariationSelect}
-                selectedPath={selectedVariation}
-              />
-            )}
-          </div>
-        )}
-
-        {/* Board Container */}
+      {/* Board Container - Centered */}
+      <div className="flex-1 flex items-center justify-center p-2 sm:p-4 overflow-hidden">
         <div style={{ width: boardSize, height: boardSize }} className="relative">
           <CustomChessboard
             key={gameFen}
@@ -717,25 +654,6 @@ export default function Session() {
             </div>
           )}
         </div>
-        
-        {/* Mobile Variations Dropdown */}
-        {variationTree && (
-          <div className="lg:hidden absolute bottom-20 left-4 right-4 bg-slate-900/95 border border-teal-900/50 rounded-lg p-3 max-h-48 overflow-y-auto">
-            <button
-              onClick={() => setShowVariations(!showVariations)}
-              className="w-full mb-2 px-3 py-2 bg-teal-900/50 hover:bg-teal-800/50 text-teal-200 rounded text-sm font-semibold transition-colors"
-            >
-              {showVariations ? '▼ Hide Variations' : '▶ Show Variations'}
-            </button>
-            {showVariations && (
-              <PuzzleVariationTree
-                rootMove={variationTree}
-                onMoveSelect={handleVariationSelect}
-                selectedPath={selectedVariation}
-              />
-            )}
-          </div>
-        )}
       </div>
 
       {/* Footer Navigation */}
