@@ -1246,9 +1246,9 @@ export async function getOpeningHierarchy() {
   if (!db) return [];
 
   try {
-    // Use raw SQL for reliable distinct results
+    // Get distinct opening/subset/variation combinations with puzzle counts
     const result = await db.execute(sql`
-      SELECT DISTINCT opening, subset, variation
+      SELECT opening, subset, variation, COUNT(*) as puzzleCount
       FROM puzzles
       WHERE opening IS NOT NULL 
         AND opening != ''
@@ -1256,6 +1256,7 @@ export async function getOpeningHierarchy() {
         AND subset != ''
         AND variation IS NOT NULL 
         AND variation != ''
+      GROUP BY opening, subset, variation
       ORDER BY opening ASC, subset ASC, variation ASC
     `);
 
@@ -1265,6 +1266,35 @@ export async function getOpeningHierarchy() {
   } catch (error) {
     console.error('[Database] Error getting opening hierarchy:', error);
     return [];
+  }
+}
+
+/**
+ * Get puzzle count by opening hierarchy level
+ */
+export async function getPuzzleCountByOpeningHierarchy(
+  opening?: string,
+  subset?: string,
+  variation?: string
+) {
+  const db = await getDb();
+  if (!db) return 0;
+
+  try {
+    let whereConditions = [];
+    if (opening) whereConditions.push(eq(puzzles.opening, opening));
+    if (subset) whereConditions.push(eq(puzzles.subset, subset));
+    if (variation) whereConditions.push(eq(puzzles.variation, variation));
+
+    const result = await db
+      .select({ count: count() })
+      .from(puzzles)
+      .where(whereConditions.length > 0 ? and(...whereConditions) : undefined);
+
+    return result[0]?.count || 0;
+  } catch (error) {
+    console.error('[Database] Error counting puzzles by hierarchy:', error);
+    return 0;
   }
 }
 

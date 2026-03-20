@@ -18,7 +18,7 @@ from urllib.parse import urlparse
 # Config
 STOCKFISH_PATH = os.path.expanduser("~/stockfish")
 DEPTH = 12  # Analysis depth (balance speed vs accuracy)
-MAX_CP_LOSS = 200  # 2.00 centipawn loss threshold
+MAX_CP_LOSS = 100  # 1.00 centipawn loss threshold
 BATCH_SIZE = 500  # Puzzles per DB fetch
 INSERT_BATCH = 100  # Rows per INSERT
 PROGRESS_INTERVAL = 1000  # Log every N puzzles

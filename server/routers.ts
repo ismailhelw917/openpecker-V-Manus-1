@@ -48,6 +48,7 @@ import {
   classifyAllPuzzlesByVariation,
   getOpeningHierarchy,
   getPuzzlesByOpeningHierarchy,
+  getPuzzleCountByOpeningHierarchy,
 } from "./db";
 import {
   getOnlineCount,
@@ -328,6 +329,25 @@ export const appRouter = router({
     getHierarchy: publicProcedure
       .query(async () => {
         return await getOpeningHierarchy();
+      }),
+
+    /**
+     * Get puzzle count by opening hierarchy level
+     */
+    getPuzzleCount: publicProcedure
+      .input(
+        z.object({
+          opening: z.string().optional(),
+          subset: z.string().optional(),
+          variation: z.string().optional(),
+        })
+      )
+      .query(async ({ input }) => {
+        return await getPuzzleCountByOpeningHierarchy(
+          input.opening,
+          input.subset,
+          input.variation
+        );
       }),
 
     /**

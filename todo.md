@@ -1213,3 +1213,12 @@
 - [x] Populate from puzzles table using Stockfish evaluation (running ~24h, PID 5811, 55.8/s)
 - [x] Create indexes on smaller best_moves table (created with table)
 - [ ] Save checkpoint
+- [ ] Change best_moves centipawn loss filter from 2.00 to 1.00
+- [ ] Optimized multi-threaded Stockfish migration at 2.00 cp loss (target: 6 hours)
+
+## Puzzle Indexing for Train Tab (Round - User Request)
+- [x] Kill Stockfish migration (unnecessary)
+- [x] Fix puzzle counts in Train tab UI to show real numbers from database
+- [x] Update getOpeningHierarchy to include COUNT(*) for accurate counts
+- [x] Verify puzzles are accessible and playable from Train tab
+- [x] Save checkpoint
