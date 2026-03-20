@@ -380,9 +380,15 @@ export default function Train() {
             {/* Start Button */}
             <button
               type="button"
-              onClick={handleStartSession}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleStartSession();
+              }}
+              onTouchStart={(e) => e.preventDefault()}
               onTouchEnd={(e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 handleStartSession();
               }}
               onContextMenu={(e) => e.preventDefault()}
@@ -398,7 +404,8 @@ export default function Train() {
                 pointerEvents: 'auto',
                 WebkitAppearance: 'none',
                 appearance: 'none',
-                border: 'none'
+                border: 'none',
+                touchAction: 'manipulation'
               }}
             >
               {isFetchingPuzzles ? "Loading..." : "Start Session"}

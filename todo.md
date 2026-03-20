@@ -1400,3 +1400,13 @@
 - [ ] Fix chessboard not showing on session page
 - [x] Check promo code configuration (checkout vs settings) - FOUND: Settings page
 - [ ] Fix Upgrade to Premium button to go to Stripe checkout
+
+
+## Bug Fix (Round 27 - Android & Publishing Prep)
+- [x] Fix Start Session button not working on Android - DONE
+- [ ] Verify Sets page updates after playing sessions
+- [ ] Verify Leaderboard updates with player stats after playing
+- [ ] Verify Stats page updates with new session data
+- [x] Fix Upgrade to Premium button to open Stripe checkout - DONE
+- [ ] Clean up console errors and warnings
+- [ ] Prepare website for publishing

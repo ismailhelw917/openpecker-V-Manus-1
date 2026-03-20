@@ -105,7 +105,31 @@ export default function Home() {
               </div>
               {!user?.isPremium && (
                 <Button
-                  onClick={() => setLocation("/stats")}
+                  onClick={async () => {
+                    if (!user) {
+                      setLocation(getLoginUrl("/"));
+                      return;
+                    }
+                    try {
+                      const response = await fetch("/api/create-checkout-session", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          priceId: "price_monthly",
+                          planName: "Premium",
+                          userId: user.id,
+                          email: user.email,
+                        }),
+                      });
+                      if (!response.ok) throw new Error("Failed to create checkout session");
+                      const data = await response.json();
+                      if (data?.url) {
+                        window.open(data.url, "_blank");
+                      }
+                    } catch (error) {
+                      toast.error("Failed to open checkout");
+                    }
+                  }}
                   className="w-full max-w-sm bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg transition-all"
                 >
                   ⭐ Upgrade to Premium
