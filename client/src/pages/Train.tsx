@@ -362,11 +362,15 @@ export default function Train() {
 
             {/* Start Button */}
             <button
+              type="button"
               onClick={handleStartSession}
               onContextMenu={(e) => e.preventDefault()}
-              disabled={isFetchingPuzzles || !selectedOpening}
-              className="w-full py-3 bg-teal-600 hover:bg-teal-500 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition user-select-none touch-manipulation"
-              style={{ WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
+              className={`w-full py-3 text-white font-semibold rounded-lg transition user-select-none touch-manipulation relative z-10 ${
+                isFetchingPuzzles || !selectedOpening
+                  ? 'bg-slate-600 cursor-not-allowed opacity-50'
+                  : 'bg-teal-600 hover:bg-teal-500 cursor-pointer'
+              }`}
+              style={{ WebkitUserSelect: 'none', WebkitTouchCallout: 'none', pointerEvents: 'auto' }}
             >
               {isFetchingPuzzles ? "Loading..." : "Start Session"}
             </button>

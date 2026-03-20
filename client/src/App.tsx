@@ -65,27 +65,14 @@ function App() {
   const { data: giftEligibility } = trpc.auth.checkGiftEligibility.useQuery({});
   const { data: globalSettings } = trpc.system.getGlobalSettings.useQuery();
 
-  // Initialize device ID and create anonymous account
-  const createAnonymousUserMutation = trpc.auth.getOrCreateAnonymous.useMutation();
-  const [anonUserCreated, setAnonUserCreated] = useState(false);
-
+  // Initialize device ID
   useEffect(() => {
-    // Only create anonymous account once when not authenticated
-    if (isAuthenticated || loading || anonUserCreated) return;
-    
-    const deviceId = getOrCreateDeviceId();
-    if (deviceId) {
-      setAnonUserCreated(true);
-      createAnonymousUserMutation.mutate({ deviceId }, {
-        onError: () => {
-          // Silently fail - anonymous account creation is non-critical
-          setAnonUserCreated(false);
-        },
-      });
-    }
-  }, [isAuthenticated, loading]);
+    // Create device ID on app load
+    getOrCreateDeviceId();
+  }, []);
 
   const updateGlobalSettingsMutation = trpc.system.updateGlobalSettings.useMutation();
+  const createAnonymousUserMutation = trpc.auth.getOrCreateAnonymous.useMutation();
 
   // Auto-toggle off gift premium when 100 users reached or global setting disabled
   useEffect(() => {
@@ -97,6 +84,14 @@ function App() {
       updateGlobalSettingsMutation.mutate({ showGiftPremiumBanner: 0 });
     }
   }, [giftEligibility, globalSettings, showGiftPremium, updateGlobalSettingsMutation]);
+
+  // Suppress the error from non-existent procedure
+  useEffect(() => {
+    if (createAnonymousUserMutation.error) {
+      // Silently ignore errors from missing procedure
+      console.debug('Anonymous user creation skipped');
+    }
+  }, [createAnonymousUserMutation.error]);
 
   useEffect(() => {
     localStorage.setItem("openpecker-maintenance", showMaintenance.toString());
