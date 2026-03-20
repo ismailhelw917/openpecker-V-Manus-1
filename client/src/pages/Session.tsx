@@ -500,6 +500,25 @@ export default function Session() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Verify move with Stockfish
+  const verifyMoveWithStockfish = useCallback((fen: string, moveUCI: string) => {
+    trpc.analysis.verifyBestMove.mutate(
+      { fen, move: moveUCI, depth: 12 },
+      {
+        onSuccess: (result) => {
+          if (result.success && result.isBestMove) {
+            console.log('✓ Move is best move according to Stockfish!');
+          } else if (result.success) {
+            console.log('Better move available:', result.bestMove);
+          }
+        },
+        onError: (error) => {
+          console.error('Stockfish verification failed:', error);
+        },
+      }
+    );
+  }, []);
+
   const handleMove = (sourceSquare: string, targetSquare: string) => {
     if (solved || isAutoSolving) return false;
 
@@ -587,6 +606,9 @@ export default function Session() {
         }
       } else {
         // ===== WRONG MOVE (but legal) =====
+        // Verify if it's the best move using Stockfish
+        verifyMoveWithStockfish(game.fen(), moveUCI);
+        
         // Lock the board immediately so the puzzle can't be replayed
         setSolved(true);
 

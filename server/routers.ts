@@ -2,6 +2,7 @@ import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
+import { verifyBestMove } from "./stockfish";
 import { z } from "zod";
 import { nanoid } from "nanoid";
 import bcrypt from "bcrypt";
@@ -821,6 +822,36 @@ export const appRouter = router({
     getOnlineCount: publicProcedure
       .query(async () => {
         return getOnlineSessionCount();
+      }),
+  }),
+
+  // ==================== ANALYSIS ====================
+  analysis: router({
+    /**
+     * Verify if a move is the best move using Stockfish
+     */
+    verifyBestMove: publicProcedure
+      .input(
+        z.object({
+          fen: z.string(),
+          move: z.string(), // UCI format (e.g., "e2e4")
+          depth: z.number().optional().default(15),
+        })
+      )
+      .mutation(async ({ input }) => {
+        try {
+          const result = await verifyBestMove(input.fen, input.move, input.depth);
+          return {
+            success: true,
+            isBestMove: result.isBestMove,
+            bestMove: result.bestMove,
+          };
+        } catch (error) {
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : 'Unknown error',
+          };
+        }
       }),
   }),
 
