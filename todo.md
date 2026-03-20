@@ -1379,3 +1379,9 @@
 - [x] Navigation to session page successful
 - [x] Chessboard renders with dark theme
 - [x] Timer and progress tracking functional
+
+## Bug Fix (Round 24 - Start Session Button Text Selection)
+- [x] Add user-select-none to Start Session button
+- [x] Prevent text highlighting on button click
+- [x] Test button click behavior - FIXED
+- [x] Button now prevents text selection on click

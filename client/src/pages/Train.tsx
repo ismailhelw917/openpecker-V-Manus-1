@@ -364,7 +364,7 @@ export default function Train() {
             <button
               onClick={handleStartSession}
               disabled={isFetchingPuzzles || !selectedOpening}
-              className="w-full py-3 bg-teal-600 hover:bg-teal-500 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition"
+              className="w-full py-3 bg-teal-600 hover:bg-teal-500 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition user-select-none"
             >
               {isFetchingPuzzles ? "Loading..." : "Start Session"}
             </button>
