@@ -21,7 +21,11 @@ export default function Session() {
   const [solved, setSolved] = useState(false);
   const [currentCycle, setCurrentCycle] = useState(1);
   const [targetCycles, setTargetCycles] = useState(3);
-  const [boardSize, setBoardSize] = useState(400);
+  const [boardSize, setBoardSize] = useState(() => {
+    const w = typeof window !== 'undefined' ? window.innerWidth : 400;
+    const h = typeof window !== 'undefined' ? window.innerHeight : 600;
+    return Math.min(w - 32, h - 200, 500);
+  });
   const [gameFen, setGameFen] = useState(() => new Chess().fen());
   const [boardOrientation, setBoardOrientation] = useState<'white' | 'black'>('white');
   const [userMoveIndex, setUserMoveIndex] = useState(1);
@@ -304,6 +308,18 @@ export default function Session() {
       setIsLoading(false);
     }
   }, [getTrainingSet.data?.id]); // Only depend on training set ID to prevent re-initialization
+
+  // Responsive board sizing
+  useEffect(() => {
+    const handleResize = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      setBoardSize(Math.min(w - 32, h - 200, 500));
+    };
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Advance to next puzzle
   const advanceToNextPuzzle = useCallback(() => {

@@ -380,31 +380,17 @@ export default function Train() {
             {/* Start Button */}
             <button
               type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleStartSession();
-              }}
-              onTouchStart={(e) => e.preventDefault()}
-              onTouchEnd={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleStartSession();
-              }}
+              onClick={() => handleStartSession()}
               onContextMenu={(e) => e.preventDefault()}
               disabled={isFetchingPuzzles || !selectedOpening}
-              className={`w-full py-3 text-white font-semibold rounded-lg transition user-select-none touch-manipulation relative z-10 ${
+              className={`w-full py-4 text-lg text-white font-semibold rounded-lg transition select-none relative z-10 ${
                 isFetchingPuzzles || !selectedOpening
                   ? 'bg-slate-600 cursor-not-allowed opacity-50'
                   : 'bg-teal-600 hover:bg-teal-500 active:bg-teal-700 cursor-pointer'
               }`}
               style={{ 
                 WebkitUserSelect: 'none', 
-                WebkitTouchCallout: 'none', 
-                pointerEvents: 'auto',
-                WebkitAppearance: 'none',
-                appearance: 'none',
-                border: 'none',
+                WebkitTouchCallout: 'none',
                 touchAction: 'manipulation'
               }}
             >

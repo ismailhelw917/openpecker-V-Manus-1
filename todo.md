@@ -56,10 +56,10 @@
 - [ ] Create export/sharing functionality for stats
 
 ## Phase 8: Premium & Paywall (Optional)
-- [ ] Set up Stripe integration (future enhancement)
-- [ ] Create paywall component for premium features (future enhancement)
-- [ ] Implement premium feature gating (future enhancement)
-- [ ] Add subscription management UI (future enhancement)
+- [x] Set up Stripe integration - checkout endpoint at /api/create-checkout-session
+- [x] Create paywall component for premium features - Premium modal in Settings
+- [x] Implement premium feature gating - isPremium check on user model
+- [x] Add subscription management UI - Settings shows premium status, upgrade buttons on Home/Settings/ProAnalytics
 
 ## Phase 9: Testing & Refinement
 - [x] Write vitest tests for backend procedures (24 tests passing)
@@ -1410,3 +1410,12 @@
 - [x] Fix Upgrade to Premium button to open Stripe checkout - DONE
 - [ ] Clean up console errors and warnings
 - [ ] Prepare website for publishing
+
+
+## Bug Fix (Round 28 - Parallel Fixes)
+- [ ] Fix chessboard display - board not showing pieces
+- [ ] Fix Android Start Session button not responding
+- [ ] Set up Stripe integration for premium
+- [ ] Create paywall component for premium features
+- [ ] Implement premium feature gating
+- [ ] Add subscription management UI
