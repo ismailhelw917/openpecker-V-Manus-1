@@ -728,6 +728,55 @@ export const appRouter = router({
           lastActive: new Date(),
         };
       }),
+
+    /**
+     * Aggregate stats after cycle completion
+     */
+    aggregateAfterCycle: publicProcedure
+      .input(
+        z.object({
+          userId: z.number().optional(),
+          deviceId: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        try {
+          // Get puzzle attempts for the user/device
+          const attempts = await getPuzzleAttemptsByUser(input.userId || null, input.deviceId || null);
+          
+          // Get cycle history
+          const cycles = await getCycleHistoryByUser(input.userId || null, input.deviceId || null);
+          
+          if (attempts.length === 0 || cycles.length === 0) {
+            return { success: false, message: 'No data to aggregate' };
+          }
+
+          // Calculate aggregated stats
+          const totalPuzzles = attempts.length;
+          const totalCorrect = attempts.filter((a: any) => a.isCorrect === 1).length;
+          const totalTimeMs = attempts.reduce((sum: number, a: any) => sum + (a.timeMs || 0), 0);
+          const accuracy = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 100) : 0;
+          const avgTimePerPuzzle = totalPuzzles > 0 ? Math.round(totalTimeMs / totalPuzzles) : 0;
+          const totalCycles = cycles.length;
+          const avgPuzzlesPerCycle = totalCycles > 0 ? Math.round(totalPuzzles / totalCycles) : 0;
+
+          return {
+            success: true,
+            stats: {
+              totalPuzzles,
+              totalCorrect,
+              accuracy,
+              totalTimeMs,
+              avgTimePerPuzzle,
+              totalCycles,
+              avgPuzzlesPerCycle,
+            },
+          };
+        } catch (error) {
+          console.error('[Stats] Error aggregating stats:', error);
+          return { success: false, message: 'Failed to aggregate stats' };
+        }
+      }),
   }),
 
   // ==================== PREMIUM ====================

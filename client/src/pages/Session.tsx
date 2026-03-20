@@ -87,6 +87,15 @@ export default function Session() {
     },
   });
 
+  // Aggregate stats after cycle mutation
+  const aggregateStatsMutation = trpc.stats.aggregateAfterCycle.useMutation({
+    onSuccess: () => {
+      utils.stats.getUserStats.invalidate();
+      utils.stats.getSummary.invalidate();
+      utils.stats.getLeaderboard.invalidate();
+    },
+  });
+
   // Update training set mutation
   const updateTrainingSetMutation = trpc.trainingSets.update.useMutation({
     onSuccess: () => {
@@ -330,6 +339,12 @@ export default function Session() {
           lastPlayedAt: new Date(),
           cyclesCompleted: currentCycle,
           totalAttempts: puzzles.length,
+        });
+
+        // Aggregate stats after cycle completion
+        aggregateStatsMutation.mutate({
+          userId: user?.id,
+          deviceId: getOrCreateDeviceId(),
         });
 
         setTimeout(() => setLocation("/sets"), 1000);
