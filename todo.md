@@ -1235,6 +1235,7 @@
 ## Fix Hierarchy Display (Round - User Feedback)
 - [x] Regenerate hierarchy.json with correct opening/subset/variation parsing
 - [x] Fix handleSelectOpening to calculate subsets directly (avoid stale closure)
-- [x] Verify subset-selection step now shows correctly
-- [x] Test full hierarchy flow: Opening → Subset → Configuration
-- [ ] Save checkpoint
+- [x] Fix handleSelectSubset to calculate variations directly (avoid stale closure)
+- [x] Verify full hierarchy flow: Opening → Subset → Variation → Configuration
+- [x] Test with Alekhine > Defense > Exchange Variation
+- [x] Save checkpoint

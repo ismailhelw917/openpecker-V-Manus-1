@@ -185,7 +185,9 @@ export default function Train() {
     setSelectedSubset(subset);
     setSelectedVariation(null);
     setSearchQuery("");
-    if (variations.length > 0) {
+    // Calculate variations directly instead of using stale value from useMemo
+    const newVariations = hierarchyFilters.getVariations(hierarchy, selectedOpening || '', subset);
+    if (newVariations.length > 0) {
       setStep("variation-selection");
     } else {
       setStep("configuration");
