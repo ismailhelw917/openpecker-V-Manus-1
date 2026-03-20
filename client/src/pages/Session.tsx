@@ -605,7 +605,7 @@ export default function Session() {
               <p className="text-sm font-bold text-amber-400">{currentCycle}/{targetCycles}</p>
             </div>
           </div>
-          <div className="w-40 h-0.5 bg-slate-800 rounded-full mx-auto overflow-hidden">
+          <div className="w-24 sm:w-32 md:w-40 h-0.5 bg-slate-800 rounded-full mx-auto overflow-hidden">
             <div
               className="h-full bg-amber-400 transition-all"
               style={{ width: `${progress}%` }}

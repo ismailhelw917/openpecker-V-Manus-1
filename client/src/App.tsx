@@ -13,8 +13,7 @@ import Session from "./pages/Session";
 import Auth from "./pages/Auth";
 import { Leaderboard } from "./pages/Leaderboard";
 import Profile from "./pages/Profile";
-import AdminAnalytics from "./pages/AdminAnalytics";
-import ProAnalytics from "./pages/ProAnalytics";
+// Analytics pages removed - using stats page instead
 
 import { useEffect, useState } from "react";
 import { useAuth } from "./_core/hooks/useAuth";
@@ -37,8 +36,7 @@ function Router() {
       <Route path={"/profile"} component={Profile} />
       <Route path={"/session/:id"} component={Session} />
       <Route path={"/auth"} component={Auth} />
-       <Route path={"admin/analytics"} component={AdminAnalytics} />
-      <Route path={"analytics"} component={ProAnalytics} />
+      <Route path={"/play/:id"} component={Session} />
 
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />

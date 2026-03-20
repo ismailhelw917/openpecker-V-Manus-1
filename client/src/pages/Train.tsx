@@ -138,7 +138,7 @@ export default function Train() {
       });
 
       if (session?.id) {
-        setLocation(`/play/${session.id}`);
+        setLocation(`/session/${session.id}`);
       } else {
         toast.error("Failed to create training session: No session ID");
       }
@@ -274,7 +274,7 @@ export default function Train() {
 
         {/* Configuration */}
         {step === "configuration" && (
-          <div className="bg-slate-700/50 border border-slate-600 rounded-lg p-6 space-y-6">
+          <div className="bg-slate-700/50 border border-slate-600 rounded-lg p-4 sm:p-6 space-y-6" id="config-panel">
             {/* Puzzle Count */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-3">Puzzles per Session</label>
@@ -367,6 +367,18 @@ export default function Train() {
               className="w-full py-3 bg-teal-600 hover:bg-teal-500 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition"
             >
               {isFetchingPuzzles ? "Loading..." : "Start Session"}
+            </button>
+
+            {/* Scroll to Start Button (Mobile) */}
+            <button
+              onClick={() => {
+                const buttons = document.querySelectorAll('button');
+                const startButton = Array.from(buttons).find(btn => btn.textContent?.includes('Start Session'));
+                if (startButton) startButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }}
+              className="w-full py-2 bg-slate-600 hover:bg-slate-500 text-gray-300 text-sm rounded-lg transition md:hidden"
+            >
+              ↓ Scroll to Start Session
             </button>
           </div>
         )}
