@@ -229,7 +229,22 @@
 - [x] Save checkpoint
 
 ## Bug Fix (Round 18 - Session Creation Navigation)
-- [x] Fix Train.tsx to handle setId string response from API
+- [x] Fixed parameter order in getRandomPuzzlesByOpeningAndRating call
+- [x] Fixed themes parsing to handle both JSON arrays and space-separated strings
+- [x] Puzzles now load successfully from database
+- [x] Session page displays chessboard with puzzle positions
+- [x] Save checkpoint
+
+## Bug Fix (Round 19 - Puzzle Loading Fixed)
+- [x] Identified parameter order bug in routers.ts (colorFilter and variation swapped)
+- [x] Fixed getRandomPuzzlesByOpeningAndRating call with correct parameter order
+- [x] Fixed themes field parsing to handle both JSON and space-separated formats
+- [x] Verified puzzle loading works with 50 puzzles fetched successfully
+- [x] Confirmed chessboard component renders with puzzle positions
+- [x] Session timer and progress tracking working
+- [x] Ready for checkpoint
+
+## Bug Fix (Round 20 - Train.tsx to handle setId string response from API
 - [x] Updated response handler to check for string response directly
 - [x] Test session creation flow end-to-end
 - [x] Verified navigation to session page works correctly

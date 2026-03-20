@@ -413,27 +413,54 @@ export async function getRandomPuzzlesByOpeningAndRating(
     lte(puzzles.rating, maxRating)
   );
 
-  // Add variation filter using LIKE to match database variation format
+  // Skip variation filter for now - just search by opening name
+  // The variation names in the database don't match the hierarchy
+  // TODO: Fix variation matching logic
+  /*
   if (variation && variation.trim()) {
+    const variationPattern = `%${variation}%`;
     console.log('[getRandomPuzzlesByOpeningAndRating] Filtering by variation:', variation);
-    whereConditions = and(whereConditions, like(puzzles.variation, `%${variation}%`));
+    console.log('[getRandomPuzzlesByOpeningAndRating] LIKE pattern:', variationPattern);
+    whereConditions = and(whereConditions, like(puzzles.variation, variationPattern));
   }
+  */
 
   if (color && color !== 'both') {
     whereConditions = and(whereConditions, eq(puzzles.color, color));
   }
 
   try {
+    console.log('[getRandomPuzzlesByOpeningAndRating] Query params:', {
+      dbOpeningName,
+      minRating,
+      maxRating,
+      color,
+      puzzleCount
+    });
+
+    // Use Drizzle ORM query builder
     const result = await db
-      .selectDistinct()
+      .select()
       .from(puzzles)
       .where(whereConditions)
-      .orderBy(sql`RAND()`)
-      .limit(limit);
-    console.log('[getRandomPuzzlesByOpeningAndRating] Found:', result.length, 'puzzles');
-    return result;
+      .limit(puzzleCount);
+    
+    console.log('[getRandomPuzzlesByOpeningAndRating] Query result type:', typeof result, 'length:', result?.length);
+    console.log('[getRandomPuzzlesByOpeningAndRating] Found:', result?.length || 0, 'puzzles');
+    
+    if (result && result.length > 0) {
+      console.log('[getRandomPuzzlesByOpeningAndRating] First puzzle:', {
+        id: result[0].id,
+        openingName: result[0].openingName,
+        fen: result[0].fen?.substring(0, 50),
+        rating: result[0].rating
+      });
+    }
+    
+    return result || [];
   } catch (error) {
     console.error('[getRandomPuzzlesByOpeningAndRating] Error:', error);
+    console.error('[getRandomPuzzlesByOpeningAndRating] Stack:', (error as Error).stack);
     return [];
   }
 }

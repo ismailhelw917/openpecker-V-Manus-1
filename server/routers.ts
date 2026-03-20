@@ -554,19 +554,32 @@ export const appRouter = router({
             input.minRating,
             input.maxRating,
             input.puzzleCount,
-            input.colorFilter !== 'both' ? input.colorFilter : undefined,
-            input.variation
+            input.variation,
+            input.colorFilter !== 'both' ? input.colorFilter : undefined
           );
           console.log('[puzzleSession.create] Fetched puzzles count:', fetchedPuzzles.length);
-          const puzzlesJson = JSON.stringify(fetchedPuzzles.map(p => ({
-            id: p.id,
-            fen: p.fen,
-            moves: typeof p.moves === 'string' ? p.moves.split(' ') : p.moves,
-            rating: p.rating,
-            themes: typeof p.themes === 'string' ? JSON.parse(p.themes) : p.themes,
-            color: p.color,
-            openingName: p.openingName,
-          })));
+          const puzzlesJson = JSON.stringify(fetchedPuzzles.map(p => {
+            let themes = [];
+            if (typeof p.themes === 'string') {
+              try {
+                themes = JSON.parse(p.themes);
+              } catch {
+                themes = p.themes.split(/\s+/).filter((t: string) => t.length > 0);
+              }
+            } else if (Array.isArray(p.themes)) {
+              themes = p.themes;
+            }
+            
+            return {
+              id: p.id,
+              fen: p.fen,
+              moves: typeof p.moves === 'string' ? p.moves.split(' ') : p.moves,
+              rating: p.rating,
+              themes,
+              color: p.color,
+              openingName: p.openingName,
+            };
+          }));
           const trainingSet = await createTrainingSet({
             id: trainingSetId,
             userId: ctx.user?.id || null,
