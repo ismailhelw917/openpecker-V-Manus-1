@@ -1239,3 +1239,12 @@
 - [x] Verify full hierarchy flow: Opening → Subset → Variation → Configuration
 - [x] Test with Alekhine > Defense > Exchange Variation
 - [x] Save checkpoint
+
+
+## Filter Openings by Minimum Puzzle Count (User Request)
+- [x] Update generate-hierarchy.mjs to filter openings with < 20 puzzles
+- [x] Regenerate hierarchy.json with minimum 20 puzzle threshold
+- [x] Reduced from 1405 to 1392 hierarchy items
+- [x] Reduced unique openings from ~120 to 102
+- [x] Verified Amsterdam (1), Colle (3), etc. are removed
+- [x] Save checkpoint

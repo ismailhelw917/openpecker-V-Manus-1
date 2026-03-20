@@ -150,12 +150,6 @@
     "puzzleCount": 41
   },
   {
-    "opening": "Amsterdam",
-    "subset": "Attack",
-    "variation": "Other variations",
-    "puzzleCount": 1
-  },
-  {
     "opening": "Anderssens",
     "subset": "Opening",
     "variation": "Other variations",
@@ -1062,12 +1056,6 @@
     "puzzleCount": 51
   },
   {
-    "opening": "Bongcloud",
-    "subset": "Attack",
-    "variation": "Other variations",
-    "puzzleCount": 18
-  },
-  {
     "opening": "Borg",
     "subset": "Defense",
     "variation": null,
@@ -1096,12 +1084,6 @@
     "subset": "Opening",
     "variation": "Zilbermints Gambit",
     "puzzleCount": 3
-  },
-  {
-    "opening": "Bronstein",
-    "subset": "Gambit",
-    "variation": "Other variations",
-    "puzzleCount": 12
   },
   {
     "opening": "Canard",
@@ -1500,12 +1482,6 @@
     "puzzleCount": 212
   },
   {
-    "opening": "Colle",
-    "subset": "System",
-    "variation": "Rhamphorhynchus Variation",
-    "puzzleCount": 3
-  },
-  {
     "opening": "Crab",
     "subset": "Opening",
     "variation": "Other variations",
@@ -1570,12 +1546,6 @@
     "subset": "Gambit",
     "variation": "Declined Sorensen Defense",
     "puzzleCount": 542
-  },
-  {
-    "opening": "Dory",
-    "subset": "Defense",
-    "variation": "Other variations",
-    "puzzleCount": 12
   },
   {
     "opening": "Duras",
@@ -2568,12 +2538,6 @@
     "puzzleCount": 525
   },
   {
-    "opening": "Global",
-    "subset": "Opening",
-    "variation": "Other variations",
-    "puzzleCount": 13
-  },
-  {
     "opening": "Goldsmith",
     "subset": "Defense",
     "variation": "Other variations",
@@ -3052,12 +3016,6 @@
     "subset": "Defense",
     "variation": "West",
     "puzzleCount": 473
-  },
-  {
-    "opening": "Irish",
-    "subset": "Gambit",
-    "variation": "Other variations",
-    "puzzleCount": 5
   },
   {
     "opening": "Italian",
@@ -4158,12 +4116,6 @@
     "puzzleCount": 48
   },
   {
-    "opening": "Marienbad",
-    "subset": "System",
-    "variation": "Other variations",
-    "puzzleCount": 12
-  },
-  {
     "opening": "Mexican",
     "subset": "Defense",
     "variation": "Horsefly Gambit",
@@ -4366,12 +4318,6 @@
     "subset": "Defense",
     "variation": "Wind Gambit",
     "puzzleCount": 11
-  },
-  {
-    "opening": "Montevideo",
-    "subset": "Defense",
-    "variation": "Other variations",
-    "puzzleCount": 17
   },
   {
     "opening": "Neo-Grunfeld",
@@ -4726,12 +4672,6 @@
     "subset": "Defense",
     "variation": "Woodchuck Variation",
     "puzzleCount": 20
-  },
-  {
-    "opening": "Norwegian",
-    "subset": "Defense",
-    "variation": "Other variations",
-    "puzzleCount": 4
   },
   {
     "opening": "Old",
@@ -7656,12 +7596,6 @@
     "puzzleCount": 5
   },
   {
-    "opening": "System",
-    "subset": "Double",
-    "variation": "Duck Formation",
-    "puzzleCount": 12
-  },
-  {
     "opening": "Tarrasch",
     "subset": "Defense",
     "variation": "Classical Variation",
@@ -8148,12 +8082,6 @@
     "puzzleCount": 3
   },
   {
-    "opening": "Vulture",
-    "subset": "Defense",
-    "variation": "Other variations",
-    "puzzleCount": 16
-  },
-  {
     "opening": "Wade",
     "subset": "Defense",
     "variation": "Other variations",
@@ -8200,12 +8128,6 @@
     "subset": "System",
     "variation": "Other variations",
     "puzzleCount": 601
-  },
-  {
-    "opening": "Zaire",
-    "subset": "Defense",
-    "variation": "Other variations",
-    "puzzleCount": 1
   },
   {
     "opening": "Zukertort",
