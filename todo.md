@@ -1134,3 +1134,11 @@
 - [x] Reorganize all hooks: useState → useRef → useCallback → useEffect
 - [x] Test Session page loads without React hooks error
 - [ ] Save checkpoint with bug fix
+
+
+## Testing: Legal Moves and Capturing (Round 42 - User Request)
+- [x] Test that illegal moves are rejected (e.g., moving pawn backwards)
+- [x] Test that pieces can only move on their turn
+- [x] Test that captures work and show animation
+- [x] Test edge cases: en passant, castling, pawn promotion
+- [x] Document test results
