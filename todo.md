@@ -1117,3 +1117,13 @@
 - [ ] Generate synthetic puzzles from opening positions
 - [ ] Combine Lichess and synthetic puzzles into database
 - [ ] Test puzzle loading and playability with new data
+
+
+## Puzzle Solving Fix (Round 38 - User Request)
+- [x] Diagnose puzzle solving issue - found moves in algebraic notation instead of UCI
+- [x] Add convertAlgebraicToUCI function to Session.tsx
+- [x] Handle FEN side-to-move mismatches by trying flipped turn
+- [x] Update parseMovesList to detect and convert algebraic moves
+- [ ] Test puzzle solving end-to-end
+- [ ] Add scrolling button to train page opening selection
+- [ ] Save checkpoint with fixes

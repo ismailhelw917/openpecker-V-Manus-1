@@ -167,15 +167,61 @@ export default function Session() {
     return () => clearInterval(interval);
   }, [isLoading, puzzles.length]);
 
+  // Helper: Convert algebraic notation to UCI format
+  const convertAlgebraicToUCI = useCallback((algebraicMoves: string[], fen: string): string[] => {
+    let game = new Chess(fen);
+    const uciMoves: string[] = [];
+    
+    for (const move of algebraicMoves) {
+      try {
+        let moveObj = game.move(move, { sloppy: true });
+        if (moveObj) {
+          const uci = `${moveObj.from}${moveObj.to}${moveObj.promotion || ''}`;
+          uciMoves.push(uci);
+        } else {
+          // If move fails, try flipping the turn (FEN side-to-move mismatch)
+          const fenParts = fen.split(' ');
+          const flippedTurn = fenParts[1] === 'w' ? 'b' : 'w';
+          fenParts[1] = flippedTurn;
+          const flippedFen = fenParts.join(' ');
+          
+          try {
+            game = new Chess(flippedFen);
+            moveObj = game.move(move, { sloppy: true });
+            if (moveObj) {
+              const uci = `${moveObj.from}${moveObj.to}${moveObj.promotion || ''}`;
+              uciMoves.push(uci);
+            } else {
+              break;
+            }
+          } catch (e2) {
+            break;
+          }
+        }
+      } catch (e) {
+        break;
+      }
+    }
+    
+    return uciMoves;
+  }, []);
+
   // Parse moves list from puzzle data
   const parseMovesList = useCallback((puzzle: any): string[] => {
     if (!puzzle?.moves) return [];
     if (Array.isArray(puzzle.moves)) return puzzle.moves;
     if (typeof puzzle.moves === 'string') {
-      return puzzle.moves.split(' ').filter((m: string) => m.length > 0);
+      const moves = puzzle.moves.split(' ').filter((m: string) => m.length > 0);
+      // Check if moves are in algebraic notation (contain letters like N, B, R, Q, K, O)
+      const isAlgebraic = moves.some((m: string) => /^[NBRQK]|^O-O/.test(m));
+      
+      if (isAlgebraic && puzzle.fen) {
+        return convertAlgebraicToUCI(moves, puzzle.fen);
+      }
+      return moves;
     }
     return [];
-  }, []);
+  }, [convertAlgebraicToUCI]);
 
   // Play a UCI move on the game instance
   const playUCIMove = useCallback((game: Chess, uciMove: string): boolean => {
