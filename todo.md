@@ -1142,3 +1142,13 @@
 - [x] Test that captures work and show animation
 - [x] Test edge cases: en passant, castling, pawn promotion
 - [x] Document test results
+
+
+## Bug: Pieces Not Moving (Round 43 - User Report)
+- [x] Check browser console for drag/drop errors
+- [x] Verify onPieceDrop handler is being called
+- [x] Test if move validation is rejecting all moves
+- [x] Check if game instance is properly initialized
+- [x] Fix the root cause - changed game={new Chess(gameFen)} to game={gameRef.current}
+- [x] Add key={gameFen} to force re-render on board updates
+- [x] Test pieces can move and capture

@@ -613,7 +613,8 @@ export default function Session() {
       <div className="flex-1 flex items-center justify-center p-2 sm:p-4 overflow-hidden">
         <div style={{ width: boardSize, height: boardSize }} className="relative">
           <CustomChessboard
-            game={new Chess(gameFen)}
+            key={gameFen}
+            game={gameRef.current}
             onPieceDrop={handleMove}
             boardColors={themeColors[boardTheme]}
             orientation={boardOrientation}
