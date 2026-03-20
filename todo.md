@@ -1428,3 +1428,14 @@
 - [x] Conditionally hide Upgrade to Premium buttons when user has premium - ALREADY IMPLEMENTED in Home.tsx, Settings.tsx, ProAnalytics.tsx
 - [x] Verified Stripe checkout endpoint works (returns valid checkout URL)
 - [x] Stripe promo codes enabled via allow_promotion_codes: true
+
+
+## Bug Fix (Round 30 - iOS Button, Scroll, Google Login)
+- [x] Fix Start Session button not working on iOS - added touch-action:manipulation, WebkitTapHighlightColor, WebkitAppearance:none to all buttons
+- [x] Add scroll down indicator on Train configuration page - added floating ChevronDown bounce button that appears when scrollable content exists
+- [x] Fix Login with Google button - changed from <button> with onClick to native <a> tag with href for maximum iOS/mobile compatibility
+- [x] Add global iOS touch-action:manipulation CSS rule for all interactive elements
+- [x] Update viewport meta tag with viewport-fit=cover for iOS safe area support
+- [x] Fix BottomNav with proper iOS safe area padding using env(safe-area-inset-bottom)
+- [x] Fix Settings.tsx scoping bug - promoCode/validationResult variables were in PromoCodeSection but referenced in Settings component
+- [x] Update premium modal checkout buttons with proper touch handling (removed pointer-events-none from children)

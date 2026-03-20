@@ -4,7 +4,8 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "@/_core/deviceId";
 import { useHierarchyCache } from "@/hooks/useHierarchyCache";
 import { toast } from "sonner";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { ChevronDown } from "lucide-react";
 
 type Step = "opening-selection" | "variation-selection" | "configuration";
 
@@ -29,6 +30,10 @@ export default function Train() {
   const [isLoading, setIsLoading] = useState(false);
   const [isFetchingPuzzles, setIsFetchingPuzzles] = useState(false);
 
+  // Scroll indicator state
+  const [showScrollIndicator, setShowScrollIndicator] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   // Configuration state
   const [minRating, setMinRating] = useState(1000);
   const [maxRating, setMaxRating] = useState(2000);
@@ -41,6 +46,30 @@ export default function Train() {
 
   // Create session mutation
   const createSessionMutation = trpc.puzzleSession.create.useMutation();
+
+  // Check if scrollable content exists below viewport
+  useEffect(() => {
+    const checkScroll = () => {
+      const el = scrollContainerRef.current;
+      if (!el) return;
+      const hasMore = el.scrollHeight > el.clientHeight + el.scrollTop + 50;
+      setShowScrollIndicator(hasMore);
+    };
+
+    // Check on mount and when step changes
+    const timer = setTimeout(checkScroll, 100);
+    const el = scrollContainerRef.current;
+    if (el) {
+      el.addEventListener("scroll", checkScroll, { passive: true });
+    }
+
+    return () => {
+      clearTimeout(timer);
+      if (el) {
+        el.removeEventListener("scroll", checkScroll);
+      }
+    };
+  }, [step, selectedOpening, selectedVariation]);
 
   // Get unique openings
   const uniqueOpenings = useMemo(() => {
@@ -165,6 +194,10 @@ export default function Train() {
     }
   };
 
+  const scrollDown = () => {
+    scrollContainerRef.current?.scrollBy({ top: 200, behavior: "smooth" });
+  };
+
   if (hierarchyLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -177,9 +210,9 @@ export default function Train() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 flex flex-col">
       {isLoading && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] backdrop-blur-sm">
           <div className="bg-slate-800 rounded-lg p-8 text-center">
             <div className="mb-4">
               <div className="inline-block">
@@ -191,214 +224,237 @@ export default function Train() {
           </div>
         </div>
       )}
-      <div className="max-w-2xl mx-auto">
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-3xl font-bold text-white">Train</h1>
-            {step !== "opening-selection" && (
-              <button
-                onClick={handleBack}
-                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition"
-              >
-                Back
-              </button>
+
+      {/* Main scrollable area - takes full height minus bottom nav */}
+      <div
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-auto p-4 md:p-8 pb-24"
+        style={{ WebkitOverflowScrolling: "touch" }}
+      >
+        <div className="max-w-2xl mx-auto">
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="text-3xl font-bold text-white">Train</h1>
+              {step !== "opening-selection" && (
+                <button
+                  onClick={handleBack}
+                  className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition"
+                >
+                  Back
+                </button>
+              )}
+            </div>
+
+            {/* Selection Display */}
+            {selectedOpening && (
+              <div className="bg-teal-900/30 border border-teal-700/50 rounded-lg p-4 mb-6">
+                <div className="text-sm text-teal-300">
+                  <div>Opening: <span className="font-semibold text-teal-100">{selectedOpening}</span></div>
+                  {selectedVariation && (
+                    <div>Variation: <span className="font-semibold text-teal-100">{selectedVariation}</span></div>
+                  )}
+                  <div>Available Puzzles: <span className="font-semibold text-teal-100">{puzzleCountForSelection}</span></div>
+                </div>
+              </div>
             )}
           </div>
 
-          {/* Selection Display */}
-          {selectedOpening && (
-            <div className="bg-teal-900/30 border border-teal-700/50 rounded-lg p-4 mb-6">
-              <div className="text-sm text-teal-300">
-                <div>Opening: <span className="font-semibold text-teal-100">{selectedOpening}</span></div>
-                {selectedVariation && (
-                  <div>Variation: <span className="font-semibold text-teal-100">{selectedVariation}</span></div>
+          {/* Opening Selection */}
+          {step === "opening-selection" && (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Search openings...</label>
+                <input
+                  type="text"
+                  placeholder="Search openings..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-teal-500"
+                />
+              </div>
+
+              <div className="space-y-2">
+                {filteredOpenings.length === 0 ? (
+                  <div className="text-center py-8 text-gray-400">No openings found</div>
+                ) : (
+                  filteredOpenings.map((item) => (
+                    <button
+                      key={item.opening}
+                      onClick={() => handleSelectOpening(item.opening)}
+                      className="w-full text-left px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition border border-slate-600 hover:border-teal-500"
+                      style={{ touchAction: "manipulation" }}
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className="text-white font-medium">{item.opening}</span>
+                        <span className="text-gray-400 text-sm">{item.puzzleCount.toLocaleString()} puzzles</span>
+                      </div>
+                    </button>
+                  ))
                 )}
-                <div>Available Puzzles: <span className="font-semibold text-teal-100">{puzzleCountForSelection}</span></div>
               </div>
             </div>
           )}
+
+          {/* Variation Selection */}
+          {step === "variation-selection" && (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Search variations...</label>
+                <input
+                  type="text"
+                  placeholder="Search variations..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-teal-500"
+                />
+              </div>
+
+              <div className="space-y-2">
+                {filteredVariations.length === 0 ? (
+                  <div className="text-center py-8 text-gray-400">No variations found</div>
+                ) : (
+                  filteredVariations.map((variation) => (
+                    <button
+                      key={variation.variation}
+                      onClick={() => handleSelectVariation(variation.variation)}
+                      className="w-full text-left px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition border border-slate-600 hover:border-teal-500"
+                      style={{ touchAction: "manipulation" }}
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className="text-white font-medium">{variation.variation}</span>
+                        <span className="text-gray-400 text-sm">{variation.puzzleCount.toLocaleString()} puzzles</span>
+                      </div>
+                    </button>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Configuration */}
+          {step === "configuration" && (
+            <div className="bg-slate-700/50 border border-slate-600 rounded-lg p-4 sm:p-6 space-y-6" id="config-panel">
+              {/* Puzzle Count */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-3">Puzzles per Session</label>
+                <div className="flex gap-2 flex-wrap">
+                  {PUZZLE_COUNT_OPTIONS.map((count) => (
+                    <button
+                      key={count}
+                      onClick={() => setPuzzleCount(count)}
+                      className={`px-4 py-2 rounded-lg font-medium transition ${
+                        puzzleCount === count
+                          ? "bg-teal-600 text-white"
+                          : "bg-slate-600 text-gray-300 hover:bg-slate-500"
+                      }`}
+                      style={{ touchAction: "manipulation" }}
+                    >
+                      {count}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Rating Range */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-3">Rating Range</label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs text-gray-400 mb-1 block">Min</label>
+                    <input
+                      type="number"
+                      value={minRating}
+                      onChange={(e) => setMinRating(parseInt(e.target.value) || 1000)}
+                      className="w-full px-3 py-2 bg-slate-600 border border-slate-500 rounded text-white focus:outline-none focus:border-teal-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-400 mb-1 block">Max</label>
+                    <input
+                      type="number"
+                      value={maxRating}
+                      onChange={(e) => setMaxRating(parseInt(e.target.value) || 2000)}
+                      className="w-full px-3 py-2 bg-slate-600 border border-slate-500 rounded text-white focus:outline-none focus:border-teal-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Cycles */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-3">Cycles</label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map((cycle) => (
+                    <button
+                      key={cycle}
+                      onClick={() => setTargetCycles(cycle)}
+                      className={`px-3 py-2 rounded font-medium transition ${
+                        targetCycles === cycle
+                          ? "bg-teal-600 text-white"
+                          : "bg-slate-600 text-gray-300 hover:bg-slate-500"
+                      }`}
+                      style={{ touchAction: "manipulation" }}
+                    >
+                      {cycle}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Color Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-3">Color</label>
+                <div className="flex gap-2">
+                  {(["white", "black", "both"] as const).map((color) => (
+                    <button
+                      key={color}
+                      onClick={() => setColorFilter(color)}
+                      className={`px-4 py-2 rounded font-medium transition capitalize ${
+                        colorFilter === color
+                          ? "bg-teal-600 text-white"
+                          : "bg-slate-600 text-gray-300 hover:bg-slate-500"
+                      }`}
+                      style={{ touchAction: "manipulation" }}
+                    >
+                      {color}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Start Button - Native <button> element for best iOS/Android compatibility */}
+              <button
+                type="button"
+                onClick={handleStartSession}
+                disabled={isLoading || isFetchingPuzzles}
+                className="w-full py-4 text-lg text-white font-semibold rounded-lg text-center bg-teal-600 active:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed select-none"
+                style={{
+                  touchAction: "manipulation",
+                  WebkitTapHighlightColor: "rgba(0,0,0,0.1)",
+                  WebkitAppearance: "none",
+                }}
+              >
+                {isLoading || isFetchingPuzzles ? "Loading..." : "Start Session"}
+              </button>
+            </div>
+          )}
+
+          {/* Extra bottom spacing for mobile nav */}
+          <div className="h-8"></div>
         </div>
-
-        {/* Opening Selection */}
-        {step === "opening-selection" && (
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Search openings...</label>
-              <input
-                type="text"
-                placeholder="Search openings..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-teal-500"
-              />
-            </div>
-
-            <div className="space-y-2 max-h-96 overflow-y-auto">
-              {filteredOpenings.length === 0 ? (
-                <div className="text-center py-8 text-gray-400">No openings found</div>
-              ) : (
-                filteredOpenings.map((item) => (
-                  <button
-                    key={item.opening}
-                    onClick={() => handleSelectOpening(item.opening)}
-                    className="w-full text-left px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition border border-slate-600 hover:border-teal-500"
-                  >
-                    <div className="flex justify-between items-center">
-                      <span className="text-white font-medium">{item.opening}</span>
-                      <span className="text-gray-400 text-sm">{item.puzzleCount.toLocaleString()} puzzles</span>
-                    </div>
-                  </button>
-                ))
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Variation Selection */}
-        {step === "variation-selection" && (
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Search variations...</label>
-              <input
-                type="text"
-                placeholder="Search variations..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-teal-500"
-              />
-            </div>
-
-            <div className="space-y-2 max-h-96 overflow-y-auto">
-              {filteredVariations.length === 0 ? (
-                <div className="text-center py-8 text-gray-400">No variations found</div>
-              ) : (
-                filteredVariations.map((variation) => (
-                  <button
-                    key={variation.variation}
-                    onClick={() => handleSelectVariation(variation.variation)}
-                    className="w-full text-left px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition border border-slate-600 hover:border-teal-500"
-                  >
-                    <div className="flex justify-between items-center">
-                      <span className="text-white font-medium">{variation.variation}</span>
-                      <span className="text-gray-400 text-sm">{variation.puzzleCount.toLocaleString()} puzzles</span>
-                    </div>
-                  </button>
-                ))
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Configuration */}
-        {step === "configuration" && (
-          <div className="bg-slate-700/50 border border-slate-600 rounded-lg p-4 sm:p-6 space-y-6" id="config-panel">
-            {/* Puzzle Count */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-3">Puzzles per Session</label>
-              <div className="flex gap-2 flex-wrap">
-                {PUZZLE_COUNT_OPTIONS.map((count) => (
-                  <button
-                    key={count}
-                    onClick={() => setPuzzleCount(count)}
-                    className={`px-4 py-2 rounded-lg font-medium transition ${
-                      puzzleCount === count
-                        ? "bg-teal-600 text-white"
-                        : "bg-slate-600 text-gray-300 hover:bg-slate-500"
-                    }`}
-                  >
-                    {count}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Rating Range */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-3">Rating Range</label>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs text-gray-400 mb-1 block">Min</label>
-                  <input
-                    type="number"
-                    value={minRating}
-                    onChange={(e) => setMinRating(parseInt(e.target.value) || 1000)}
-                    className="w-full px-3 py-2 bg-slate-600 border border-slate-500 rounded text-white focus:outline-none focus:border-teal-500"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-gray-400 mb-1 block">Max</label>
-                  <input
-                    type="number"
-                    value={maxRating}
-                    onChange={(e) => setMaxRating(parseInt(e.target.value) || 2000)}
-                    className="w-full px-3 py-2 bg-slate-600 border border-slate-500 rounded text-white focus:outline-none focus:border-teal-500"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Cycles */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-3">Cycles</label>
-              <div className="flex gap-2">
-                {[1, 2, 3, 4, 5].map((cycle) => (
-                  <button
-                    key={cycle}
-                    onClick={() => setTargetCycles(cycle)}
-                    className={`px-3 py-2 rounded font-medium transition ${
-                      targetCycles === cycle
-                        ? "bg-teal-600 text-white"
-                        : "bg-slate-600 text-gray-300 hover:bg-slate-500"
-                    }`}
-                  >
-                    {cycle}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Color Filter */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-3">Color</label>
-              <div className="flex gap-2">
-                {(["white", "black", "both"] as const).map((color) => (
-                  <button
-                    key={color}
-                    onClick={() => setColorFilter(color)}
-                    className={`px-4 py-2 rounded font-medium transition capitalize ${
-                      colorFilter === color
-                        ? "bg-teal-600 text-white"
-                        : "bg-slate-600 text-gray-300 hover:bg-slate-500"
-                    }`}
-                  >
-                    {color}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Start Button - Simple div with role=button for maximum mobile compatibility */}
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleStartSession();
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  handleStartSession();
-                }
-              }}
-              className="w-full py-4 text-lg text-white font-semibold rounded-lg text-center bg-teal-600 active:bg-teal-700 cursor-pointer select-none"
-              style={{ WebkitTapHighlightColor: 'rgba(0,0,0,0.1)' }}
-            >
-              {isLoading || isFetchingPuzzles ? "Loading..." : "Start Session"}
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Scroll Down Indicator */}
+      {showScrollIndicator && (
+        <button
+          onClick={scrollDown}
+          className="fixed bottom-20 right-4 z-40 bg-teal-600 hover:bg-teal-700 text-white rounded-full p-2 shadow-lg animate-bounce"
+          style={{ touchAction: "manipulation" }}
+          aria-label="Scroll down"
+        >
+          <ChevronDown className="w-5 h-5" />
+        </button>
+      )}
     </div>
   );
 }

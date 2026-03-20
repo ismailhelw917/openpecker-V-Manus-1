@@ -48,7 +48,16 @@ const PREMIUM_FEATURES = [
   "Support independent development",
 ];
 
-function PromoCodeSection() {
+export default function Settings() {
+  const [, setLocation] = useLocation();
+  const { user, logout } = useAuth();
+  const utils = trpc.useUtils();
+  const [selectedTheme, setSelectedTheme] = useState<'classic' | 'green' | 'blue' | 'purple'>(() => {
+    const saved = localStorage.getItem('board-theme');
+    return (saved as 'classic' | 'green' | 'blue' | 'purple') || 'classic';
+  });
+
+  // Promo code state (shared between promo section and premium modal)
   const [promoCode, setPromoCode] = useState("");
   const [validationResult, setValidationResult] = useState<any>(null);
   const [isValidating, setIsValidating] = useState(false);
@@ -63,6 +72,7 @@ function PromoCodeSection() {
         );
         setPromoCode("");
         setValidationResult(null);
+        utils.auth.me.invalidate();
       } else {
         toast.error(data.error || "Failed to redeem promo code");
       }
@@ -102,93 +112,12 @@ function PromoCodeSection() {
     redeemMutation.mutate({ code: promoCode.trim(), deviceId });
   };
 
-  return (
-    <div className="mb-12">
-      <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-        <Gift className="w-5 h-5" />
-        PROMO CODE
-      </h2>
-
-      <Card className="bg-slate-900/50 border-teal-900/30 p-4 sm:p-6">
-        <p className="text-slate-400 text-xs sm:text-sm mb-4 leading-relaxed">
-          Have a promo code? Enter it below to unlock special benefits.
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-          <input
-            type="text"
-            value={promoCode}
-            onChange={(e) => {
-              setPromoCode(e.target.value.toUpperCase());
-              setValidationResult(null);
-            }}
-            placeholder="Enter promo code"
-            className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-white placeholder-slate-500 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 font-mono text-sm sm:text-lg tracking-wider"
-          />
-          <Button
-            onClick={handleValidate}
-            disabled={isValidating || !promoCode.trim()}
-            className="bg-teal-500 hover:bg-teal-600 text-white font-semibold px-4 sm:px-6 py-2 sm:py-3 whitespace-nowrap"
-          >
-            {isValidating ? <Loader className="w-4 h-4 animate-spin" /> : "Apply"}
-          </Button>
-        </div>
-
-        {/* Validation Result */}
-        {validationResult && validationResult.valid && (
-          <div className="mt-4 p-4 rounded-lg border border-teal-400/30 bg-teal-400/10">
-            <div className="flex items-start gap-3">
-              <Tag className="w-5 h-5 text-teal-400 mt-0.5 shrink-0" />
-              <div className="flex-1">
-                <p className="text-teal-300 font-semibold mb-1">
-                  {validationResult.benefitType === "lifetime_premium"
-                    ? "Lifetime Premium Access"
-                    : `${validationResult.discountPercent}% Lifetime Discount`}
-                </p>
-                <p className="text-slate-400 text-sm mb-1">{validationResult.description}</p>
-                <p className="text-slate-500 text-xs">
-                  {validationResult.remainingUses} uses remaining
-                </p>
-              </div>
-            </div>
-            <Button
-              onClick={handleRedeem}
-              disabled={redeemMutation.isPending}
-              className="w-full mt-4 bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-3"
-            >
-              {redeemMutation.isPending ? (
-                <Loader className="w-4 h-4 animate-spin" />
-              ) : (
-                "Redeem Now"
-              )}
-            </Button>
-          </div>
-        )}
-
-        {validationResult && !validationResult.valid && (
-          <div className="mt-4 p-4 rounded-lg border border-red-400/30 bg-red-400/10">
-            <p className="text-red-300 text-sm">{validationResult.error}</p>
-          </div>
-        )}
-      </Card>
-    </div>
-  );
-}
-
-export default function Settings() {
-  const [, setLocation] = useLocation();
-  const { user, logout } = useAuth();
-  const utils = trpc.useUtils();
-  const [selectedTheme, setSelectedTheme] = useState<'classic' | 'green' | 'blue' | 'purple'>(() => {
-    const saved = localStorage.getItem('board-theme');
-    return (saved as 'classic' | 'green' | 'blue' | 'purple') || 'classic';
-  });
-
   const handleThemeChange = (themeId: 'classic' | 'green' | 'blue' | 'purple') => {
     setSelectedTheme(themeId);
     localStorage.setItem('board-theme', themeId);
     toast.success(`Board theme changed to ${themeId}`);
   };
+
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -200,22 +129,17 @@ export default function Settings() {
 
     if (payment === 'success' && sessionId) {
       toast.success('Payment successful! Your premium access is being activated...');
-      // Verify the checkout session and refresh user data
       fetch(`/api/checkout-session/${sessionId}`)
         .then(res => res.json())
         .then(data => {
           if (data.status === 'paid' || data.status === 'complete') {
             toast.success('Premium access activated! Enjoy all features.');
-            // Refresh auth state to pick up isPremium change
             utils.auth.me.invalidate();
           }
         })
         .catch(() => {
-          // Webhook will handle it even if this check fails
           toast.info('Payment received. Premium access will be activated shortly.');
         });
-
-      // Clean URL params
       window.history.replaceState({}, '', '/settings');
     } else if (payment === 'cancelled') {
       toast.info('Payment was cancelled. You can try again anytime.');
@@ -257,7 +181,6 @@ export default function Settings() {
       const data = await response.json();
       const url = data?.url;
       if (url) {
-        // Redirect in same tab for better UX (Stripe will redirect back)
         window.location.href = url;
       } else {
         throw new Error("No checkout URL received");
@@ -283,6 +206,7 @@ export default function Settings() {
           <button
             onClick={() => setLocation("/")}
             className="text-slate-400 hover:text-white transition-colors shrink-0"
+            style={{ touchAction: "manipulation" }}
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -290,7 +214,7 @@ export default function Settings() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
         {/* Board Theme Section */}
         <div className="mb-12">
           <div className="mb-6">
@@ -308,15 +232,14 @@ export default function Settings() {
                     ? "border-teal-400 bg-teal-400/10 shadow-lg shadow-teal-400/20"
                     : "border-slate-700 bg-slate-800/20 hover:border-slate-600 hover:bg-slate-800/40"
                 }`}
+                style={{ touchAction: "manipulation" }}
               >
-                {/* Checkmark for selected */}
                 {selectedTheme === theme.id && (
                   <div className="absolute -top-2 -right-2 bg-teal-400 rounded-full p-1 shadow-lg">
                     <Check className="w-4 h-4 text-slate-900" strokeWidth={3} />
                   </div>
                 )}
                 
-                {/* Theme preview - checkerboard */}
                 <div className="mb-3 mx-auto">
                   <div className="w-20 h-20 rounded-lg border-2 overflow-hidden shadow-md" style={{ borderColor: theme.colors.dark }}>
                     <div className="grid grid-cols-4 w-full h-full">
@@ -333,7 +256,6 @@ export default function Settings() {
                   </div>
                 </div>
                 
-                {/* Theme name */}
                 <p className={`font-semibold text-sm transition-colors ${
                   selectedTheme === theme.id ? "text-teal-300" : "text-slate-300 group-hover:text-white"
                 }`}>
@@ -364,7 +286,7 @@ export default function Settings() {
                   ? "bg-teal-400/20 text-teal-400" 
                   : "bg-amber-400/20 text-amber-400"
               }`}>
-                {user?.isPremium ? "✓ PREMIUM" : "FREE TIER"}
+                {user?.isPremium ? "PREMIUM" : "FREE TIER"}
               </span>
             </div>
 
@@ -372,20 +294,90 @@ export default function Settings() {
               <Button
                 onClick={() => setShowPremiumModal(true)}
                 className="w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-3 rounded-lg transition-colors"
+                style={{ touchAction: "manipulation" }}
               >
                 UPGRADE TO PREMIUM
               </Button>
             )}
             {user?.isPremium && (
               <div className="w-full p-3 bg-teal-400/10 border border-teal-400/30 rounded-lg text-center text-teal-300 font-semibold">
-                ✓ Premium Active
+                Premium Active
               </div>
             )}
           </Card>
         </div>
 
         {/* Promo Code Section */}
-        <PromoCodeSection />
+        <div className="mb-12">
+          <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+            <Gift className="w-5 h-5" />
+            PROMO CODE
+          </h2>
+
+          <Card className="bg-slate-900/50 border-teal-900/30 p-4 sm:p-6">
+            <p className="text-slate-400 text-xs sm:text-sm mb-4 leading-relaxed">
+              Have a promo code? Enter it below to unlock special benefits.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+              <input
+                type="text"
+                value={promoCode}
+                onChange={(e) => {
+                  setPromoCode(e.target.value.toUpperCase());
+                  setValidationResult(null);
+                }}
+                placeholder="Enter promo code"
+                className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-white placeholder-slate-500 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 font-mono text-sm sm:text-lg tracking-wider"
+              />
+              <Button
+                onClick={handleValidate}
+                disabled={isValidating || !promoCode.trim()}
+                className="bg-teal-500 hover:bg-teal-600 text-white font-semibold px-4 sm:px-6 py-2 sm:py-3 whitespace-nowrap"
+                style={{ touchAction: "manipulation" }}
+              >
+                {isValidating ? <Loader className="w-4 h-4 animate-spin" /> : "Apply"}
+              </Button>
+            </div>
+
+            {validationResult && validationResult.valid && (
+              <div className="mt-4 p-4 rounded-lg border border-teal-400/30 bg-teal-400/10">
+                <div className="flex items-start gap-3">
+                  <Tag className="w-5 h-5 text-teal-400 mt-0.5 shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-teal-300 font-semibold mb-1">
+                      {validationResult.benefitType === "lifetime_premium"
+                        ? "Lifetime Premium Access"
+                        : `${validationResult.discountPercent}% Lifetime Discount`}
+                    </p>
+                    <p className="text-slate-400 text-sm mb-1">{validationResult.description}</p>
+                    <p className="text-slate-500 text-xs">
+                      {validationResult.remainingUses} uses remaining
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={handleRedeem}
+                  disabled={redeemMutation.isPending}
+                  className="w-full mt-4 bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-3"
+                  style={{ touchAction: "manipulation" }}
+                >
+                  {redeemMutation.isPending ? (
+                    <Loader className="w-4 h-4 animate-spin" />
+                  ) : (
+                    "Redeem Now"
+                  )}
+                </Button>
+              </div>
+            )}
+
+            {validationResult && !validationResult.valid && (
+              <div className="mt-4 p-4 rounded-lg border border-red-400/30 bg-red-400/10">
+                <p className="text-red-300 text-sm">{validationResult.error}</p>
+              </div>
+            )}
+          </Card>
+        </div>
 
         {/* Account Section */}
         {user && (
@@ -401,6 +393,7 @@ export default function Settings() {
                 onClick={handleLogout}
                 variant="destructive"
                 className="w-full"
+                style={{ touchAction: "manipulation" }}
               >
                 Sign Out
               </Button>
@@ -428,12 +421,13 @@ export default function Settings() {
 
       {/* Premium Modal */}
       {showPremiumModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60] p-3">
           <Card className="bg-gradient-to-b from-amber-950 via-slate-900 to-slate-950 border-amber-400/30 max-w-lg w-full max-h-[95vh] overflow-y-auto relative">
             {/* Close Button */}
             <button
               onClick={() => setShowPremiumModal(false)}
-              className="absolute top-2 right-2 text-slate-400 hover:text-white transition-colors text-xl"
+              className="absolute top-2 right-2 text-slate-400 hover:text-white transition-colors text-xl p-2"
+              style={{ touchAction: "manipulation" }}
             >
               ✕
             </button>
@@ -449,33 +443,37 @@ export default function Settings() {
               <div className="space-y-2">
                 {PREMIUM_FEATURES.map((feature, idx) => (
                   <div key={idx} className="flex items-start gap-2">
-                    <span className="text-teal-400 mt-0.5 text-sm">✓</span>
+                    <span className="text-teal-400 mt-0.5 text-sm">&#10003;</span>
                     <span className="text-white text-xs sm:text-sm">{feature}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Promo Code */}
+            {/* Promo Code in Modal */}
             <div className="px-3 sm:px-4 py-3 sm:py-4 border-t border-amber-400/20">
               <div className="flex gap-2">
                 <input
                   type="text"
                   placeholder="Enter promo code"
                   value={promoCode}
-                  onChange={(e) => setPromoCode(e.target.value)}
+                  onChange={(e) => {
+                    setPromoCode(e.target.value.toUpperCase());
+                    setValidationResult(null);
+                  }}
                   className="flex-1 px-3 py-2 bg-slate-800 border border-slate-700 rounded text-white text-sm placeholder-slate-500 focus:outline-none focus:border-amber-400"
                 />
                 <button
                   onClick={handleValidate}
                   disabled={isValidating}
                   className="px-3 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm rounded font-semibold disabled:opacity-50 transition-colors"
+                  style={{ touchAction: "manipulation" }}
                 >
                   {isValidating ? "..." : "Apply"}
                 </button>
               </div>
               {validationResult?.valid && (
-                <p className="text-teal-400 text-xs mt-2">✓ {validationResult.discountPercent}% off applied</p>
+                <p className="text-teal-400 text-xs mt-2">&#10003; {validationResult.discountPercent}% off applied</p>
               )}
             </div>
 
@@ -483,14 +481,16 @@ export default function Settings() {
             <div className="px-3 sm:px-4 py-3 sm:py-4 space-y-2 sm:space-y-3">
               {/* Monthly */}
               <button
+                type="button"
                 onClick={() => handleCheckout("price_monthly", "Monthly")}
                 disabled={loading}
-                className="w-full p-3 rounded-lg border-2 border-slate-700 bg-slate-800/50 hover:border-amber-400 hover:bg-amber-400/5 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed pointer-events-auto cursor-pointer"
+                className="w-full p-3 rounded-lg border-2 border-slate-700 bg-slate-800/50 hover:border-amber-400 hover:bg-amber-400/5 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ touchAction: "manipulation" }}
               >
-                <div className="flex items-center justify-between pointer-events-none">
+                <div className="flex items-center justify-between">
                   <div>
                     <p className="text-slate-400 text-xs">MONTHLY</p>
-                    <p className="text-white font-bold text-lg">€4.99 <span className="text-xs text-slate-400">/month</span></p>
+                    <p className="text-white font-bold text-lg">&euro;4.99 <span className="text-xs text-slate-400">/month</span></p>
                   </div>
                   {loading ? <Loader className="w-5 h-5 text-amber-400 animate-spin" /> : <Zap className="w-5 h-5 text-amber-400" />}
                 </div>
@@ -498,14 +498,16 @@ export default function Settings() {
 
               {/* Lifetime */}
               <button
+                type="button"
                 onClick={() => handleCheckout("price_lifetime", "Lifetime")}
                 disabled={loading}
-                className="w-full p-3 rounded-lg border-2 border-amber-400/40 bg-amber-400/10 hover:border-amber-400 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed pointer-events-auto cursor-pointer"
+                className="w-full p-3 rounded-lg border-2 border-amber-400/40 bg-amber-400/10 hover:border-amber-400 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ touchAction: "manipulation" }}
               >
-                <div className="flex items-center justify-between pointer-events-none">
+                <div className="flex items-center justify-between">
                   <div>
                     <p className="text-amber-400 font-semibold text-xs">LIFETIME ACCESS</p>
-                    <p className="text-white font-bold text-lg">€49 <span className="text-xs text-slate-400">/once</span></p>
+                    <p className="text-white font-bold text-lg">&euro;49 <span className="text-xs text-slate-400">/once</span></p>
                   </div>
                   {loading ? <Loader className="w-5 h-5 text-amber-400 animate-spin" /> : <Shield className="w-5 h-5 text-amber-400" />}
                 </div>
