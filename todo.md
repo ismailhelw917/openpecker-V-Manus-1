@@ -1222,3 +1222,11 @@
 - [x] Update getOpeningHierarchy to include COUNT(*) for accurate counts
 - [x] Verify puzzles are accessible and playable from Train tab
 - [x] Save checkpoint
+
+## Instant Client-Side Filtering (Round - Innovative Solution)
+- [x] Create build-time script to generate hierarchy.json from database
+- [x] Implement useHierarchyCache hook to load static JSON
+- [x] Create hierarchyFilters utility for client-side filtering (zero server load)
+- [x] Update Train.tsx to use client-side filtering instead of server queries
+- [x] Verify instant loading and filtering works
+- [x] Save checkpoint

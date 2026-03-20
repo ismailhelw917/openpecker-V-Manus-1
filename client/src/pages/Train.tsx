@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "@/_core/deviceId";
+import { useHierarchyCache, hierarchyFilters } from "@/hooks/useHierarchyCache";
 import { toast } from "sonner";
 import { useState, useEffect, useMemo } from "react";
 
@@ -14,6 +15,7 @@ interface HierarchyItem {
   opening: string | null;
   subset: string | null;
   variation: string | null;
+  puzzleCount?: number;
 }
 
 export default function Train() {
@@ -34,45 +36,24 @@ export default function Train() {
   const [colorFilter, setColorFilter] = useState<"white" | "black" | "both">("both");
   const [puzzleCount, setPuzzleCount] = useState(50);
 
-  // Fetch opening hierarchy using tRPC
-  const getHierarchyQuery = trpc.openings.getHierarchy.useQuery({});
+  // Load hierarchy from static JSON (instant, no server requests)
+  const { hierarchy, isLoading: hierarchyLoading } = useHierarchyCache();
 
-  const hierarchy = useMemo(() => {
-    if (!getHierarchyQuery.data) return [];
-    return getHierarchyQuery.data as HierarchyItem[];
-  }, [getHierarchyQuery.data]);
-
-  // Get unique openings
+  // Get unique openings using client-side filter
   const uniqueOpenings = useMemo(() => {
-    const openings = new Set<string>();
-    hierarchy.forEach(item => {
-      if (item.opening) openings.add(item.opening);
-    });
-    return Array.from(openings).sort();
+    return hierarchyFilters.getOpenings(hierarchy);
   }, [hierarchy]);
 
-  // Get subsets for selected opening
+  // Get subsets for selected opening using client-side filter
   const subsets = useMemo(() => {
     if (!selectedOpening) return [];
-    const subsetSet = new Set<string>();
-    hierarchy.forEach(item => {
-      if (item.opening === selectedOpening && item.subset) {
-        subsetSet.add(item.subset);
-      }
-    });
-    return Array.from(subsetSet).sort();
+    return hierarchyFilters.getSubsets(hierarchy, selectedOpening);
   }, [selectedOpening, hierarchy]);
 
-  // Get variations for selected opening and subset
+  // Get variations for selected opening and subset using client-side filter
   const variations = useMemo(() => {
     if (!selectedOpening || !selectedSubset) return [];
-    const variationSet = new Set<string>();
-    hierarchy.forEach(item => {
-      if (item.opening === selectedOpening && item.subset === selectedSubset && item.variation) {
-        variationSet.add(item.variation);
-      }
-    });
-    return Array.from(variationSet).sort();
+    return hierarchyFilters.getVariations(hierarchy, selectedOpening, selectedSubset);
   }, [selectedOpening, selectedSubset, hierarchy]);
 
   // Filter openings by search query
@@ -96,16 +77,25 @@ export default function Train() {
     );
   }, [variations, searchQuery]);
 
-  // Get puzzle count for current selection from hierarchy
+  // Get puzzle count for current selection using client-side filter
   const puzzleCountForSelection = useMemo(() => {
-    const matching = hierarchy.filter(item => {
-      if (selectedOpening && item.opening !== selectedOpening) return false;
-      if (selectedSubset && item.subset !== selectedSubset) return false;
-      if (selectedVariation && item.variation !== selectedVariation) return false;
-      return true;
-    });
-    // Sum up puzzle counts from matching hierarchy items
-    return matching.reduce((sum, item) => sum + (item.puzzleCount || 0), 0);
+    if (selectedVariation) {
+      return hierarchyFilters.getVariationCount(
+        hierarchy,
+        selectedOpening || '',
+        selectedSubset || '',
+        selectedVariation
+      );
+    } else if (selectedSubset) {
+      return hierarchyFilters.getSubsetCount(
+        hierarchy,
+        selectedOpening || '',
+        selectedSubset
+      );
+    } else if (selectedOpening) {
+      return hierarchyFilters.getOpeningCount(hierarchy, selectedOpening);
+    }
+    return 0;
   }, [selectedOpening, selectedSubset, selectedVariation, hierarchy]);
 
   const createTrainingSet = trpc.trainingSets.create.useMutation();
@@ -190,7 +180,7 @@ export default function Train() {
     setStep("configuration");
   };
 
-  if (isLoading || getHierarchyQuery.isLoading) {
+  if (isLoading || hierarchyLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
@@ -233,10 +223,8 @@ export default function Train() {
             <div className="max-h-[60vh] overflow-y-auto space-y-2 pr-2">
               {filteredOpenings.length > 0 ? (
                 filteredOpenings.map(opening => {
-                  // Sum puzzle counts for this opening across all subsets/variations
-                  const puzzleCount = hierarchy
-                    .filter(h => h.opening === opening)
-                    .reduce((sum, item) => sum + (item.puzzleCount || 0), 0);
+                  // Get puzzle count using client-side filter
+                  const puzzleCount = hierarchyFilters.getOpeningCount(hierarchy, opening);
                   return (
                     <div
                       key={opening}
@@ -286,10 +274,12 @@ export default function Train() {
             <div className="max-h-[60vh] overflow-y-auto space-y-2 pr-2">
               {filteredSubsets.length > 0 ? (
                 filteredSubsets.map(subset => {
-                  // Sum puzzle counts for this subset across all variations
-                  const puzzleCount = hierarchy
-                    .filter(h => h.opening === selectedOpening && h.subset === subset)
-                    .reduce((sum, item) => sum + (item.puzzleCount || 0), 0);
+                  // Get puzzle count using client-side filter
+                  const puzzleCount = hierarchyFilters.getSubsetCount(
+                    hierarchy,
+                    selectedOpening || '',
+                    subset
+                  );
                   return (
                     <div
                       key={subset}
@@ -342,10 +332,13 @@ export default function Train() {
             <div className="max-h-[60vh] overflow-y-auto space-y-2 pr-2">
               {filteredVariations.length > 0 ? (
                 filteredVariations.map(variation => {
-                  // Get puzzle count for this specific variation
-                  const puzzleCount = hierarchy
-                    .filter(h => h.opening === selectedOpening && h.subset === selectedSubset && h.variation === variation)
-                    .reduce((sum, item) => sum + (item.puzzleCount || 0), 0);
+                  // Get puzzle count using client-side filter
+                  const puzzleCount = hierarchyFilters.getVariationCount(
+                    hierarchy,
+                    selectedOpening || '',
+                    selectedSubset || '',
+                    variation
+                  );
                   return (
                     <div
                       key={variation}
