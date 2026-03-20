@@ -1461,4 +1461,7 @@
 - [x] Fix ChessgroundBoard.tsx - cast lastMove and dests types
 - [x] Fix db.ts - remove duplicate import and add missing 'lt' import
 - [x] Fix db.ts - cast raw SQL query results properly
-- [ ] Final checkpoint for publishing
+- [x] Final checkpoint for publishing
+
+## Bug Fix (Round 32 - Pieces Not Movable)
+- [x] Fix puzzles not being playable - ChessgroundBoard now auto-computes legal moves (dests) from FEN using chess.js, derives turnColor from FEN, adds touch-action:none for mobile drag support, and uses stable onMove ref to prevent re-renders
