@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
 
+interface VariationItem {
+  variation: string;
+  puzzleCount: number;
+}
+
 interface HierarchyItem {
-  opening: string | null;
-  subset: string | null;
-  variation: string | null;
-  puzzleCount?: number;
+  opening: string;
+  puzzleCount: number;
+  variations: VariationItem[];
 }
 
 /**
@@ -30,8 +34,21 @@ export function useHierarchyCache() {
         }
 
         const data = await response.json() as HierarchyItem[];
-        setHierarchy(data);
-        console.log(`[HierarchyCache] Loaded ${data.length} hierarchy items`);
+        
+        // Validate data structure
+        if (!Array.isArray(data)) {
+          throw new Error('Hierarchy data is not an array');
+        }
+        
+        // Filter out invalid entries
+        const validData = data.filter(item => 
+          item.opening && 
+          Array.isArray(item.variations) && 
+          item.puzzleCount > 0
+        );
+        
+        setHierarchy(validData);
+        console.log(`[HierarchyCache] Loaded ${validData.length} hierarchy items`);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Unknown error'));
         console.error('[HierarchyCache] Error:', err);
@@ -52,73 +69,36 @@ export function useHierarchyCache() {
 
 /**
  * Client-side filtering functions (zero server load)
+ * Works with 2-level hierarchy: Opening → Variation
  */
 export const hierarchyFilters = {
   /**
    * Get unique openings from cached hierarchy
    */
   getOpenings(hierarchy: HierarchyItem[]): string[] {
-    const openings = new Set<string>();
-    hierarchy.forEach(item => {
-      if (item.opening) openings.add(item.opening);
-    });
-    return Array.from(openings).sort();
+    return hierarchy
+      .map(item => item.opening)
+      .filter(opening => opening && opening.length > 0)
+      .sort();
   },
 
   /**
-   * Get subsets for a specific opening
-   */
-  getSubsets(hierarchy: HierarchyItem[], opening: string): string[] {
-    const subsets = new Set<string>();
-    hierarchy.forEach(item => {
-      if (item.opening === opening && item.subset) {
-        subsets.add(item.subset);
-      }
-    });
-    return Array.from(subsets).sort();
-  },
-
-  /**
-   * Get variations for a specific opening and subset
+   * Get variations for a specific opening
    */
   getVariations(
     hierarchy: HierarchyItem[],
-    opening: string,
-    subset: string
-  ): string[] {
-    const variations = new Set<string>();
-    hierarchy.forEach(item => {
-      if (
-        item.opening === opening &&
-        item.subset === subset &&
-        item.variation
-      ) {
-        variations.add(item.variation);
-      }
-    });
-    return Array.from(variations).sort();
+    opening: string
+  ): VariationItem[] {
+    const openingItem = hierarchy.find(item => item.opening === opening);
+    return openingItem?.variations || [];
   },
 
   /**
    * Get total puzzle count for opening
    */
   getOpeningCount(hierarchy: HierarchyItem[], opening: string): number {
-    return hierarchy
-      .filter(h => h.opening === opening)
-      .reduce((sum, item) => sum + (item.puzzleCount || 0), 0);
-  },
-
-  /**
-   * Get total puzzle count for subset
-   */
-  getSubsetCount(
-    hierarchy: HierarchyItem[],
-    opening: string,
-    subset: string
-  ): number {
-    return hierarchy
-      .filter(h => h.opening === opening && h.subset === subset)
-      .reduce((sum, item) => sum + (item.puzzleCount || 0), 0);
+    const openingItem = hierarchy.find(item => item.opening === opening);
+    return openingItem?.puzzleCount || 0;
   },
 
   /**
@@ -127,17 +107,13 @@ export const hierarchyFilters = {
   getVariationCount(
     hierarchy: HierarchyItem[],
     opening: string,
-    subset: string,
     variation: string
   ): number {
-    return hierarchy
-      .filter(
-        h =>
-          h.opening === opening &&
-          h.subset === subset &&
-          h.variation === variation
-      )
-      .reduce((sum, item) => sum + (item.puzzleCount || 0), 0);
+    const openingItem = hierarchy.find(item => item.opening === opening);
+    if (!openingItem) return 0;
+    
+    const variationItem = openingItem.variations.find(v => v.variation === variation);
+    return variationItem?.puzzleCount || 0;
   },
 
   /**

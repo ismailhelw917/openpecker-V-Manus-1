@@ -122,6 +122,46 @@ function normalizeOpeningName(name) {
   return OPENING_NAME_MAP[name] || name;
 }
 
+function parseVariationName(openingVariation, openingName) {
+  // Extract clean variation name by removing redundant prefixes
+  // Input: "Defense Sicilian Defense Old Sicilian" → "Old Sicilian"
+  // Input: "Defense French Defense Advance Variation" → "Advance Variation"
+  // Input: "Game Italian Game Two Knights Defense" → "Two Knights Defense"
+  
+  if (!openingVariation) return openingVariation;
+  
+  let text = openingVariation.trim();
+  const typeWords = ['Defense', 'Game', 'Gambit', 'Attack', 'Opening', 'Variation', 'Pawn'];
+  
+  // Remove leading type word (e.g., "Defense " or "Game ")
+  for (const typeWord of typeWords) {
+    if (text.startsWith(typeWord + ' ')) {
+      text = text.substring(typeWord.length + 1).trim();
+      break;
+    }
+  }
+  
+  // Remove the opening name from the beginning
+  // Try both the original name and normalized name
+  const names = [openingName, normalizeOpeningName(openingName)];
+  for (const name of names) {
+    if (text.toLowerCase().startsWith(name.toLowerCase() + ' ')) {
+      text = text.substring(name.length + 1).trim();
+      break;
+    }
+  }
+  
+  // Remove any remaining leading type word after opening name
+  for (const typeWord of typeWords) {
+    if (text.startsWith(typeWord + ' ')) {
+      text = text.substring(typeWord.length + 1).trim();
+      break;
+    }
+  }
+  
+  return text || openingVariation;
+}
+
 async function generateHierarchy() {
   console.log('[GenerateHierarchy] Starting...');
 
@@ -181,8 +221,9 @@ async function generateHierarchy() {
         };
       }
       
+      const cleanVariation = parseVariationName(row.openingVariation, row.openingName);
       hierarchyMap[normalizedOpening].variations.push({
-        variation: row.openingVariation,
+        variation: cleanVariation,
         puzzleCount: parseInt(row.puzzleCount, 10)
       });
     });

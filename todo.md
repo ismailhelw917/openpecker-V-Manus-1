@@ -1259,3 +1259,14 @@
 - [x] Verified opening names: Alekhine's Defence, French Defence, Caro-Kann Defence, etc.
 - [x] Tested full flow: Opening → Variation → Configuration
 - [x] Save checkpoint
+
+
+## Fix Variation Name Parsing (User Feedback - Round 2)
+- [x] Analyzed openingVariation data structure (format: "Defense Sicilian Defense Old Sicilian")
+- [x] Created parseVariationName function to extract clean names
+- [x] Updated generate-hierarchy.mjs with improved parsing logic
+- [x] Regenerated hierarchy.json with corrected variation names (137.97KB)
+- [x] Fixed schema mismatch in useHierarchyCache.ts (updated to 2-level hierarchy)
+- [x] Verified Train tab displays clean variation names (e.g., "Old Sicilian")
+- [x] Tested full flow: Opening → Variation → Configuration
+- [x] Save checkpoint
