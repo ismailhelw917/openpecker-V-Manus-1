@@ -1,0 +1,8 @@
+{
+  "query": "CREATE INDEX IF NOT EXISTS idx_puzzles_opening ON puzzles(opening); CREATE INDEX IF NOT EXISTS idx_puzzles_subset ON puzzles(subset); CREATE INDEX IF NOT EXISTS idx_puzzles_variation ON puzzles(variation); CREATE INDEX IF NOT EXISTS idx_puzzles_source ON puzzles(source); CREATE INDEX IF NOT EXISTS idx_puzzles_difficulty ON puzzles(difficulty); CREATE INDEX IF NOT EXISTS idx_puzzles_opening_name ON puzzles(opening_name);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute CREATE INDEX IF NOT EXISTS idx_puzzles_opening ON puzzles(opening); CREATE INDEX IF NOT EXISTS idx_puzzles_subset ON puzzles(subset); CREATE INDEX IF NOT EXISTS idx_puzzles_variation ON puzzles(variation); CREATE INDEX IF NOT EXISTS idx_puzzles_source ON puzzles(source); CREATE INDEX IF NOT EXISTS idx_puzzles_difficulty ON puzzles(difficulty); CREATE INDEX IF NOT EXISTS idx_puzzles_opening_name ON puzzles(opening_name);",
+  "returncode": 1,
+  "logs": [
+    "ERROR 2013 (HY000) at line 1: Lost connection to MySQL server during query"
+  ]
+}

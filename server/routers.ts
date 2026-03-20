@@ -2,6 +2,7 @@ import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
+import { puzzleVariationsRouter } from "./puzzle-variations-router";
 import { z } from "zod";
 import { nanoid } from "nanoid";
 import bcrypt from "bcrypt";
@@ -863,7 +864,7 @@ export const appRouter = router({
         await handlePaymentSuccess(input.userId);
         return { success: true };
       }),
-  }),
+   }),
+  puzzleVariations: puzzleVariationsRouter,
 });
-
 export type AppRouter = typeof appRouter;

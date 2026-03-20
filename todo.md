@@ -1190,3 +1190,20 @@
 - [ ] Add puzzle sorting by name and sub_variation
 - [ ] Test puzzle loading with variations
 - [ ] Save checkpoint with puzzle research implementation
+
+## Research Integration (chess_puzzle_research_fixed.json)
+- [x] Phase 2: ChessMove Tree Structure (server/chess-move-tree.ts)
+- [x] Phase 3: Difficulty Calculator (server/difficulty-calculator.ts)
+- [x] Phase 4: PGN Parser (server/pgn-parser.ts)
+- [x] Phase 5: Stockfish Bridge (server/stockfish-bridge.ts)
+- [x] Phase 6: PuzzleVariationTree Component (client/src/components/PuzzleVariationTree.tsx)
+- [x] Phase 7: tRPC Puzzle Variations Router (server/puzzle-variations-router.ts)
+- [x] Phase 8: VariationPanel Component (client/src/components/VariationPanel.tsx)
+- [x] Phase 9: ChessPuzzleKit Migration Script (server/migrate_lichess.py)
+- [x] Analytics Manager Integration (server/analytics.ts)
+- [x] Advanced Analytics Features (server/analytics-features.ts)
+- [x] Analytics Database Schema (drizzle/analytics-schema.sql)
+- [x] Puzzle Indexes (drizzle/add_indexes.sql)
+- [ ] Apply analytics schema migration
+- [ ] Apply puzzle indexes
+- [ ] Run ChessPuzzleKit migration (5M puzzles)
