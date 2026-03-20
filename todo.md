@@ -1393,3 +1393,10 @@
 - [x] Start Session button now fully functional
 - [x] No more text selection or context menu on click
 - [x] Session creation and navigation working perfectly
+
+
+## Bug Fix (Round 26 - Loading Screen & Chessboard Issues)
+- [x] Add loading screen overlay when Start Session is clicked - DONE
+- [ ] Fix chessboard not showing on session page
+- [x] Check promo code configuration (checkout vs settings) - FOUND: Settings page
+- [ ] Fix Upgrade to Premium button to go to Stripe checkout

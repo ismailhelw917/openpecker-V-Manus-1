@@ -72,7 +72,6 @@ function App() {
   }, []);
 
   const updateGlobalSettingsMutation = trpc.system.updateGlobalSettings.useMutation();
-  const createAnonymousUserMutation = trpc.auth.getOrCreateAnonymous.useMutation();
 
   // Auto-toggle off gift premium when 100 users reached or global setting disabled
   useEffect(() => {
@@ -84,14 +83,6 @@ function App() {
       updateGlobalSettingsMutation.mutate({ showGiftPremiumBanner: 0 });
     }
   }, [giftEligibility, globalSettings, showGiftPremium, updateGlobalSettingsMutation]);
-
-  // Suppress the error from non-existent procedure
-  useEffect(() => {
-    if (createAnonymousUserMutation.error) {
-      // Silently ignore errors from missing procedure
-      console.debug('Anonymous user creation skipped');
-    }
-  }, [createAnonymousUserMutation.error]);
 
   useEffect(() => {
     localStorage.setItem("openpecker-maintenance", showMaintenance.toString());

@@ -123,6 +123,8 @@ export default function Train() {
       return;
     }
 
+    setIsLoading(true);
+
     try {
       const deviceId = getOrCreateDeviceId();
 
@@ -141,10 +143,12 @@ export default function Train() {
         setLocation(`/session/${session.id}`);
       } else {
         toast.error("Failed to create training session: No session ID");
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("Error creating session:", error);
       toast.error("Failed to create training session");
+      setIsLoading(false);
     }
   };
 
@@ -174,6 +178,19 @@ export default function Train() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 p-4 md:p-8">
+      {isLoading && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div className="bg-slate-800 rounded-lg p-8 text-center">
+            <div className="mb-4">
+              <div className="inline-block">
+                <div className="w-12 h-12 border-4 border-teal-600 border-t-teal-400 rounded-full animate-spin"></div>
+              </div>
+            </div>
+            <p className="text-white font-semibold text-lg">Loading Session...</p>
+            <p className="text-slate-400 text-sm mt-2">Preparing your training session</p>
+          </div>
+        </div>
+      )}
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
@@ -364,13 +381,25 @@ export default function Train() {
             <button
               type="button"
               onClick={handleStartSession}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                handleStartSession();
+              }}
               onContextMenu={(e) => e.preventDefault()}
+              disabled={isFetchingPuzzles || !selectedOpening}
               className={`w-full py-3 text-white font-semibold rounded-lg transition user-select-none touch-manipulation relative z-10 ${
                 isFetchingPuzzles || !selectedOpening
                   ? 'bg-slate-600 cursor-not-allowed opacity-50'
-                  : 'bg-teal-600 hover:bg-teal-500 cursor-pointer'
+                  : 'bg-teal-600 hover:bg-teal-500 active:bg-teal-700 cursor-pointer'
               }`}
-              style={{ WebkitUserSelect: 'none', WebkitTouchCallout: 'none', pointerEvents: 'auto' }}
+              style={{ 
+                WebkitUserSelect: 'none', 
+                WebkitTouchCallout: 'none', 
+                pointerEvents: 'auto',
+                WebkitAppearance: 'none',
+                appearance: 'none',
+                border: 'none'
+              }}
             >
               {isFetchingPuzzles ? "Loading..." : "Start Session"}
             </button>
