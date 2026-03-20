@@ -377,37 +377,25 @@ export default function Train() {
               </div>
             </div>
 
-            {/* Start Button */}
-            <button
-              type="button"
-              onClick={() => handleStartSession()}
-              onContextMenu={(e) => e.preventDefault()}
-              disabled={isFetchingPuzzles || !selectedOpening}
-              className={`w-full py-4 text-lg text-white font-semibold rounded-lg transition select-none relative z-10 ${
-                isFetchingPuzzles || !selectedOpening
-                  ? 'bg-slate-600 cursor-not-allowed opacity-50'
-                  : 'bg-teal-600 hover:bg-teal-500 active:bg-teal-700 cursor-pointer'
-              }`}
-              style={{ 
-                WebkitUserSelect: 'none', 
-                WebkitTouchCallout: 'none',
-                touchAction: 'manipulation'
+            {/* Start Button - Simple div with role=button for maximum mobile compatibility */}
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleStartSession();
               }}
-            >
-              {isFetchingPuzzles ? "Loading..." : "Start Session"}
-            </button>
-
-            {/* Scroll to Start Button (Mobile) */}
-            <button
-              onClick={() => {
-                const buttons = document.querySelectorAll('button');
-                const startButton = Array.from(buttons).find(btn => btn.textContent?.includes('Start Session'));
-                if (startButton) startButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleStartSession();
+                }
               }}
-              className="w-full py-2 bg-slate-600 hover:bg-slate-500 text-gray-300 text-sm rounded-lg transition md:hidden"
+              className="w-full py-4 text-lg text-white font-semibold rounded-lg text-center bg-teal-600 active:bg-teal-700 cursor-pointer select-none"
+              style={{ WebkitTapHighlightColor: 'rgba(0,0,0,0.1)' }}
             >
-              ↓ Scroll to Start Session
-            </button>
+              {isLoading || isFetchingPuzzles ? "Loading..." : "Start Session"}
+            </div>
           </div>
         )}
       </div>

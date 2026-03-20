@@ -107,9 +107,10 @@ export default function Home() {
                 <Button
                   onClick={async () => {
                     if (!user) {
-                      setLocation(getLoginUrl("/"));
+                      window.location.href = getLoginUrl("/");
                       return;
                     }
+                    toast.info("Redirecting to checkout...");
                     try {
                       const response = await fetch("/api/create-checkout-session", {
                         method: "POST",
@@ -121,13 +122,19 @@ export default function Home() {
                           email: user.email,
                         }),
                       });
-                      if (!response.ok) throw new Error("Failed to create checkout session");
+                      if (!response.ok) {
+                        const errData = await response.json().catch(() => ({}));
+                        throw new Error(errData.error || "Failed to create checkout session");
+                      }
                       const data = await response.json();
                       if (data?.url) {
-                        window.open(data.url, "_blank");
+                        window.location.href = data.url;
+                      } else {
+                        toast.error("No checkout URL returned");
                       }
-                    } catch (error) {
-                      toast.error("Failed to open checkout");
+                    } catch (error: any) {
+                      console.error("Checkout error:", error);
+                      toast.error(error?.message || "Failed to open checkout. Please try again.");
                     }
                   }}
                   className="w-full max-w-sm bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg transition-all"

@@ -1419,3 +1419,12 @@
 - [ ] Create paywall component for premium features
 - [ ] Implement premium feature gating
 - [ ] Add subscription management UI
+
+
+## Bug Fix (Round 29 - Critical Mobile & Conditional UI)
+- [x] Fix Start Session button not working on Android/iOS - replaced <button> with <div role=button> for mobile compat
+- [x] Fix Buy Premium buttons - changed window.open to window.location.href, added error toast
+- [x] Conditionally hide Login buttons when user is signed in - ALREADY IMPLEMENTED in Home.tsx
+- [x] Conditionally hide Upgrade to Premium buttons when user has premium - ALREADY IMPLEMENTED in Home.tsx, Settings.tsx, ProAnalytics.tsx
+- [x] Verified Stripe checkout endpoint works (returns valid checkout URL)
+- [x] Stripe promo codes enabled via allow_promotion_codes: true
