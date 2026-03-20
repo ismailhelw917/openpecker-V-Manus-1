@@ -386,3 +386,54 @@ export const onlineSessions = mysqlTable("online_sessions", {
 
 export type OnlineSession = typeof onlineSessions.$inferSelect;
 export type InsertOnlineSession = typeof onlineSessions.$inferInsert;
+
+/**
+ * User Opening Stats - Aggregated statistics per user per opening/variation
+ * Macro-level data for Stats page, CSV export, and Leaderboard
+ */
+export const userOpeningStats = mysqlTable("user_opening_stats", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId"),
+  deviceId: varchar("deviceId", { length: 64 }),
+  opening: varchar("opening", { length: 255 }).notNull(), // e.g., 'Sicilian Defence'
+  variation: varchar("variation", { length: 255 }), // e.g., 'Old Sicilian'
+  totalPuzzles: int("totalPuzzles").default(0).notNull(),
+  correctPuzzles: int("correctPuzzles").default(0).notNull(),
+  accuracy: decimal("accuracy", { precision: 5, scale: 2 }).default("0").notNull(),
+  avgTimeMs: int("avgTimeMs").default(0).notNull(),
+  totalTimeMs: int("totalTimeMs").default(0).notNull(),
+  ratingChange: int("ratingChange").default(0), // Rating change from baseline
+  lastUpdatedAt: timestamp("lastUpdatedAt").defaultNow().onUpdateNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("idx_uos_userId").on(table.userId),
+  deviceIdIdx: index("idx_uos_deviceId").on(table.deviceId),
+  openingIdx: index("idx_uos_opening").on(table.opening),
+  userOpeningIdx: index("idx_uos_user_opening").on(table.userId, table.opening),
+}));
+
+export type UserOpeningStat = typeof userOpeningStats.$inferSelect;
+export type InsertUserOpeningStat = typeof userOpeningStats.$inferInsert;
+
+/**
+ * Stats Exports - Track CSV exports for users
+ * Used for audit trail and download history
+ */
+export const statsExports = mysqlTable("stats_exports", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId"),
+  deviceId: varchar("deviceId", { length: 64 }),
+  exportType: mysqlEnum("exportType", ["full", "opening", "monthly"]).default("full").notNull(),
+  csvUrl: text("csvUrl").notNull(), // S3 presigned URL
+  recordCount: int("recordCount").notNull(),
+  fileSize: int("fileSize"), // bytes
+  exportedAt: timestamp("exportedAt").defaultNow().notNull(),
+  expiresAt: timestamp("expiresAt"), // When presigned URL expires
+}, (table) => ({
+  userIdIdx: index("idx_se_userId").on(table.userId),
+  deviceIdIdx: index("idx_se_deviceId").on(table.deviceId),
+  exportedAtIdx: index("idx_se_exportedAt").on(table.exportedAt),
+}));
+
+export type StatsExport = typeof statsExports.$inferSelect;
+export type InsertStatsExport = typeof statsExports.$inferInsert;

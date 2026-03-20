@@ -42,7 +42,7 @@ export async function analyzePuzzleDifficulty(
     evaluations.push(strength);
     
     // Make the move
-    const moveResult = game.move(move, { sloppy: true });
+    const moveResult = game.move(move);
     if (!moveResult) {
       console.warn(`Invalid move: ${move} in position ${game.fen()}`);
       break;
@@ -90,7 +90,7 @@ export function algebraicToUCI(fen: string, algebraicMoves: string[]): string[] 
   const uciMoves: string[] = [];
   
   for (const algebraic of algebraicMoves) {
-    const move = game.move(algebraic, { sloppy: true });
+    const move = game.move(algebraic);
     if (move) {
       uciMoves.push(move.from + move.to + (move.promotion || ''));
     } else {
@@ -131,7 +131,7 @@ export function buildMoveTree(
     }
     
     // Make the move to advance the board state
-    const moveResult = game.move(algebraic, { sloppy: true });
+    const moveResult = game.move(algebraic);
     if (!moveResult) {
       console.warn(`Invalid move in tree: ${algebraic}`);
       break;

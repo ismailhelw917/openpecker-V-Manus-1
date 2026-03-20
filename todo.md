@@ -1270,3 +1270,66 @@
 - [x] Verified Train tab displays clean variation names (e.g., "Old Sicilian")
 - [x] Tested full flow: Opening → Variation → Configuration
 - [x] Save checkpoint
+
+
+## Session Tracking & Stats Implementation (New Feature)
+
+### Phase 1: Database Schema
+- [ ] Add `session_moves` table (puzzle_id, move_played, move_correct, time_spent, accuracy_score)
+- [ ] Add `user_stats` table (user_id, opening, variation, total_puzzles, correct_puzzles, accuracy, avg_time, rating_change)
+- [ ] Add `stats_exports` table (user_id, export_date, csv_file_path, record_count)
+- [ ] Create migration SQL and apply via webdev_execute_sql
+
+### Phase 2: CSV Export Pipeline
+- [ ] Create `/server/stats/csvExporter.ts` to aggregate and export stats
+- [ ] Implement CSV generation with Lichess-like format
+- [ ] Add scheduled job to export stats daily/weekly
+- [ ] Store CSV files in S3 with presigned URLs
+
+### Phase 3: tRPC Endpoints
+- [ ] Add `stats.getUserStats` procedure (fetch user's aggregated stats)
+- [ ] Add `stats.getOpeningStats` procedure (stats by opening)
+- [ ] Add `stats.exportCSV` procedure (trigger CSV export)
+- [ ] Add `stats.downloadCSV` procedure (get CSV download link)
+- [ ] Add `leaderboard.getTopPlayers` procedure (rank by accuracy/improvement)
+
+### Phase 4: Stats Page UI (Waiting for user's picture)
+- [ ] Implement Stats page component
+- [ ] Display opening mastery chart
+- [ ] Show accuracy trends over time
+- [ ] Display improvement graph
+- [ ] Add CSV export button
+
+### Phase 5: Testing & Validation
+- [ ] Test session move tracking during puzzle play
+- [ ] Verify CSV export accuracy
+- [ ] Test leaderboard rankings
+- [ ] Save checkpoint
+
+
+## Session Tracking & Stats Implementation (Parallel with UI)
+
+### Backend - Database & API
+- [x] Create user_opening_stats and stats_exports tables
+- [x] Create csvExporter.ts with aggregation logic
+- [x] Create stats router with tRPC endpoints
+- [ ] Register stats router in appRouter
+- [ ] Integrate session move tracking into puzzle play flow
+- [ ] Update user_opening_stats after session completion
+
+### Frontend - Stats Page UI (Chess.com-inspired dashboard)
+- [ ] Create Stats.tsx page component with 2-column layout
+- [ ] Left column: Opening variants tree with puzzle counts
+- [ ] Right column: Summary cards (Total Puzzles, Accuracy %, Streak, Last Activity)
+- [ ] Add accuracy trend line chart (Recharts)
+- [ ] Add activity heatmap (calendar grid with colored cells)
+- [ ] Add recent sessions list
+- [ ] Add CSV export button
+- [ ] Style with Tailwind + shadcn/ui components
+
+### Integration & Testing
+- [ ] Test session move tracking during puzzle play
+- [ ] Verify CSV export accuracy
+- [ ] Test leaderboard rankings
+- [ ] Verify stats aggregation
+- [ ] Save checkpoint

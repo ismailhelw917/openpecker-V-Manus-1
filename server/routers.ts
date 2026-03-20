@@ -521,6 +521,53 @@ export const appRouter = router({
       }),
   }),
 
+  // ==================== PUZZLE SESSION ====================
+  puzzleSession: router({
+    /**
+     * Create a new puzzle session
+     */
+    create: publicProcedure
+      .input(
+        z.object({
+          opening: z.string(),
+          variation: z.string(),
+          puzzleCount: z.number().default(50),
+          minRating: z.number().default(0),
+          maxRating: z.number().default(3000),
+          targetCycles: z.number().default(3),
+          colorFilter: z.enum(['white', 'black', 'both']).default('both'),
+          deviceId: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        try {
+          const trainingSetId = nanoid();
+          const trainingSet = await createTrainingSet({
+            id: trainingSetId,
+            userId: ctx.user?.id || null,
+            deviceId: input.deviceId || null,
+            name: `${input.opening} - ${input.variation}`,
+            description: `Training session for ${input.opening} ${input.variation}`,
+            opening: input.opening,
+            variation: input.variation,
+            targetCycles: input.targetCycles,
+            puzzleCount: input.puzzleCount,
+            minRating: input.minRating,
+            maxRating: input.maxRating,
+            colorFilter: input.colorFilter,
+          });
+
+          return {
+            id: trainingSetId,
+            ...trainingSet,
+          };
+        } catch (error) {
+          console.error('Error creating puzzle session:', error);
+          throw error;
+        }
+      }),
+  }),
+
   // ==================== CYCLES ====================
   cycles: router({
     /**
@@ -536,7 +583,6 @@ export const appRouter = router({
           correctCount: z.number(),
           totalTimeMs: z.number(),
           accuracy: z.number(),
-          averageSpeed: z.number(),
         })
       )
       .mutation(async ({ input }) => {
@@ -544,11 +590,11 @@ export const appRouter = router({
           userId: input.userId || null,
           deviceId: input.deviceId || null,
           trainingSetId: input.trainingSetId,
+          cycleNumber: 1,
           totalPuzzles: input.totalPuzzles,
           correctCount: input.correctCount,
           totalTimeMs: input.totalTimeMs,
-          accuracy: input.accuracy,
-          averageSpeed: input.averageSpeed,
+          accuracy: input.accuracy.toString(),
         });
       }),
 
@@ -723,8 +769,9 @@ export const appRouter = router({
           userId: input.userId || null,
           deviceId: input.deviceId || null,
           trainingSetId: input.trainingSetId,
+          cycleNumber: 1,
           puzzleId: input.puzzleId,
-          isCorrect: input.isCorrect,
+          isCorrect: input.isCorrect ? 1 : 0,
           timeMs: input.timeMs,
         });
       }),

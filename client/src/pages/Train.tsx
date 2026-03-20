@@ -39,6 +39,9 @@ export default function Train() {
   // Load hierarchy from static JSON (instant, no server requests)
   const { hierarchy, isLoading: hierarchyLoading } = useHierarchyCache();
 
+  // Create session mutation
+  const createSessionMutation = trpc.puzzleSession.create.useMutation();
+
   // Get unique openings
   const uniqueOpenings = useMemo(() => {
     return hierarchy.map(h => ({
@@ -120,11 +123,10 @@ export default function Train() {
       return;
     }
 
-    setIsFetchingPuzzles(true);
     try {
       const deviceId = getOrCreateDeviceId();
 
-      const session = await trpc.puzzleSession.create.mutate({
+      const session = await createSessionMutation.mutateAsync({
         opening: selectedOpening,
         variation: selectedVariation,
         puzzleCount,
@@ -135,12 +137,14 @@ export default function Train() {
         deviceId,
       });
 
-      setLocation(`/play/${session.id}`);
+      if (session?.id) {
+        setLocation(`/play/${session.id}`);
+      } else {
+        toast.error("Failed to create training session: No session ID");
+      }
     } catch (error) {
       console.error("Error creating session:", error);
       toast.error("Failed to create training session");
-    } finally {
-      setIsFetchingPuzzles(false);
     }
   };
 
