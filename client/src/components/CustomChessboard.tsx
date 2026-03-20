@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Chess } from 'chess.js';
-import { DndContext, DragOverlay, useDraggable, useDroppable, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, DragOverlay, useDraggable, useDroppable, MouseSensor, TouchSensor, useSensor, useSensors, closestCenter } from '@dnd-kit/core';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface CaptureAnimationData {
@@ -93,8 +93,8 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
   isAutoSolving,
 }) => {
   const sensors = useSensors(
-    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(TouchSensor, { activationConstraint: { distance: 5 } })
+    useSensor(MouseSensor, { activationConstraint: { delay: 100, tolerance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 100, tolerance: 5 } })
   );
   const board = useMemo(() => game.board(), [game]);
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
@@ -140,6 +140,7 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
   }, [game, selectedSquare, activeSquare, propLegalMoves]);
 
   const handleSquareClick = (squareName: string) => {
+    console.log('[handleSquareClick] Clicked:', squareName);
     const piece = game.get(squareName as any);
     const currentTurn = game.turn();
     
@@ -235,7 +236,7 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
   };
 
   return (
-    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd} collisionDetection={closestCenter}>
       <div className="grid grid-cols-8 grid-rows-8 w-full aspect-square border border-border-dark/50 overflow-hidden">
         {squares.map(({ r, c }) => {
           const squareName = getSquareName(r, c);
