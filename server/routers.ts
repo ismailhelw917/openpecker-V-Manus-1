@@ -490,6 +490,11 @@ export const appRouter = router({
           name: z.string().optional(),
           description: z.string().optional(),
           isPublic: z.boolean().optional(),
+          status: z.enum(["active", "paused", "completed"]).optional(),
+          cyclesCompleted: z.number().optional(),
+          bestAccuracy: z.string().optional(),
+          totalAttempts: z.number().optional(),
+          lastPlayedAt: z.date().optional(),
         })
       )
       .mutation(async ({ input }) => {
@@ -497,6 +502,11 @@ export const appRouter = router({
           name: input.name,
           description: input.description,
           isPublic: input.isPublic,
+          status: input.status,
+          cyclesCompleted: input.cyclesCompleted,
+          bestAccuracy: input.bestAccuracy,
+          totalAttempts: input.totalAttempts,
+          lastPlayedAt: input.lastPlayedAt,
         });
       }),
 

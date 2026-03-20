@@ -521,7 +521,16 @@ export async function getTrainingSetsByUser(userId: number | null, deviceId: str
 export async function updateTrainingSet(id: string, updates: any) {
   const db = await getDb();
   if (!db) return;
-  await db.update(trainingSets).set(updates).where(eq(trainingSets.id, id));
+  // Filter out undefined values to avoid "No values to set" error
+  const cleanUpdates: Record<string, any> = {};
+  for (const [key, value] of Object.entries(updates)) {
+    if (value !== undefined) {
+      cleanUpdates[key] = value;
+    }
+  }
+  // Always touch updatedAt so the row is marked as recently modified
+  cleanUpdates.updatedAt = new Date();
+  await db.update(trainingSets).set(cleanUpdates).where(eq(trainingSets.id, id));
 }
 
 export async function deleteTrainingSet(id: string) {

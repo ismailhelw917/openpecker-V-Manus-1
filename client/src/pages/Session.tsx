@@ -128,6 +128,7 @@ export default function Session() {
     });
     updateTrainingSetMutation.mutate({
       id: sessionId,
+      lastPlayedAt: new Date(),
     });
   }, [puzzles, currentPuzzleIndex, user, sessionId, currentCycle, getTrainingSet.data?.totalAttempts]);
 
@@ -347,6 +348,8 @@ export default function Session() {
 
         updateTrainingSetMutation.mutate({
           id: sessionId,
+          cyclesCompleted: currentCycle,
+          lastPlayedAt: new Date(),
         });
 
         // Aggregate stats after cycle completion

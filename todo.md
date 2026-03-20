@@ -1465,3 +1465,7 @@
 
 ## Bug Fix (Round 32 - Pieces Not Movable)
 - [x] Fix puzzles not being playable - ChessgroundBoard now auto-computes legal moves (dests) from FEN using chess.js, derives turnColor from FEN, adds touch-action:none for mobile drag support, and uses stable onMove ref to prevent re-renders
+
+## Bug Fix (Round 33 - No Values to Set & Google Sign-In)
+- [x] Fix "No values to set" API mutation error - updateTrainingSet now filters undefined values and always sets updatedAt; Session.tsx now passes lastPlayedAt and cyclesCompleted
+- [x] Verify Google Sign-In works without additional configuration - confirmed it uses Manus OAuth which supports Google login out of the box
