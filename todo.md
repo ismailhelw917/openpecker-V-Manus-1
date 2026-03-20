@@ -1091,3 +1091,21 @@
 - [x] Add scrolling functionality to opening list
 - [x] Ensure responsive design on different screen sizes
 - [x] Test hierarchical selector on mobile devices
+
+
+## Feature: Puzzle System Overhaul (Round 20)
+- [ ] Integrate Lichess opening explorer API for accurate classification
+- [ ] Reclassify all 2,598 puzzles using Lichess API
+- [ ] Redesign puzzle loading to ensure all puzzles always accessible
+- [ ] Update Train tab to load all puzzles correctly
+- [ ] Test puzzle playability across all openings
+- [ ] Save checkpoint
+
+
+## Feature: Fix Puzzle System for Full Playability (Round 20)
+- [x] Verify all puzzles are in database with correct opening hierarchy
+- [x] Update Train tab to load all puzzles for selected opening
+- [x] Fix Session page to display puzzles correctly
+- [x] Ensure all puzzles are playable end-to-end
+- [x] Test across all 6 openings with puzzle data
+- [x] Confirmed end-to-end puzzle playability working
