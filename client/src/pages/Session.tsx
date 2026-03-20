@@ -94,10 +94,6 @@ export default function Session() {
     to: string;
   } | null>(null);
 
-  // Best move feedback state
-  const [bestMove, setBestMove] = useState<{ from: string; to: string } | null>(null);
-  const [showBestMoveHint, setShowBestMoveHint] = useState(false);
-
   // Board theme definitions
   const themeColors = {
     classic: { light: '#f0d9b5', dark: '#b58863' },
@@ -514,11 +510,6 @@ export default function Session() {
             console.log('✓ Move is best move according to Stockfish!');
           } else if (result.success) {
             console.log('Better move available:', result.bestMove);
-            const from = result.bestMove.substring(0, 2);
-            const to = result.bestMove.substring(2, 4);
-            setBestMove({ from, to });
-            setShowBestMoveHint(true);
-            setTimeout(() => setShowBestMoveHint(false), 3000);
           }
         },
         onError: (error) => {
@@ -527,7 +518,6 @@ export default function Session() {
       }
     );
   }, []);
-
 
   const handleMove = (sourceSquare: string, targetSquare: string) => {
     if (solved || isAutoSolving) return false;
@@ -686,16 +676,7 @@ export default function Session() {
             autoSolveMove={autoSolveMove}
             isAutoSolving={isAutoSolving}
             captureAnimation={captureAnimation}
-            highlightedSquares={showBestMoveHint && bestMove ? [bestMove.from, bestMove.to] : []}
-            highlightColor="rgba(255, 193, 7, 0.4)"
           />
-
-          {/* Best Move Indicator */}
-          {showBestMoveHint && bestMove && (
-            <div className="absolute top-2 left-2 bg-amber-500 text-white px-3 py-1 rounded text-xs font-semibold animate-pulse">
-              Best move: {bestMove.from.toUpperCase()}-{bestMove.to.toUpperCase()}
-            </div>
-          )}
 
           {/* Green Checkmark Watermark for Correct Solutions */}
           {showCorrectCheckmark && !isAutoSolving && (

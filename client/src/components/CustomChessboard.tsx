@@ -22,8 +22,6 @@ interface CustomChessboardProps {
   autoSolveMove?: { from: string; to: string } | null;
   autoNextCountdown?: number | null;
   isAutoSolving?: boolean;
-  highlightedSquares?: string[];
-  highlightColor?: string;
 }
 
 const DraggablePiece = ({ piece, squareName }: { piece: any; squareName: string }) => {
@@ -93,8 +91,6 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
   autoSolveMove,
   autoNextCountdown,
   isAutoSolving,
-  highlightedSquares = [],
-  highlightColor = 'rgba(255, 193, 7, 0.4)',
 }) => {
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
@@ -281,9 +277,6 @@ export const CustomChessboard: React.FC<CustomChessboardProps> = ({
               {optionSquares[squareName] && <div className="absolute inset-0" style={optionSquares[squareName]} />}
               {selectedSquare === squareName && <div className="absolute inset-0 bg-yellow-400/50" />}
               {activeSquare === squareName && <div className="absolute inset-0 bg-yellow-400/50" />}
-              {highlightedSquares.includes(squareName) && (
-                <div className="absolute inset-0" style={{ backgroundColor: highlightColor }} />
-              )}
               {autoSolveMove && (autoSolveMove.from === squareName || autoSolveMove.to === squareName) && (
                 <motion.div 
                   className="absolute inset-0 bg-green-400/50 rounded" 
