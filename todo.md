@@ -1230,3 +1230,11 @@
 - [x] Update Train.tsx to use client-side filtering instead of server queries
 - [x] Verify instant loading and filtering works
 - [x] Save checkpoint
+
+
+## Fix Hierarchy Display (Round - User Feedback)
+- [x] Regenerate hierarchy.json with correct opening/subset/variation parsing
+- [x] Fix handleSelectOpening to calculate subsets directly (avoid stale closure)
+- [x] Verify subset-selection step now shows correctly
+- [x] Test full hierarchy flow: Opening → Subset → Configuration
+- [ ] Save checkpoint

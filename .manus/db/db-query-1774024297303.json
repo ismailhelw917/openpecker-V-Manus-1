@@ -1,0 +1,60 @@
+{
+  "query": "SELECT id, openingName, openingVariation FROM puzzles WHERE openingName = 'Amar' LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT id, openingName, openingVariation FROM puzzles WHERE openingName = 'Amar' LIMIT 10;",
+  "rows": [
+    {
+      "id": "0EywV",
+      "openingName": "Amar",
+      "openingVariation": "Opening Amar Opening Other variations"
+    },
+    {
+      "id": "25f56",
+      "openingName": "Amar",
+      "openingVariation": "Opening Amar Opening Other variations"
+    },
+    {
+      "id": "26v8M",
+      "openingName": "Amar",
+      "openingVariation": "Opening Amar Opening Paris Gambit"
+    },
+    {
+      "id": "2BzZ3",
+      "openingName": "Amar",
+      "openingVariation": "Opening Amar Opening Other variations"
+    },
+    {
+      "id": "2UeyV",
+      "openingName": "Amar",
+      "openingVariation": "Opening Amar Opening Other variations"
+    },
+    {
+      "id": "3gEYO",
+      "openingName": "Amar",
+      "openingVariation": "Opening Amar Opening Other variations"
+    },
+    {
+      "id": "4l7p3",
+      "openingName": "Amar",
+      "openingVariation": "Opening Amar Opening Other variations"
+    },
+    {
+      "id": "5Jko4",
+      "openingName": "Amar",
+      "openingVariation": "Opening Amar Opening Other variations"
+    },
+    {
+      "id": "5aq6w",
+      "openingName": "Amar",
+      "openingVariation": "Opening Amar Opening Other variations"
+    },
+    {
+      "id": "6Wh7U",
+      "openingName": "Amar",
+      "openingVariation": "Opening Amar Opening Other variations"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topeningName\topeningVariation\n0EywV\tAmar\tOpening Amar Opening Other variations\n25f56\tAmar\tOpening Amar Opening Other variations\n26v8M\tAmar\tOpening Amar Opening Paris Gambit\n2BzZ3\tAmar\tOpening Amar Opening Other variations\n2UeyV\tAmar\tOpening Amar Opening Other variations\n3gEYO\tAmar\tOpening Amar Opening Other variations\n4l7p3\tAmar\tOpening Amar Opening Other variations\n5Jko4\tAmar\tOpening Amar Opening Other variations\n5aq6w\tAmar\tOpening Amar Opening Other variations\n6Wh7U\tAmar\tOpening Amar Opening Other variations\n",
+  "stderr": "",
+  "execution_time_ms": 1544
+}

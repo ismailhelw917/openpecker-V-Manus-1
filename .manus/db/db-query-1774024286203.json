@@ -1,0 +1,50 @@
+{
+  "query": "SELECT id, openingName, openingVariation, opening, subset, variation FROM puzzles WHERE openingName LIKE 'Alekhine%' LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT id, openingName, openingVariation, opening, subset, variation FROM puzzles WHERE openingName LIKE 'Alekhine%' LIMIT 5;",
+  "rows": [
+    {
+      "id": "0017R",
+      "openingName": "Alekhine",
+      "openingVariation": "Defense Alekhine Defense Other variations",
+      "opening": "Alekhine",
+      "subset": "Defense Alekhine Defense Other variations",
+      "variation": "Defense Alekhine Defense Other variations"
+    },
+    {
+      "id": "01acW",
+      "openingName": "Alekhine",
+      "openingVariation": "Defense Alekhine Defense Scandinavian Variation",
+      "opening": "Alekhine",
+      "subset": "Defense Alekhine Defense Scandinavian Variation",
+      "variation": "Defense Alekhine Defense Scandinavian Variation"
+    },
+    {
+      "id": "01nIi",
+      "openingName": "Alekhine",
+      "openingVariation": "Defense Alekhine Defense Four Pawns Attack",
+      "opening": "Alekhine",
+      "subset": "Defense Alekhine Defense Four Pawns Attack",
+      "variation": "Defense Alekhine Defense Four Pawns Attack"
+    },
+    {
+      "id": "02GkM",
+      "openingName": "Alekhine",
+      "openingVariation": "Defense Alekhine Defense Two Pawn Attack",
+      "opening": "Alekhine",
+      "subset": "Defense Alekhine Defense Two Pawn Attack",
+      "variation": "Defense Alekhine Defense Two Pawn Attack"
+    },
+    {
+      "id": "03av2",
+      "openingName": "Alekhine",
+      "openingVariation": "Defense Alekhine Defense Other variations",
+      "opening": "Alekhine",
+      "subset": "Defense Alekhine Defense Other variations",
+      "variation": "Defense Alekhine Defense Other variations"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topeningName\topeningVariation\topening\tsubset\tvariation\n0017R\tAlekhine\tDefense Alekhine Defense Other variations\tAlekhine\tDefense Alekhine Defense Other variations\tDefense Alekhine Defense Other variations\n01acW\tAlekhine\tDefense Alekhine Defense Scandinavian Variation\tAlekhine\tDefense Alekhine Defense Scandinavian Variation\tDefense Alekhine Defense Scandinavian Variation\n01nIi\tAlekhine\tDefense Alekhine Defense Four Pawns Attack\tAlekhine\tDefense Alekhine Defense Four Pawns Attack\tDefense Alekhine Defense Four Pawns Attack\n02GkM\tAlekhine\tDefense Alekhine Defense Two Pawn Attack\tAlekhine\tDefense Alekhine Defense Two Pawn Attack\tDefense Alekhine Defense Two Pawn Attack\n03av2\tAlekhine\tDefense Alekhine Defense Other variations\tAlekhine\tDefense Alekhine Defense Other variations\tDefense Alekhine Defense Other variations\n",
+  "stderr": "",
+  "execution_time_ms": 1616
+}

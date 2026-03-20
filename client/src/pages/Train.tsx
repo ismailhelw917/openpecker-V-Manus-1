@@ -38,6 +38,20 @@ export default function Train() {
 
   // Load hierarchy from static JSON (instant, no server requests)
   const { hierarchy, isLoading: hierarchyLoading } = useHierarchyCache();
+  
+  // Debug logging
+  useEffect(() => {
+    console.log('[Train] Hierarchy loaded:', hierarchy.length, 'items');
+    if (hierarchy.length > 0) {
+      const alekhineItems = hierarchy.filter(h => h.opening === 'Alekhine');
+      console.log('[Train] Alekhine items:', alekhineItems.length);
+      const subsets = new Set();
+      alekhineItems.forEach(item => {
+        if (item.subset) subsets.add(item.subset);
+      });
+      console.log('[Train] Alekhine subsets:', Array.from(subsets));
+    }
+  }, [hierarchy]);
 
   // Get unique openings using client-side filter
   const uniqueOpenings = useMemo(() => {
@@ -47,7 +61,9 @@ export default function Train() {
   // Get subsets for selected opening using client-side filter
   const subsets = useMemo(() => {
     if (!selectedOpening) return [];
-    return hierarchyFilters.getSubsets(hierarchy, selectedOpening);
+    const result = hierarchyFilters.getSubsets(hierarchy, selectedOpening);
+    console.log('[Train] getSubsets for', selectedOpening, ':', result);
+    return result;
   }, [selectedOpening, hierarchy]);
 
   // Get variations for selected opening and subset using client-side filter
@@ -156,7 +172,9 @@ export default function Train() {
     setSelectedSubset(null);
     setSelectedVariation(null);
     setSearchQuery("");
-    if (subsets.length > 0) {
+    // Calculate subsets directly instead of using stale value from useMemo
+    const newSubsets = hierarchyFilters.getSubsets(hierarchy, opening);
+    if (newSubsets.length > 0) {
       setStep("subset-selection");
     } else {
       setStep("configuration");
