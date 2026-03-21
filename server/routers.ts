@@ -1344,11 +1344,30 @@ export const appRouter = router({
           userId: z.number().optional(),
           email: z.string().email(),
           promoCode: z.string().optional(),
+          recaptchaToken: z.string().optional(),
         })
       )
       .mutation(async ({ input, ctx }) => {
         const { createCheckoutSession } = await import("./_core/payment");
+        const { verifyRecaptchaToken, detectSuspiciousActivity, shouldRequireCaptchaChallenge } = await import("./_core/recaptcha");
         const origin = ctx.req?.headers.origin || "https://openpecker.com";
+        
+        if (input.recaptchaToken) {
+          try {
+            const recaptchaResult = await verifyRecaptchaToken(input.recaptchaToken);
+            if (!recaptchaResult.success) {
+              throw new Error('reCAPTCHA verification failed');
+            }
+            const suspiciousFlags = detectSuspiciousActivity(recaptchaResult.score, {});
+            const requiresChallenge = shouldRequireCaptchaChallenge(recaptchaResult.score, suspiciousFlags);
+            if (requiresChallenge) {
+              throw new Error('Suspicious activity detected');
+            }
+          } catch (error) {
+            console.error('[CHECKOUT] reCAPTCHA error:', error);
+            throw error;
+          }
+        }
         
         return createCheckoutSession(
           input.userId || ctx.user?.id || 0,

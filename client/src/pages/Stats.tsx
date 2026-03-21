@@ -74,13 +74,13 @@ export default function Stats() {
     try { return getOrCreateDeviceId(); } catch { return null; }
   });
 
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+
   const handleCheckout = async (priceId: string, planName: string) => {
-    // If auth is still loading, wait and retry
     if (authLoading) {
       toast.info("Please wait, loading your account...");
       return;
     }
-    // If user is not authenticated after auth has loaded, redirect to login
     if (!user) {
       console.log('[Stats Checkout] User not found, redirecting to login');
       window.location.href = getLoginUrl();
@@ -91,13 +91,26 @@ export default function Stats() {
     setLoading(true);
     setCheckoutPlan(planName);
     try {
+      let token = recaptchaToken;
+      if (!token && typeof window !== 'undefined' && (window as any).grecaptcha) {
+        try {
+          token = await (window as any).grecaptcha.execute(
+            import.meta.env.VITE_RECAPTCHA_SITE_KEY,
+            { action: 'checkout' }
+          );
+          setRecaptchaToken(token);
+        } catch (error) {
+          console.warn('reCAPTCHA execution failed, continuing');
+        }
+      }
+      
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
       
       const response = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId, planName, userId: user.id, email: user.email }),
+        body: JSON.stringify({ priceId, planName, userId: user.id, email: user.email, recaptchaToken: token }),
         signal: controller.signal,
       });
       
