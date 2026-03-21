@@ -321,7 +321,7 @@ export default function Settings() {
               Have a promo code? Enter it below to unlock special benefits.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+            <div className="flex gap-2 sm:gap-3 items-center">
               <input
                 type="text"
                 value={promoCode}
@@ -330,12 +330,12 @@ export default function Settings() {
                   setValidationResult(null);
                 }}
                 placeholder="Enter promo code"
-                className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-white placeholder-slate-500 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 font-mono text-sm sm:text-lg tracking-wider"
+                className="flex-1 min-w-0 bg-slate-800 border border-slate-700 rounded-lg px-3 sm:px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 font-mono text-sm tracking-wider"
               />
               <Button
                 onClick={handleValidate}
                 disabled={isValidating || !promoCode.trim()}
-                className="bg-teal-500 hover:bg-teal-600 text-white font-semibold px-4 sm:px-6 py-2 sm:py-3 whitespace-nowrap"
+                className="shrink-0 bg-teal-500 hover:bg-teal-600 text-white font-semibold px-4 sm:px-6 py-2 whitespace-nowrap"
                 style={{ touchAction: "manipulation" }}
               >
                 {isValidating ? <Loader className="w-4 h-4 animate-spin" /> : "Apply"}
@@ -454,7 +454,7 @@ export default function Settings() {
 
             {/* Promo Code in Modal */}
             <div className="px-3 sm:px-4 py-3 sm:py-4 border-t border-amber-400/20">
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
                 <input
                   type="text"
                   placeholder="Enter promo code"
@@ -463,12 +463,12 @@ export default function Settings() {
                     setPromoCode(e.target.value.toUpperCase());
                     setValidationResult(null);
                   }}
-                  className="flex-1 px-3 py-2 bg-slate-800 border border-slate-700 rounded text-white text-sm placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                  className="flex-1 min-w-0 px-3 py-2 bg-slate-800 border border-slate-700 rounded text-white text-sm placeholder-slate-500 focus:outline-none focus:border-amber-400"
                 />
                 <button
                   onClick={handleValidate}
                   disabled={isValidating}
-                  className="px-3 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm rounded font-semibold disabled:opacity-50 transition-colors"
+                  className="shrink-0 whitespace-nowrap px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm rounded font-semibold disabled:opacity-50 transition-colors"
                   style={{ touchAction: "manipulation" }}
                 >
                   {isValidating ? "..." : "Apply"}
@@ -484,14 +484,13 @@ export default function Settings() {
               <div className="px-3 sm:px-4 py-2">
                 <div className="bg-amber-900/20 border border-amber-700/30 rounded-lg p-3 text-center">
                   <p className="text-amber-200 text-sm mb-2">Sign in to unlock premium features</p>
-                  <button
-                    type="button"
-                    onClick={() => { window.location.href = getLoginUrl(); }}
-                    className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm rounded-lg transition-colors"
-                    style={{ touchAction: "manipulation" }}
+                  <a
+                    href={getLoginUrl()}
+                    className="inline-block px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm rounded-lg transition-colors no-underline"
+                    style={{ touchAction: "manipulation", WebkitTapHighlightColor: "rgba(0,0,0,0.1)" }}
                   >
                     Sign In
-                  </button>
+                  </a>
                 </div>
               </div>
             )}

@@ -13,13 +13,11 @@ import Session from "./pages/Session";
 import Auth from "./pages/Auth";
 import { Leaderboard } from "./pages/Leaderboard";
 import Profile from "./pages/Profile";
-// Analytics pages removed - using stats page instead
 
 import { useEffect, useState } from "react";
 import { useAuth } from "./_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "./_core/deviceId";
 import { trpc } from "./lib/trpc";
-import { useLocation } from "wouter";
 import { PremiumBanner } from "./components/PremiumBanner";
 import { usePageTracking } from "./hooks/usePageTracking";
 import { useSessionTracking } from "./hooks/useSessionTracking";
@@ -51,26 +49,24 @@ function App() {
   // Track user sessions with heartbeats
   useSessionTracking();
 
-  const [timeLeft, setTimeLeft] = useState(180);
-  const [showMaintenance, setShowMaintenance] = useState(() => {
-    const stored = localStorage.getItem("openpecker-maintenance");
-    return stored === "true";
-  });
-  const [showGiftPremium, setShowGiftPremium] = useState(true);
-  const [giftPremiumDismissed, setGiftPremiumDismissed] = useState(false);
   const [premiumBannerDismissed, setPremiumBannerDismissed] = useState(false);
   const [showPremiumWatermark, setShowPremiumWatermark] = useState(true);
   const { isAuthenticated, loading, user } = useAuth();
-  const [, setLocation] = useLocation();
-  const { data: giftEligibility } = trpc.auth.checkGiftEligibility.useQuery({});
-  const { data: globalSettings } = trpc.system.getGlobalSettings.useQuery();
 
-  // Initialize device ID
+  // Initialize device ID once
   useEffect(() => {
-    // Create device ID on app load
     getOrCreateDeviceId();
   }, []);
 
+  // Lazy-load gift eligibility and global settings only when needed
+  const { data: giftEligibility } = trpc.auth.checkGiftEligibility.useQuery({}, {
+    enabled: !loading && !isAuthenticated, // Only check for non-authenticated users
+  });
+  const { data: globalSettings } = trpc.system.getGlobalSettings.useQuery(undefined, {
+    enabled: !loading, // Only load after auth resolves
+  });
+
+  const [showGiftPremium, setShowGiftPremium] = useState(true);
   const updateGlobalSettingsMutation = trpc.system.updateGlobalSettings.useMutation();
 
   // Auto-toggle off gift premium when 100 users reached or global setting disabled
@@ -78,42 +74,19 @@ function App() {
     if (globalSettings && !globalSettings.showGiftPremiumBanner) {
       setShowGiftPremium(false);
     } else if (giftEligibility && !giftEligibility.eligible && showGiftPremium) {
-      // 100 users reached - auto-disable banner in global settings
       setShowGiftPremium(false);
       updateGlobalSettingsMutation.mutate({ showGiftPremiumBanner: 0 });
     }
   }, [giftEligibility, globalSettings, showGiftPremium, updateGlobalSettingsMutation]);
 
-  useEffect(() => {
-    localStorage.setItem("openpecker-maintenance", showMaintenance.toString());
-  }, [showMaintenance]);
-
-  // Timer countdown
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 180));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400 mx-auto mb-4"></div>
-          <p className="text-slate-400">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
+  // Show content immediately - don't block on auth loading
   return (
     <ThemeProvider>
       <TooltipProvider>
         <ErrorBoundary>
           <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950">
             {/* Premium Banner for unregistered users */}
-            {!isAuthenticated && showGiftPremium && !premiumBannerDismissed && (
+            {!loading && !isAuthenticated && showGiftPremium && !premiumBannerDismissed && (
               <PremiumBanner onDismiss={() => setPremiumBannerDismissed(true)} />
             )}
 
@@ -125,11 +98,11 @@ function App() {
               </div>
             )}
 
-            {/* Routes */}
+            {/* Routes - render immediately, pages handle their own loading states */}
             <Router />
 
-            {/* Bottom Navigation (for all users) */}
-            {!loading && <BottomNav />}
+            {/* Bottom Navigation */}
+            <BottomNav />
           </div>
         </ErrorBoundary>
       </TooltipProvider>

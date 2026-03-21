@@ -1498,3 +1498,11 @@
 - [x] Fix paywall buttons not working - changed handleCheckout to redirect to login (getLoginUrl) instead of just showing toast; added sign-in prompt in premium modal for non-authenticated users
 - [x] Fix text overflow on mobile - added overflow-x:hidden to html/body, changed BottomNav to flex-1 layout with truncate, added truncate/min-w-0 to Train page opening/variation lists, added word-break:break-word globally
 - [x] All 7 bugfix tests passing
+
+## Bug Fix (Round 38 - Init Speed, Login, Leaderboard Cleanup, Mobile Text)
+- [x] Speed up app initialization - added QueryClient staleTime/gcTime/retry defaults, removed blocking auth loading spinner, lazy-loaded gift eligibility and global settings queries, removed unnecessary timer countdown
+- [x] Fix login buttons not working - changed all login buttons from onClick/setLocation to <a> tags with href={getLoginUrl()} for better mobile compatibility, removed intermediate /auth redirect
+- [x] Delete 3 players from leaderboard (Ayush, N.Balaji, BR) - deleted via SQL, only guest remains
+- [x] Fix Stats page tab labels wrapping on mobile - added text-sm sm:text-base, whitespace-nowrap, shrink-0 to tab buttons
+- [x] Fix "Apply" button text displaying vertically on mobile - added shrink-0, whitespace-nowrap, min-w-0 on input
+- [x] Fix promo code input being too tall on mobile - reduced py-2 sm:py-3 to py-2, text-sm sm:text-lg to text-sm

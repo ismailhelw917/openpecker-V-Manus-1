@@ -300,10 +300,10 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
 
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Tab Navigation */}
-        <div className="flex gap-2 sm:gap-4 mb-6 sm:mb-8 border-b border-teal-900/30 overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}>
+        <div className="flex gap-1 sm:gap-4 mb-4 sm:mb-8 border-b border-teal-900/30 overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}>
           <button
             onClick={() => setActiveTab("overview")}
-            className={`pb-4 px-2 font-semibold transition-colors ${
+            className={`pb-3 sm:pb-4 px-2 sm:px-3 text-sm sm:text-base font-semibold whitespace-nowrap shrink-0 transition-colors ${
               activeTab === "overview"
                 ? "text-amber-400 border-b-2 border-amber-400"
                 : "text-slate-400 hover:text-white"
@@ -313,7 +313,7 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
           </button>
           <button
             onClick={() => setActiveTab("trends")}
-            className={`pb-4 px-2 font-semibold transition-colors ${
+            className={`pb-3 sm:pb-4 px-2 sm:px-3 text-sm sm:text-base font-semibold whitespace-nowrap shrink-0 transition-colors ${
               activeTab === "trends"
                 ? "text-amber-400 border-b-2 border-amber-400"
                 : "text-slate-400 hover:text-white"
@@ -323,7 +323,7 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
           </button>
           <button
             onClick={() => setActiveTab("openings")}
-            className={`pb-4 px-2 font-semibold transition-colors ${
+            className={`pb-3 sm:pb-4 px-2 sm:px-3 text-sm sm:text-base font-semibold whitespace-nowrap shrink-0 transition-colors ${
               activeTab === "openings"
                 ? "text-amber-400 border-b-2 border-amber-400"
                 : "text-slate-400 hover:text-white"

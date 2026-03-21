@@ -130,13 +130,18 @@ export default function Home() {
                 </svg>
                 Login with Google
               </a>
-              <Button
-                onClick={() => setLocation("/auth")}
-                className="w-full max-w-sm bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-semibold py-6 rounded-lg"
-                style={{ touchAction: "manipulation" }}
+              <a
+                href={getLoginUrl()}
+                className="w-full max-w-sm bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-all mx-auto"
+                style={{
+                  touchAction: "manipulation",
+                  WebkitTapHighlightColor: "rgba(0,0,0,0.1)",
+                  display: "flex",
+                  textDecoration: "none",
+                }}
               >
                 Sign In / Register
-              </Button>
+              </a>
             </div>
           ) : (
             <div className="space-y-2">
