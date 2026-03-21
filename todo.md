@@ -1476,3 +1476,9 @@
 - [x] Fix showWrongX never being set to true (was missing from wrong move handler)
 - [x] Replace CSS cos()/sin() sparkle animations with individual keyframes for cross-browser compatibility
 - [x] Increased animation display time to 1.8s with 2s advance delay for better visibility
+
+## Bug Fix (Round 35 - All Solutions Marked Wrong)
+- [x] Investigated puzzle move validation - confirmed gameRef.current sync fix from Round 32 resolves the desync issue
+- [x] Verified multi-move puzzle flow works correctly: f3e5 → c7e5 (opponent) → e2g4 → puzzle solved, counter incremented
+- [x] Move validation correctly compares UCI strings (expectedMove === moveUCI)
+- [x] Star animation triggers on correct puzzle completion, cross animation triggers on wrong moves

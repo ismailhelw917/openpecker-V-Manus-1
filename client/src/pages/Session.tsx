@@ -559,6 +559,10 @@ export default function Session() {
       const moveUCI = `${result.from}${result.to}${result.promotion || ""}`;
       console.log('Move validation:', { userMoveIndex, expectedMove, moveUCI, totalMoves: movesList.length });
 
+      // CRITICAL: Sync gameRef.current with the local game instance
+      // playOpponentResponse reads from gameRef.current, so it must have the user's move applied
+      gameRef.current = game;
+
       // Update the board with the move (FIX #4: always show the move, even if wrong)
       setGameFen(game.fen());
 
