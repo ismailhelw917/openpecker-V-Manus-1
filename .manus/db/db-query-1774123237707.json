@@ -1,0 +1,15 @@
+{
+  "query": "SELECT COUNT(*) as total_players, SUM(CASE WHEN type='registered' THEN 1 ELSE 0 END) as registered, SUM(CASE WHEN type='anonymous' THEN 1 ELSE 0 END) as anonymous FROM players;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT COUNT(*) as total_players, SUM(CASE WHEN type='registered' THEN 1 ELSE 0 END) as registered, SUM(CASE WHEN type='anonymous' THEN 1 ELSE 0 END) as anonymous FROM players;",
+  "rows": [
+    {
+      "total_players": "111",
+      "registered": "106",
+      "anonymous": "5"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_players\tregistered\tanonymous\n111\t106\t5\n",
+  "stderr": "",
+  "execution_time_ms": 1651
+}

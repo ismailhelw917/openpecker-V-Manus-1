@@ -186,7 +186,7 @@ export async function getLeaderboardPlayers(limit: number = 500, sortBy: 'accura
     orderBy = 'CASE WHEN rating IS NULL THEN 1200 ELSE rating END DESC, totalPuzzles DESC';
   }
 
-  // Get all players ranked by performance (show all players, not just those with activity)
+  // Get all players ranked by performance, only show those with activity
   const result = await db.execute(sql`
     SELECT 
       id, userId, deviceId, name, email, type, isPremium,
@@ -198,6 +198,7 @@ export async function getLeaderboardPlayers(limit: number = 500, sortBy: 'accura
       COALESCE(rating, 1200) as rating,
       lastActivityAt, createdAt
     FROM players
+    WHERE totalPuzzles > 0
     ORDER BY ${sql.raw(orderBy)}
     LIMIT ${limit}
   `);

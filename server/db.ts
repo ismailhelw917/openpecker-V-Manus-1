@@ -639,6 +639,35 @@ export async function getPuzzleAttemptsByTrainingSet(trainingSetId: string) {
     .orderBy(asc(puzzleAttempts.completedAt));
 }
 
+export async function getPuzzleAttemptStatsForSets(trainingSetIds: string[]) {
+  const db = await getDb();
+  if (!db) return {};
+  if (trainingSetIds.length === 0) return {};
+  
+  const result = await db
+    .select({
+      trainingSetId: puzzleAttempts.trainingSetId,
+      totalAttempts: count(),
+      totalCorrect: count(sql`CASE WHEN ${puzzleAttempts.isCorrect} = 1 THEN 1 END`),
+      totalTimeMs: sum(puzzleAttempts.timeMs),
+    })
+    .from(puzzleAttempts)
+    .where(inArray(puzzleAttempts.trainingSetId, trainingSetIds))
+    .groupBy(puzzleAttempts.trainingSetId);
+  
+  const statsMap: Record<string, any> = {};
+  result.forEach((row: any) => {
+    statsMap[row.trainingSetId] = {
+      totalAttempts: row.totalAttempts || 0,
+      totalCorrect: row.totalCorrect || 0,
+      totalTimeMs: row.totalTimeMs || 0,
+      accuracy: row.totalAttempts > 0 ? (row.totalCorrect / row.totalAttempts) * 100 : null,
+    };
+  });
+  
+  return statsMap;
+}
+
 /**
  * Get all puzzle attempts for a user (by userId or deviceId)
  * Used for real-time stats aggregation

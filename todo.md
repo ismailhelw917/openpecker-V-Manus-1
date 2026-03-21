@@ -1772,3 +1772,9 @@
 - [x] Removed trackOnlineMutation from dependency array
 - [x] Server performance restored - no more 502 errors
 - [x] "Upgrade to Premium" button now works (was blocked by 502 errors)
+
+## Critical Issues (Round 83)
+- [x] Sets tab taking too long to load - fixed with batch query optimization
+- [x] Leaderboard showing incorrect numbers - fixed by filtering only active players (totalPuzzles > 0)
+- [x] Stats "Upgrade to Premium" button - added debug logging and verified onClick handler
+- [x] Optimized getSets router to use getPuzzleAttemptStatsForSets batch query

@@ -263,7 +263,10 @@ export default function Stats() {
             ))}
           </ul>
           <Button
-            onClick={() => setShowPremiumPaywall(true)}
+            onClick={() => {
+              console.log('[Stats] Upgrade button clicked, setting showPremiumPaywall to true');
+              setShowPremiumPaywall(true);
+            }}
             className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-8 py-3 text-lg rounded-lg"
           >
             Upgrade to Premium
