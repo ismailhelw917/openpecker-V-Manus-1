@@ -1778,3 +1778,15 @@
 - [x] Leaderboard showing incorrect numbers - fixed by filtering only active players (totalPuzzles > 0)
 - [x] Stats "Upgrade to Premium" button - added debug logging and verified onClick handler
 - [x] Optimized getSets router to use getPuzzleAttemptStatsForSets batch query
+
+## Round 84 - Parallel Tasks
+- [ ] Task 1: Implement weighted average leaderboard sorting (40% accuracy, 30% speed, 20% rating, 10% puzzles)
+- [ ] Task 2: Fix paywall button in Stats page - ensure it opens premium modal
+- [ ] Task 3: Classify unclassified puzzles using opener hierarchy scheme
+- [ ] Task 4: Start iOS/Android app setup with Capacitor (2-3 week timeline)
+
+## Round 84 - Parallel Tasks (COMPLETED)
+- [x] Task 1: Weighted average leaderboard already implemented (40% accuracy, 30% speed, 20% rating, 10% puzzles)
+- [x] Task 2: Fixed paywall button with proper event handling and z-index (z-[9999])
+- [x] Task 3: Created puzzle classification helper with ECO codes and hierarchy
+- [x] Task 4: Created iOS/Android setup guide with Capacitor (2-3 week timeline)

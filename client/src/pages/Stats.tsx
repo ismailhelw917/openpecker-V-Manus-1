@@ -263,11 +263,14 @@ export default function Stats() {
             ))}
           </ul>
           <Button
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
               console.log('[Stats] Upgrade button clicked, setting showPremiumPaywall to true');
               setShowPremiumPaywall(true);
             }}
-            className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-8 py-3 text-lg rounded-lg"
+            className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-8 py-3 text-lg rounded-lg w-full"
+            type="button"
           >
             Upgrade to Premium
           </Button>
@@ -299,7 +302,8 @@ export default function Stats() {
 
       {/* Premium Modal */}
       {showPremiumPaywall && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4" onClick={() => setShowPremiumPaywall(false)}>
+          <div onClick={(e) => e.stopPropagation()}>
           <Card className="bg-gradient-to-b from-amber-950 via-slate-900 to-slate-950 border-amber-400/30 max-w-lg w-full max-h-[90vh] overflow-y-auto relative">
             <button
               onClick={() => setShowPremiumPaywall(false)}
@@ -361,6 +365,7 @@ export default function Stats() {
               </p>
             </div>
           </Card>
+          </div>
         </div>
       )}
 
