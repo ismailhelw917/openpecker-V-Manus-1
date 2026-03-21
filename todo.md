@@ -1716,3 +1716,6 @@
 - [x] Implement monthly (€4.99) and lifetime (€49) checkout handlers
 - [x] Add close button (X) to dismiss paywall
 - [x] Test paywall component rendering and interactions
+
+## Round 75 - UI Text Cleanup
+- [x] Changed Stats page premium button text from "Upgrade to Premium - €49.99/year" to just "Upgrade to Premium"
