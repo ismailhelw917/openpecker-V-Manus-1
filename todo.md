@@ -1741,3 +1741,9 @@
 - [x] Remove problematic test file causing build issues
 - [x] Lock 6 more openings in Train tab (reduced free limit from 13% to 7%)
 - [x] Save checkpoint
+
+## Puzzle Count Options (Round 79 - Current)
+- [x] Add 6 sets option (300 puzzles) to configuration
+- [x] Add 7 sets option (350 puzzles) to configuration
+- [x] Update PUZZLE_COUNT_OPTIONS array in Train.tsx
+- [ ] Save checkpoint
