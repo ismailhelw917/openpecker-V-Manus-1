@@ -5,7 +5,7 @@ import { getOrCreateDeviceId } from "@/_core/deviceId";
 import { useHierarchyCache } from "@/hooks/useHierarchyCache";
 import { toast } from "sonner";
 import { useState, useEffect, useMemo, useRef } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Lock, Zap } from "lucide-react";
 
 type Step = "opening-selection" | "variation-selection" | "configuration";
 
@@ -93,6 +93,17 @@ export default function Train() {
     );
   }, [uniqueOpenings, searchQuery]);
 
+  // Determine which openings are free (first 25%) vs premium (remaining 75%)
+  const freeOpeningLimit = useMemo(() => {
+    return Math.max(Math.ceil(uniqueOpenings.length * 0.25), 5); // At least 5 free
+  }, [uniqueOpenings]);
+
+  const isOpeningLocked = (openingName: string): boolean => {
+    if (user?.isPremium) return false;
+    const index = uniqueOpenings.findIndex(o => o.opening === openingName);
+    return index >= freeOpeningLimit;
+  };
+
   // Filter variations by search query
   const filteredVariations = useMemo(() => {
     return variations.filter(v =>
@@ -115,6 +126,18 @@ export default function Train() {
   }, [selectedOpening, selectedVariation, hierarchy]);
 
   const handleSelectOpening = (opening: string) => {
+    // Check premium lock
+    if (isOpeningLocked(opening)) {
+      toast("Premium opening", {
+        description: "Upgrade to Premium to unlock all openings.",
+        action: {
+          label: "Upgrade",
+          onClick: () => setLocation("/settings"),
+        },
+      });
+      return;
+    }
+
     setSelectedOpening(opening);
     setSelectedVariation(null);
     setSearchQuery("");
@@ -272,19 +295,32 @@ export default function Train() {
                 {filteredOpenings.length === 0 ? (
                   <div className="text-center py-8 text-gray-400">No openings found</div>
                 ) : (
-                  filteredOpenings.map((item) => (
-                    <button
-                      key={item.opening}
-                      onClick={() => handleSelectOpening(item.opening)}
-                      className="w-full text-left px-3 sm:px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition border border-slate-600 hover:border-teal-500"
-                      style={{ touchAction: "manipulation" }}
-                    >
-                      <div className="flex justify-between items-center gap-2">
-                        <span className="text-white font-medium truncate min-w-0 text-sm sm:text-base">{item.opening}</span>
-                        <span className="text-gray-400 text-xs sm:text-sm shrink-0 whitespace-nowrap">{item.puzzleCount.toLocaleString()}</span>
-                      </div>
-                    </button>
-                  ))
+                  filteredOpenings.map((item) => {
+                    const locked = isOpeningLocked(item.opening);
+                    return (
+                      <button
+                        key={item.opening}
+                        onClick={() => handleSelectOpening(item.opening)}
+                        className={`w-full text-left px-3 sm:px-4 py-3 rounded-lg transition border ${
+                          locked
+                            ? "bg-slate-800/60 border-slate-700/50 opacity-75"
+                            : "bg-slate-700 hover:bg-slate-600 border-slate-600 hover:border-teal-500"
+                        }`}
+                        style={{ touchAction: "manipulation" }}
+                      >
+                        <div className="flex justify-between items-center gap-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            {locked && <Lock className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
+                            <span className={`font-medium truncate min-w-0 text-sm sm:text-base ${locked ? 'text-slate-400' : 'text-white'}`}>{item.opening}</span>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            {locked && <span className="text-[10px] bg-amber-400/20 text-amber-400 px-1.5 py-0.5 rounded font-semibold">PRO</span>}
+                            <span className="text-gray-400 text-xs sm:text-sm whitespace-nowrap">{item.puzzleCount.toLocaleString()}</span>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })
                 )}
               </div>
             </div>

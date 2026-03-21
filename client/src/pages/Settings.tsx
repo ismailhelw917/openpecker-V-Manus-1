@@ -309,77 +309,7 @@ export default function Settings() {
           </Card>
         </div>
 
-        {/* Promo Code Section */}
-        <div className="mb-12">
-          <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-            <Gift className="w-5 h-5" />
-            PROMO CODE
-          </h2>
 
-          <Card className="bg-slate-900/50 border-teal-900/30 p-4 sm:p-6">
-            <p className="text-slate-400 text-xs sm:text-sm mb-4 leading-relaxed">
-              Have a promo code? Enter it below to unlock special benefits.
-            </p>
-
-            <div className="flex gap-2 sm:gap-3 items-center">
-              <input
-                type="text"
-                value={promoCode}
-                onChange={(e) => {
-                  setPromoCode(e.target.value.toUpperCase());
-                  setValidationResult(null);
-                }}
-                placeholder="Enter promo code"
-                className="flex-1 min-w-0 bg-slate-800 border border-slate-700 rounded-lg px-3 sm:px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 font-mono text-sm tracking-wider"
-              />
-              <Button
-                onClick={handleValidate}
-                disabled={isValidating || !promoCode.trim()}
-                className="shrink-0 bg-teal-500 hover:bg-teal-600 text-white font-semibold px-4 sm:px-6 py-2 whitespace-nowrap"
-                style={{ touchAction: "manipulation" }}
-              >
-                {isValidating ? <Loader className="w-4 h-4 animate-spin" /> : "Apply"}
-              </Button>
-            </div>
-
-            {validationResult && validationResult.valid && (
-              <div className="mt-4 p-4 rounded-lg border border-teal-400/30 bg-teal-400/10">
-                <div className="flex items-start gap-3">
-                  <Tag className="w-5 h-5 text-teal-400 mt-0.5 shrink-0" />
-                  <div className="flex-1">
-                    <p className="text-teal-300 font-semibold mb-1">
-                      {validationResult.benefitType === "lifetime_premium"
-                        ? "Lifetime Premium Access"
-                        : `${validationResult.discountPercent}% Lifetime Discount`}
-                    </p>
-                    <p className="text-slate-400 text-sm mb-1">{validationResult.description}</p>
-                    <p className="text-slate-500 text-xs">
-                      {validationResult.remainingUses} uses remaining
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  onClick={handleRedeem}
-                  disabled={redeemMutation.isPending}
-                  className="w-full mt-4 bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold py-3"
-                  style={{ touchAction: "manipulation" }}
-                >
-                  {redeemMutation.isPending ? (
-                    <Loader className="w-4 h-4 animate-spin" />
-                  ) : (
-                    "Redeem Now"
-                  )}
-                </Button>
-              </div>
-            )}
-
-            {validationResult && !validationResult.valid && (
-              <div className="mt-4 p-4 rounded-lg border border-red-400/30 bg-red-400/10">
-                <p className="text-red-300 text-sm">{validationResult.error}</p>
-              </div>
-            )}
-          </Card>
-        </div>
 
         {/* Account Section */}
         {user && (

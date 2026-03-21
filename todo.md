@@ -1506,3 +1506,11 @@
 - [x] Fix Stats page tab labels wrapping on mobile - added text-sm sm:text-base, whitespace-nowrap, shrink-0 to tab buttons
 - [x] Fix "Apply" button text displaying vertically on mobile - added shrink-0, whitespace-nowrap, min-w-0 on input
 - [x] Fix promo code input being too tall on mobile - reduced py-2 sm:py-3 to py-2, text-sm sm:text-lg to text-sm
+
+## Round 39 - Paywall, Premium Lock, Stats Fix, Promo Cleanup, Register
+- [x] Add watermark paywall to Stats tab - Trends/Openings tabs and Rating chart blurred with "PREMIUM" overlay + upgrade button for non-premium users
+- [x] Lock 75% of opening selections behind premium - free users get first 25% (min 5) of openings, locked ones show Lock icon + PRO badge, toast with Upgrade action on click
+- [x] Fix stats and sets display - enhanced trainingSets.getByUser to include per-set attempt stats from puzzle_attempts table, SavedSets now shows computed accuracy from actual attempts
+- [x] Remove standalone promo code section from Settings page - kept only the one inside premium modal
+- [x] Add email + Google register options on Home - "Register with Google" and "Register with Email" buttons, both redirect to /train after login via OAuth returnPath in state
+- [x] All 11 round39 tests passing (OAuth return path parsing + premium opening lock logic)

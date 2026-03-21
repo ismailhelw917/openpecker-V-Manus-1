@@ -477,7 +477,31 @@ export const appRouter = router({
         })
       )
       .query(async ({ input }) => {
-        return getTrainingSetsByUser(input.userId || null, input.deviceId || null);
+        const sets = await getTrainingSetsByUser(input.userId || null, input.deviceId || null);
+        // Enrich each set with per-set attempt stats from puzzle_attempts
+        const enrichedSets = await Promise.all(
+          sets.map(async (set: any) => {
+            try {
+              const attemptStats = await getPuzzleAttemptsByTrainingSet(set.id);
+              const totalCorrectFromAttempts = attemptStats.filter((a: any) => a.isCorrect).length;
+              const totalAttemptsFromAttempts = attemptStats.length;
+              const totalTimeMsFromAttempts = attemptStats.reduce((sum: number, a: any) => sum + (a.timeMs || 0), 0);
+              const computedAccuracy = totalAttemptsFromAttempts > 0
+                ? (totalCorrectFromAttempts / totalAttemptsFromAttempts) * 100
+                : null;
+              return {
+                ...set,
+                attemptAccuracy: computedAccuracy,
+                attemptTotalCorrect: totalCorrectFromAttempts,
+                attemptTotalAttempts: totalAttemptsFromAttempts,
+                attemptTotalTimeMs: totalTimeMsFromAttempts,
+              };
+            } catch {
+              return set;
+            }
+          })
+        );
+        return enrichedSets;
       }),
 
     /**

@@ -1,0 +1,75 @@
+{
+  "query": "SELECT id, openingName, status, cyclesCompleted, currentPuzzleIndex, currentCycle, correctCount, bestAccuracy, totalAttempts, totalTimeMs, lastPlayedAt FROM training_sets ORDER BY updatedAt DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT id, openingName, status, cyclesCompleted, currentPuzzleIndex, currentCycle, correctCount, bestAccuracy, totalAttempts, totalTimeMs, lastPlayedAt FROM training_sets ORDER BY updatedAt DESC LIMIT 5;",
+  "rows": [
+    {
+      "id": "b-40zNOq8Tg08ughSe-rD",
+      "openingName": "Sicilian Defence",
+      "status": "active",
+      "cyclesCompleted": "0",
+      "currentPuzzleIndex": "3",
+      "currentCycle": "1",
+      "correctCount": "0",
+      "bestAccuracy": "NULL",
+      "totalAttempts": "3",
+      "totalTimeMs": "21527",
+      "lastPlayedAt": "2026-03-21 05:49:53"
+    },
+    {
+      "id": "OL1xOzvNwOJg1smmZqZfl",
+      "openingName": "Sicilian Defence",
+      "status": "active",
+      "cyclesCompleted": "0",
+      "currentPuzzleIndex": "9",
+      "currentCycle": "1",
+      "correctCount": "4",
+      "bestAccuracy": "NULL",
+      "totalAttempts": "0",
+      "totalTimeMs": "0",
+      "lastPlayedAt": "2026-03-21 05:25:59"
+    },
+    {
+      "id": "klRuR6a0Yi3YvfaEw41A0",
+      "openingName": "Caro-Kann Defence",
+      "status": "active",
+      "cyclesCompleted": "0",
+      "currentPuzzleIndex": "0",
+      "currentCycle": "1",
+      "correctCount": "0",
+      "bestAccuracy": "NULL",
+      "totalAttempts": "0",
+      "totalTimeMs": "0",
+      "lastPlayedAt": "NULL"
+    },
+    {
+      "id": "3ju6L59lX30yJETcxttpA",
+      "openingName": "Sicilian Defence",
+      "status": "active",
+      "cyclesCompleted": "0",
+      "currentPuzzleIndex": "0",
+      "currentCycle": "1",
+      "correctCount": "0",
+      "bestAccuracy": "NULL",
+      "totalAttempts": "0",
+      "totalTimeMs": "0",
+      "lastPlayedAt": "2026-03-21 05:09:16"
+    },
+    {
+      "id": "-Ev0MMHjj-F0PINS9xeVq",
+      "openingName": "Caro-Kann Defence",
+      "status": "active",
+      "cyclesCompleted": "0",
+      "currentPuzzleIndex": "0",
+      "currentCycle": "1",
+      "correctCount": "0",
+      "bestAccuracy": "NULL",
+      "totalAttempts": "0",
+      "totalTimeMs": "0",
+      "lastPlayedAt": "2026-03-21 05:06:04"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topeningName\tstatus\tcyclesCompleted\tcurrentPuzzleIndex\tcurrentCycle\tcorrectCount\tbestAccuracy\ttotalAttempts\ttotalTimeMs\tlastPlayedAt\nb-40zNOq8Tg08ughSe-rD\tSicilian Defence\tactive\t0\t3\t1\t0\tNULL\t3\t21527\t2026-03-21 05:49:53\nOL1xOzvNwOJg1smmZqZfl\tSicilian Defence\tactive\t0\t9\t1\t4\tNULL\t0\t0\t2026-03-21 05:25:59\nklRuR6a0Yi3YvfaEw41A0\tCaro-Kann Defence\tactive\t0\t0\t1\t0\tNULL\t0\t0\tNULL\n3ju6L59lX30yJETcxttpA\tSicilian Defence\tactive\t0\t0\t1\t0\tNULL\t0\t0\t2026-03-21 05:09:16\n-Ev0MMHjj-F0PINS9xeVq\tCaro-Kann Defence\tactive\t0\t0\t1\t0\tNULL\t0\t0\t2026-03-21 05:06:04\n",
+  "stderr": "",
+  "execution_time_ms": 1599
+}

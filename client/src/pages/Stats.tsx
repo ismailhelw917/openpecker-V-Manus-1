@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, Zap, Shield, Loader, Users, TrendingUp } from "lucide-react";
+import { Download, Zap, Shield, Loader, Users, TrendingUp, Lock } from "lucide-react";
 import { StatsDisplay } from "@/components/StatsDisplay";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "@/_core/deviceId";
@@ -339,34 +339,62 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
             {/* Key Metrics Grid */}
             <StatsDisplay stats={finalStats} isLoading={isLoading} />
 
-            {/* Rating Trend Chart */}
+            {/* Rating Trend Chart - Premium locked */}
             {finalStats && (
-              <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-6">
-                <h3 className="text-base sm:text-xl font-bold text-white mb-4 sm:mb-6">Rating Progression</h3>
-                <ResponsiveContainer width="100%" height={250}>
-                  <LineChart data={MOCK_RATING_TREND}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                    <XAxis dataKey="week" stroke="#94a3b8" />
-                    <YAxis stroke="#94a3b8" />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: "#1e293b",
-                        border: "1px solid #0f766e",
-                        borderRadius: "8px",
-                      }}
-                      labelStyle={{ color: "#fbbf24" }}
-                    />
-                    <Line type="monotone" dataKey="rating" stroke="#fbbf24" strokeWidth={3} dot={{ fill: "#fbbf24" }} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </Card>
+              <div className="relative">
+                {!user?.isPremium && (
+                  <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-950/70 backdrop-blur-sm rounded-lg">
+                    <Lock className="w-8 h-8 text-amber-400 mb-3" />
+                    <p className="text-amber-400 font-bold text-lg mb-1">Premium Feature</p>
+                    <p className="text-slate-400 text-sm mb-4 text-center px-4">Unlock detailed rating progression charts</p>
+                    <Button
+                      onClick={() => setShowPremiumModal(true)}
+                      className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-6"
+                    >
+                      <Zap className="w-4 h-4 mr-2" /> Upgrade
+                    </Button>
+                  </div>
+                )}
+                <Card className={`bg-slate-900/50 border-teal-900/30 p-3 sm:p-6 ${!user?.isPremium ? 'blur-[2px] pointer-events-none select-none' : ''}`}>
+                  <h3 className="text-base sm:text-xl font-bold text-white mb-4 sm:mb-6">Rating Progression</h3>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <LineChart data={MOCK_RATING_TREND}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                      <XAxis dataKey="week" stroke="#94a3b8" />
+                      <YAxis stroke="#94a3b8" />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "#1e293b",
+                          border: "1px solid #0f766e",
+                          borderRadius: "8px",
+                        }}
+                        labelStyle={{ color: "#fbbf24" }}
+                      />
+                      <Line type="monotone" dataKey="rating" stroke="#fbbf24" strokeWidth={3} dot={{ fill: "#fbbf24" }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </Card>
+              </div>
             )}
           </div>
         )}
 
-        {/* Trends Tab */}
+        {/* Trends Tab - Premium locked */}
         {activeTab === "trends" && (
-          <div className="space-y-8">
+          <div className="space-y-8 relative">
+            {!user?.isPremium && (
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-950/70 backdrop-blur-sm rounded-lg min-h-[400px]">
+                <Lock className="w-10 h-10 text-amber-400 mb-3" />
+                <p className="text-amber-400 font-bold text-xl mb-1">Premium Analytics</p>
+                <p className="text-slate-400 text-sm mb-4 text-center px-4 max-w-xs">Unlock accuracy trends, time analysis, and training cycle insights</p>
+                <Button
+                  onClick={() => setShowPremiumModal(true)}
+                  className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-6"
+                >
+                  <Zap className="w-4 h-4 mr-2" /> Upgrade to Premium
+                </Button>
+              </div>
+            )}
             {/* Accuracy Trend */}
             <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-6">
               <h3 className="text-base sm:text-xl font-bold text-white mb-4 sm:mb-6">Accuracy Trend (7 Days)</h3>
@@ -432,9 +460,22 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
           </div>
         )}
 
-        {/* Openings Tab */}
-        {finalStats && activeTab === "openings" && (
-          <div className="space-y-8">
+        {/* Openings Tab - Premium locked */}
+        {activeTab === "openings" && (
+          <div className="space-y-8 relative">
+            {!user?.isPremium && (
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-950/70 backdrop-blur-sm rounded-lg min-h-[300px]">
+                <Lock className="w-10 h-10 text-amber-400 mb-3" />
+                <p className="text-amber-400 font-bold text-xl mb-1">Premium Feature</p>
+                <p className="text-slate-400 text-sm mb-4 text-center px-4 max-w-xs">Track your mastery of each opening with detailed breakdowns</p>
+                <Button
+                  onClick={() => setShowPremiumModal(true)}
+                  className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-6"
+                >
+                  <Zap className="w-4 h-4 mr-2" /> Upgrade to Premium
+                </Button>
+              </div>
+            )}
             <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-6">
               <h3 className="text-base sm:text-xl font-bold text-white mb-4 sm:mb-6">Opening Mastery</h3>
               <div className="space-y-3 sm:space-y-4">

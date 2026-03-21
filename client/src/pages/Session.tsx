@@ -45,6 +45,7 @@ export default function Session() {
   } | null>(null);
   const [puzzleStartTime, setPuzzleStartTime] = useState<number>(Date.now());
 
+
   // ===== ALL useRef HOOKS =====
   const gameRef = useRef(new Chess());
   const puzzleGenRef = useRef(0);

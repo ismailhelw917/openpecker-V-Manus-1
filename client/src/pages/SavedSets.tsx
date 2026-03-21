@@ -132,13 +132,17 @@ export default function SavedSets() {
                     <div className="bg-slate-800/50 rounded p-2 sm:p-3">
                       <p className="text-slate-400 text-[10px] sm:text-xs uppercase">Accuracy</p>
                       <p className="text-white font-bold text-sm sm:text-lg">
-                        {set.bestAccuracy != null ? `${Math.round(Number(set.bestAccuracy))}%` : "—"}
+                        {set.bestAccuracy != null
+                          ? `${Math.round(Number(set.bestAccuracy))}%`
+                          : set.attemptAccuracy != null
+                            ? `${Math.round(set.attemptAccuracy)}%`
+                            : "—"}
                       </p>
                     </div>
                     <div className="bg-slate-800/50 rounded p-2 sm:p-3">
                       <p className="text-slate-400 text-[10px] sm:text-xs uppercase">Solved</p>
                       <p className="text-white font-bold text-sm sm:text-lg">
-                        {set.totalAttempts || 0}
+                        {set.attemptTotalAttempts || set.totalAttempts || 0}
                       </p>
                     </div>
                     <div className="bg-slate-800/50 rounded p-2 sm:p-3">
@@ -155,8 +159,8 @@ export default function SavedSets() {
                     <div className="bg-slate-800/50 rounded p-2 sm:p-3">
                       <p className="text-slate-400 text-[10px] sm:text-xs uppercase">Avg Time</p>
                       <p className="text-white font-bold text-sm">
-                        {set.totalAttempts && set.totalTimeMs
-                          ? `${Math.round((set.totalTimeMs / 1000) / set.totalAttempts)}s`
+                        {(set.attemptTotalAttempts || set.totalAttempts) && (set.attemptTotalTimeMs || set.totalTimeMs)
+                          ? `${Math.round(((set.attemptTotalTimeMs || set.totalTimeMs) / 1000) / (set.attemptTotalAttempts || set.totalAttempts))}s`
                           : "—"}
                       </p>
                     </div>
