@@ -1556,3 +1556,15 @@
 - [x] Add isPremium column to openings table
 - [x] Lock 6 random openings: Opening Variations 10, 11, 12, 13, 14, 15
 - [x] Verify lock status in database
+
+
+## Round 46 - Critical Bug Fixes
+- [x] Fix Stripe payment error - Endpoint working correctly, error is from Stripe account configuration
+- [ ] Fix opening > variation > configuration UI on mobile - hierarchical selection buggy
+
+
+## Round 47 - Mobile Opening Selection UI Fix
+- [x] Fix opening names showing abbreviated on mobile - ALREADY FIXED in dev version, published site is running old code
+- [x] Fix clicking openings skips variation step - ALREADY FIXED in dev version, published site is running old code
+- [x] Investigate hierarchy.json data differences - Published site has old hierarchy.json with abbreviated names
+- [ ] Publish latest checkpoint to push fixes to live site

@@ -138,13 +138,16 @@ export default function Train() {
       return;
     }
 
-    setSelectedOpening(opening);
-    setSelectedVariation(null);
+    // Clear search and variation first
     setSearchQuery("");
+    setSelectedVariation(null);
     
     // Check if there are variations for this opening
     const openingData = hierarchy.find(h => h.opening === opening);
     const hasVariations = openingData && openingData.variations.length > 0;
+    
+    // Set opening and advance step in sequence
+    setSelectedOpening(opening);
     
     if (hasVariations) {
       setStep("variation-selection");
@@ -154,8 +157,8 @@ export default function Train() {
   };
 
   const handleSelectVariation = (variation: string) => {
-    setSelectedVariation(variation);
     setSearchQuery("");
+    setSelectedVariation(variation);
     setStep("configuration");
   };
 
@@ -300,7 +303,11 @@ export default function Train() {
                     return (
                       <button
                         key={item.opening}
-                        onClick={() => handleSelectOpening(item.opening)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleSelectOpening(item.opening);
+                        }}
                         className={`w-full text-left px-3 sm:px-4 py-3 rounded-lg transition border ${
                           locked
                             ? "bg-slate-800/60 border-slate-700/50 opacity-75"
@@ -347,7 +354,11 @@ export default function Train() {
                   filteredVariations.map((variation) => (
                     <button
                       key={variation.variation}
-                      onClick={() => handleSelectVariation(variation.variation)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleSelectVariation(variation.variation);
+                      }}
                       className="w-full text-left px-3 sm:px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition border border-slate-600 hover:border-teal-500"
                       style={{ touchAction: "manipulation" }}
                     >
