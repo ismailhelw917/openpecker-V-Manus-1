@@ -1614,3 +1614,14 @@
 - [x] Remove promo code area from Settings premium modal
 - [x] Unauthenticated users clicking €4.99/€49 already redirect to login (handleCheckout checks !user)
 - [x] Put paywall on Stats page - shows Lock icon + "Sign In Required" for unauthenticated users
+
+## Site Review & Publish (Round 55)
+- [x] Check dev server status and project health
+- [x] Review Home page visually
+- [x] Review Train page visually
+- [x] Review Stats page visually
+- [x] Review Settings page visually
+- [x] Review Leaderboard page visually
+- [x] Fix any issues found during review (silenced counter.dev errors, updated canonical URL to openpecker.com, fixed deprecated meta tag)
+- [x] Run tests to verify everything works (18/22 test files pass, 4 pre-existing failures in puzzle fetch/stats aggregation)
+- [x] Save checkpoint for publishing to restore openpecker.com

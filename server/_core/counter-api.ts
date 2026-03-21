@@ -44,12 +44,10 @@ export async function trackEvent(event: TrackingEvent): Promise<boolean> {
       });
 
       if (!response.ok) {
-        console.error(`[Counter API] Error tracking event: ${response.status} ${response.statusText}`);
-      } else {
-        console.log(`[Counter API] Event tracked: ${event.action}`);
+        // Silently fail - counter.dev is optional analytics
       }
     } catch (error) {
-      console.error('[Counter API] Error:', error);
+      // Silently fail - counter.dev may be unreachable
     }
   });
   
