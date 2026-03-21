@@ -208,7 +208,7 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
             onClick={() => handleCheckout("price_yearly", "yearly")}
             className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-8 py-3 text-lg rounded-lg"
           >
-            Upgrade to Premium - \u20AC49.99/year
+            Upgrade to Premium - €49.99/year
           </Button>
           <p className="text-slate-500 text-sm mt-3">Cancel anytime. 7-day free trial included.</p>
         </div>

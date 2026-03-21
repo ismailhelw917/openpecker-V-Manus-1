@@ -1703,3 +1703,9 @@
 - [x] Tested Italian Game - returns 5 puzzles ✅
 - [ ] Investigate why UI shows "No puzzles found" despite database working
 - [ ] Check browser console for error messages
+
+## Round 73 - Bug Fixes
+- [x] Verified unclassified puzzles already hidden on desktop Train page
+- [x] Fixed premium button Unicode escape - now shows €49.99/year correctly
+- [x] Fixed Stats page API mutation error by adding trackUserOnline and getTotalPlayerCount procedures
+- [x] Verified leaderboard image display is correct (127 online, 7 players, 4.5K visitors)

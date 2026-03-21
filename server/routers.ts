@@ -1308,6 +1308,29 @@ export const appRouter = router({
         // Simulates 127 base users with natural fluctuations
         return getMockOnlineCount();
       }),
+
+    /**
+     * Track user online status
+     */
+    trackUserOnline: publicProcedure
+      .input(z.object({
+        userId: z.number().optional(),
+        userName: z.string().optional(),
+        sessionId: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        // Just acknowledge the tracking - no-op for now
+        return { success: true };
+      }),
+
+    /**
+     * Get total player count
+     */
+    getTotalPlayerCount: publicProcedure
+      .query(async () => {
+        // Return a mock total player count
+        return { totalPlayers: 4500, todayActive: 502 };
+      }),
   }),
 
   // ==================== PAYMENT ====================

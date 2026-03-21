@@ -71,12 +71,14 @@ export default function Train() {
     };
   }, [step, selectedOpening, selectedVariation]);
 
-  // Get unique openings
+  // Get unique openings (exclude Unclassified)
   const uniqueOpenings = useMemo(() => {
-    return hierarchy.map(h => ({
-      opening: h.opening,
-      puzzleCount: h.puzzleCount
-    }));
+    return hierarchy
+      .filter(h => h.opening !== 'Unclassified')
+      .map(h => ({
+        opening: h.opening,
+        puzzleCount: h.puzzleCount
+      }));
   }, [hierarchy]);
 
   // Get variations for selected opening
