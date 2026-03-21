@@ -149,19 +149,29 @@ export default function Settings() {
   }, []);
 
   const handleCheckout = async (priceId: string, planName: string) => {
-    // Don't proceed if auth is still loading or user is not authenticated
-    if (authLoading || !user) {
-      if (authLoading) {
-        toast.info("Loading your account information...");
-      } else {
-        toast.info("Please sign in first to upgrade to premium");
-        window.location.href = getLoginUrl();
-      }
+    // Debug logging
+    console.log('[Checkout] authLoading:', authLoading, 'user:', user);
+    
+    // Don't proceed if auth is still loading
+    if (authLoading) {
+      toast.info("Loading your account information...");
+      console.log('[Checkout] Auth still loading, returning');
       return;
     }
+    
+    // Check if user is authenticated
+    if (!user) {
+      console.log('[Checkout] User not authenticated, redirecting to login');
+      toast.info("Please sign in first to upgrade to premium");
+      window.location.href = getLoginUrl();
+      return;
+    }
+    
+    console.log('[Checkout] Proceeding with checkout for user:', user.id);
 
     setLoading(true);
     try {
+      console.log('[Checkout] Creating checkout session with:', { priceId, userId: user.id, email: user.email });
       const response = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

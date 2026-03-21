@@ -65,7 +65,7 @@ export default function Stats() {
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
   const [selectedSet, setSelectedSet] = useState<string>("all");
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [deviceId] = useState<string | null>(() => {
@@ -73,11 +73,25 @@ export default function Stats() {
   });
 
   const handleCheckout = async (priceId: string, planName: string) => {
+    // Debug logging
+    console.log('[Stats Checkout] authLoading:', authLoading, 'user:', user);
+    
+    // Don't proceed if auth is still loading
+    if (authLoading) {
+      toast.info("Loading your account information...");
+      console.log('[Stats Checkout] Auth still loading, returning');
+      return;
+    }
+    
+    // Check if user is authenticated
     if (!user) {
+      console.log('[Stats Checkout] User not authenticated, redirecting to login');
       toast.info("Please sign in first to upgrade to premium");
       window.location.href = getLoginUrl();
       return;
     }
+    
+    console.log('[Stats Checkout] Proceeding with checkout for user:', user.id);
     setLoading(true);
     try {
       const response = await fetch("/api/create-checkout-session", {
@@ -207,7 +221,7 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
             <div className="px-6 py-8 space-y-4">
               <button
                 onClick={() => handleCheckout("price_monthly", "Monthly")}
-                disabled={loading}
+                disabled={loading || authLoading}
                 className="w-full p-4 rounded-lg border-2 border-slate-700 bg-slate-800/50 hover:border-amber-400 hover:bg-amber-400/5 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center justify-between">
@@ -221,7 +235,7 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
 
               <button
                 onClick={() => handleCheckout("price_lifetime", "Lifetime")}
-                disabled={loading}
+                disabled={loading || authLoading}
                 className="w-full p-4 rounded-lg border-2 border-amber-400/40 bg-amber-400/10 hover:border-amber-400 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center justify-between">
