@@ -10,7 +10,8 @@ import { ChevronDown, Lock, Zap } from "lucide-react";
 
 type Step = "opening-selection" | "variation-selection" | "configuration";
 
-const PUZZLE_COUNT_OPTIONS = [50, 100, 150, 200, 250];
+const PUZZLE_COUNT_OPTIONS = [50, 100, 150, 200, 250, 300, 350];
+// Note: 300 = 6 sets of 50, 350 = 7 sets of 50
 
 interface HierarchyItem {
   opening: string;
