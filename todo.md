@@ -1696,5 +1696,10 @@
 - [x] Confirmed DISPLAY_TO_DB_OPENING mapping is correct ("Queen's Gambit" → "Queens")
 - [x] Database query works correctly when tested directly
 - [x] Added debug logging to getRandomPuzzlesByOpeningAndRating to track puzzle retrieval
-- [ ] Test Queen's Gambit training session after debug logging is active
-- [ ] Verify all other openings return puzzles correctly
+- [x] Created test script to verify puzzle fetching
+- [x] Tested Queen's Gambit - returns 5 puzzles ✅
+- [x] Tested Sicilian Defence - returns 5 puzzles ✅
+- [x] Tested French Defence - returns 5 puzzles ✅
+- [x] Tested Italian Game - returns 5 puzzles ✅
+- [ ] Investigate why UI shows "No puzzles found" despite database working
+- [ ] Check browser console for error messages
