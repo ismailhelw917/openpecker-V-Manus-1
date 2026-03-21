@@ -1577,3 +1577,10 @@
 - [x] Fix parseVariationName to remove all redundant prefixes (Game, Declined, Accepted, etc.)
 - [x] Regenerate hierarchy.json with clean variation names - fixed 301 names, merged 13 duplicates
 - [x] Verify variation names display correctly
+
+## Round 50 - Three Bug Fixes
+- [x] Fix stats not updating - computed real stats from puzzle_attempts, cycle_history, training_sets
+- [x] Fix leaderboard data not showing - created player row for Ismail, auto-create on login and puzzle record
+- [x] Fix payment links - changed window.open to window.location.href for mobile compatibility
+- [x] Fix Stats page infinite loading for anonymous users
+- [x] Added vitest tests for stats computation, streak calculation, player name generation, checkout handling (15 tests passing)

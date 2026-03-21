@@ -1,0 +1,28 @@
+{
+  "query": "SELECT * FROM players WHERE userId = 750572;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT * FROM players WHERE userId = 750572;",
+  "rows": [
+    {
+      "id": "90001",
+      "userId": "750572",
+      "deviceId": "NULL",
+      "name": "Ismail",
+      "email": "happychesspenguin@gmail.com",
+      "type": "registered",
+      "isPremium": "0",
+      "totalPuzzles": "19",
+      "totalCorrect": "5",
+      "totalTimeMs": "898234",
+      "completedCycles": "0",
+      "accuracy": "26.00",
+      "rating": "1200",
+      "lastActivityAt": "2026-03-21 09:40:36",
+      "createdAt": "2026-03-21 09:40:36",
+      "updatedAt": "2026-03-21 09:40:36"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\tdeviceId\tname\temail\ttype\tisPremium\ttotalPuzzles\ttotalCorrect\ttotalTimeMs\tcompletedCycles\taccuracy\trating\tlastActivityAt\tcreatedAt\tupdatedAt\n90001\t750572\tNULL\tIsmail\thappychesspenguin@gmail.com\tregistered\t0\t19\t5\t898234\t0\t26.00\t1200\t2026-03-21 09:40:36\t2026-03-21 09:40:36\t2026-03-21 09:40:36\n",
+  "stderr": "",
+  "execution_time_ms": 1589
+}

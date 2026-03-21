@@ -1,0 +1,46 @@
+{
+  "query": "\n-- Check players table\nSELECT * FROM players;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \n-- Check players table\nSELECT * FROM players;\n",
+  "rows": [
+    {
+      "id": "60004",
+      "userId": "999",
+      "deviceId": "test-device-123",
+      "name": "Guest_test-device-123",
+      "email": "NULL",
+      "type": "registered",
+      "isPremium": "0",
+      "totalPuzzles": "500",
+      "totalCorrect": "450",
+      "totalTimeMs": "0",
+      "completedCycles": "10",
+      "accuracy": "90.00",
+      "rating": "1225",
+      "lastActivityAt": "2026-03-21 09:06:24",
+      "createdAt": "2026-03-21 05:33:37",
+      "updatedAt": "2026-03-21 09:06:24"
+    },
+    {
+      "id": "60005",
+      "userId": "750215",
+      "deviceId": "NULL",
+      "name": "Test-Player",
+      "email": "test@test.com",
+      "type": "registered",
+      "isPremium": "0",
+      "totalPuzzles": "75",
+      "totalCorrect": "55",
+      "totalTimeMs": "900000",
+      "completedCycles": "10",
+      "accuracy": "73.00",
+      "rating": "1214",
+      "lastActivityAt": "2026-03-21 09:06:19",
+      "createdAt": "2026-03-21 06:01:53",
+      "updatedAt": "2026-03-21 09:06:19"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\tdeviceId\tname\temail\ttype\tisPremium\ttotalPuzzles\ttotalCorrect\ttotalTimeMs\tcompletedCycles\taccuracy\trating\tlastActivityAt\tcreatedAt\tupdatedAt\n60004\t999\ttest-device-123\tGuest_test-device-123\tNULL\tregistered\t0\t500\t450\t0\t10\t90.00\t1225\t2026-03-21 09:06:24\t2026-03-21 05:33:37\t2026-03-21 09:06:24\n60005\t750215\tNULL\tTest-Player\ttest@test.com\tregistered\t0\t75\t55\t900000\t10\t73.00\t1214\t2026-03-21 09:06:19\t2026-03-21 06:01:53\t2026-03-21 09:06:19\n",
+  "stderr": "",
+  "execution_time_ms": 1529
+}

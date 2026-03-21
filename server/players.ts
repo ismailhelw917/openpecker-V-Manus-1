@@ -5,7 +5,7 @@ import { sql } from 'drizzle-orm';
  * Player management helpers for the new unified players table
  */
 
-export async function getOrCreatePlayer(userId: number | null, deviceId: string | null, name: string, email?: string, isPremium: number = 0) {
+export async function getOrCreatePlayer(userId: number | null, deviceId: string | null, name: string | null, email?: string | null, isPremium: number = 0) {
   const db = await getDb();
   if (!db) throw new Error('Database not available');
 
@@ -26,8 +26,9 @@ export async function getOrCreatePlayer(userId: number | null, deviceId: string 
 
   // Create player if doesn't exist
   if (!player) {
+    const playerName = name || (userId ? `Player-${userId}` : `Guest-${deviceId?.slice(0, 8) || 'unknown'}`);
     await db.execute(sql`
-      INSERT INTO players (userId, deviceId, name, email, type, isPremium, lastActivityAt) VALUES (${userId || null}, ${deviceId || null}, ${name}, ${email || null}, ${type}, ${isPremium}, NOW())
+      INSERT INTO players (userId, deviceId, name, email, type, isPremium, lastActivityAt) VALUES (${userId || null}, ${deviceId || null}, ${playerName}, ${email || null}, ${type}, ${isPremium}, NOW())
     `);
 
     // Fetch the newly created player
@@ -59,29 +60,58 @@ export async function updatePlayerStats(playerId: number) {
   const userId = player.userId;
   const deviceId = player.deviceId;
 
-  // Update stats from cycle_history and puzzle_attempts
+  // First try to get stats from puzzle_attempts (most accurate, individual puzzle level)
+  // This captures all activity including partial cycles
+  const attemptResult = await db.execute(sql`
+    SELECT 
+      COUNT(*) as totalPuzzles,
+      SUM(isCorrect) as totalCorrect,
+      SUM(timeMs) as totalTimeMs
+    FROM puzzle_attempts pa
+    JOIN training_sets ts ON pa.trainingSetId = ts.id
+    WHERE (ts.userId = ${userId} OR ts.deviceId = ${deviceId})
+      AND (ts.userId IS NOT NULL OR ts.deviceId IS NOT NULL)
+  `);
+  const ar = Array.isArray(attemptResult) ? (Array.isArray(attemptResult[0]) ? attemptResult[0] : attemptResult) : [];
+  const attemptPuzzles = Number(ar[0]?.totalPuzzles || 0);
+  const attemptCorrect = Number(ar[0]?.totalCorrect || 0);
+  const attemptTimeMs = Number(ar[0]?.totalTimeMs || 0);
+
+  // Get cycle count from cycle_history
+  const cycleResult = await db.execute(sql`
+    SELECT COUNT(*) as cnt FROM cycle_history 
+    WHERE (userId = ${userId} OR deviceId = ${deviceId}) AND (userId IS NOT NULL OR deviceId IS NOT NULL)
+  `);
+  const cr = Array.isArray(cycleResult) ? (Array.isArray(cycleResult[0]) ? cycleResult[0] : cycleResult) : [];
+  const completedCycles = Number(cr[0]?.cnt || 0);
+
+  // Also get cycle-level totals as fallback
+  const cycleTotals = await db.execute(sql`
+    SELECT 
+      COALESCE(SUM(totalPuzzles), 0) as totalPuzzles,
+      COALESCE(SUM(correctCount), 0) as totalCorrect,
+      COALESCE(SUM(totalTimeMs), 0) as totalTimeMs
+    FROM cycle_history 
+    WHERE (userId = ${userId} OR deviceId = ${deviceId}) AND (userId IS NOT NULL OR deviceId IS NOT NULL)
+  `);
+  const ct = Array.isArray(cycleTotals) ? (Array.isArray(cycleTotals[0]) ? cycleTotals[0] : cycleTotals) : [];
+  const cyclePuzzles = Number(ct[0]?.totalPuzzles || 0);
+  const cycleCorrect = Number(ct[0]?.totalCorrect || 0);
+  const cycleTimeMs = Number(ct[0]?.totalTimeMs || 0);
+
+  // Use the higher values (puzzle_attempts captures partial cycles, cycle_history captures completed ones)
+  const totalPuzzles = Math.max(attemptPuzzles, cyclePuzzles);
+  const totalCorrect = Math.max(attemptCorrect, cycleCorrect);
+  const totalTimeMs = Math.max(attemptTimeMs, cycleTimeMs);
+  const accuracy = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 100) : 0;
+
   await db.execute(sql`
     UPDATE players SET
-      totalPuzzles = COALESCE((
-        SELECT SUM(totalPuzzles) FROM cycle_history 
-        WHERE (userId = ${userId} OR deviceId = ${deviceId}) AND (userId IS NOT NULL OR deviceId IS NOT NULL)
-      ), 0),
-      totalCorrect = COALESCE((
-        SELECT SUM(correctCount) FROM cycle_history 
-        WHERE (userId = ${userId} OR deviceId = ${deviceId}) AND (userId IS NOT NULL OR deviceId IS NOT NULL)
-      ), 0),
-      totalTimeMs = COALESCE((
-        SELECT SUM(totalTimeMs) FROM cycle_history 
-        WHERE (userId = ${userId} OR deviceId = ${deviceId}) AND (userId IS NOT NULL OR deviceId IS NOT NULL)
-      ), 0),
-      completedCycles = COALESCE((
-        SELECT COUNT(*) FROM cycle_history 
-        WHERE (userId = ${userId} OR deviceId = ${deviceId}) AND (userId IS NOT NULL OR deviceId IS NOT NULL)
-      ), 0),
-      accuracy = CASE 
-        WHEN COALESCE((SELECT SUM(totalPuzzles) FROM cycle_history WHERE (userId = ${userId} OR deviceId = ${deviceId}) AND (userId IS NOT NULL OR deviceId IS NOT NULL)), 0) = 0 THEN 0
-        ELSE ROUND((COALESCE((SELECT SUM(correctCount) FROM cycle_history WHERE (userId = ${userId} OR deviceId = ${deviceId}) AND (userId IS NOT NULL OR deviceId IS NOT NULL)), 0) / COALESCE((SELECT SUM(totalPuzzles) FROM cycle_history WHERE (userId = ${userId} OR deviceId = ${deviceId}) AND (userId IS NOT NULL OR deviceId IS NOT NULL)), 1)) * 100)
-      END,
+      totalPuzzles = ${totalPuzzles},
+      totalCorrect = ${totalCorrect},
+      totalTimeMs = ${totalTimeMs},
+      completedCycles = ${completedCycles},
+      accuracy = ${accuracy},
       lastActivityAt = NOW()
     WHERE id = ${playerId}
   `);

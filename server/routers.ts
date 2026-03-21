@@ -128,9 +128,26 @@ export const appRouter = router({
           // Track user login with Counter API (record name for leaderboard)
           if (user && user.id && user.name) {
             await trackUserLogin(user.id, user.name);
-            // Also update player name in players table for leaderboard display
-            if (user.id) {
-              await updatePlayerName(user.id, user.name);
+            // Ensure player row exists in players table for leaderboard
+            try {
+              const { getOrCreatePlayer, updatePlayerStats } = await import('./players');
+              const player = await getOrCreatePlayer(
+                user.id,
+                null,
+                user.name,
+                userInfo.email,
+                user.isPremium || 0
+              );
+              // Update player name if it changed
+              if (user.id) {
+                await updatePlayerName(user.id, user.name);
+              }
+              // Refresh player stats from actual data
+              if (player?.id) {
+                await updatePlayerStats(player.id);
+              }
+            } catch (playerError) {
+              console.warn('[OAuth] Failed to create/update player:', playerError);
             }
           }
 
@@ -807,9 +824,14 @@ export const appRouter = router({
         const db = await getDb();
         const stats = await getPuzzleAttemptStats(ctx.user.id, null);
         const accuracy = stats.totalPuzzles > 0 ? Math.round((stats.totalCorrect / stats.totalPuzzles) * 100) : 0;
+        const totalTimeMs = stats.totalTimeMs || 0;
+        const totalPuzzles = stats.totalPuzzles || 0;
+        const totalCorrect = stats.totalCorrect || 0;
+        const totalIncorrect = totalPuzzles - totalCorrect;
         
         // Fetch player rating from players table
         let playerRating = 1200;
+        let peakRating = 1200;
         if (db) {
           try {
             const rows = await db.execute(
@@ -818,41 +840,187 @@ export const appRouter = router({
             if (Array.isArray(rows) && rows.length > 0 && Array.isArray(rows[0]) && rows[0].length > 0) {
               const row = rows[0][0];
               if (row?.rating) {
-                playerRating = row.rating;
+                playerRating = Number(row.rating);
+                peakRating = playerRating;
               }
             }
           } catch (error) {
             console.error('[getUserStats] Error fetching player rating:', error);
           }
         }
-        
+
+        // Compute cycle stats from cycle_history
+        let totalCycles = 0;
+        let fastestCycleTimeMs = 0;
+        let cyclesToday = 0;
+        if (db) {
+          try {
+            const cycleRows = await db.execute(
+              sql`SELECT COUNT(*) as cnt, MIN(totalTimeMs) as fastest FROM cycle_history WHERE userId = ${ctx.user.id}`
+            );
+            const cr = Array.isArray(cycleRows) ? (Array.isArray(cycleRows[0]) ? cycleRows[0] : cycleRows) : [];
+            if (cr[0]) {
+              totalCycles = Number(cr[0].cnt || 0);
+              fastestCycleTimeMs = Number(cr[0].fastest || 0);
+            }
+            // Cycles today
+            const todayRows = await db.execute(
+              sql`SELECT COUNT(*) as cnt FROM cycle_history WHERE userId = ${ctx.user.id} AND DATE(completedAt) = CURDATE()`
+            );
+            const tr = Array.isArray(todayRows) ? (Array.isArray(todayRows[0]) ? todayRows[0] : todayRows) : [];
+            if (tr[0]) cyclesToday = Number(tr[0].cnt || 0);
+          } catch (error) {
+            console.error('[getUserStats] Error fetching cycle stats:', error);
+          }
+        }
+
+        // Compute daily stats and streaks from training_sets
+        let puzzlesToday = 0;
+        let currentStreak = 0;
+        let longestStreak = 0;
+        let firstActivityDate: Date | null = null;
+        if (db) {
+          try {
+            // Puzzles solved today
+            const todayPuzzles = await db.execute(
+              sql`SELECT COUNT(*) as cnt FROM puzzle_attempts pa
+                  JOIN training_sets ts ON pa.trainingSetId = ts.id
+                  WHERE ts.userId = ${ctx.user.id} AND DATE(pa.completedAt) = CURDATE()`
+            );
+            const tp = Array.isArray(todayPuzzles) ? (Array.isArray(todayPuzzles[0]) ? todayPuzzles[0] : todayPuzzles) : [];
+            if (tp[0]) puzzlesToday = Number(tp[0].cnt || 0);
+
+            // Get distinct active days for streak calculation
+            const activeDays = await db.execute(
+              sql`SELECT DISTINCT DATE(pa.completedAt) as activeDay FROM puzzle_attempts pa
+                  JOIN training_sets ts ON pa.trainingSetId = ts.id
+                  WHERE ts.userId = ${ctx.user.id}
+                  ORDER BY activeDay DESC`
+            );
+            const days = Array.isArray(activeDays) ? (Array.isArray(activeDays[0]) ? activeDays[0] : activeDays) : [];
+            if (days.length > 0) {
+              firstActivityDate = new Date(days[days.length - 1].activeDay);
+              // Calculate current streak (consecutive days ending today or yesterday)
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
+              let streak = 0;
+              let maxStreak = 0;
+              let tempStreak = 0;
+              let expectedDate = new Date(today);
+              // Check if today or yesterday has activity
+              const firstDay = new Date(days[0].activeDay);
+              firstDay.setHours(0, 0, 0, 0);
+              const diffFromToday = Math.floor((today.getTime() - firstDay.getTime()) / (1000 * 60 * 60 * 24));
+              if (diffFromToday > 1) {
+                // Last activity was more than 1 day ago, current streak is 0
+                streak = 0;
+              } else {
+                expectedDate = new Date(firstDay);
+                for (let i = 0; i < days.length; i++) {
+                  const dayDate = new Date(days[i].activeDay);
+                  dayDate.setHours(0, 0, 0, 0);
+                  const diff = Math.floor((expectedDate.getTime() - dayDate.getTime()) / (1000 * 60 * 60 * 24));
+                  if (diff === 0) {
+                    streak++;
+                    expectedDate.setDate(expectedDate.getDate() - 1);
+                  } else {
+                    break;
+                  }
+                }
+              }
+              // Calculate longest streak
+              tempStreak = 1;
+              maxStreak = 1;
+              for (let i = 1; i < days.length; i++) {
+                const prev = new Date(days[i - 1].activeDay);
+                const curr = new Date(days[i].activeDay);
+                prev.setHours(0, 0, 0, 0);
+                curr.setHours(0, 0, 0, 0);
+                const diff = Math.floor((prev.getTime() - curr.getTime()) / (1000 * 60 * 60 * 24));
+                if (diff === 1) {
+                  tempStreak++;
+                  maxStreak = Math.max(maxStreak, tempStreak);
+                } else {
+                  tempStreak = 1;
+                }
+              }
+              currentStreak = streak;
+              longestStreak = Math.max(maxStreak, streak);
+            }
+          } catch (error) {
+            console.error('[getUserStats] Error fetching daily stats:', error);
+          }
+        }
+
+        // Compute opening stats
+        let bestOpening = "N/A";
+        let weakestOpening = "N/A";
+        if (db) {
+          try {
+            const openingStats = await db.execute(
+              sql`SELECT ts.openingName,
+                    COUNT(*) as attempts,
+                    SUM(pa.isCorrect) as correct
+                  FROM puzzle_attempts pa
+                  JOIN training_sets ts ON pa.trainingSetId = ts.id
+                  WHERE ts.userId = ${ctx.user.id} AND ts.openingName IS NOT NULL
+                  GROUP BY ts.openingName
+                  HAVING attempts >= 3
+                  ORDER BY (correct / attempts) DESC`
+            );
+            const os = Array.isArray(openingStats) ? (Array.isArray(openingStats[0]) ? openingStats[0] : openingStats) : [];
+            if (os.length > 0) {
+              bestOpening = os[0].openingName || "N/A";
+              weakestOpening = os[os.length - 1].openingName || "N/A";
+            }
+          } catch (error) {
+            console.error('[getUserStats] Error fetching opening stats:', error);
+          }
+        }
+
+        // Compute time stats
+        const totalTimeHours = totalTimeMs > 0 ? Math.floor(totalTimeMs / 3600000) : 0;
+        const totalTimeMinutes = totalTimeMs > 0 ? Math.floor(totalTimeMs / 60000) : 0;
+        const avgTimePerPuzzleMs = totalPuzzles > 0 ? Math.round(totalTimeMs / totalPuzzles) : 0;
+        const avgTimePerPuzzleStr = avgTimePerPuzzleMs > 0 ? (avgTimePerPuzzleMs / 1000).toFixed(1) + "s" : "0s";
+        const studyTimeStr = totalTimeHours > 0 ? totalTimeHours + "h" : (totalTimeMinutes > 0 ? totalTimeMinutes + "m" : "0h");
+
+        // Compute averages per day
+        const daysSinceFirst = firstActivityDate ? Math.max(1, Math.ceil((Date.now() - firstActivityDate.getTime()) / (1000 * 60 * 60 * 24))) : 1;
+        const avgPuzzlesPerDay = totalPuzzles > 0 ? Math.round(totalPuzzles / daysSinceFirst) : 0;
+        const avgCyclesPerDay = totalCycles > 0 ? Math.round((totalCycles / daysSinceFirst) * 10) / 10 : 0;
+        const avgPuzzlesPerCycle = totalCycles > 0 ? Math.round(totalPuzzles / totalCycles) : 0;
+        const fastestCycleTime = fastestCycleTimeMs > 0 ? (fastestCycleTimeMs / 1000).toFixed(0) + "s" : "N/A";
+        const consistency = totalPuzzles >= 5 ? Math.min(100, Math.round((currentStreak / Math.max(daysSinceFirst, 1)) * 100)) : 0;
+        const ratingGain = playerRating - 1200;
+
         return {
           userId: ctx.user.id,
-          totalPuzzles: stats.totalPuzzles || 0,
-          totalCorrect: stats.totalCorrect || 0,
-          accuracy: accuracy,
-          totalCycles: 0,
-          averageTimePerPuzzle: stats.totalPuzzles > 0 ? Math.round(stats.totalTimeMs / stats.totalPuzzles) : 0,
-          totalTimeMs: stats.totalTimeMs || 0,
+          totalPuzzles,
+          totalCorrect,
+          accuracy,
+          totalCycles,
+          averageTimePerPuzzle: avgTimePerPuzzleMs,
+          totalTimeMs,
           rating: playerRating,
-          peakRating: playerRating,
-          ratingGain: 0,
-          consistency: 0,
-          totalIncorrect: (stats.totalPuzzles || 0) - (stats.totalCorrect || 0),
-          avgPuzzlesPerCycle: 0,
-          fastestCycleTime: "N/A",
-          studyTime: "0h",
-          totalTimeHours: "0h",
-          avgTimePerPuzzle: "0s",
-          totalTimeMinutes: 0,
-          currentStreak: 0,
-          longestStreak: 0,
-          puzzlesToday: 0,
-          cyclesToday: 0,
-          avgPuzzlesPerDay: 0,
-          avgCyclesPerDay: 0,
-          bestOpening: "N/A",
-          weakestOpening: "N/A",
+          peakRating,
+          ratingGain,
+          consistency,
+          totalIncorrect,
+          avgPuzzlesPerCycle,
+          fastestCycleTime,
+          studyTime: studyTimeStr,
+          totalTimeHours: totalTimeHours + "h",
+          avgTimePerPuzzle: avgTimePerPuzzleStr,
+          totalTimeMinutes,
+          currentStreak,
+          longestStreak,
+          puzzlesToday,
+          cyclesToday,
+          avgPuzzlesPerDay,
+          avgCyclesPerDay,
+          bestOpening,
+          weakestOpening,
           lastActive: new Date(),
         };
       }),
@@ -942,7 +1110,7 @@ export const appRouter = router({
         })
       )
       .mutation(async ({ input }) => {
-        return recordPuzzleAttempt({
+        const result = await recordPuzzleAttempt({
           userId: input.userId || null,
           deviceId: input.deviceId || null,
           trainingSetId: input.trainingSetId,
@@ -951,6 +1119,25 @@ export const appRouter = router({
           isCorrect: input.isCorrect ? 1 : 0,
           timeMs: input.timeMs,
         });
+        // Update player stats in leaderboard after each attempt
+        if (input.userId || input.deviceId) {
+          try {
+            const { getOrCreatePlayer, updatePlayerStats } = await import('./players');
+            const player = await getOrCreatePlayer(
+              input.userId || null,
+              input.deviceId || null,
+              null,
+              null,
+              0
+            );
+            if (player?.id) {
+              await updatePlayerStats(player.id);
+            }
+          } catch (e) {
+            console.warn('[record] Failed to update player stats:', e);
+          }
+        }
+        return result;
       }),
 
     /**

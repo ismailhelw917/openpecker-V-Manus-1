@@ -96,8 +96,7 @@ export default function Stats() {
       if (!response.ok) throw new Error(`Failed to create checkout session: ${response.status}`);
       const data = await response.json();
       if (data?.url) {
-        window.open(data.url, "_blank");
-        toast.success("Opening Stripe checkout...");
+        window.location.href = data.url;
       } else {
         throw new Error("No checkout URL received");
       }
@@ -148,11 +147,11 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
     return () => clearInterval(interval);
   }, [user, refetchStats]);
 
-  // Show loading state
-  const isLoading = user ? statsLoading : anonStatsLoading;
+  // Show loading state - wait for auth to finish before deciding which stats to use
+  const isLoading = authLoading || (user ? statsLoading : anonStatsLoading);
   const finalStats = user ? stats : anonStats;
 
-  if (isLoading && !finalStats) {
+  if ((authLoading || (isLoading && !finalStats)) && !(!authLoading && !user && !anonStatsLoading && !anonStats)) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center">
         <div className="text-center">

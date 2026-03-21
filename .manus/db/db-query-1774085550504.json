@@ -1,0 +1,143 @@
+{
+  "query": "\n-- Check puzzle_attempts for user 750572\nSELECT pa.trainingSetId, pa.puzzleId, pa.isCorrect, pa.timeMs, pa.completedAt \nFROM puzzle_attempts pa \nJOIN training_sets ts ON pa.trainingSetId = ts.id \nWHERE ts.userId = 750572 \nORDER BY pa.completedAt DESC LIMIT 20;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \n-- Check puzzle_attempts for user 750572\nSELECT pa.trainingSetId, pa.puzzleId, pa.isCorrect, pa.timeMs, pa.completedAt \nFROM puzzle_attempts pa \nJOIN training_sets ts ON pa.trainingSetId = ts.id \nWHERE ts.userId = 750572 \nORDER BY pa.completedAt DESC LIMIT 20;\n",
+  "rows": [
+    {
+      "trainingSetId": "JKynpDwY_fx8YAS-wX_U7",
+      "puzzleId": "005jJ",
+      "isCorrect": "1",
+      "timeMs": "7210",
+      "completedAt": "2026-03-21 09:20:21"
+    },
+    {
+      "trainingSetId": "JKynpDwY_fx8YAS-wX_U7",
+      "puzzleId": "0054a",
+      "isCorrect": "1",
+      "timeMs": "13113",
+      "completedAt": "2026-03-21 09:20:01"
+    },
+    {
+      "trainingSetId": "JKynpDwY_fx8YAS-wX_U7",
+      "puzzleId": "002Tf",
+      "isCorrect": "0",
+      "timeMs": "19950",
+      "completedAt": "2026-03-21 09:19:42"
+    },
+    {
+      "trainingSetId": "JKynpDwY_fx8YAS-wX_U7",
+      "puzzleId": "002IE",
+      "isCorrect": "0",
+      "timeMs": "4407",
+      "completedAt": "2026-03-21 09:19:16"
+    },
+    {
+      "trainingSetId": "s4qceOABVwKMG77nS-PBW",
+      "puzzleId": "002Tf",
+      "isCorrect": "1",
+      "timeMs": "15253",
+      "completedAt": "2026-03-21 07:08:20"
+    },
+    {
+      "trainingSetId": "s4qceOABVwKMG77nS-PBW",
+      "puzzleId": "002IE",
+      "isCorrect": "1",
+      "timeMs": "4596",
+      "completedAt": "2026-03-21 07:08:02"
+    },
+    {
+      "trainingSetId": "-Ev0MMHjj-F0PINS9xeVq",
+      "puzzleId": "002KJ",
+      "isCorrect": "1",
+      "timeMs": "426568",
+      "completedAt": "2026-03-21 05:06:05"
+    },
+    {
+      "trainingSetId": "0Wa3DUoju-0KbFYyPDH8d",
+      "puzzleId": "002KJ",
+      "isCorrect": "0",
+      "timeMs": "109502",
+      "completedAt": "2026-03-21 04:52:06"
+    },
+    {
+      "trainingSetId": "IzbHuwkowl_iLB9Mn3413",
+      "puzzleId": "006GK",
+      "isCorrect": "0",
+      "timeMs": "158005",
+      "completedAt": "2026-03-20 22:02:19"
+    },
+    {
+      "trainingSetId": "teC0_hexB68HP4x4Wjz0_",
+      "puzzleId": "pCryx",
+      "isCorrect": "0",
+      "timeMs": "3205",
+      "completedAt": "2026-03-19 05:49:11"
+    },
+    {
+      "trainingSetId": "teC0_hexB68HP4x4Wjz0_",
+      "puzzleId": "3z54w",
+      "isCorrect": "0",
+      "timeMs": "58145",
+      "completedAt": "2026-03-19 05:49:07"
+    },
+    {
+      "trainingSetId": "teC0_hexB68HP4x4Wjz0_",
+      "puzzleId": "3z54w",
+      "isCorrect": "0",
+      "timeMs": "2863",
+      "completedAt": "2026-03-19 05:44:01"
+    },
+    {
+      "trainingSetId": "teC0_hexB68HP4x4Wjz0_",
+      "puzzleId": "3z54w",
+      "isCorrect": "0",
+      "timeMs": "10170",
+      "completedAt": "2026-03-19 05:43:56"
+    },
+    {
+      "trainingSetId": "teC0_hexB68HP4x4Wjz0_",
+      "puzzleId": "3z54w",
+      "isCorrect": "0",
+      "timeMs": "2187",
+      "completedAt": "2026-03-19 05:43:44"
+    },
+    {
+      "trainingSetId": "teC0_hexB68HP4x4Wjz0_",
+      "puzzleId": "3z54w",
+      "isCorrect": "0",
+      "timeMs": "15405",
+      "completedAt": "2026-03-19 05:29:57"
+    },
+    {
+      "trainingSetId": "teC0_hexB68HP4x4Wjz0_",
+      "puzzleId": "3z54w",
+      "isCorrect": "0",
+      "timeMs": "4650",
+      "completedAt": "2026-03-19 05:29:40"
+    },
+    {
+      "trainingSetId": "teC0_hexB68HP4x4Wjz0_",
+      "puzzleId": "3z54w",
+      "isCorrect": "0",
+      "timeMs": "7252",
+      "completedAt": "2026-03-19 05:23:28"
+    },
+    {
+      "trainingSetId": "A5EJkr3Ft1-CWX4uEjWmk",
+      "puzzleId": "0Zrcu",
+      "isCorrect": "0",
+      "timeMs": "19505",
+      "completedAt": "2026-03-18 20:26:40"
+    },
+    {
+      "trainingSetId": "A5EJkr3Ft1-CWX4uEjWmk",
+      "puzzleId": "0Sa7W",
+      "isCorrect": "0",
+      "timeMs": "16248",
+      "completedAt": "2026-03-18 20:26:16"
+    }
+  ],
+  "messages": [],
+  "stdout": "trainingSetId\tpuzzleId\tisCorrect\ttimeMs\tcompletedAt\nJKynpDwY_fx8YAS-wX_U7\t005jJ\t1\t7210\t2026-03-21 09:20:21\nJKynpDwY_fx8YAS-wX_U7\t0054a\t1\t13113\t2026-03-21 09:20:01\nJKynpDwY_fx8YAS-wX_U7\t002Tf\t0\t19950\t2026-03-21 09:19:42\nJKynpDwY_fx8YAS-wX_U7\t002IE\t0\t4407\t2026-03-21 09:19:16\ns4qceOABVwKMG77nS-PBW\t002Tf\t1\t15253\t2026-03-21 07:08:20\ns4qceOABVwKMG77nS-PBW\t002IE\t1\t4596\t2026-03-21 07:08:02\n-Ev0MMHjj-F0PINS9xeVq\t002KJ\t1\t426568\t2026-03-21 05:06:05\n0Wa3DUoju-0KbFYyPDH8d\t002KJ\t0\t109502\t2026-03-21 04:52:06\nIzbHuwkowl_iLB9Mn3413\t006GK\t0\t158005\t2026-03-20 22:02:19\nteC0_hexB68HP4x4Wjz0_\tpCryx\t0\t3205\t2026-03-19 05:49:11\nteC0_hexB68HP4x4Wjz0_\t3z54w\t0\t58145\t2026-03-19 05:49:07\nteC0_hexB68HP4x4Wjz0_\t3z54w\t0\t2863\t2026-03-19 05:44:01\nteC0_hexB68HP4x4Wjz0_\t3z54w\t0\t10170\t2026-03-19 05:43:56\nteC0_hexB68HP4x4Wjz0_\t3z54w\t0\t2187\t2026-03-19 05:43:44\nteC0_hexB68HP4x4Wjz0_\t3z54w\t0\t15405\t2026-03-19 05:29:57\nteC0_hexB68HP4x4Wjz0_\t3z54w\t0\t4650\t2026-03-19 05:29:40\nteC0_hexB68HP4x4Wjz0_\t3z54w\t0\t7252\t2026-03-19 05:23:28\nA5EJkr3Ft1-CWX4uEjWmk\t0Zrcu\t0\t19505\t2026-03-18 20:26:40\nA5EJkr3Ft1-CWX4uEjWmk\t0Sa7W\t0\t16248\t2026-03-18 20:26:16\n",
+  "stderr": "",
+  "execution_time_ms": 1501
+}

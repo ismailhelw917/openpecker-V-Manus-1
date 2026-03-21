@@ -1,0 +1,110 @@
+{
+  "query": "\n-- Check Ismail's (user 750572) training sets and their puzzle attempts\nSELECT ts.id, ts.openingName, ts.puzzleCount, ts.cyclesCompleted, ts.totalAttempts, ts.totalTimeMs, ts.status, ts.createdAt\nFROM training_sets ts WHERE ts.userId = 750572 ORDER BY ts.createdAt DESC LIMIT 10;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \n-- Check Ismail's (user 750572) training sets and their puzzle attempts\nSELECT ts.id, ts.openingName, ts.puzzleCount, ts.cyclesCompleted, ts.totalAttempts, ts.totalTimeMs, ts.status, ts.createdAt\nFROM training_sets ts WHERE ts.userId = 750572 ORDER BY ts.createdAt DESC LIMIT 10;\n",
+  "rows": [
+    {
+      "id": "JKynpDwY_fx8YAS-wX_U7",
+      "openingName": "Queen's Gambit",
+      "puzzleCount": "50",
+      "cyclesCompleted": "0",
+      "totalAttempts": "4",
+      "totalTimeMs": "44680",
+      "status": "active",
+      "createdAt": "2026-03-21 09:19:11"
+    },
+    {
+      "id": "set_1774082858062_q5lzk5vwa",
+      "openingName": "Sicilian",
+      "puzzleCount": "50",
+      "cyclesCompleted": "0",
+      "totalAttempts": "0",
+      "totalTimeMs": "0",
+      "status": "active",
+      "createdAt": "2026-03-21 08:47:38"
+    },
+    {
+      "id": "s4qceOABVwKMG77nS-PBW",
+      "openingName": "Queen's Gambit",
+      "puzzleCount": "50",
+      "cyclesCompleted": "0",
+      "totalAttempts": "2",
+      "totalTimeMs": "19849",
+      "status": "active",
+      "createdAt": "2026-03-21 07:07:55"
+    },
+    {
+      "id": "klRuR6a0Yi3YvfaEw41A0",
+      "openingName": "Caro-Kann Defence",
+      "puzzleCount": "50",
+      "cyclesCompleted": "0",
+      "totalAttempts": "0",
+      "totalTimeMs": "0",
+      "status": "active",
+      "createdAt": "2026-03-21 05:18:42"
+    },
+    {
+      "id": "-Ev0MMHjj-F0PINS9xeVq",
+      "openingName": "Caro-Kann Defence",
+      "puzzleCount": "50",
+      "cyclesCompleted": "0",
+      "totalAttempts": "0",
+      "totalTimeMs": "0",
+      "status": "active",
+      "createdAt": "2026-03-21 04:58:56"
+    },
+    {
+      "id": "0Wa3DUoju-0KbFYyPDH8d",
+      "openingName": "Caro-Kann Defence",
+      "puzzleCount": "50",
+      "cyclesCompleted": "0",
+      "totalAttempts": "0",
+      "totalTimeMs": "0",
+      "status": "active",
+      "createdAt": "2026-03-21 04:50:15"
+    },
+    {
+      "id": "IzbHuwkowl_iLB9Mn3413",
+      "openingName": "Italian Game",
+      "puzzleCount": "50",
+      "cyclesCompleted": "0",
+      "totalAttempts": "0",
+      "totalTimeMs": "0",
+      "status": "active",
+      "createdAt": "2026-03-20 21:59:39"
+    },
+    {
+      "id": "oToQUorIeqwrJCSz1wz27",
+      "openingName": "Caro-Kann Defence",
+      "puzzleCount": "50",
+      "cyclesCompleted": "0",
+      "totalAttempts": "0",
+      "totalTimeMs": "0",
+      "status": "active",
+      "createdAt": "2026-03-20 21:49:47"
+    },
+    {
+      "id": "Q6FOVP9gTPAz0aHDFkOkN",
+      "openingName": "Caro-Kann Defence",
+      "puzzleCount": "50",
+      "cyclesCompleted": "0",
+      "totalAttempts": "0",
+      "totalTimeMs": "0",
+      "status": "active",
+      "createdAt": "2026-03-20 21:31:06"
+    },
+    {
+      "id": "0UAgt-S2OxHQdWzP2VdwC",
+      "openingName": "Sicilian Defence",
+      "puzzleCount": "50",
+      "cyclesCompleted": "0",
+      "totalAttempts": "0",
+      "totalTimeMs": "0",
+      "status": "active",
+      "createdAt": "2026-03-20 20:56:42"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topeningName\tpuzzleCount\tcyclesCompleted\ttotalAttempts\ttotalTimeMs\tstatus\tcreatedAt\nJKynpDwY_fx8YAS-wX_U7\tQueen's Gambit\t50\t0\t4\t44680\tactive\t2026-03-21 09:19:11\nset_1774082858062_q5lzk5vwa\tSicilian\t50\t0\t0\t0\tactive\t2026-03-21 08:47:38\ns4qceOABVwKMG77nS-PBW\tQueen's Gambit\t50\t0\t2\t19849\tactive\t2026-03-21 07:07:55\nklRuR6a0Yi3YvfaEw41A0\tCaro-Kann Defence\t50\t0\t0\t0\tactive\t2026-03-21 05:18:42\n-Ev0MMHjj-F0PINS9xeVq\tCaro-Kann Defence\t50\t0\t0\t0\tactive\t2026-03-21 04:58:56\n0Wa3DUoju-0KbFYyPDH8d\tCaro-Kann Defence\t50\t0\t0\t0\tactive\t2026-03-21 04:50:15\nIzbHuwkowl_iLB9Mn3413\tItalian Game\t50\t0\t0\t0\tactive\t2026-03-20 21:59:39\noToQUorIeqwrJCSz1wz27\tCaro-Kann Defence\t50\t0\t0\t0\tactive\t2026-03-20 21:49:47\nQ6FOVP9gTPAz0aHDFkOkN\tCaro-Kann Defence\t50\t0\t0\t0\tactive\t2026-03-20 21:31:06\n0UAgt-S2OxHQdWzP2VdwC\tSicilian Defence\t50\t0\t0\t0\tactive\t2026-03-20 20:56:42\n",
+  "stderr": "",
+  "execution_time_ms": 1578
+}
