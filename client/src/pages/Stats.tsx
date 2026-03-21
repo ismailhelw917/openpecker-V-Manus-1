@@ -175,26 +175,29 @@ export default function Stats() {
     retryDelay: 1000,
   });
 
-  // Track user online status
+  // Track user online status - debounced
   useEffect(() => {
-    if (user || deviceId) {
-      trackOnlineMutation.mutate(
-        {
-          userId: user?.id,
-          userName: user?.name ?? undefined,
-          sessionId: deviceId || 'anonymous',
-        },
-        {
-          onError: (error) => {
-            console.error('[Stats] trackUserOnline error:', error);
+    if (user?.id || deviceId) {
+      const timer = setTimeout(() => {
+        trackOnlineMutation.mutate(
+          {
+            userId: user?.id,
+            userName: user?.name ?? undefined,
+            sessionId: deviceId || 'anonymous',
           },
-          onSuccess: () => {
-            console.log('[Stats] trackUserOnline success');
-          },
-        }
-      );
+          {
+            onError: (error) => {
+              console.error('[Stats] trackUserOnline error:', error);
+            },
+            onSuccess: () => {
+              console.log('[Stats] trackUserOnline success');
+            },
+          }
+        );
+      }, 1000);
+      return () => clearTimeout(timer);
     }
-  }, [user, deviceId, trackOnlineMutation]);
+  }, [user?.id, deviceId]);
 
   // Auto-refresh stats every 5 seconds
   useEffect(() => {
