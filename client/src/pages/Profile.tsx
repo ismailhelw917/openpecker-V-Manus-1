@@ -312,19 +312,7 @@ export default function Profile() {
                 </p>
               </div>
 
-              <div className="bg-slate-700/30 rounded-lg p-3 sm:p-4">
-                <p className="text-xs sm:text-sm text-slate-400">Win Rate</p>
-                <p className="text-lg sm:text-2xl font-bold text-green-400">
-                  {userStats.data?.winRate || 0}%
-                </p>
-              </div>
 
-              <div className="bg-slate-700/30 rounded-lg p-3 sm:p-4">
-                <p className="text-xs sm:text-sm text-slate-400">Loss Rate</p>
-                <p className="text-lg sm:text-2xl font-bold text-red-400">
-                  {userStats.data ? (100 - (userStats.data.winRate || 0)).toFixed(1) : 0}%
-                </p>
-              </div>
             </div>
           </Card>
         )}

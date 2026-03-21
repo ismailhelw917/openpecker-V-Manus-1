@@ -4,12 +4,12 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { puzzleVariationsRouter } from "./puzzle-variations-router";
 import { z } from "zod";
+import { sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import bcrypt from "bcrypt";
 import { sdk } from "./_core/sdk";
 import { trackUserLogin, trackUserRegistration, trackLeaderboardPlayer, trackDailyVisitor, trackOnlineUser, trackPuzzleByOpening } from "./_core/counter-api";
-import {
-  getDb,
+import { getDb,
   getPuzzlesByThemeAndRating,
   getRandomPuzzlesByThemeAndRating,
   getRandomPuzzlesByOpeningAndRating,
@@ -804,8 +804,28 @@ export const appRouter = router({
         z.object({}).nullish()
       )
       .query(async ({ ctx }) => {
+        const db = await getDb();
         const stats = await getPuzzleAttemptStats(ctx.user.id, null);
         const accuracy = stats.totalPuzzles > 0 ? Math.round((stats.totalCorrect / stats.totalPuzzles) * 100) : 0;
+        
+        // Fetch player rating from players table
+        let playerRating = 1200;
+        if (db) {
+          try {
+            const rows = await db.execute(
+              sql`SELECT rating FROM players WHERE userId = ${ctx.user.id} LIMIT 1`
+            );
+            if (Array.isArray(rows) && rows.length > 0 && Array.isArray(rows[0]) && rows[0].length > 0) {
+              const row = rows[0][0];
+              if (row?.rating) {
+                playerRating = row.rating;
+              }
+            }
+          } catch (error) {
+            console.error('[getUserStats] Error fetching player rating:', error);
+          }
+        }
+        
         return {
           userId: ctx.user.id,
           totalPuzzles: stats.totalPuzzles || 0,
@@ -814,9 +834,8 @@ export const appRouter = router({
           totalCycles: 0,
           averageTimePerPuzzle: stats.totalPuzzles > 0 ? Math.round(stats.totalTimeMs / stats.totalPuzzles) : 0,
           totalTimeMs: stats.totalTimeMs || 0,
-          rating: 1200,
-          peakRating: 1200,
-          winRate: 0,
+          rating: playerRating,
+          peakRating: playerRating,
           ratingGain: 0,
           consistency: 0,
           totalIncorrect: (stats.totalPuzzles || 0) - (stats.totalCorrect || 0),

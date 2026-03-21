@@ -50,7 +50,6 @@ export function StatsDisplay({ stats, isLoading }: StatsDisplayProps) {
             { label: "RATING", value: (stats?.rating ?? 0).toString(), highlight: true },
             { label: "PEAK RATING", value: (stats?.peakRating ?? 0).toString() },
             { label: "ACCURACY", value: Math.round(stats?.accuracy ?? 0) + "%" },
-            { label: "WIN RATE", value: (stats?.winRate ?? 0) + "%" },
             { label: "RATING GAIN", value: "+" + (stats?.ratingGain ?? 0).toString() },
             { label: "CONSISTENCY", value: (stats?.consistency ?? 0) + "%" },
           ],
