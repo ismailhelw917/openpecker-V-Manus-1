@@ -28,6 +28,7 @@ import { getDb,
   insertOpenings,
   recordPuzzleAttempt,
   getPuzzleAttemptsByTrainingSet,
+  getPuzzleAttemptStatsForSets,
   getPuzzleAttemptStats,
   getPuzzleAttemptsByUser,
   getUserByOpenId,
@@ -541,7 +542,6 @@ export const appRouter = router({
         if (sets.length === 0) return [];
         
         // Batch query stats for all sets in one query
-        const { getPuzzleAttemptStatsForSets } = await import('./db');
         const setIds = sets.map((s: any) => s.id);
         const statsMap = await getPuzzleAttemptStatsForSets(setIds);
         
