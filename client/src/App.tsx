@@ -53,12 +53,23 @@ function App() {
 
 
   const [showPremiumWatermark, setShowPremiumWatermark] = useState(true);
-  const { isAuthenticated, loading, user } = useAuth();
+  const { isAuthenticated, loading, user, refresh: refreshAuth } = useAuth();
 
   // Initialize device ID once
   useEffect(() => {
     getOrCreateDeviceId();
   }, []);
+
+  // Handle checkout success - refresh auth state when returning from Stripe
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('checkout') === 'success') {
+      // User just completed checkout, refresh auth state to get updated isPremium
+      refreshAuth();
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [refreshAuth]);
 
   // Lazy-load global settings only when needed
   const { data: globalSettings } = trpc.system.getGlobalSettings.useQuery(undefined, {

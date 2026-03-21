@@ -93,10 +93,10 @@ export default function Train() {
     );
   }, [uniqueOpenings, searchQuery]);
 
-  // Determine which openings are free (first ~19%) vs premium (remaining ~81%)
-  // Reduced from 25% to lock 6 more openings behind premium
+  // Determine which openings are free (first ~13%) vs premium (remaining ~87%)
+  // Reduced from 19% to lock 6 more openings behind premium
   const freeOpeningLimit = useMemo(() => {
-    return Math.max(Math.ceil(uniqueOpenings.length * 0.19), 5); // At least 5 free
+    return Math.max(Math.ceil(uniqueOpenings.length * 0.13), 5); // At least 5 free
   }, [uniqueOpenings]);
 
   const isOpeningLocked = (openingName: string): boolean => {
@@ -309,20 +309,20 @@ export default function Train() {
                           e.stopPropagation();
                           handleSelectOpening(item.opening);
                         }}
-                        className={`w-full text-left px-3 sm:px-4 py-3 rounded-lg transition border ${
+                        className={`w-full text-left px-2 sm:px-4 py-2 sm:py-3 rounded-lg transition border ${
                           locked
                             ? "bg-slate-800/60 border-slate-700/50 opacity-75"
                             : "bg-slate-700 hover:bg-slate-600 border-slate-600 hover:border-teal-500"
                         }`}
                         style={{ touchAction: "manipulation" }}
                       >
-                        <div className="flex justify-between items-center gap-2">
-                          <div className="flex items-center gap-2 min-w-0">
-                            {locked && <Lock className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
-                            <span className={`font-medium truncate min-w-0 text-sm sm:text-base ${locked ? 'text-slate-400' : 'text-white'}`}>{item.opening}</span>
+                        <div className="flex justify-between items-center gap-1 sm:gap-2">
+                          <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1">
+                            {locked && <Lock className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-amber-400 shrink-0 flex-shrink-0" />}
+                            <span className={`font-medium truncate min-w-0 text-xs sm:text-base ${locked ? 'text-slate-400' : 'text-white'}`}>{item.opening}</span>
                           </div>
-                          <div className="flex items-center gap-2 shrink-0">
-                            {locked && <span className="text-[10px] bg-amber-400/20 text-amber-400 px-1.5 py-0.5 rounded font-semibold">PRO</span>}
+                          <div className="flex items-center gap-1 sm:gap-2 shrink-0 flex-shrink-0">
+                            {locked && <span className="text-[9px] sm:text-[10px] bg-amber-400/20 text-amber-400 px-1 sm:px-1.5 py-0.5 rounded font-semibold whitespace-nowrap">PRO</span>}
                             <span className="text-gray-400 text-xs sm:text-sm whitespace-nowrap">{item.puzzleCount.toLocaleString()}</span>
                           </div>
                         </div>

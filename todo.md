@@ -1629,3 +1629,8 @@
 ## Round 56 - Two Bug Fixes
 - [x] Fix Sicilian variations all getting same puzzle set (uncommented and fixed variation filter in getRandomPuzzlesByOpeningAndRating to use openingVariation LIKE match)
 - [x] Hide unclassified puzzles from Train tab (removed from hierarchy.json and filtered from getUniqueOpenings SQL query)
+
+## Round 59 - Premium Activation & More Locked Openings
+- [x] Fix premium not activating after purchase (added checkout success handler to refresh auth state)
+- [x] Lock 6 more openings behind the paywall (reduced free opening limit from 19% to 13%)
+- [x] Fix lock icons and PRO badges not showing on mobile (improved responsive layout)

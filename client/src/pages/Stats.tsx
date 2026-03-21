@@ -98,7 +98,7 @@ export default function Stats() {
       if (!response.ok) throw new Error(`Failed to create checkout session: ${response.status}`);
       const data = await response.json();
       if (data?.url) {
-        window.location.href = data.url;
+        window.location.href = `${data.url}?return_url=${encodeURIComponent(window.location.origin)}?checkout=success`;
       } else {
         throw new Error("No checkout URL received");
       }
@@ -154,7 +154,7 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
   const isLoading = authLoading || (user ? statsLoading : anonStatsLoading);
   const finalStats = user ? stats : anonStats;
 
-  if ((authLoading || (isLoading && !finalStats)) && !(!authLoading && !user && !anonStatsLoading && !anonStats)) {
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center">
         <div className="text-center">
@@ -180,6 +180,37 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
           >
             Sign In to View Stats
           </a>
+        </div>
+      </div>
+    );
+  }
+
+  // Premium paywall: require premium subscription for full Stats tab
+  if (user && !user.isPremium) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center px-4">
+        <div className="text-center max-w-lg">
+          <div className="relative inline-block mb-6">
+            <Shield className="w-20 h-20 text-amber-400" />
+            <Lock className="w-8 h-8 text-slate-900 absolute bottom-0 right-0 bg-amber-400 rounded-full p-1.5" />
+          </div>
+          <h2 className="text-3xl font-bold text-amber-400 mb-3">Premium Feature</h2>
+          <p className="text-slate-400 mb-6 text-lg">Unlock detailed performance analytics, rating history, opening mastery tracking, and more with OpenPecker Premium.</p>
+          <ul className="text-left text-slate-300 space-y-2 mb-8 max-w-sm mx-auto">
+            {PREMIUM_FEATURES.map((f, i) => (
+              <li key={i} className="flex items-start gap-2">
+                <Zap className="w-4 h-4 text-amber-400 mt-1 shrink-0" />
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+          <Button
+            onClick={() => handleCheckout("price_yearly", "yearly")}
+            className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-8 py-3 text-lg rounded-lg"
+          >
+            Upgrade to Premium - \u20AC49.99/year
+          </Button>
+          <p className="text-slate-500 text-sm mt-3">Cancel anytime. 7-day free trial included.</p>
         </div>
       </div>
     );
