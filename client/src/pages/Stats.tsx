@@ -91,20 +91,40 @@ export default function Stats() {
     setLoading(true);
     setCheckoutPlan(planName);
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+      
       const response = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ priceId, planName, userId: user.id, email: user.email }),
+        signal: controller.signal,
       });
-      if (!response.ok) throw new Error(`Failed to create checkout session: ${response.status}`);
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to create checkout session: ${response.status}`);
+      }
       const data = await response.json();
       if (data?.url) {
         window.location.href = `${data.url}?return_url=${encodeURIComponent(window.location.origin)}?checkout=success`;
       } else {
-        throw new Error("No checkout URL received");
+        throw new Error("No checkout URL received from server");
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to start checkout");
+      let errorMsg = error instanceof Error ? error.message : "Failed to start checkout";
+      
+      // Handle specific error cases
+      if (error instanceof Error && error.message.includes('AbortError')) {
+        errorMsg = "Checkout request timed out. Please check your connection and try again.";
+      } else if (errorMsg.includes('503')) {
+        errorMsg = "Payment system is temporarily unavailable. Please try again later.";
+      }
+      
+      console.error('[Stats Checkout] Error:', errorMsg);
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
       setCheckoutPlan(null);

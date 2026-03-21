@@ -28,6 +28,15 @@ export function registerStripeRoutes(app: express.Express) {
   // Create checkout session endpoint (needs its own JSON parser since registered before global express.json)
   app.post("/api/create-checkout-session", express.json(), async (req, res) => {
     try {
+      // Check if Stripe is configured
+      if (!process.env.STRIPE_SECRET_KEY) {
+        console.error('[Checkout] STRIPE_SECRET_KEY not configured');
+        return res.status(503).json({
+          error: "Payment system is not currently available. Please try again later or contact support.",
+          code: "STRIPE_NOT_CONFIGURED"
+        });
+      }
+
       const { priceId, userId, email, promoCode, discountPercent } = req.body;
 
       if (!priceId || !userId || !email) {
@@ -48,7 +57,16 @@ export function registerStripeRoutes(app: express.Express) {
       const origin = req.headers.origin || "https://openpecker.com";
 
       // Create Stripe checkout session
-      const stripe = getStripe();
+      let stripe;
+      try {
+        stripe = getStripe();
+      } catch (stripeError) {
+        console.error('[Checkout] Failed to initialize Stripe:', stripeError);
+        return res.status(503).json({
+          error: "Payment system is not currently available. Please try again later or contact support.",
+          code: "STRIPE_INIT_ERROR"
+        });
+      }
       
       // Determine mode based on the price type in Stripe
       const isMonthly = priceId === "price_monthly" || actualPriceId === STRIPE_PRICES.price_monthly;

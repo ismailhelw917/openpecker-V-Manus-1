@@ -1730,3 +1730,12 @@
 - [x] Updated "Upgrade to Premium" button to open PremiumPaywall modal instead of direct checkout
 - [x] Fixed state variable naming from showPremiumModal to showPremiumPaywall
 - [x] All upgrade buttons in Stats page now trigger paywall modal
+
+## Stripe Error Handling (Round 78 - Current)
+- [x] Add timeout handling to checkout requests (15 seconds)
+- [x] Add error message parsing from server responses
+- [x] Handle 503 errors with user-friendly message
+- [x] Add STRIPE_SECRET_KEY validation in Stripe handler
+- [x] Return graceful error response when Stripe not configured
+- [x] Write error handling tests for checkout flow
+- [ ] Save checkpoint
