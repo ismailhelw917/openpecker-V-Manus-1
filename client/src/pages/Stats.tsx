@@ -305,28 +305,28 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
 
       {/* Header */}
       <div className="bg-slate-900/50 backdrop-blur border-b border-teal-900/30 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
-          <div className="flex items-start justify-between mb-4 sm:mb-6">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-6">
+          <div className="flex items-start justify-between mb-3 sm:mb-4">
             <div>
-              <h1 className="text-2xl sm:text-4xl font-bold text-amber-400 mb-1 sm:mb-2">Performance</h1>
-              <p className="text-sm sm:text-base text-slate-400">Track your opening mastery progress.</p>
+              <h1 className="text-xl sm:text-4xl font-bold text-amber-400 mb-0.5 sm:mb-2">Performance</h1>
+              <p className="text-xs sm:text-base text-slate-400">Track your opening mastery progress.</p>
             </div>
-            <button className="text-slate-400 hover:text-white transition-colors">
-              <Download className="w-5 h-5" />
+            <button className="text-slate-400 hover:text-white transition-colors p-1">
+              <Download className="w-4 sm:w-5 h-4 sm:h-5" />
             </button>
           </div>
 
           {/* Controls */}
-          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+          <div className="flex items-center gap-1.5 sm:gap-3 flex-wrap">
             <select 
               value={selectedSet}
               onChange={(e) => setSelectedSet(e.target.value)}
-              className="bg-slate-800 border border-slate-700 text-white px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm">
+              className="bg-slate-800 border border-slate-700 text-white px-2 sm:px-4 py-1 sm:py-2 rounded-lg text-[11px] sm:text-sm">
               <option value="all">ALL SETS</option>
             </select>
             <button 
               onClick={() => setTimeRange("7d")}
-              className={`px-2 sm:px-3 py-1.5 sm:py-2 rounded text-xs sm:text-sm transition-colors ${
+              className={`px-1.5 sm:px-3 py-1 sm:py-2 rounded text-[11px] sm:text-sm transition-colors ${
                 timeRange === "7d" 
                   ? "bg-amber-400 text-slate-900 font-semibold" 
                   : "text-slate-400 hover:text-white"
@@ -335,7 +335,7 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
             </button>
             <button 
               onClick={() => setTimeRange("30d")}
-              className={`px-2 sm:px-3 py-1.5 sm:py-2 rounded text-xs sm:text-sm transition-colors ${
+              className={`px-1.5 sm:px-3 py-1 sm:py-2 rounded text-[11px] sm:text-sm transition-colors ${
                 timeRange === "30d" 
                   ? "bg-amber-400 text-slate-900 font-semibold" 
                   : "text-slate-400 hover:text-white"
@@ -344,7 +344,7 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
             </button>
             <button 
               onClick={() => setTimeRange("all")}
-              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded text-xs sm:text-sm transition-colors ${
+              className={`px-2 sm:px-4 py-1 sm:py-2 rounded text-[11px] sm:text-sm transition-colors ${
                 timeRange === "all" 
                   ? "bg-amber-400 text-slate-900 font-semibold" 
                   : "text-slate-400 hover:text-white"
@@ -360,10 +360,10 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
 
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Tab Navigation */}
-        <div className="flex gap-1 sm:gap-4 mb-4 sm:mb-8 border-b border-teal-900/30 overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}>
+        <div className="flex gap-0.5 sm:gap-4 mb-3 sm:mb-8 border-b border-teal-900/30 overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}>
           <button
             onClick={() => setActiveTab("overview")}
-            className={`pb-3 sm:pb-4 px-2 sm:px-3 text-sm sm:text-base font-semibold whitespace-nowrap shrink-0 transition-colors ${
+            className={`pb-2 sm:pb-4 px-2 sm:px-3 text-xs sm:text-base font-semibold whitespace-nowrap shrink-0 transition-colors ${
               activeTab === "overview"
                 ? "text-amber-400 border-b-2 border-amber-400"
                 : "text-slate-400 hover:text-white"
@@ -373,7 +373,7 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
           </button>
           <button
             onClick={() => setActiveTab("trends")}
-            className={`pb-3 sm:pb-4 px-2 sm:px-3 text-sm sm:text-base font-semibold whitespace-nowrap shrink-0 transition-colors ${
+            className={`pb-2 sm:pb-4 px-2 sm:px-3 text-xs sm:text-base font-semibold whitespace-nowrap shrink-0 transition-colors ${
               activeTab === "trends"
                 ? "text-amber-400 border-b-2 border-amber-400"
                 : "text-slate-400 hover:text-white"
@@ -383,7 +383,7 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
           </button>
           <button
             onClick={() => setActiveTab("openings")}
-            className={`pb-3 sm:pb-4 px-2 sm:px-3 text-sm sm:text-base font-semibold whitespace-nowrap shrink-0 transition-colors ${
+            className={`pb-2 sm:pb-4 px-2 sm:px-3 text-xs sm:text-base font-semibold whitespace-nowrap shrink-0 transition-colors ${
               activeTab === "openings"
                 ? "text-amber-400 border-b-2 border-amber-400"
                 : "text-slate-400 hover:text-white"
@@ -395,7 +395,7 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
 
         {/* Overview Tab */}
         {activeTab === "overview" && (
-          <div className="space-y-8">
+          <div className="space-y-4 sm:space-y-8">
             {/* Key Metrics Grid */}
             <StatsDisplay stats={finalStats} isLoading={isLoading} />
 
@@ -404,20 +404,20 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
               <div className="relative">
                 {!user?.isPremium && (
                   <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-950/70 backdrop-blur-sm rounded-lg">
-                    <Lock className="w-8 h-8 text-amber-400 mb-3" />
-                    <p className="text-amber-400 font-bold text-lg mb-1">Premium Feature</p>
-                    <p className="text-slate-400 text-sm mb-4 text-center px-4">Unlock detailed rating progression charts</p>
+                    <Lock className="w-6 sm:w-8 h-6 sm:h-8 text-amber-400 mb-2 sm:mb-3" />
+                    <p className="text-amber-400 font-bold text-sm sm:text-lg mb-1">Premium Feature</p>
+                    <p className="text-slate-400 text-xs sm:text-sm mb-3 sm:mb-4 text-center px-3">Unlock detailed rating progression charts</p>
                     <Button
                       onClick={() => setShowPremiumModal(true)}
-                      className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-6"
+                      className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-4 sm:px-6 text-sm"
                     >
-                      <Zap className="w-4 h-4 mr-2" /> Upgrade
+                      <Zap className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" /> Upgrade
                     </Button>
                   </div>
                 )}
-                <Card className={`bg-slate-900/50 border-teal-900/30 p-3 sm:p-6 ${!user?.isPremium ? 'blur-[2px] pointer-events-none select-none' : ''}`}>
-                  <h3 className="text-base sm:text-xl font-bold text-white mb-4 sm:mb-6">Rating Progression</h3>
-                  <ResponsiveContainer width="100%" height={250}>
+                <Card className={`bg-slate-900/50 border-teal-900/30 p-2.5 sm:p-6 ${!user?.isPremium ? 'blur-[2px] pointer-events-none select-none' : ''}`}>
+                  <h3 className="text-sm sm:text-xl font-bold text-white mb-3 sm:mb-6">Rating Progression</h3>
+                  <ResponsiveContainer width="100%" height={window.innerWidth < 640 ? 200 : 250}>
                     <LineChart data={MOCK_RATING_TREND}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                       <XAxis dataKey="week" stroke="#94a3b8" />
@@ -456,9 +456,9 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
               </div>
             )}
             {/* Accuracy Trend */}
-            <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-6">
-              <h3 className="text-base sm:text-xl font-bold text-white mb-4 sm:mb-6">Accuracy Trend (7 Days)</h3>
-              <ResponsiveContainer width="100%" height={250}>
+            <Card className="bg-slate-900/50 border-teal-900/30 p-2.5 sm:p-6">
+              <h3 className="text-sm sm:text-xl font-bold text-white mb-3 sm:mb-6">Accuracy Trend (7 Days)</h3>
+              <ResponsiveContainer width="100%" height={window.innerWidth < 640 ? 200 : 250}>
                 <BarChart data={MOCK_ACCURACY_TREND}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                   <XAxis dataKey="date" stroke="#94a3b8" />
@@ -477,9 +477,9 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
             </Card>
 
             {/* Time per Puzzle */}
-            <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-6">
-              <h3 className="text-base sm:text-xl font-bold text-white mb-4 sm:mb-6">Avg Time Per Puzzle (7 Days)</h3>
-              <ResponsiveContainer width="100%" height={250}>
+            <Card className="bg-slate-900/50 border-teal-900/30 p-2.5 sm:p-6">
+              <h3 className="text-sm sm:text-xl font-bold text-white mb-3 sm:mb-6">Avg Time Per Puzzle (7 Days)</h3>
+              <ResponsiveContainer width="100%" height={window.innerWidth < 640 ? 200 : 250}>
                 <LineChart data={MOCK_TIME_PER_PUZZLE}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                   <XAxis dataKey="day" stroke="#94a3b8" />
@@ -498,9 +498,9 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
             </Card>
 
             {/* Cycles Per Day */}
-            <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-6">
-              <h3 className="text-base sm:text-xl font-bold text-white mb-4 sm:mb-6">Training Cycles Per Day</h3>
-              <ResponsiveContainer width="100%" height={250}>
+            <Card className="bg-slate-900/50 border-teal-900/30 p-2.5 sm:p-6">
+              <h3 className="text-sm sm:text-xl font-bold text-white mb-3 sm:mb-6">Training Cycles Per Day</h3>
+              <ResponsiveContainer width="100%" height={window.innerWidth < 640 ? 200 : 250}>
                 <BarChart data={MOCK_CYCLES_PER_DAY}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                   <XAxis dataKey="day" stroke="#94a3b8" />

@@ -110,27 +110,27 @@ export function StatsDisplay({ stats, isLoading }: StatsDisplayProps) {
       ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {sections.map((section) => (
         <div key={section.title}>
-          <h3 className="text-xs sm:text-sm font-bold text-slate-500 uppercase tracking-widest mb-2 sm:mb-3 px-1">
+          <h3 className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 sm:mb-3 px-1">
             {section.title}
           </h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
             {section.metrics.map((metric, index) => (
               <Card
                 key={index}
-                className={`p-3 sm:p-5 border-2 transition-all ${
+                className={`p-2.5 sm:p-4 border-2 transition-all ${
                   metric.highlight
                     ? "bg-gradient-to-br from-amber-900/30 to-amber-950/20 border-amber-400/50 shadow-lg shadow-amber-400/20"
                     : "bg-slate-900/50 border-slate-700/50 hover:border-teal-500/50"
                 }`}
               >
-                <p className="text-[10px] sm:text-xs font-bold text-slate-400 mb-1 sm:mb-2 uppercase tracking-wider leading-tight">
+                <p className="text-[9px] sm:text-xs font-bold text-slate-400 mb-1 uppercase tracking-wider leading-tight">
                   {metric.label}
                 </p>
                 <p
-                  className={`text-base sm:text-2xl font-bold truncate ${
+                  className={`text-sm sm:text-xl font-bold truncate ${
                     metric.highlight ? "text-amber-400" : "text-teal-400"
                   }`}
                 >
