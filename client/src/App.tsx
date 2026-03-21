@@ -60,26 +60,10 @@ function App() {
     getOrCreateDeviceId();
   }, []);
 
-  // Lazy-load gift eligibility and global settings only when needed
-  const { data: giftEligibility } = trpc.auth.checkGiftEligibility.useQuery({}, {
-    enabled: !loading && !isAuthenticated, // Only check for non-authenticated users
-  });
+  // Lazy-load global settings only when needed
   const { data: globalSettings } = trpc.system.getGlobalSettings.useQuery(undefined, {
     enabled: !loading, // Only load after auth resolves
   });
-
-  const [showGiftPremium, setShowGiftPremium] = useState(true);
-  const updateGlobalSettingsMutation = trpc.system.updateGlobalSettings.useMutation();
-
-  // Auto-toggle off gift premium when 100 users reached or global setting disabled
-  useEffect(() => {
-    if (globalSettings && !globalSettings.showGiftPremiumBanner) {
-      setShowGiftPremium(false);
-    } else if (giftEligibility && !giftEligibility.eligible && showGiftPremium) {
-      setShowGiftPremium(false);
-      updateGlobalSettingsMutation.mutate({ showGiftPremiumBanner: 0 });
-    }
-  }, [giftEligibility, globalSettings, showGiftPremium, updateGlobalSettingsMutation]);
 
   // Show content immediately - don't block on auth loading
   return (
@@ -87,8 +71,6 @@ function App() {
       <TooltipProvider>
         <ErrorBoundary>
           <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-20 sm:pb-24">
-
-
             {/* Premium Watermark for online users */}
             {showPremiumWatermark && user?.isPremium === 1 && (
               <div className="fixed top-4 right-4 bg-amber-500/20 border border-amber-400 rounded-lg px-4 py-2 text-sm text-amber-300 z-50 flex items-center gap-2">
