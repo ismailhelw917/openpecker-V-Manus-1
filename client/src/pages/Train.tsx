@@ -3,6 +3,7 @@ import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "@/_core/deviceId";
 import { useHierarchyCache } from "@/hooks/useHierarchyCache";
+import { PremiumPaywall } from "@/components/PremiumPaywall";
 import { toast } from "sonner";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { ChevronDown, Lock, Zap } from "lucide-react";
@@ -33,6 +34,9 @@ export default function Train() {
   // Scroll indicator state
   const [showScrollIndicator, setShowScrollIndicator] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Premium paywall state
+  const [showPremiumPaywall, setShowPremiumPaywall] = useState(false);
 
   // Configuration state
   const [minRating, setMinRating] = useState(1000);
@@ -131,13 +135,7 @@ export default function Train() {
   const handleSelectOpening = (opening: string) => {
     // Check premium lock
     if (isOpeningLocked(opening)) {
-      toast("Premium opening", {
-        description: "Upgrade to Premium to unlock all openings.",
-        action: {
-          label: "Upgrade",
-          onClick: () => setLocation("/settings"),
-        },
-      });
+      setShowPremiumPaywall(true);
       return;
     }
 
@@ -499,6 +497,20 @@ export default function Train() {
         >
           <ChevronDown className="w-5 h-5" />
         </button>
+      )}
+
+      {showPremiumPaywall && (
+        <PremiumPaywall
+          onClose={() => setShowPremiumPaywall(false)}
+          onMonthlyClick={() => {
+            setShowPremiumPaywall(false);
+            window.open("https://openpecker.com/checkout?plan=monthly", "_blank");
+          }}
+          onLifetimeClick={() => {
+            setShowPremiumPaywall(false);
+            window.open("https://openpecker.com/checkout?plan=lifetime", "_blank");
+          }}
+        />
       )}
     </div>
   );

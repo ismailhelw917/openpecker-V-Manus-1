@@ -1709,3 +1709,10 @@
 - [x] Fixed premium button Unicode escape - now shows €49.99/year correctly
 - [x] Fixed Stats page API mutation error by adding trackUserOnline and getTotalPlayerCount procedures
 - [x] Verified leaderboard image display is correct (127 online, 7 players, 4.5K visitors)
+
+## Round 74 - Premium Paywall for Train Tab
+- [x] Create PremiumPaywall component matching design (brown card, checkmarks, pricing)
+- [x] Add paywall modal trigger when user clicks locked opening
+- [x] Implement monthly (€4.99) and lifetime (€49) checkout handlers
+- [x] Add close button (X) to dismiss paywall
+- [x] Test paywall component rendering and interactions
