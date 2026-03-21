@@ -4,7 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { puzzleVariationsRouter } from "./puzzle-variations-router";
 import { z } from "zod";
-import { sql } from "drizzle-orm";
+import { sql, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import bcrypt from "bcrypt";
 import { sdk } from "./_core/sdk";
@@ -192,6 +192,48 @@ export const appRouter = router({
     isAuthenticated: publicProcedure.query(async ({ ctx }) => {
       return !!ctx.user;
     }),
+
+    /**
+     * Update user name
+     */
+    updateName: protectedProcedure
+      .input(
+        z.object({
+          name: z.string().min(2).max(50),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        if (!ctx.user?.id) {
+          throw new Error('User not authenticated');
+        }
+
+        const db = await getDb();
+        if (!db) {
+          throw new Error('Database not available');
+        }
+
+        // Update user name in users table
+        const { users: usersTable } = await import('../drizzle/schema');
+        await db
+          .update(usersTable)
+          .set({ name: input.name })
+          .where(eq(usersTable.id, ctx.user.id));
+
+        // Update player name in leaderboard
+        try {
+          await updatePlayerName(ctx.user.id, input.name);
+        } catch (err) {
+          console.warn('Failed to update player name:', err);
+        }
+
+        return {
+          success: true,
+          user: {
+            ...ctx.user,
+            name: input.name,
+          },
+        };
+      }),
 
     /**
      * Check if user is eligible for gift/promo
@@ -1261,6 +1303,12 @@ export const appRouter = router({
      */
     getOnlineCount: publicProcedure
       .query(async () => {
+        // Clean up stale sessions (older than 30 minutes) before counting
+        try {
+          await cleanupStaleOnlineSessions(30);
+        } catch (error) {
+          console.warn('Failed to cleanup stale sessions:', error);
+        }
         return getOnlineSessionCount();
       }),
   }),

@@ -1647,3 +1647,17 @@
 - [x] Verify registration portal has no Manus branding in Auth page (shows OpenPecker logo, "Login with Google", no Manus references)
 - [x] Verify OAuth callback redirects to openpecker.com (not Manus)
 - [x] Confirm session is maintained on professional site domain
+
+## Round 64 - Name Selection & Unclassified Puzzles
+- [x] Verify unclassified puzzles are hidden from Train tab (confirmed in Round 62)
+- [x] Add name selection/edit feature after sign-in (implemented NameSelectionDialog)
+
+## Round 65 - Name Selection Dialog & Online Count Fix
+- [x] Create NameSelectionDialog component for users to choose display name after sign-in
+- [x] Add updateName tRPC procedure to backend (auth.updateName mutation)
+- [x] Integrate name selection dialog into App.tsx with auto-show for new users
+- [x] Debug online user count showing only 7 (found 850 stale sessions in database)
+- [x] Fix online count by adding cleanup of stale sessions (>30 min old) before counting
+- [x] Cleaned up 835 stale sessions from database
+- [x] Added 8 new tests for name selection and session tracking (all passing)
+- [x] Verified online count now correctly filters active sessions with recent heartbeats

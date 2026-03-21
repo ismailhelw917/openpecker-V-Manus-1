@@ -14,6 +14,7 @@ import Auth from "./pages/Auth";
 import { Leaderboard } from "./pages/Leaderboard";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
+import NameSelectionDialog from "./components/NameSelectionDialog";
 
 import { useEffect, useState } from "react";
 import { useAuth } from "./_core/hooks/useAuth";
@@ -51,14 +52,28 @@ function App() {
   // Track user sessions with heartbeats
   useSessionTracking();
 
-
   const [showPremiumWatermark, setShowPremiumWatermark] = useState(true);
+  const [showNameDialog, setShowNameDialog] = useState(false);
+  const [hasSeenNameDialog, setHasSeenNameDialog] = useState(false);
   const { isAuthenticated, loading, user, refresh: refreshAuth } = useAuth();
+  const updateNameMutation = trpc.auth.updateName.useMutation();
 
   // Initialize device ID once
   useEffect(() => {
     getOrCreateDeviceId();
   }, []);
+
+  // Show name selection dialog for new users
+  useEffect(() => {
+    if (!loading && isAuthenticated && user && !hasSeenNameDialog) {
+      // Check if user has a default name (from OAuth) or needs to set one
+      const hasCustomName = user.name && !user.name.includes('@');
+      if (!hasCustomName) {
+        setShowNameDialog(true);
+        setHasSeenNameDialog(true);
+      }
+    }
+  }, [isAuthenticated, loading, user, hasSeenNameDialog]);
 
   // Handle checkout success - refresh auth state when returning from Stripe
   useEffect(() => {
@@ -70,6 +85,17 @@ function App() {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, [refreshAuth]);
+
+  const handleNameSave = async (name: string) => {
+    try {
+      await updateNameMutation.mutateAsync({ name });
+      await refreshAuth();
+      setShowNameDialog(false);
+    } catch (error) {
+      console.error('Failed to update name:', error);
+      throw error;
+    }
+  };
 
   // Lazy-load global settings only when needed
   const { data: globalSettings } = trpc.system.getGlobalSettings.useQuery(undefined, {
@@ -97,6 +123,16 @@ function App() {
 
             {/* Bottom Navigation */}
             <BottomNav />
+
+            {/* Name Selection Dialog */}
+            {isAuthenticated && user && (
+              <NameSelectionDialog
+                isOpen={showNameDialog}
+                onClose={() => setShowNameDialog(false)}
+                currentName={user.name || undefined}
+                onNameSave={handleNameSave}
+              />
+            )}
           </div>
         </ErrorBoundary>
       </TooltipProvider>
