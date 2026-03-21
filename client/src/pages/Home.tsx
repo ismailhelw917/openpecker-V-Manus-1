@@ -32,21 +32,19 @@ export default function Home() {
     }
   }, []);
 
-  const handleUpgradeToPremium = async (planType: 'monthly' | 'lifetime' = 'monthly') => {
+  const handleUpgradeToPremium = async () => {
     if (!user) {
       window.location.href = getLoginUrl();
       return;
     }
     toast.info("Redirecting to checkout...");
     try {
-      const priceId = planType === 'lifetime' ? 'price_lifetime' : 'price_monthly';
-      const planName = planType === 'lifetime' ? 'Premium Lifetime' : 'Premium';
       const response = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          priceId,
-          planName,
+          priceId: "price_monthly",
+          planName: "Premium",
           userId: user.id,
           email: user.email,
         }),
@@ -117,22 +115,13 @@ export default function Home() {
                 Welcome, <span className="text-teal-600 font-semibold">{user?.name || user?.email}</span>
               </div>
               {!user?.isPremium && (
-                <div className="w-full max-w-sm space-y-2">
-                  <Button
-                    onClick={() => handleUpgradeToPremium('monthly')}
-                    className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg transition-all"
-                    style={{ touchAction: "manipulation" }}
-                  >
-                    €4.99/month
-                  </Button>
-                  <Button
-                    onClick={() => handleUpgradeToPremium('lifetime')}
-                    className="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg transition-all"
-                    style={{ touchAction: "manipulation" }}
-                  >
-                    €49.99 Lifetime
-                  </Button>
-                </div>
+                <Button
+                  onClick={handleUpgradeToPremium}
+                  className="w-full max-w-sm bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg transition-all"
+                  style={{ touchAction: "manipulation" }}
+                >
+                  Upgrade to Premium
+                </Button>
               )}
             </div>
           ) : (
