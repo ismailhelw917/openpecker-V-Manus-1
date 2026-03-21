@@ -65,7 +65,7 @@ export default function Stats() {
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
   const [selectedSet, setSelectedSet] = useState<string>("all");
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, isAuthenticated } = useAuth();
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [deviceId] = useState<string | null>(() => {
@@ -74,7 +74,7 @@ export default function Stats() {
 
   const handleCheckout = async (priceId: string, planName: string) => {
     // Debug logging
-    console.log('[Stats Checkout] authLoading:', authLoading, 'user:', user);
+    console.log('[Stats Checkout] authLoading:', authLoading, 'isAuthenticated:', isAuthenticated, 'user:', user);
     
     // Don't proceed if auth is still loading
     if (authLoading) {
@@ -84,7 +84,7 @@ export default function Stats() {
     }
     
     // Check if user is authenticated
-    if (!user) {
+    if (!isAuthenticated || !user) {
       console.log('[Stats Checkout] User not authenticated, redirecting to login');
       toast.info("Please sign in first to upgrade to premium");
       window.location.href = getLoginUrl();
