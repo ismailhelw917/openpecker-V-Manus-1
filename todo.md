@@ -1669,3 +1669,8 @@
 - [x] Add test mode for faster updates during testing
 - [x] Write 5 comprehensive tests for mock online count (all passing)
 - [x] Verified mock count stays within bounds and fluctuates naturally
+
+## Round 68 - Remove Upgrade Button from Home Page
+- [x] Remove "Upgrade to Premium" button from home page
+- [x] Keep welcome message showing user's name
+- [x] Verify TypeScript compilation successful

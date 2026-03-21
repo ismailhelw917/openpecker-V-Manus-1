@@ -114,15 +114,6 @@ export default function Home() {
               <div className="text-slate-700 text-sm">
                 Welcome, <span className="text-teal-600 font-semibold">{user?.name || user?.email}</span>
               </div>
-              {!user?.isPremium && (
-                <Button
-                  onClick={handleUpgradeToPremium}
-                  className="w-full max-w-sm bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg transition-all"
-                  style={{ touchAction: "manipulation" }}
-                >
-                  Upgrade to Premium
-                </Button>
-              )}
             </div>
           ) : (
             <div className="space-y-2">
