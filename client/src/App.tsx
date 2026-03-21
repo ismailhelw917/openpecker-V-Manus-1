@@ -86,7 +86,7 @@ function App() {
     <ThemeProvider>
       <TooltipProvider>
         <ErrorBoundary>
-          <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950">
+          <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-20 sm:pb-24">
             {/* Premium Banner for unregistered users */}
             {!loading && !isAuthenticated && showGiftPremium && !premiumBannerDismissed && (
               <PremiumBanner onDismiss={() => setPremiumBannerDismissed(true)} />
@@ -101,7 +101,9 @@ function App() {
             )}
 
             {/* Routes - render immediately, pages handle their own loading states */}
-            <Router />
+            <div className="max-w-screen-xl mx-auto">
+              <Router />
+            </div>
 
             {/* Bottom Navigation */}
             <BottomNav />

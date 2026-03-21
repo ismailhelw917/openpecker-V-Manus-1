@@ -111,7 +111,14 @@ export function registerStripeRoutes(app: express.Express) {
         sessionParams.customer_email = email;
       }
 
-      const session = await stripe.checkout.sessions.create(sessionParams);
+      // Add timeout to prevent indefinite loading
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Stripe checkout session creation timeout')), 10000)
+      );
+      const session = await Promise.race([
+        stripe.checkout.sessions.create(sessionParams),
+        timeoutPromise
+      ]) as Stripe.Checkout.Session;
 
       console.log(`Created Stripe checkout session ${session.id} for user ${userId}`);
 
