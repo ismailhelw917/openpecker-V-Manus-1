@@ -647,7 +647,7 @@ export async function getPuzzleAttemptStatsForSets(trainingSetIds: string[]) {
   const result = await db
     .select({
       trainingSetId: puzzleAttempts.trainingSetId,
-      totalAttempts: count(),
+      totalAttempts: count(puzzleAttempts.id),
       totalCorrect: count(sql`CASE WHEN ${puzzleAttempts.isCorrect} = 1 THEN 1 END`),
       totalTimeMs: sum(puzzleAttempts.timeMs),
     })
@@ -658,10 +658,10 @@ export async function getPuzzleAttemptStatsForSets(trainingSetIds: string[]) {
   const statsMap: Record<string, any> = {};
   result.forEach((row: any) => {
     statsMap[row.trainingSetId] = {
-      totalAttempts: row.totalAttempts || 0,
-      totalCorrect: row.totalCorrect || 0,
-      totalTimeMs: row.totalTimeMs || 0,
-      accuracy: row.totalAttempts > 0 ? (row.totalCorrect / row.totalAttempts) * 100 : null,
+      totalAttempts: Number(row.totalAttempts) || 0,
+      totalCorrect: Number(row.totalCorrect) || 0,
+      totalTimeMs: Number(row.totalTimeMs) || 0,
+      accuracy: Number(row.totalAttempts) > 0 ? (Number(row.totalCorrect) / Number(row.totalAttempts)) * 100 : null,
     };
   });
   
