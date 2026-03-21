@@ -1642,3 +1642,8 @@
 
 ## Round 61 - Verify Unclassified Puzzles Hidden
 - [x] Verify unclassified puzzles are completely hidden from UI (Train page shows 100 classified openings, no Unclassified/Opening/Unknown entries)
+
+## Round 62 - Auth Portal Professional Branding
+- [x] Verify registration portal has no Manus branding in Auth page (shows OpenPecker logo, "Login with Google", no Manus references)
+- [x] Verify OAuth callback redirects to openpecker.com (not Manus)
+- [x] Confirm session is maintained on professional site domain
