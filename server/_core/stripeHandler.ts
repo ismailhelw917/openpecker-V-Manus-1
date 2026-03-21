@@ -64,8 +64,27 @@ export function registerStripeRoutes(app: express.Express) {
         // Default to payment mode if price retrieval fails
         console.warn("Could not retrieve price type, defaulting to payment mode", e);
       }
+
+      // Create or retrieve Stripe Customer to skip email collection on checkout
+      let stripeCustomerId: string | undefined;
+      try {
+        // Search for existing customer by email
+        const existingCustomers = await stripe.customers.list({ email, limit: 1 });
+        if (existingCustomers.data.length > 0) {
+          stripeCustomerId = existingCustomers.data[0].id;
+        } else {
+          // Create a new customer
+          const customer = await stripe.customers.create({
+            email,
+            metadata: { userId: userId.toString() },
+          });
+          stripeCustomerId = customer.id;
+        }
+      } catch (e) {
+        console.warn("Could not create/retrieve Stripe customer, falling back to customer_email", e);
+      }
       
-      const session = await stripe.checkout.sessions.create({
+      const sessionParams: Stripe.Checkout.SessionCreateParams = {
         payment_method_types: ["card"],
         line_items: [
           {
@@ -76,7 +95,6 @@ export function registerStripeRoutes(app: express.Express) {
         mode,
         success_url: `${origin}/settings?payment=success&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/settings?payment=cancelled`,
-        customer_email: email,
         client_reference_id: userId.toString(),
         allow_promotion_codes: true,
         metadata: {
@@ -84,7 +102,16 @@ export function registerStripeRoutes(app: express.Express) {
           email,
           plan: isMonthly ? "monthly" : "lifetime",
         },
-      });
+      };
+
+      // Use customer ID if available (skips email collection), otherwise fall back to customer_email
+      if (stripeCustomerId) {
+        sessionParams.customer = stripeCustomerId;
+      } else {
+        sessionParams.customer_email = email;
+      }
+
+      const session = await stripe.checkout.sessions.create(sessionParams);
 
       console.log(`Created Stripe checkout session ${session.id} for user ${userId}`);
 

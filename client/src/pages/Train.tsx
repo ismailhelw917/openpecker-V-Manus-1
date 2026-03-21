@@ -440,7 +440,7 @@ export default function Train() {
                     <button
                       key={color}
                       onClick={() => setColorFilter(color)}
-                      className={`px-4 py-2 rounded font-medium transition capitalize ${
+                      className={`flex-1 py-2 rounded font-medium transition capitalize whitespace-nowrap text-sm sm:text-base ${
                         colorFilter === color
                           ? "bg-teal-600 text-white"
                           : "bg-slate-600 text-gray-300 hover:bg-slate-500"

@@ -1521,3 +1521,9 @@
 - [x] Check promo code functionality - validate/redeem flow works; codes are uppercased before lookup; lifetime_premium codes set isPremium=1
 - [x] List all promo codes: OPENPECKER50 (free premium, 50 uses), OPENPECKER80 (80% off, 200 uses), SAVE80 (80% off, 1000 uses, expires 2027-03-19), plus lowercase duplicates (openpecker50: 100 uses, openpecker80: 400 uses)
 - [x] Verify premium unlocks everything - confirmed: all openings, Stats Trends/Openings/Rating chart, Pro Analytics, premium badge on leaderboard/profile
+
+## Round 41 - Train Text, Promo Cleanup, Checkout Fix, Email Registration
+- [x] Fix Train page color buttons text wrapping on mobile - added whitespace-nowrap and flex-1 to color buttons
+- [x] Remove SAVE80 promo code from database - deleted via SQL
+- [x] Fix checkout button asking for registration again - Stripe handler now creates/retrieves Stripe Customer by email, passing customer ID to skip email collection step
+- [x] Create independent email registration page at /register - has email input form + Google sign-up button, both redirect to /train after login; Home page "Register with Email" now links to /register

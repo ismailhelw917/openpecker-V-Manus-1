@@ -128,9 +128,9 @@ export default function Home() {
                 </svg>
                 Register with Google
               </a>
-              {/* Register with Email - redirects to /train after login */}
+              {/* Register with Email - goes to dedicated registration page */}
               <a
-                href={getLoginUrl("/train")}
+                href="/register"
                 className="w-full max-w-sm bg-slate-100 hover:bg-slate-200 text-slate-900 border-2 border-slate-300 font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-all mx-auto"
                 style={{
                   touchAction: "manipulation",

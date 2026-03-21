@@ -13,6 +13,7 @@ import Session from "./pages/Session";
 import Auth from "./pages/Auth";
 import { Leaderboard } from "./pages/Leaderboard";
 import Profile from "./pages/Profile";
+import Register from "./pages/Register";
 
 import { useEffect, useState } from "react";
 import { useAuth } from "./_core/hooks/useAuth";
@@ -34,6 +35,7 @@ function Router() {
       <Route path={"/profile"} component={Profile} />
       <Route path={"/session/:id"} component={Session} />
       <Route path={"/auth"} component={Auth} />
+      <Route path={"/register"} component={Register} />
       <Route path={"/play/:id"} component={Session} />
 
       <Route path={"/404"} component={NotFound} />
