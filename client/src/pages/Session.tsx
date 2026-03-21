@@ -580,7 +580,8 @@ export default function Session() {
 
   const handleMove = (sourceSquare: string, targetSquare: string) => {
     console.log('[handleMove] Called with:', { sourceSquare, targetSquare, solved, isAutoSolving });
-    if (solved || isAutoSolving) return false;
+    if (solved) return false;
+    // Allow dragging pieces even during auto-solve animation
 
     const currentPuzzle = puzzles[currentPuzzleIndex];
     if (!currentPuzzle) return false;

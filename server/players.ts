@@ -178,7 +178,8 @@ export async function getLeaderboardPlayers(limit: number = 500, sortBy: 'accura
   if (!db) throw new Error('Database not available');
 
   // Build ORDER BY clause based on sort preference
-  let orderBy = 'CASE WHEN totalPuzzles = 0 THEN 0 ELSE ROUND((totalCorrect / totalPuzzles) * 100) END DESC, totalPuzzles DESC';
+  // Default: weighted average (40% accuracy, 30% speed, 20% rating, 10% puzzles)
+  let orderBy = 'CASE WHEN totalPuzzles = 0 THEN 0 ELSE ((0.4 * ROUND((totalCorrect / totalPuzzles) * 100)) + (0.3 * (100 - LEAST(100, ROUND((totalTimeMs / totalPuzzles / 1000) * 5)))) + (0.2 * LEAST(100, (COALESCE(rating, 1200) - 1200) / 10)) + (0.1 * LEAST(100, totalPuzzles / 100))) END DESC, totalPuzzles DESC';
   if (sortBy === 'speed') {
     orderBy = 'CASE WHEN totalPuzzles = 0 THEN 999999 ELSE ROUND(totalTimeMs / totalPuzzles / 1000) END ASC, totalPuzzles DESC';
   } else if (sortBy === 'rating') {

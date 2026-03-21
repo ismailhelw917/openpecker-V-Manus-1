@@ -1747,3 +1747,11 @@
 - [x] Add 7 sets option (350 puzzles) to configuration
 - [x] Update PUZZLE_COUNT_OPTIONS array in Train.tsx
 - [ ] Save checkpoint
+
+## Feature Improvements (Round 80)
+- [x] Allow dragging pieces before animation ends in Session
+- [x] Change leaderboard to weighted average (accuracy, speed, rating, puzzles solved)
+- [x] Link "Upgrade to Premium" button in Settings to paywall modal (already linked)
+- [x] Add cycles 6 and 7 options to configuration
+- [x] Test all changes
+- [x] Save checkpoint

@@ -427,8 +427,8 @@ export default function Train() {
               {/* Cycles */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-3">Cycles</label>
-                <div className="flex gap-2">
-                  {[1, 2, 3, 4, 5].map((cycle) => (
+                <div className="flex gap-2 flex-wrap">
+                  {[1, 2, 3, 4, 5, 6, 7].map((cycle) => (
                     <button
                       key={cycle}
                       onClick={() => setTargetCycles(cycle)}
