@@ -1527,3 +1527,7 @@
 - [x] Remove SAVE80 promo code from database - deleted via SQL
 - [x] Fix checkout button asking for registration again - Stripe handler now creates/retrieves Stripe Customer by email, passing customer ID to skip email collection step
 - [x] Create independent email registration page at /register - has email input form + Google sign-up button, both redirect to /train after login; Home page "Register with Email" now links to /register
+
+
+## Bug Fix (Round 42 - Paywall Button Redirect)
+- [x] Fix paywall button (€4.99, €49) redirecting to /register - added authLoading check in handleCheckout to prevent redirect while auth is loading

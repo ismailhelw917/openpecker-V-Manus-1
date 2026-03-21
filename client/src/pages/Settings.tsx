@@ -51,7 +51,7 @@ const PREMIUM_FEATURES = [
 
 export default function Settings() {
   const [, setLocation] = useLocation();
-  const { user, logout } = useAuth();
+  const { user, logout, loading: authLoading } = useAuth();
   const utils = trpc.useUtils();
   const [selectedTheme, setSelectedTheme] = useState<'classic' | 'green' | 'blue' | 'purple'>(() => {
     const saved = localStorage.getItem('board-theme');
@@ -149,6 +149,12 @@ export default function Settings() {
   }, []);
 
   const handleCheckout = async (priceId: string, planName: string) => {
+    // Check if auth is still loading
+    if (authLoading) {
+      toast.info("Loading your account information...");
+      return;
+    }
+    
     if (!user) {
       toast.info("Please sign in first to upgrade to premium");
       window.location.href = getLoginUrl();
