@@ -1585,10 +1585,10 @@
 - [x] Fix Stats page infinite loading for anonymous users
 - [x] Added vitest tests for stats computation, streak calculation, player name generation, checkout handling (15 tests passing)
 
-## Round 51 - Three Parallel Fixes
-- [ ] Fix Stripe payment links swapped (monthly/lifetime amounts mapped to wrong buttons)
-- [ ] Verify promo codes are working
-- [ ] Lock 6 more random openings behind premium
+## Round 51 - Three Parallel Fixes (superseded by Round 51 Four Parallel Fixes below)
+- [x] Fix Stripe payment links swapped - confirmed correct by user
+- [x] Verify promo codes - OPENPECKER80, OPENPECKER50 created in Stripe Dashboard
+- [x] Lock 6 more random openings - free limit reduced to 19%
 
 ## Round 51 - Four Parallel Fixes
 - [x] Fix Stripe payment links swapped - swapped price IDs so monthly maps to correct price
@@ -1601,3 +1601,10 @@
 - [x] Add loading/transition page between price click and Stripe checkout (Settings.tsx + Stats.tsx with CreditCard spinner overlay)
 - [x] Fix rating/ELO - updatePlayerStats now computes ELO from puzzle accuracy with K-factor system
 - [x] Fix leaderboard - fixed isMe check (userId vs id mismatch), filtered to active players only, backfilled 105 player rows from users table
+
+## Round 53 - Lock 6 More Openings + Leaderboard Fix + E2E Test
+- [x] Verify current free opening percentage in Train.tsx - confirmed 19% (6 more locked)
+- [x] Fix leaderboard not updating - isMe check fixed, player auto-creation on puzzle record
+- [x] Complete full E2E test: record 5 puzzles, complete cycle, verify all data points
+- [x] All data points verified: puzzles, accuracy, ELO (1248), cycles (1), time (52s), leaderboard entry created
+- [x] Cleaned up test data from database

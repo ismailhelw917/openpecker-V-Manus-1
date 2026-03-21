@@ -1,0 +1,13 @@
+{
+  "query": "\n-- Clean up test players\nDELETE FROM players WHERE deviceId LIKE 'e2e-test-%' OR deviceId LIKE 'curl-test-%';\n\n-- Clean up test puzzle attempts  \nDELETE FROM puzzle_attempts WHERE trainingSetId LIKE 'e2e-set-%' OR trainingSetId LIKE 'test-set-%';\n\n-- Clean up test cycle history\nDELETE FROM cycle_history WHERE deviceId LIKE 'e2e-test-%';\n\n-- Verify clean state\nSELECT COUNT(*) as playerCount FROM players WHERE totalPuzzles > 0;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \n-- Clean up test players\nDELETE FROM players WHERE deviceId LIKE 'e2e-test-%' OR deviceId LIKE 'curl-test-%';\n\n-- Clean up test puzzle attempts  \nDELETE FROM puzzle_attempts WHERE trainingSetId LIKE 'e2e-set-%' OR trainingSetId LIKE 'test-set-%';\n\n-- Clean up test cycle history\nDELETE FROM cycle_history WHERE deviceId LIKE 'e2e-test-%';\n\n-- Verify clean state\nSELECT COUNT(*) as playerCount FROM players WHERE totalPuzzles > 0;\n",
+  "rows": [
+    {
+      "playerCount": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "playerCount\n1\n",
+  "stderr": "",
+  "execution_time_ms": 2226
+}
