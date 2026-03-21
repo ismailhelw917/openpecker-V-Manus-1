@@ -149,15 +149,14 @@ export default function Settings() {
   }, []);
 
   const handleCheckout = async (priceId: string, planName: string) => {
-    // Check if auth is still loading
-    if (authLoading) {
-      toast.info("Loading your account information...");
-      return;
-    }
-    
-    if (!user) {
-      toast.info("Please sign in first to upgrade to premium");
-      window.location.href = getLoginUrl();
+    // Don't proceed if auth is still loading or user is not authenticated
+    if (authLoading || !user) {
+      if (authLoading) {
+        toast.info("Loading your account information...");
+      } else {
+        toast.info("Please sign in first to upgrade to premium");
+        window.location.href = getLoginUrl();
+      }
       return;
     }
 
@@ -437,7 +436,7 @@ export default function Settings() {
               <button
                 type="button"
                 onClick={() => handleCheckout("price_monthly", "Monthly")}
-                disabled={loading}
+                disabled={loading || authLoading}
                 className="w-full p-3 rounded-lg border-2 border-slate-700 bg-slate-800/50 hover:border-amber-400 hover:bg-amber-400/5 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ touchAction: "manipulation" }}
               >
@@ -454,7 +453,7 @@ export default function Settings() {
               <button
                 type="button"
                 onClick={() => handleCheckout("price_lifetime", "Lifetime")}
-                disabled={loading}
+                disabled={loading || authLoading}
                 className="w-full p-3 rounded-lg border-2 border-amber-400/40 bg-amber-400/10 hover:border-amber-400 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ touchAction: "manipulation" }}
               >
