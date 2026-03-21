@@ -20,8 +20,8 @@ function getStripe(): Stripe {
 
 // Stripe price IDs for different plans
 const STRIPE_PRICES = {
-  price_monthly: process.env.STRIPE_PRICE_MONTHLY || "price_1TBJ4ZFObBPpBaOOfHXsv3ET",
-  price_lifetime: process.env.STRIPE_PRICE_LIFETIME || "price_1TBJ39FObBPpBaOOsQJSkiEu",
+  price_monthly: process.env.STRIPE_PRICE_MONTHLY || "price_1TBJ39FObBPpBaOOsQJSkiEu",
+  price_lifetime: process.env.STRIPE_PRICE_LIFETIME || "price_1TBJ4ZFObBPpBaOOfHXsv3ET",
 };
 
 export function registerStripeRoutes(app: express.Express) {

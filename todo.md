@@ -1584,3 +1584,14 @@
 - [x] Fix payment links - changed window.open to window.location.href for mobile compatibility
 - [x] Fix Stats page infinite loading for anonymous users
 - [x] Added vitest tests for stats computation, streak calculation, player name generation, checkout handling (15 tests passing)
+
+## Round 51 - Three Parallel Fixes
+- [ ] Fix Stripe payment links swapped (monthly/lifetime amounts mapped to wrong buttons)
+- [ ] Verify promo codes are working
+- [ ] Lock 6 more random openings behind premium
+
+## Round 51 - Four Parallel Fixes
+- [x] Fix Stripe payment links swapped - swapped price IDs so monthly maps to correct price
+- [x] Verify promo codes - already enabled (allow_promotion_codes: true)
+- [x] Lock 6 more openings - reduced free limit from 25% to 19% (~6 fewer free openings)
+- [x] Fix custom domain - openpecker.com is reachable, was temporary DNS/deployment gap
