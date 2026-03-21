@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "./_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "./_core/deviceId";
 import { trpc } from "./lib/trpc";
-import { PremiumBanner } from "./components/PremiumBanner";
+
 import { usePageTracking } from "./hooks/usePageTracking";
 import { useSessionTracking } from "./hooks/useSessionTracking";
 
@@ -51,7 +51,7 @@ function App() {
   // Track user sessions with heartbeats
   useSessionTracking();
 
-  const [premiumBannerDismissed, setPremiumBannerDismissed] = useState(false);
+
   const [showPremiumWatermark, setShowPremiumWatermark] = useState(true);
   const { isAuthenticated, loading, user } = useAuth();
 
@@ -87,10 +87,7 @@ function App() {
       <TooltipProvider>
         <ErrorBoundary>
           <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-20 sm:pb-24">
-            {/* Premium Banner for unregistered users */}
-            {!loading && !isAuthenticated && showGiftPremium && !premiumBannerDismissed && (
-              <PremiumBanner onDismiss={() => setPremiumBannerDismissed(true)} />
-            )}
+
 
             {/* Premium Watermark for online users */}
             {showPremiumWatermark && user?.isPremium === 1 && (
