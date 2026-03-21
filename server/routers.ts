@@ -497,6 +497,7 @@ export const appRouter = router({
           correctCount: z.number().optional(),
           bestAccuracy: z.string().optional(),
           totalAttempts: z.number().optional(),
+          totalTimeMs: z.number().optional(),
           lastPlayedAt: z.date().optional(),
         })
       )
@@ -512,6 +513,7 @@ export const appRouter = router({
           correctCount: input.correctCount,
           bestAccuracy: input.bestAccuracy,
           totalAttempts: input.totalAttempts,
+          totalTimeMs: input.totalTimeMs,
           lastPlayedAt: input.lastPlayedAt,
         });
       }),
@@ -649,7 +651,7 @@ export const appRouter = router({
         })
       )
       .mutation(async ({ input }) => {
-        return createCycleRecord({
+        const result = await createCycleRecord({
           userId: input.userId || null,
           deviceId: input.deviceId || null,
           trainingSetId: input.trainingSetId,
@@ -659,6 +661,26 @@ export const appRouter = router({
           totalTimeMs: input.totalTimeMs,
           accuracy: input.accuracy.toString(),
         });
+
+        // Update player stats in the leaderboard after cycle completion
+        try {
+          const { getOrCreatePlayer, updatePlayerStats } = await import('./players');
+          const playerName = input.userId ? `Player-${input.userId}` : `Guest-${(input.deviceId || 'unknown').substring(0, 5)}`;
+          const player = await getOrCreatePlayer(
+            input.userId || null,
+            input.deviceId || null,
+            playerName
+          );
+          if (player?.id) {
+            await updatePlayerStats(player.id);
+            console.log(`[cycles.create] Updated player stats for player ${player.id}`);
+          }
+        } catch (error) {
+          console.warn('[cycles.create] Failed to update player stats:', error);
+          // Don't throw - cycle record was already created successfully
+        }
+
+        return result;
       }),
 
     /**

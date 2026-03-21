@@ -276,12 +276,12 @@ export default function Train() {
                     <button
                       key={item.opening}
                       onClick={() => handleSelectOpening(item.opening)}
-                      className="w-full text-left px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition border border-slate-600 hover:border-teal-500"
+                      className="w-full text-left px-3 sm:px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition border border-slate-600 hover:border-teal-500"
                       style={{ touchAction: "manipulation" }}
                     >
-                      <div className="flex justify-between items-center">
-                        <span className="text-white font-medium">{item.opening}</span>
-                        <span className="text-gray-400 text-sm">{item.puzzleCount.toLocaleString()} puzzles</span>
+                      <div className="flex justify-between items-center gap-2">
+                        <span className="text-white font-medium truncate min-w-0 text-sm sm:text-base">{item.opening}</span>
+                        <span className="text-gray-400 text-xs sm:text-sm shrink-0 whitespace-nowrap">{item.puzzleCount.toLocaleString()}</span>
                       </div>
                     </button>
                   ))
@@ -312,12 +312,12 @@ export default function Train() {
                     <button
                       key={variation.variation}
                       onClick={() => handleSelectVariation(variation.variation)}
-                      className="w-full text-left px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition border border-slate-600 hover:border-teal-500"
+                      className="w-full text-left px-3 sm:px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition border border-slate-600 hover:border-teal-500"
                       style={{ touchAction: "manipulation" }}
                     >
-                      <div className="flex justify-between items-center">
-                        <span className="text-white font-medium">{variation.variation}</span>
-                        <span className="text-gray-400 text-sm">{variation.puzzleCount.toLocaleString()} puzzles</span>
+                      <div className="flex justify-between items-center gap-2">
+                        <span className="text-white font-medium truncate min-w-0 text-sm sm:text-base">{variation.variation}</span>
+                        <span className="text-gray-400 text-xs sm:text-sm shrink-0 whitespace-nowrap">{variation.puzzleCount.toLocaleString()}</span>
                       </div>
                     </button>
                   ))

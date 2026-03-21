@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { ChevronLeft, Lock, Zap, Shield, CreditCard, Loader, Check, Gift, Tag } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "@/_core/deviceId";
+import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 
@@ -149,7 +150,8 @@ export default function Settings() {
 
   const handleCheckout = async (priceId: string, planName: string) => {
     if (!user) {
-      toast.error("Please sign in to upgrade");
+      toast.info("Please sign in first to upgrade to premium");
+      window.location.href = getLoginUrl();
       return;
     }
 
@@ -476,6 +478,23 @@ export default function Settings() {
                 <p className="text-teal-400 text-xs mt-2">&#10003; {validationResult.discountPercent}% off applied</p>
               )}
             </div>
+
+            {/* Sign-in prompt for non-authenticated users */}
+            {!user && (
+              <div className="px-3 sm:px-4 py-2">
+                <div className="bg-amber-900/20 border border-amber-700/30 rounded-lg p-3 text-center">
+                  <p className="text-amber-200 text-sm mb-2">Sign in to unlock premium features</p>
+                  <button
+                    type="button"
+                    onClick={() => { window.location.href = getLoginUrl(); }}
+                    className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm rounded-lg transition-colors"
+                    style={{ touchAction: "manipulation" }}
+                  >
+                    Sign In
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Pricing */}
             <div className="px-3 sm:px-4 py-3 sm:py-4 space-y-2 sm:space-y-3">

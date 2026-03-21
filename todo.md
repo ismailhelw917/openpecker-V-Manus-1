@@ -1491,3 +1491,10 @@
 - [x] Save correctCount immediately when marking puzzle as solved
 - [x] Reset progress fields when all cycles completed (status='completed')
 - [x] Record cycle completion before starting next cycle
+
+## Bug Fix (Round 37 - Leaderboard, Sets, Paywall, Mobile Text)
+- [x] Fix leaderboard not showing player stats - added getOrCreatePlayer + updatePlayerStats calls in cycles.create mutation
+- [x] Fix sets tab not showing data - added totalTimeMs column, updated Session.tsx to save bestAccuracy/totalAttempts/totalTimeMs on cycle completion and puzzle attempts
+- [x] Fix paywall buttons not working - changed handleCheckout to redirect to login (getLoginUrl) instead of just showing toast; added sign-in prompt in premium modal for non-authenticated users
+- [x] Fix text overflow on mobile - added overflow-x:hidden to html/body, changed BottomNav to flex-1 layout with truncate, added truncate/min-w-0 to Train page opening/variation lists, added word-break:break-word globally
+- [x] All 7 bugfix tests passing

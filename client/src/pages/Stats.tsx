@@ -6,6 +6,7 @@ import { Download, Zap, Shield, Loader, Users, TrendingUp } from "lucide-react";
 import { StatsDisplay } from "@/components/StatsDisplay";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "@/_core/deviceId";
+import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { trpc } from "@/lib/trpc";
@@ -73,7 +74,8 @@ export default function Stats() {
 
   const handleCheckout = async (priceId: string, planName: string) => {
     if (!user) {
-      toast.error("Please sign in to upgrade");
+      toast.info("Please sign in first to upgrade to premium");
+      window.location.href = getLoginUrl();
       return;
     }
     setLoading(true);
@@ -298,7 +300,7 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
 
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Tab Navigation */}
-        <div className="flex gap-2 sm:gap-4 mb-6 sm:mb-8 border-b border-teal-900/30 overflow-x-auto">
+        <div className="flex gap-2 sm:gap-4 mb-6 sm:mb-8 border-b border-teal-900/30 overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}>
           <button
             onClick={() => setActiveTab("overview")}
             className={`pb-4 px-2 font-semibold transition-colors ${

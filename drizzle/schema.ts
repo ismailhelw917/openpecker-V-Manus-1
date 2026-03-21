@@ -118,6 +118,7 @@ export const trainingSets = mysqlTable("training_sets", {
   correctCount: int("correctCount").default(0),
   bestAccuracy: decimal("bestAccuracy", { precision: 5, scale: 2 }),
   totalAttempts: int("totalAttempts").default(0),
+  totalTimeMs: int("totalTimeMs").default(0),
   
   // Puzzle data
   puzzlesJson: text("puzzlesJson").notNull(), // JSON array of puzzle objects

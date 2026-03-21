@@ -115,6 +115,18 @@ export default function Session() {
     },
   });
 
+  // Track cumulative totalAttempts and totalTimeMs for the training set
+  const totalAttemptsRef = useRef(0);
+  const totalTimeMsRef = useRef(0);
+
+  // Initialize refs from saved training set data
+  useEffect(() => {
+    if (getTrainingSet.data) {
+      totalAttemptsRef.current = getTrainingSet.data.totalAttempts || 0;
+      totalTimeMsRef.current = getTrainingSet.data.totalTimeMs || 0;
+    }
+  }, [getTrainingSet.data?.id]);
+
   const recordPuzzleAttempt = useCallback((isCorrect: boolean, timeMs: number) => {
     const deviceId = getOrCreateDeviceId();
     const currentPuzzle = puzzles[currentPuzzleIndex];
@@ -126,11 +138,18 @@ export default function Session() {
       isCorrect,
       timeMs,
     });
+
+    // Increment cumulative stats on the training set
+    totalAttemptsRef.current += 1;
+    totalTimeMsRef.current += timeMs;
+
     updateTrainingSetMutation.mutate({
       id: sessionId,
+      totalAttempts: totalAttemptsRef.current,
+      totalTimeMs: totalTimeMsRef.current,
       lastPlayedAt: new Date(),
     });
-  }, [puzzles, currentPuzzleIndex, user, sessionId, currentCycle, getTrainingSet.data?.totalAttempts]);
+  }, [puzzles, currentPuzzleIndex, user, sessionId, currentCycle]);
 
   // Session timer
   useEffect(() => {
@@ -363,6 +382,12 @@ export default function Session() {
         accuracy,
       });
 
+      // Compute bestAccuracy: compare current cycle accuracy with stored best
+      const currentBestAccuracy = getTrainingSet.data?.bestAccuracy
+        ? parseFloat(String(getTrainingSet.data.bestAccuracy))
+        : 0;
+      const newBestAccuracy = Math.max(currentBestAccuracy, accuracy);
+
       if (currentCycle < targetCycles) {
         // Start next cycle
         const nextCycle = currentCycle + 1;
@@ -371,13 +396,15 @@ export default function Session() {
         setCorrectCount(0);
         initializePuzzle(puzzles[0]);
 
-        // Save progress: new cycle, reset puzzle index
+        // Save progress: new cycle, reset puzzle index, update bestAccuracy
         updateTrainingSetMutation.mutate({
           id: sessionId,
           currentPuzzleIndex: 0,
           currentCycle: nextCycle,
           correctCount: 0,
           cyclesCompleted: currentCycle,
+          bestAccuracy: newBestAccuracy.toFixed(2),
+          totalTimeMs: totalTimeMsRef.current,
           lastPlayedAt: new Date(),
         });
       } else {
@@ -388,6 +415,8 @@ export default function Session() {
           currentPuzzleIndex: 0,
           currentCycle: 1,
           correctCount: 0,
+          bestAccuracy: newBestAccuracy.toFixed(2),
+          totalTimeMs: totalTimeMsRef.current,
           status: "completed" as const,
           lastPlayedAt: new Date(),
         });
