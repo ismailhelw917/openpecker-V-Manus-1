@@ -1568,3 +1568,7 @@
 - [x] Fix clicking openings skips variation step - ALREADY FIXED in dev version, published site is running old code
 - [x] Investigate hierarchy.json data differences - Published site has old hierarchy.json with abbreviated names
 - [ ] Publish latest checkpoint to push fixes to live site
+
+## Round 48 - Deployment SSL Fix
+- [x] Fix generate-hierarchy.mjs SSL config error causing deployment failure
+- [x] Remove DB dependency from build step - use pre-generated hierarchy.json instead
