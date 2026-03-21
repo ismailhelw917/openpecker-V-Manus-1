@@ -1719,3 +1719,9 @@
 
 ## Round 75 - UI Text Cleanup
 - [x] Changed Stats page premium button text from "Upgrade to Premium - €49.99/year" to just "Upgrade to Premium"
+
+## Round 76 - Stats Page Error Handling
+- [x] Added retry logic to all Stats page queries (retry: 1, retryDelay: 1000ms)
+- [x] Added error handling and logging to trackUserOnline mutation
+- [x] Fixed TypeScript errors with query input parameters
+- [x] Addressed "BadRequestError: request aborted" by improving error recovery

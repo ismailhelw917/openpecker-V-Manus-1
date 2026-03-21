@@ -110,34 +110,55 @@ export default function Stats() {
     }
   };
   const utils = trpc.useUtils();
-const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
+
+  const trackOnlineMutation = trpc.system.trackUserOnline.useMutation({
+    retry: 1,
+  });
 
 
 
   // Fetch real user stats using tRPC
-  const { data: stats, isLoading: statsLoading, refetch: refetchStats } = trpc.stats.getUserStats.useQuery({}, {
+  const { data: stats, isLoading: statsLoading, refetch: refetchStats } = trpc.stats.getUserStats.useQuery(undefined, {
     enabled: Boolean(user),
+    retry: 1,
+    retryDelay: 1000,
   });
 
   // Fetch stats for anonymous users by device ID
   // Also used as fallback for logged-in users to include pre-login data
   const { data: anonStats, isLoading: anonStatsLoading } = trpc.stats.getSummary.useQuery(
     { userId: user?.id, deviceId: deviceId || undefined },
-    { enabled: !!deviceId || !!user }
+    { enabled: !!deviceId || !!user, retry: 1, retryDelay: 1000 }
   );
 
   // Fetch Counter API metrics
-  const { data: onlineData } = trpc.system.getOnlineCount.useQuery();
-  const { data: totalPlayersData } = trpc.system.getTotalPlayerCount.useQuery();
+  const { data: onlineData } = trpc.system.getOnlineCount.useQuery(undefined, {
+    retry: 1,
+    retryDelay: 1000,
+  });
+  const { data: totalPlayersData } = trpc.system.getTotalPlayerCount.useQuery(undefined, {
+    retry: 1,
+    retryDelay: 1000,
+  });
 
   // Track user online status
   useEffect(() => {
     if (user || deviceId) {
-      trackOnlineMutation.mutate({
-        userId: user?.id,
-        userName: user?.name ?? undefined,
-        sessionId: deviceId || 'anonymous',
-      });
+      trackOnlineMutation.mutate(
+        {
+          userId: user?.id,
+          userName: user?.name ?? undefined,
+          sessionId: deviceId || 'anonymous',
+        },
+        {
+          onError: (error) => {
+            console.error('[Stats] trackUserOnline error:', error);
+          },
+          onSuccess: () => {
+            console.log('[Stats] trackUserOnline success');
+          },
+        }
+      );
     }
   }, [user, deviceId, trackOnlineMutation]);
 
