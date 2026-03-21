@@ -290,14 +290,31 @@ export default function Session() {
       }
 
       setPuzzles(puzzleList);
-      setCurrentPuzzleIndex(0);
-      setCorrectCount(0);
-      setSolved(false);
-      setCurrentCycle(1);
       setTargetCycles(getTrainingSet.data.targetCycles || 3);
 
-      // Initialize first puzzle
-      initializePuzzle(puzzleList[0]);
+      // Resume from saved checkpoint if available
+      const savedPuzzleIndex = getTrainingSet.data.currentPuzzleIndex ?? 0;
+      const savedCycle = getTrainingSet.data.currentCycle ?? 1;
+      const savedCorrectCount = getTrainingSet.data.correctCount ?? 0;
+
+      // Clamp to valid range in case puzzles changed
+      const resumeIndex = Math.min(savedPuzzleIndex, puzzleList.length - 1);
+
+      console.log('Resuming session:', {
+        savedPuzzleIndex,
+        savedCycle,
+        savedCorrectCount,
+        resumeIndex,
+        totalPuzzles: puzzleList.length,
+      });
+
+      setCurrentPuzzleIndex(resumeIndex);
+      setCurrentCycle(savedCycle);
+      setCorrectCount(savedCorrectCount);
+      setSolved(false);
+
+      // Initialize puzzle at the resume point
+      initializePuzzle(puzzleList[resumeIndex]);
 
       setIsLoading(false);
     } catch (error) {
@@ -324,8 +341,28 @@ export default function Session() {
       const nextIndex = currentPuzzleIndex + 1;
       setCurrentPuzzleIndex(nextIndex);
       initializePuzzle(puzzles[nextIndex]);
+
+      // Save progress to DB so session can be resumed
+      updateTrainingSetMutation.mutate({
+        id: sessionId,
+        currentPuzzleIndex: nextIndex,
+        currentCycle: currentCycle,
+        correctCount: correctCount,
+        lastPlayedAt: new Date(),
+      });
     } else {
-      // Cycle completed
+      // Cycle completed - record cycle
+      const accuracy = (correctCount / puzzles.length) * 100;
+      completeCycleMutation.mutate({
+        userId: user?.id,
+        deviceId: getOrCreateDeviceId(),
+        trainingSetId: sessionId,
+        totalPuzzles: puzzles.length,
+        correctCount,
+        totalTimeMs: sessionTime * 1000,
+        accuracy,
+      });
+
       if (currentCycle < targetCycles) {
         // Start next cycle
         const nextCycle = currentCycle + 1;
@@ -333,22 +370,25 @@ export default function Session() {
         setCurrentPuzzleIndex(0);
         setCorrectCount(0);
         initializePuzzle(puzzles[0]);
-      } else {
-        // All cycles completed - record final cycle
-        const accuracy = (correctCount / puzzles.length) * 100;
-        completeCycleMutation.mutate({
-          userId: user?.id,
-          deviceId: getOrCreateDeviceId(),
-          trainingSetId: sessionId,
-          totalPuzzles: puzzles.length,
-          correctCount,
-          totalTimeMs: sessionTime * 1000,
-          accuracy,
-        });
 
+        // Save progress: new cycle, reset puzzle index
+        updateTrainingSetMutation.mutate({
+          id: sessionId,
+          currentPuzzleIndex: 0,
+          currentCycle: nextCycle,
+          correctCount: 0,
+          cyclesCompleted: currentCycle,
+          lastPlayedAt: new Date(),
+        });
+      } else {
+        // All cycles completed
         updateTrainingSetMutation.mutate({
           id: sessionId,
           cyclesCompleted: currentCycle,
+          currentPuzzleIndex: 0,
+          currentCycle: 1,
+          correctCount: 0,
+          status: "completed" as const,
           lastPlayedAt: new Date(),
         });
 
@@ -400,12 +440,21 @@ export default function Session() {
   const markPuzzleSolved = useCallback(() => {
     const puzzleTimeMs = Date.now() - puzzleStartTime;
     recordPuzzleAttempt(true, puzzleTimeMs);
-    setCorrectCount(prev => prev + 1);
+    setCorrectCount(prev => {
+      const newCount = prev + 1;
+      // Save updated correct count to DB immediately
+      updateTrainingSetMutation.mutate({
+        id: sessionId,
+        correctCount: newCount,
+        lastPlayedAt: new Date(),
+      });
+      return newCount;
+    });
     setShowCorrectCheckmark(true);
     setSolved(true);
     safePuzzleTimeout(() => setShowCorrectCheckmark(false), 1800);
     safePuzzleTimeout(() => advanceToNextPuzzle(), 2000);
-  }, [puzzleStartTime, recordPuzzleAttempt, safePuzzleTimeout, advanceToNextPuzzle]);
+  }, [puzzleStartTime, recordPuzzleAttempt, safePuzzleTimeout, advanceToNextPuzzle, sessionId]);
 
   // Helper: auto-solve the puzzle after a wrong move
   const autoSolvePuzzle = useCallback((currentPuzzle: any, movesList: string[]) => {
@@ -600,9 +649,12 @@ export default function Session() {
         const puzzleTimeMs = Date.now() - puzzleStartTime;
         recordPuzzleAttempt(false, puzzleTimeMs);
 
-        // Hide cross and advance after showing it
-        safePuzzleTimeout(() => setShowWrongX(false), 1800);
-        safePuzzleTimeout(() => advanceToNextPuzzle(), 2000);
+        // Show cross animation, then auto-solve to show the correct solution
+        safePuzzleTimeout(() => {
+          setShowWrongX(false);
+          // Auto-solve: reset board and replay the correct solution
+          autoSolvePuzzle(currentPuzzle, movesList);
+        }, 1800);
       }
 
       return true;

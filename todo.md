@@ -1482,3 +1482,12 @@
 - [x] Verified multi-move puzzle flow works correctly: f3e5 → c7e5 (opponent) → e2g4 → puzzle solved, counter incremented
 - [x] Move validation correctly compares UCI strings (expectedMove === moveUCI)
 - [x] Star animation triggers on correct puzzle completion, cross animation triggers on wrong moves
+
+## Bug Fix (Round 36 - Auto-solve & Session Resume)
+- [x] Show auto-solve animation when wrong move is played: cross animation for 1.8s, then board resets and replays correct solution with animated moves before advancing
+- [x] Fix puzzle sets resetting: added currentPuzzleIndex, currentCycle, correctCount columns to training_sets table
+- [x] Save progress to DB after each puzzle advance (currentPuzzleIndex, currentCycle, correctCount, lastPlayedAt)
+- [x] Load saved progress when resuming a session instead of always starting from puzzle 0
+- [x] Save correctCount immediately when marking puzzle as solved
+- [x] Reset progress fields when all cycles completed (status='completed')
+- [x] Record cycle completion before starting next cycle

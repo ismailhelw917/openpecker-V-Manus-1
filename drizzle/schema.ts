@@ -113,6 +113,9 @@ export const trainingSets = mysqlTable("training_sets", {
   // Progress tracking
   status: mysqlEnum("status", ["active", "paused", "completed"]).default("active"),
   cyclesCompleted: int("cyclesCompleted").default(0),
+  currentPuzzleIndex: int("currentPuzzleIndex").default(0),
+  currentCycle: int("currentCycle").default(1),
+  correctCount: int("correctCount").default(0),
   bestAccuracy: decimal("bestAccuracy", { precision: 5, scale: 2 }),
   totalAttempts: int("totalAttempts").default(0),
   
