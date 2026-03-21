@@ -403,8 +403,8 @@ export default function Session() {
     setCorrectCount(prev => prev + 1);
     setShowCorrectCheckmark(true);
     setSolved(true);
-    safePuzzleTimeout(() => setShowCorrectCheckmark(false), 1000);
-    safePuzzleTimeout(() => advanceToNextPuzzle(), 1500);
+    safePuzzleTimeout(() => setShowCorrectCheckmark(false), 1800);
+    safePuzzleTimeout(() => advanceToNextPuzzle(), 2000);
   }, [puzzleStartTime, recordPuzzleAttempt, safePuzzleTimeout, advanceToNextPuzzle]);
 
   // Helper: auto-solve the puzzle after a wrong move
@@ -590,13 +590,15 @@ export default function Session() {
         // ===== WRONG MOVE (but legal) =====
         // Lock the board immediately so the puzzle can't be replayed
         setSolved(true);
+        setShowWrongX(true);
 
         // Record incorrect attempt
         const puzzleTimeMs = Date.now() - puzzleStartTime;
         recordPuzzleAttempt(false, puzzleTimeMs);
 
-        // Advance to next puzzle after a brief delay to let the move animation complete
-        safePuzzleTimeout(() => advanceToNextPuzzle(), 300);
+        // Hide cross and advance after showing it
+        safePuzzleTimeout(() => setShowWrongX(false), 1800);
+        safePuzzleTimeout(() => advanceToNextPuzzle(), 2000);
       }
 
       return true;
@@ -655,23 +657,36 @@ export default function Session() {
             theme="brown"
           />
 
-          {/* Green Checkmark Watermark for Correct Solutions */}
+          {/* Star Animation for Correct Solutions */}
           {showCorrectCheckmark && !isAutoSolving && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="text-green-400 opacity-80 animate-pulse">
-                <svg className="w-32 h-32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+              <div className="star-correct-animation">
+                {/* Glow ring */}
+                <div className="star-glow" />
+                {/* Sparkle particles */}
+                <div className="star-sparkle sparkle-1" />
+                <div className="star-sparkle sparkle-2" />
+                <div className="star-sparkle sparkle-3" />
+                <div className="star-sparkle sparkle-4" />
+                <div className="star-sparkle sparkle-5" />
+                <div className="star-sparkle sparkle-6" />
+                {/* Main star */}
+                <svg className="star-svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                 </svg>
               </div>
             </div>
           )}
 
-          {/* Red X Watermark for Wrong Moves */}
+          {/* Cross Animation for Wrong Moves */}
           {showWrongX && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="text-red-500 opacity-80 animate-pulse">
-                <svg className="w-32 h-32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+              <div className="cross-wrong-animation">
+                {/* Red glow ring */}
+                <div className="cross-glow" />
+                {/* Main cross */}
+                <svg className="cross-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </div>
             </div>

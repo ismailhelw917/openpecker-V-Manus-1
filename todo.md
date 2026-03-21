@@ -1469,3 +1469,10 @@
 ## Bug Fix (Round 33 - No Values to Set & Google Sign-In)
 - [x] Fix "No values to set" API mutation error - updateTrainingSet now filters undefined values and always sets updatedAt; Session.tsx now passes lastPlayedAt and cyclesCompleted
 - [x] Verify Google Sign-In works without additional configuration - confirmed it uses Manus OAuth which supports Google login out of the box
+
+## UI Enhancement (Round 34 - Star & Cross Animations)
+- [x] Add star animation overlay when correct puzzle solution is played - golden star with glow, sparkle particles, spin entrance, and pulse effect
+- [x] Add cross animation overlay when wrong move is played - red cross with glow, stroke draw animation, and shake effect
+- [x] Fix showWrongX never being set to true (was missing from wrong move handler)
+- [x] Replace CSS cos()/sin() sparkle animations with individual keyframes for cross-browser compatibility
+- [x] Increased animation display time to 1.8s with 2s advance delay for better visibility
