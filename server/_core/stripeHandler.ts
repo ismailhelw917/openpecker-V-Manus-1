@@ -50,11 +50,20 @@ export function registerStripeRoutes(app: express.Express) {
       // Create Stripe checkout session
       const stripe = getStripe();
       
-      // Determine mode based on the price ID
-      // Note: Both monthly and lifetime use 'payment' mode since the prices are configured as one-time payments
-      // For true subscriptions, you would need to use recurring prices configured in Stripe
+      // Determine mode based on the price type in Stripe
       const isMonthly = priceId === "price_monthly" || actualPriceId === STRIPE_PRICES.price_monthly;
-      const mode = "payment"; // Use payment mode for both plans
+      
+      // Retrieve the price to check if it's recurring or one-time
+      let mode: "payment" | "subscription" = "payment";
+      try {
+        const priceObj = await stripe.prices.retrieve(actualPriceId);
+        if (priceObj.type === "recurring") {
+          mode = "subscription";
+        }
+      } catch (e) {
+        // Default to payment mode if price retrieval fails
+        console.warn("Could not retrieve price type, defaulting to payment mode", e);
+      }
       
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],

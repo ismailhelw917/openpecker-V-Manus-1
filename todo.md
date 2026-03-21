@@ -1514,3 +1514,10 @@
 - [x] Remove standalone promo code section from Settings page - kept only the one inside premium modal
 - [x] Add email + Google register options on Home - "Register with Google" and "Register with Email" buttons, both redirect to /train after login via OAuth returnPath in state
 - [x] All 11 round39 tests passing (OAuth return path parsing + premium opening lock logic)
+
+## Round 40 - Logo, Payment, Promo, Premium Verification
+- [x] Switch home page image to new OpenPecker.com logo - uploaded to CDN and updated Home.tsx
+- [x] Check Stripe payment flow - both monthly (€4.99) and lifetime (€49) checkout URLs work; fixed lifetime price mode from payment to subscription since it's a recurring price
+- [x] Check promo code functionality - validate/redeem flow works; codes are uppercased before lookup; lifetime_premium codes set isPremium=1
+- [x] List all promo codes: OPENPECKER50 (free premium, 50 uses), OPENPECKER80 (80% off, 200 uses), SAVE80 (80% off, 1000 uses, expires 2027-03-19), plus lowercase duplicates (openpecker50: 100 uses, openpecker80: 400 uses)
+- [x] Verify premium unlocks everything - confirmed: all openings, Stats Trends/Openings/Rating chart, Pro Analytics, premium badge on leaderboard/profile

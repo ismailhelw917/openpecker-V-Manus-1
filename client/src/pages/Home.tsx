@@ -82,13 +82,11 @@ export default function Home() {
       <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
         {/* Logo */}
         <div className="mb-6 sm:mb-8 flex justify-center">
-          <div className="bg-teal-700 rounded-lg p-3 sm:p-4 shadow-lg">
-            <img
-              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/openpecker-logo-UbbhKD7VjajRRYYwpnAd2y.webp"
-              alt="OpenPecker Logo"
-              className="w-20 h-20 sm:w-32 sm:h-32 object-contain"
-            />
-          </div>
+          <img
+            src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/openpecker-new-logo_6f9fcd4c.jpg"
+            alt="OpenPecker Logo"
+            className="w-64 sm:w-80 md:w-96 object-contain rounded-xl shadow-lg"
+          />
         </div>
         
         {/* Title */}
