@@ -1,0 +1,522 @@
+{
+  "query": "SELECT DISTINCT openingName, COUNT(*) as puzzle_count FROM puzzles GROUP BY openingName ORDER BY puzzle_count DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT DISTINCT openingName, COUNT(*) as puzzle_count FROM puzzles GROUP BY openingName ORDER BY puzzle_count DESC;",
+  "rows": [
+    {
+      "openingName": "Unclassified",
+      "puzzle_count": "3831204"
+    },
+    {
+      "openingName": "Sicilian",
+      "puzzle_count": "157851"
+    },
+    {
+      "openingName": "Queens",
+      "puzzle_count": "110504"
+    },
+    {
+      "openingName": "French",
+      "puzzle_count": "66041"
+    },
+    {
+      "openingName": "Italian",
+      "puzzle_count": "56809"
+    },
+    {
+      "openingName": "Caro-Kann",
+      "puzzle_count": "54735"
+    },
+    {
+      "openingName": "Kings",
+      "puzzle_count": "54275"
+    },
+    {
+      "openingName": "Scandinavian",
+      "puzzle_count": "42565"
+    },
+    {
+      "openingName": "English",
+      "puzzle_count": "35045"
+    },
+    {
+      "openingName": "Ruy",
+      "puzzle_count": "31201"
+    },
+    {
+      "openingName": "Scotch",
+      "puzzle_count": "27948"
+    },
+    {
+      "openingName": "Indian",
+      "puzzle_count": "27774"
+    },
+    {
+      "openingName": "Philidor",
+      "puzzle_count": "19404"
+    },
+    {
+      "openingName": "Russian",
+      "puzzle_count": "18176"
+    },
+    {
+      "openingName": "Four",
+      "puzzle_count": "15386"
+    },
+    {
+      "openingName": "Modern",
+      "puzzle_count": "15098"
+    },
+    {
+      "openingName": "Zukertort",
+      "puzzle_count": "14837"
+    },
+    {
+      "openingName": "Vienna",
+      "puzzle_count": "14695"
+    },
+    {
+      "openingName": "Pirc",
+      "puzzle_count": "14029"
+    },
+    {
+      "openingName": "Slav",
+      "puzzle_count": "13854"
+    },
+    {
+      "openingName": "Bishops",
+      "puzzle_count": "13838"
+    },
+    {
+      "openingName": "Englund",
+      "puzzle_count": "12956"
+    },
+    {
+      "openingName": "Benoni",
+      "puzzle_count": "9678"
+    },
+    {
+      "openingName": "Nimzo-Larsen",
+      "puzzle_count": "9251"
+    },
+    {
+      "openingName": "Nimzowitsch",
+      "puzzle_count": "9182"
+    },
+    {
+      "openingName": "Alekhine",
+      "puzzle_count": "8897"
+    },
+    {
+      "openingName": "Horwitz",
+      "puzzle_count": "8084"
+    },
+    {
+      "openingName": "Owen",
+      "puzzle_count": "7650"
+    },
+    {
+      "openingName": "Bird",
+      "puzzle_count": "7201"
+    },
+    {
+      "openingName": "Dutch",
+      "puzzle_count": "6671"
+    },
+    {
+      "openingName": "Nimzo-Indian",
+      "puzzle_count": "6198"
+    },
+    {
+      "openingName": "Danish",
+      "puzzle_count": "5883"
+    },
+    {
+      "openingName": "Vant",
+      "puzzle_count": "5564"
+    },
+    {
+      "openingName": "Semi-Slav",
+      "puzzle_count": "5546"
+    },
+    {
+      "openingName": "Blackmar-Diemer",
+      "puzzle_count": "5214"
+    },
+    {
+      "openingName": "Center",
+      "puzzle_count": "5128"
+    },
+    {
+      "openingName": "Hungarian",
+      "puzzle_count": "4581"
+    },
+    {
+      "openingName": "Ponziani",
+      "puzzle_count": "4131"
+    },
+    {
+      "openingName": "Petrovs",
+      "puzzle_count": "4054"
+    },
+    {
+      "openingName": "Elephant",
+      "puzzle_count": "3969"
+    },
+    {
+      "openingName": "Three",
+      "puzzle_count": "3951"
+    },
+    {
+      "openingName": "Polish",
+      "puzzle_count": "3927"
+    },
+    {
+      "openingName": "Rat",
+      "puzzle_count": "3332"
+    },
+    {
+      "openingName": "Grunfeld",
+      "puzzle_count": "3326"
+    },
+    {
+      "openingName": "Trompowsky",
+      "puzzle_count": "3249"
+    },
+    {
+      "openingName": "Rapport-Jobava",
+      "puzzle_count": "3199"
+    },
+    {
+      "openingName": "NULL",
+      "puzzle_count": "2785"
+    },
+    {
+      "openingName": "Grob",
+      "puzzle_count": "2606"
+    },
+    {
+      "openingName": "Sicilian Defense",
+      "puzzle_count": "2177"
+    },
+    {
+      "openingName": "Van",
+      "puzzle_count": "2121"
+    },
+    {
+      "openingName": "Latvian",
+      "puzzle_count": "1906"
+    },
+    {
+      "openingName": "Tarrasch",
+      "puzzle_count": "1888"
+    },
+    {
+      "openingName": "Old",
+      "puzzle_count": "1836"
+    },
+    {
+      "openingName": "Catalan",
+      "puzzle_count": "1708"
+    },
+    {
+      "openingName": "Reti",
+      "puzzle_count": "1663"
+    },
+    {
+      "openingName": "Mieses",
+      "puzzle_count": "1525"
+    },
+    {
+      "openingName": "Benko",
+      "puzzle_count": "1395"
+    },
+    {
+      "openingName": "London",
+      "puzzle_count": "1229"
+    },
+    {
+      "openingName": "St",
+      "puzzle_count": "1091"
+    },
+    {
+      "openingName": "Torre",
+      "puzzle_count": "1088"
+    },
+    {
+      "openingName": "Czech",
+      "puzzle_count": "1050"
+    },
+    {
+      "openingName": "Mikenas",
+      "puzzle_count": "993"
+    },
+    {
+      "openingName": "Saragossa",
+      "puzzle_count": "991"
+    },
+    {
+      "openingName": "Duras",
+      "puzzle_count": "988"
+    },
+    {
+      "openingName": "East",
+      "puzzle_count": "907"
+    },
+    {
+      "openingName": "Richter-Veresov",
+      "puzzle_count": "807"
+    },
+    {
+      "openingName": "Yusupov-Rubinstein",
+      "puzzle_count": "601"
+    },
+    {
+      "openingName": "Neo-Grunfeld",
+      "puzzle_count": "579"
+    },
+    {
+      "openingName": "Bogo-Indian",
+      "puzzle_count": "554"
+    },
+    {
+      "openingName": "Ware",
+      "puzzle_count": "551"
+    },
+    {
+      "openingName": "Giuoco",
+      "puzzle_count": "525"
+    },
+    {
+      "openingName": "Pterodactyl",
+      "puzzle_count": "515"
+    },
+    {
+      "openingName": "Anderssens",
+      "puzzle_count": "503"
+    },
+    {
+      "openingName": "Barnes",
+      "puzzle_count": "497"
+    },
+    {
+      "openingName": "Kadas",
+      "puzzle_count": "455"
+    },
+    {
+      "openingName": "Borg",
+      "puzzle_count": "436"
+    },
+    {
+      "openingName": "Opening",
+      "puzzle_count": "432"
+    },
+    {
+      "openingName": "Lion",
+      "puzzle_count": "380"
+    },
+    {
+      "openingName": "Mexican",
+      "puzzle_count": "320"
+    },
+    {
+      "openingName": "Blumenfeld",
+      "puzzle_count": "317"
+    },
+    {
+      "openingName": "Canard",
+      "puzzle_count": "282"
+    },
+    {
+      "openingName": "Rubinstein",
+      "puzzle_count": "260"
+    },
+    {
+      "openingName": "Goldsmith",
+      "puzzle_count": "240"
+    },
+    {
+      "openingName": "Pseudo",
+      "puzzle_count": "213"
+    },
+    {
+      "openingName": "Clemenz",
+      "puzzle_count": "212"
+    },
+    {
+      "openingName": "Gedults",
+      "puzzle_count": "192"
+    },
+    {
+      "openingName": "Kangaroo",
+      "puzzle_count": "189"
+    },
+    {
+      "openingName": "Paleface",
+      "puzzle_count": "186"
+    },
+    {
+      "openingName": "Carr",
+      "puzzle_count": "183"
+    },
+    {
+      "openingName": "Portuguese",
+      "puzzle_count": "147"
+    },
+    {
+      "openingName": "Wade",
+      "puzzle_count": "144"
+    },
+    {
+      "openingName": "Gunderam",
+      "puzzle_count": "135"
+    },
+    {
+      "openingName": "Amar",
+      "puzzle_count": "108"
+    },
+    {
+      "openingName": "Amazon",
+      "puzzle_count": "103"
+    },
+    {
+      "openingName": "Lasker",
+      "puzzle_count": "91"
+    },
+    {
+      "openingName": "Robatsch",
+      "puzzle_count": "71"
+    },
+    {
+      "openingName": "Hippopotamus",
+      "puzzle_count": "58"
+    },
+    {
+      "openingName": "Sodium",
+      "puzzle_count": "57"
+    },
+    {
+      "openingName": "Fried",
+      "puzzle_count": "52"
+    },
+    {
+      "openingName": "Lemming",
+      "puzzle_count": "50"
+    },
+    {
+      "openingName": "Valencia",
+      "puzzle_count": "45"
+    },
+    {
+      "openingName": "Creepy",
+      "puzzle_count": "44"
+    },
+    {
+      "openingName": "Crab",
+      "puzzle_count": "26"
+    },
+    {
+      "openingName": "Guatemala",
+      "puzzle_count": "22"
+    },
+    {
+      "openingName": "Australian",
+      "puzzle_count": "21"
+    },
+    {
+      "openingName": "Bongcloud",
+      "puzzle_count": "18"
+    },
+    {
+      "openingName": "Montevideo",
+      "puzzle_count": "17"
+    },
+    {
+      "openingName": "Vulture",
+      "puzzle_count": "16"
+    },
+    {
+      "openingName": "Global",
+      "puzzle_count": "13"
+    },
+    {
+      "openingName": "System",
+      "puzzle_count": "12"
+    },
+    {
+      "openingName": "Dory",
+      "puzzle_count": "12"
+    },
+    {
+      "openingName": "Marienbad",
+      "puzzle_count": "12"
+    },
+    {
+      "openingName": "Bronstein",
+      "puzzle_count": "12"
+    },
+    {
+      "openingName": "Irish",
+      "puzzle_count": "5"
+    },
+    {
+      "openingName": "Norwegian",
+      "puzzle_count": "4"
+    },
+    {
+      "openingName": "Colle",
+      "puzzle_count": "3"
+    },
+    {
+      "openingName": "Sicilian Najdorf",
+      "puzzle_count": "2"
+    },
+    {
+      "openingName": "French Defense",
+      "puzzle_count": "2"
+    },
+    {
+      "openingName": "Italian Game",
+      "puzzle_count": "2"
+    },
+    {
+      "openingName": "Four Knights Game",
+      "puzzle_count": "1"
+    },
+    {
+      "openingName": "Four Knights",
+      "puzzle_count": "1"
+    },
+    {
+      "openingName": "Sicilian Accelerated Dragon",
+      "puzzle_count": "1"
+    },
+    {
+      "openingName": "Italian Game Two Knights Defense",
+      "puzzle_count": "1"
+    },
+    {
+      "openingName": "Sicilian Closed",
+      "puzzle_count": "1"
+    },
+    {
+      "openingName": "Amsterdam",
+      "puzzle_count": "1"
+    },
+    {
+      "openingName": "Zaire",
+      "puzzle_count": "1"
+    },
+    {
+      "openingName": "Four Knights Scotch",
+      "puzzle_count": "1"
+    },
+    {
+      "openingName": "Italian Game Giuoco Piano",
+      "puzzle_count": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "openingName\tpuzzle_count\nUnclassified\t3831204\nSicilian\t157851\nQueens\t110504\nFrench\t66041\nItalian\t56809\nCaro-Kann\t54735\nKings\t54275\nScandinavian\t42565\nEnglish\t35045\nRuy\t31201\nScotch\t27948\nIndian\t27774\nPhilidor\t19404\nRussian\t18176\nFour\t15386\nModern\t15098\nZukertort\t14837\nVienna\t14695\nPirc\t14029\nSlav\t13854\nBishops\t13838\nEnglund\t12956\nBenoni\t9678\nNimzo-Larsen\t9251\nNimzowitsch\t9182\nAlekhine\t8897\nHorwitz\t8084\nOwen\t7650\nBird\t7201\nDutch\t6671\nNimzo-Indian\t6198\nDanish\t5883\nVant\t5564\nSemi-Slav\t5546\nBlackmar-Diemer\t5214\nCenter\t5128\nHungarian\t4581\nPonziani\t4131\nPetrovs\t4054\nElephant\t3969\nThree\t3951\nPolish\t3927\nRat\t3332\nGrunfeld\t3326\nTrompowsky\t3249\nRapport-Jobava\t3199\nNULL\t2785\nGrob\t2606\nSicilian Defense\t2177\nVan\t2121\nLatvian\t1906\nTarrasch\t1888\nOld\t1836\nCatalan\t1708\nReti\t1663\nMieses\t1525\nBenko\t1395\nLondon\t1229\nSt\t1091\nTorre\t1088\nCzech\t1050\nMikenas\t993\nSaragossa\t991\nDuras\t988\nEast\t907\nRichter-Veresov\t807\nYusupov-Rubinstein\t601\nNeo-Grunfeld\t579\nBogo-Indian\t554\nWare\t551\nGiuoco\t525\nPterodactyl\t515\nAnderssens\t503\nBarnes\t497\nKadas\t455\nBorg\t436\nOpening\t432\nLion\t380\nMexican\t320\nBlumenfeld\t317\nCanard\t282\nRubinstein\t260\nGoldsmith\t240\nPseudo\t213\nClemenz\t212\nGedults\t192\nKangaroo\t189\nPaleface\t186\nCarr\t183\nPortuguese\t147\nWade\t144\nGunderam\t135\nAmar\t108\nAmazon\t103\nLasker\t91\nRobatsch\t71\nHippopotamus\t58\nSodium\t57\nFried\t52\nLemming\t50\nValencia\t45\nCreepy\t44\nCrab\t26\nGuatemala\t22\nAustralian\t21\nBongcloud\t18\nMontevideo\t17\nVulture\t16\nGlobal\t13\nSystem\t12\nDory\t12\nMarienbad\t12\nBronstein\t12\nIrish\t5\nNorwegian\t4\nColle\t3\nSicilian Najdorf\t2\nFrench Defense\t2\nItalian Game\t2\nFour Knights Game\t1\nFour Knights\t1\nSicilian Accelerated Dragon\t1\nItalian Game Two Knights Defense\t1\nSicilian Closed\t1\nAmsterdam\t1\nZaire\t1\nFour Knights Scotch\t1\nItalian Game Giuoco Piano\t1\n",
+  "stderr": "",
+  "execution_time_ms": 7674
+}

@@ -443,6 +443,10 @@ export async function getRandomPuzzlesByOpeningAndRating(
     console.log('[getRandomPuzzlesByOpeningAndRating] Query result type:', typeof result, 'length:', result?.length);
     console.log('[getRandomPuzzlesByOpeningAndRating] Found:', result?.length || 0, 'puzzles');
     
+    if (!result || result.length === 0) {
+      console.warn('[getRandomPuzzlesByOpeningAndRating] NO PUZZLES FOUND!');
+    }
+    
     if (result && result.length > 0) {
       console.log('[getRandomPuzzlesByOpeningAndRating] First puzzle:', {
         id: result[0].id,

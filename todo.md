@@ -1690,3 +1690,11 @@
 - [x] Verify all 4,826,780 puzzles have valid FEN positions (100% valid)
 - [x] Verify all puzzles have opening data (100% populated)
 - [x] Confirmed no missing or "not found" puzzles in database
+
+## Round 71 - Queen's Gambit Opening Debug
+- [x] Verified 110,504 puzzles exist in database for "Queens" opening
+- [x] Confirmed DISPLAY_TO_DB_OPENING mapping is correct ("Queen's Gambit" → "Queens")
+- [x] Database query works correctly when tested directly
+- [x] Added debug logging to getRandomPuzzlesByOpeningAndRating to track puzzle retrieval
+- [ ] Test Queen's Gambit training session after debug logging is active
+- [ ] Verify all other openings return puzzles correctly
