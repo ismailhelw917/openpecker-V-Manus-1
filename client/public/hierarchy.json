@@ -376,419 +376,411 @@
     "puzzleCount": 110504,
     "variations": [
       {
-        "variation": "Game Accelerated London System",
+        "variation": "Accelerated London System",
         "puzzleCount": 13444
       },
       {
-        "variation": "Game Other variations",
-        "puzzleCount": 11532
+        "variation": "Other variations",
+        "puzzleCount": 12015
       },
       {
-        "variation": "Game Chigorin Variation",
+        "variation": "Chigorin Variation",
         "puzzleCount": 6702
       },
       {
-        "variation": "Declined Queens Gambit Declined Other variations",
+        "variation": "Other variations (Declined)",
         "puzzleCount": 6155
       },
       {
-        "variation": "Declined Queens Gambit Declined Marshall Defense",
+        "variation": "Marshall Defense (Declined)",
         "puzzleCount": 5890
       },
       {
-        "variation": "Game London System",
+        "variation": "London System",
         "puzzleCount": 4777
       },
       {
-        "variation": "Game Zukertort Variation",
+        "variation": "Zukertort Variation",
         "puzzleCount": 4766
       },
       {
-        "variation": "Game Colle System",
+        "variation": "Colle System",
         "puzzleCount": 4313
       },
       {
-        "variation": "Declined Queens Gambit Declined Albin Countergambit",
+        "variation": "Albin Countergambit (Declined)",
         "puzzleCount": 3178
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Old Variation",
+        "variation": "Old Variation (Accepted)",
         "puzzleCount": 2805
       },
       {
-        "variation": "Declined Queens Gambit Declined Exchange Variation",
+        "variation": "Exchange Variation (Declined)",
         "puzzleCount": 2635
       },
       {
-        "variation": "Game Symmetrical Variation",
+        "variation": "Symmetrical Variation",
         "puzzleCount": 2582
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Other variations",
+        "variation": "Other variations (Accepted)",
         "puzzleCount": 2425
       },
       {
-        "variation": "Declined Queens Gambit Declined Chigorin Defense",
+        "variation": "Chigorin Defense (Declined)",
         "puzzleCount": 2176
       },
       {
-        "variation": "Declined Queens Gambit Declined Modern Variation",
+        "variation": "Modern Variation (Declined)",
         "puzzleCount": 2126
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Central Variation",
+        "variation": "Central Variation (Accepted)",
         "puzzleCount": 2107
       },
       {
-        "variation": "Declined Queens Gambit Declined Ragozin Defense",
+        "variation": "Ragozin Defense (Declined)",
         "puzzleCount": 1850
       },
       {
-        "variation": "Declined Queens Gambit Declined Queens Knight Variation",
+        "variation": "Queens Knight Variation (Declined)",
         "puzzleCount": 1820
       },
       {
-        "variation": "Declined Queens Gambit Declined Baltic Defense",
+        "variation": "Baltic Defense (Declined)",
         "puzzleCount": 1655
       },
       {
-        "variation": "Declined Queens Gambit Declined Three Knights Variation",
+        "variation": "Three Knights Variation (Declined)",
         "puzzleCount": 1570
       },
       {
-        "variation": "Game Modern Defense",
+        "variation": "Modern Defense",
         "puzzleCount": 1554
       },
       {
-        "variation": "Game Mason Variation",
+        "variation": "Mason Variation",
         "puzzleCount": 1515
       },
       {
-        "variation": "Declined Queens Gambit Declined Normal Defense",
+        "variation": "Normal Defense (Declined)",
         "puzzleCount": 1427
       },
       {
-        "variation": "Game Levitsky Attack",
+        "variation": "Levitsky Attack",
         "puzzleCount": 1412
       },
       {
-        "variation": "Game Krause Variation",
+        "variation": "Krause Variation",
         "puzzleCount": 1302
       },
       {
-        "variation": "Declined Queens Gambit Declined Harrwitz Attack",
+        "variation": "Harrwitz Attack (Declined)",
         "puzzleCount": 1261
       },
       {
-        "variation": "Declined Queens Gambit Declined Semi-Tarrasch Defense",
+        "variation": "Semi-Tarrasch Defense (Declined)",
         "puzzleCount": 1222
       },
       {
-        "variation": "Game Steinitz Countergambit",
+        "variation": "Steinitz Countergambit",
         "puzzleCount": 959
       },
       {
-        "variation": "Game Torre Attack",
+        "variation": "Torre Attack",
         "puzzleCount": 923
       },
       {
-        "variation": "Game Stonewall Attack",
+        "variation": "Stonewall Attack",
         "puzzleCount": 874
       },
       {
-        "variation": "Game Anti-Torre",
+        "variation": "Anti-Torre",
         "puzzleCount": 868
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Saduleto Variation",
+        "variation": "Saduleto Variation (Accepted)",
         "puzzleCount": 806
       },
       {
-        "variation": "Declined Queens Gambit Declined Austrian Defense",
+        "variation": "Austrian Defense (Declined)",
         "puzzleCount": 793
       },
       {
-        "variation": "Declined Queens Gambit Declined Tarrasch Defense",
+        "variation": "Tarrasch Defense (Declined)",
         "puzzleCount": 777
       },
       {
-        "variation": "Declined Queens Gambit Declined Traditional Variation",
+        "variation": "Traditional Variation (Declined)",
         "puzzleCount": 731
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Normal Variation",
+        "variation": "Normal Variation (Accepted)",
         "puzzleCount": 673
       },
       {
-        "variation": "Game Mason Attack",
+        "variation": "Mason Attack",
         "puzzleCount": 666
       },
       {
-        "variation": "Game Veresov Attack",
+        "variation": "Veresov Attack",
         "puzzleCount": 600
       },
       {
-        "variation": "Declined Queens Gambit Declined Vienna Variation",
+        "variation": "Vienna Variation (Declined)",
         "puzzleCount": 519
       },
       {
-        "variation": "Declined Queens Gambit Declined Orthodox Defense",
+        "variation": "Orthodox Defense (Declined)",
         "puzzleCount": 416
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Rosenthal Variation",
+        "variation": "Rosenthal Variation (Accepted)",
         "puzzleCount": 374
       },
       {
-        "variation": "Other variations",
-        "puzzleCount": 346
-      },
-      {
-        "variation": "Indian Accelerated Queens Indian Accelerated Other variations",
+        "variation": "Accelerated Other variations",
         "puzzleCount": 338
       },
       {
-        "variation": "Game Anglo-Slav Opening",
+        "variation": "Anglo-Slav Opening",
         "puzzleCount": 309
       },
       {
-        "variation": "Declined Queens Gambit Declined Janowski Variation",
+        "variation": "Janowski Variation (Declined)",
         "puzzleCount": 294
       },
       {
-        "variation": "Declined Queens Gambit Declined Neo-Orthodox Variation",
+        "variation": "Neo-Orthodox Variation (Declined)",
         "puzzleCount": 264
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Showalter Variation",
+        "variation": "Showalter Variation (Accepted)",
         "puzzleCount": 250
       },
       {
-        "variation": "Indian Defense Queens Indian Defense Classical Variation",
+        "variation": "Classical Variation",
         "puzzleCount": 248
       },
       {
-        "variation": "Indian Defense Queens Indian Defense Kasparov Variation",
+        "variation": "Kasparov Variation",
         "puzzleCount": 236
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Classical Defense",
+        "variation": "Classical Defense (Accepted)",
         "puzzleCount": 234
       },
       {
-        "variation": "Indian Defense Queens Indian Defense Fianchetto Variation",
+        "variation": "Fianchetto Variation",
         "puzzleCount": 228
       },
       {
-        "variation": "Declined Queens Gambit Declined Charousek Variation",
+        "variation": "Charousek Variation (Declined)",
         "puzzleCount": 214
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Gunsberg Defense",
+        "variation": "Gunsberg Defense (Accepted)",
         "puzzleCount": 210
       },
       {
-        "variation": "Declined Queens Gambit Declined Barmen Variation",
+        "variation": "Barmen Variation (Declined)",
         "puzzleCount": 209
       },
       {
-        "variation": "Declined Queens Gambit Declined Three Knights",
+        "variation": "Three Knights (Declined)",
         "puzzleCount": 192
       },
       {
-        "variation": "Declined Queens Gambit Declined Cambridge Springs Defense",
+        "variation": "Cambridge Springs Defense (Declined)",
         "puzzleCount": 183
       },
       {
-        "variation": "Declined Queens Gambit Declined Tartakower Defense",
+        "variation": "Tartakower Defense (Declined)",
         "puzzleCount": 157
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Accelerated Mannheim Variation",
+        "variation": "Accelerated Mannheim Variation (Accepted)",
         "puzzleCount": 144
       },
       {
-        "variation": "Indian Defense Queens Indian Defense Other variations",
-        "puzzleCount": 137
-      },
-      {
-        "variation": "Indian Defense Queens Indian Defense Kasparov-Petrosian Variation",
+        "variation": "Kasparov-Petrosian Variation",
         "puzzleCount": 136
       },
       {
-        "variation": "Game Hubsch Gambit",
+        "variation": "Hubsch Gambit",
         "puzzleCount": 130
       },
       {
-        "variation": "Declined Queens Gambit Declined Austrian Attack",
+        "variation": "Austrian Attack (Declined)",
         "puzzleCount": 126
       },
       {
-        "variation": "Indian Defense Queens Indian Defense Spassky System",
+        "variation": "Spassky System",
         "puzzleCount": 116
       },
       {
-        "variation": "Game Franco-Sicilian Defense",
+        "variation": "Franco-Sicilian Defense",
         "puzzleCount": 113
       },
       {
-        "variation": "Game Veresov",
+        "variation": "Veresov",
         "puzzleCount": 110
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Janowski-Larsen Variation",
+        "variation": "Janowski-Larsen Variation (Accepted)",
         "puzzleCount": 105
       },
       {
-        "variation": "Game Barry Attack",
+        "variation": "Barry Attack",
         "puzzleCount": 102
       },
       {
-        "variation": "Declined Queens Gambit Declined Capablanca Variation",
+        "variation": "Capablanca Variation (Declined)",
         "puzzleCount": 99
       },
       {
-        "variation": "Declined Queens Gambit Declined Been-Koomen Variation",
+        "variation": "Been-Koomen Variation (Declined)",
         "puzzleCount": 89
       },
       {
-        "variation": "Declined Queens Gambit Declined Pseudo-Tarrasch Variation",
+        "variation": "Pseudo-Tarrasch Variation (Declined)",
         "puzzleCount": 88
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Slav Gambit",
+        "variation": "Slav Gambit (Accepted)",
         "puzzleCount": 75
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Alekhine Defense",
+        "variation": "Alekhine Defense (Accepted)",
         "puzzleCount": 74
       },
       {
-        "variation": "Declined Queens Gambit Declined Lasker Defense",
+        "variation": "Lasker Defense (Declined)",
         "puzzleCount": 64
       },
       {
-        "variation": "Declined Queens Gambit Declined Alapin Variation",
+        "variation": "Alapin Variation (Declined)",
         "puzzleCount": 63
       },
       {
-        "variation": "Declined Queens Gambit Declined Anti-Tartakower Variation",
+        "variation": "Anti-Tartakower Variation (Declined)",
         "puzzleCount": 59
       },
       {
-        "variation": "Indian Defense Queens Indian Defense Petrosian Variation",
+        "variation": "Petrosian Variation",
         "puzzleCount": 57
       },
       {
-        "variation": "Indian Defense Queens Indian Defense Fianchetto Traditional",
+        "variation": "Fianchetto Traditional",
         "puzzleCount": 50
       },
       {
-        "variation": "Indian Defense Queens Indian Defense Capablanca Variation",
+        "variation": "Capablanca Variation",
         "puzzleCount": 47
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Mannheim Variation",
+        "variation": "Mannheim Variation (Accepted)",
         "puzzleCount": 45
       },
       {
-        "variation": "Declined Queens Gambit Declined Alekhine Variation",
+        "variation": "Alekhine Variation (Declined)",
         "puzzleCount": 38
       },
       {
-        "variation": "Declined Queens Gambit Declined Miles Variation",
+        "variation": "Miles Variation (Declined)",
         "puzzleCount": 30
       },
       {
-        "variation": "Game Morris Countergambit",
+        "variation": "Morris Countergambit",
         "puzzleCount": 26
       },
       {
-        "variation": "Declined Queens Gambit Declined Manhattan Variation",
+        "variation": "Manhattan Variation (Declined)",
         "puzzleCount": 25
       },
       {
-        "variation": "Declined Queens Gambit Declined Westphalian Variation",
+        "variation": "Westphalian Variation (Declined)",
         "puzzleCount": 25
       },
       {
-        "variation": "Indian Defense Queens Indian Defense Miles Variation",
+        "variation": "Miles Variation",
         "puzzleCount": 23
       },
       {
-        "variation": "Indian Defense Queens Indian Defense Riumin Variation",
+        "variation": "Riumin Variation",
         "puzzleCount": 23
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Bogoljubov Defense",
+        "variation": "Bogoljubov Defense (Accepted)",
         "puzzleCount": 18
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Winawer Defense",
+        "variation": "Winawer Defense (Accepted)",
         "puzzleCount": 18
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Smyslov Variation",
+        "variation": "Smyslov Variation (Accepted)",
         "puzzleCount": 16
       },
       {
-        "variation": "Declined Queens Gambit Declined Semi-Slav",
+        "variation": "Semi-Slav (Declined)",
         "puzzleCount": 15
       },
       {
-        "variation": "Game Liedmann Gambit",
+        "variation": "Liedmann Gambit",
         "puzzleCount": 15
       },
       {
-        "variation": "Indian Defense Queens Indian Defense Anti-Queens Indian System",
+        "variation": "Anti-Queens Indian System",
         "puzzleCount": 14
       },
       {
-        "variation": "Game Chandler Gambit",
+        "variation": "Chandler Gambit",
         "puzzleCount": 13
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Godes Variation",
+        "variation": "Godes Variation (Accepted)",
         "puzzleCount": 12
       },
       {
-        "variation": "Game Zurich Gambit",
+        "variation": "Zurich Gambit",
         "puzzleCount": 10
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Linares Variation",
+        "variation": "Linares Variation (Accepted)",
         "puzzleCount": 9
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Bogoljubow Defense",
+        "variation": "Bogoljubow Defense (Accepted)",
         "puzzleCount": 8
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Schwartz Defense",
+        "variation": "Schwartz Defense (Accepted)",
         "puzzleCount": 8
       },
       {
-        "variation": "Indian Defense Queens Indian Defense Euwe Variation",
+        "variation": "Euwe Variation",
         "puzzleCount": 7
       },
       {
-        "variation": "Indian Defense Queens Indian Defense Yates Variation",
+        "variation": "Yates Variation",
         "puzzleCount": 6
       },
       {
-        "variation": "Declined Queens Gambit Declined Pillsbury Attack",
+        "variation": "Pillsbury Attack (Declined)",
         "puzzleCount": 5
       },
       {
-        "variation": "Declined Queens Gambit Declined Zilbermints Gambit",
+        "variation": "Zilbermints Gambit (Declined)",
         "puzzleCount": 5
       },
       {
-        "variation": "Accepted Queens Gambit Accepted Furman Variation",
+        "variation": "Furman Variation (Accepted)",
         "puzzleCount": 3
       },
       {
-        "variation": "Indian Defense Queens Indian Defense Traditional Variation",
+        "variation": "Traditional Variation",
         "puzzleCount": 3
       },
       {
@@ -796,19 +788,19 @@
         "puzzleCount": 3
       },
       {
-        "variation": "Declined Queens Gambit Declined Knight Defense",
+        "variation": "Knight Defense (Declined)",
         "puzzleCount": 2
       },
       {
-        "variation": "Declined Queens Gambit Declined Semmering Variation",
+        "variation": "Semmering Variation (Declined)",
         "puzzleCount": 1
       },
       {
-        "variation": "Declined Queens Gambit Declined Spielmann Variation",
+        "variation": "Spielmann Variation (Declined)",
         "puzzleCount": 1
       },
       {
-        "variation": "Indian Defense Queens Indian Defense Buerger Variation",
+        "variation": "Buerger Variation",
         "puzzleCount": 1
       }
     ]
@@ -1272,71 +1264,63 @@
     "puzzleCount": 54275,
     "variations": [
       {
-        "variation": "Declined Kings Gambit Declined Queens Knight Defense",
+        "variation": "Other variations",
+        "puzzleCount": 6869
+      },
+      {
+        "variation": "Queens Knight Defense (Declined)",
         "puzzleCount": 3318
       },
       {
-        "variation": "Other variations",
-        "puzzleCount": 3068
-      },
-      {
-        "variation": "Indian Defense Kings Indian Defense Normal Variation",
+        "variation": "Normal Variation",
         "puzzleCount": 2876
       },
       {
-        "variation": "Game Busch-Gass Gambit",
+        "variation": "Busch-Gass Gambit",
         "puzzleCount": 2566
       },
       {
-        "variation": "Accepted Kings Gambit Accepted MacLeod Defense",
+        "variation": "MacLeod Defense (Accepted)",
         "puzzleCount": 2387
       },
       {
-        "variation": "Game Leonardis Variation",
+        "variation": "Leonardis Variation",
         "puzzleCount": 2256
       },
       {
-        "variation": "Declined Kings Gambit Declined Falkbeer Countergambit",
+        "variation": "Falkbeer Countergambit (Declined)",
         "puzzleCount": 2052
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Fischer Defense",
+        "variation": "Fischer Defense (Accepted)",
         "puzzleCount": 1976
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Kings Knights Gambit",
+        "variation": "Kings Knights Gambit (Accepted)",
         "puzzleCount": 1863
       },
       {
-        "variation": "Indian Attack Kings Indian Attack Other variations",
-        "puzzleCount": 1778
-      },
-      {
-        "variation": "Game McConnell Defense",
+        "variation": "McConnell Defense",
         "puzzleCount": 1506
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Bishops Gambit",
+        "variation": "Bishops Gambit (Accepted)",
         "puzzleCount": 1363
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Cunningham Defense",
+        "variation": "Cunningham Defense (Accepted)",
         "puzzleCount": 1341
       },
       {
-        "variation": "Game Wayward Queen Attack",
+        "variation": "Wayward Queen Attack",
         "puzzleCount": 1283
       },
       {
-        "variation": "Indian Defense Kings Indian Defense Other variations",
-        "puzzleCount": 1262
-      },
-      {
-        "variation": "Accepted Kings Gambit Accepted Modern Defense",
+        "variation": "Modern Defense (Accepted)",
         "puzzleCount": 1248
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Schallopp Defense",
+        "variation": "Schallopp Defense (Accepted)",
         "puzzleCount": 1158
       },
       {
@@ -1344,43 +1328,39 @@
         "puzzleCount": 1098
       },
       {
-        "variation": "Indian Defense Kings Indian Defense Orthodox Variation",
+        "variation": "Orthodox Variation",
         "puzzleCount": 954
       },
       {
-        "variation": "Declined Kings Gambit Declined Classical Variation",
+        "variation": "Classical Variation (Declined)",
         "puzzleCount": 898
       },
       {
-        "variation": "Indian Defense Kings Indian Defense Fianchetto Variation",
+        "variation": "Fianchetto Variation",
         "puzzleCount": 767
       },
       {
-        "variation": "Indian Defense Kings Indian Defense Samisch Variation",
+        "variation": "Samisch Variation",
         "puzzleCount": 690
       },
       {
-        "variation": "Game Other variations",
-        "puzzleCount": 686
-      },
-      {
-        "variation": "Accepted Kings Gambit Accepted Abbazia Defense",
+        "variation": "Abbazia Defense (Accepted)",
         "puzzleCount": 674
       },
       {
-        "variation": "Game Macleod Attack",
+        "variation": "Macleod Attack",
         "puzzleCount": 662
       },
       {
-        "variation": "Indian Defense Kings Indian Defense Four Pawns Attack",
+        "variation": "Four Pawns Attack",
         "puzzleCount": 660
       },
       {
-        "variation": "Game Napoleon Attack",
+        "variation": "Napoleon Attack",
         "puzzleCount": 590
       },
       {
-        "variation": "Game Maroczy Defense",
+        "variation": "Maroczy Defense",
         "puzzleCount": 541
       },
       {
@@ -1388,27 +1368,27 @@
         "puzzleCount": 537
       },
       {
-        "variation": "Game Damiano Defense",
+        "variation": "Damiano Defense",
         "puzzleCount": 512
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Kieseritzky Gambit",
+        "variation": "Kieseritzky Gambit (Accepted)",
         "puzzleCount": 458
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Becker Defense",
+        "variation": "Becker Defense (Accepted)",
         "puzzleCount": 434
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Muzio Gambit",
+        "variation": "Smyslov Variation",
+        "puzzleCount": 422
+      },
+      {
+        "variation": "Muzio Gambit (Accepted)",
         "puzzleCount": 421
       },
       {
-        "variation": "Indian Defense Kings Indian Defense Smyslov Variation",
-        "puzzleCount": 419
-      },
-      {
-        "variation": "Indian Attack Kings Indian Attack Symmetrical Defense",
+        "variation": "Symmetrical Defense",
         "puzzleCount": 408
       },
       {
@@ -1416,27 +1396,27 @@
         "puzzleCount": 387
       },
       {
-        "variation": "Declined Kings Gambit Declined Falkbeer Countergambit Accepted",
+        "variation": "Falkbeer Countergambit Accepted (Declined)",
         "puzzleCount": 366
       },
       {
-        "variation": "Game MacLeod Attack",
+        "variation": "MacLeod Attack",
         "puzzleCount": 358
       },
       {
-        "variation": "Game Tayler Opening",
+        "variation": "Tayler Opening",
         "puzzleCount": 358
       },
       {
-        "variation": "Indian Attack Kings Indian Attack French Variation",
+        "variation": "French Variation",
         "puzzleCount": 344
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Blachly Gambit",
+        "variation": "Blachly Gambit (Accepted)",
         "puzzleCount": 325
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Salvio Gambit",
+        "variation": "Salvio Gambit (Accepted)",
         "puzzleCount": 311
       },
       {
@@ -1444,323 +1424,315 @@
         "puzzleCount": 307
       },
       {
-        "variation": "Indian Defense Kings Indian Defense Zinnowitz Variation",
+        "variation": "Zinnowitz Variation",
         "puzzleCount": 301
       },
       {
-        "variation": "Game Gunderam Gambit",
+        "variation": "Gunderam Gambit",
         "puzzleCount": 287
       },
       {
-        "variation": "Indian Defense Kings Indian Defense Makogonov Variation",
+        "variation": "Makogonov Variation",
         "puzzleCount": 276
       },
       {
-        "variation": "Game Kings Head Opening",
+        "variation": "Kings Head Opening",
         "puzzleCount": 276
       },
       {
-        "variation": "Indian Attack Kings Indian Attack Sicilian Variation",
+        "variation": "Sicilian Variation",
         "puzzleCount": 275
       },
       {
-        "variation": "Declined Kings Gambit Declined Petrovs Defense",
+        "variation": "Petrovs Defense (Declined)",
         "puzzleCount": 269
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Rosentreter Gambit",
+        "variation": "Rosentreter Gambit (Accepted)",
         "puzzleCount": 229
       },
       {
-        "variation": "Game Beyer Gambit",
+        "variation": "Beyer Gambit",
         "puzzleCount": 227
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Bonsch-Osmolovsky Variation",
+        "variation": "Bonsch-Osmolovsky Variation (Accepted)",
         "puzzleCount": 222
       },
       {
-        "variation": "Game Alapin Opening",
+        "variation": "Alapin Opening",
         "puzzleCount": 219
       },
       {
-        "variation": "Declined Kings Gambit Declined Miles Defense",
+        "variation": "Miles Defense (Declined)",
         "puzzleCount": 202
       },
       {
-        "variation": "Declined Kings Gambit Declined Mafia Defense",
+        "variation": "Mafia Defense (Declined)",
         "puzzleCount": 188
       },
       {
-        "variation": "Indian Defense Kings Indian Defense Semi-Classical Variation",
+        "variation": "Semi-Classical Variation",
         "puzzleCount": 184
       },
       {
-        "variation": "Game Dresden Opening",
+        "variation": "Dresden Opening",
         "puzzleCount": 177
       },
       {
-        "variation": "Indian Defense Kings Indian Defense Accelerated Averbakh Variation",
+        "variation": "Accelerated Averbakh Variation",
         "puzzleCount": 166
       },
       {
-        "variation": "Game Mengarinis Opening",
+        "variation": "Mengarinis Opening",
         "puzzleCount": 161
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Allgaier Gambit",
+        "variation": "Allgaier Gambit (Accepted)",
         "puzzleCount": 154
       },
       {
-        "variation": "Indian Defense Kings Indian Defense Semi-Averbakh System",
+        "variation": "Semi-Averbakh System",
         "puzzleCount": 153
       },
       {
-        "variation": "Declined Kings Gambit Declined Keenes Defense",
+        "variation": "Keenes Defense (Declined)",
         "puzzleCount": 152
       },
       {
-        "variation": "Indian Defense Kings Indian Defense Larsen Variation",
+        "variation": "Larsen Variation",
         "puzzleCount": 141
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Polerio Gambit",
+        "variation": "Polerio Gambit (Accepted)",
         "puzzleCount": 137
       },
       {
-        "variation": "Declined Kings Gambit Declined Panteldakis Countergambit",
+        "variation": "Panteldakis Countergambit (Declined)",
         "puzzleCount": 129
       },
       {
-        "variation": "Indian Defense Kings Indian Defense Averbakh Variation",
+        "variation": "Averbakh Variation",
         "puzzleCount": 128
       },
       {
-        "variation": "Indian Attack Kings Indian Attack Keres Variation",
+        "variation": "Keres Variation",
         "puzzleCount": 122
       },
       {
-        "variation": "Indian Defense Kings Indian Defense Petrosian Variation",
+        "variation": "Petrosian Variation",
         "puzzleCount": 113
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Hanstein Gambit",
+        "variation": "Hanstein Gambit (Accepted)",
         "puzzleCount": 112
       },
       {
-        "variation": "Declined Kings Gambit Declined Keene Defense",
+        "variation": "Keene Defense (Declined)",
         "puzzleCount": 108
       },
       {
-        "variation": "Indian Attack Kings Indian Attack Wahls Defense",
+        "variation": "Wahls Defense",
         "puzzleCount": 100
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Double Muzio Gambit",
+        "variation": "Double Muzio Gambit (Accepted)",
         "puzzleCount": 94
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Traditional Variation",
+        "variation": "Traditional Variation (Accepted)",
         "puzzleCount": 88
       },
       {
-        "variation": "Indian Attack Kings Indian Attack Yugoslav Variation",
+        "variation": "Yugoslav Variation",
         "puzzleCount": 83
       },
       {
-        "variation": "Indian Defense Kings Indian Defense Kramer Variation",
+        "variation": "Kramer Variation",
         "puzzleCount": 77
       },
       {
-        "variation": "Other variations",
-        "puzzleCount": 75
-      },
-      {
-        "variation": "Indian Defense Kings Indian Defense Exchange Variation",
+        "variation": "Exchange Variation",
         "puzzleCount": 73
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Ghulam-Kassim Gambit",
+        "variation": "Ghulam-Kassim Gambit (Accepted)",
         "puzzleCount": 69
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Lolli Gambit",
+        "variation": "Lolli Gambit (Accepted)",
         "puzzleCount": 67
       },
       {
-        "variation": "Declined Kings Gambit Declined Classical",
+        "variation": "Classical (Declined)",
         "puzzleCount": 67
       },
       {
-        "variation": "Game Clam Variation",
+        "variation": "Clam Variation",
         "puzzleCount": 65
       },
       {
-        "variation": "Indian Defense Kings Indian Defense Steiner Attack",
+        "variation": "Steiner Attack",
         "puzzleCount": 60
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Sorensen Gambit",
+        "variation": "Sorensen Gambit (Accepted)",
         "puzzleCount": 55
       },
       {
-        "variation": "Indian Attack Kings Indian Attack Double Fianchetto",
+        "variation": "Double Fianchetto",
         "puzzleCount": 52
       },
       {
-        "variation": "Declined Kings Gambit Declined Norwalde Variation",
+        "variation": "Norwalde Variation (Declined)",
         "puzzleCount": 51
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Quade Gambit",
+        "variation": "Quade Gambit (Accepted)",
         "puzzleCount": 50
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Mason-Keres Gambit",
+        "variation": "Mason-Keres Gambit (Accepted)",
         "puzzleCount": 49
       },
       {
-        "variation": "Game Tortoise Opening",
+        "variation": "Tortoise Opening",
         "puzzleCount": 43
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Gianutio Countergambit",
+        "variation": "Gianutio Countergambit (Accepted)",
         "puzzleCount": 37
       },
       {
-        "variation": "Indian Attack Kings Indian Attack Omega-Delta Gambit",
+        "variation": "Omega-Delta Gambit",
         "puzzleCount": 37
       },
       {
-        "variation": "Indian Attack Kings Indian Attack Spassky Variation",
+        "variation": "Spassky Variation",
         "puzzleCount": 37
       },
       {
-        "variation": "Game Schulze-Muller Gambit",
+        "variation": "Schulze-Muller Gambit",
         "puzzleCount": 35
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Greco Gambit",
+        "variation": "Greco Gambit (Accepted)",
         "puzzleCount": 33
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Quaade Gambit",
+        "variation": "Quaade Gambit (Accepted)",
         "puzzleCount": 28
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Philidor Gambit",
+        "variation": "Philidor Gambit (Accepted)",
         "puzzleCount": 26
       },
       {
-        "variation": "Indian Defense Kings Indian Defense Kazakh Variation",
+        "variation": "Kazakh Variation",
         "puzzleCount": 25
       },
       {
-        "variation": "Game Weber Gambit",
+        "variation": "Weber Gambit",
         "puzzleCount": 25
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Allgaier",
+        "variation": "Allgaier (Accepted)",
         "puzzleCount": 23
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Kieseritzky",
+        "variation": "Kieseritzky (Accepted)",
         "puzzleCount": 22
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Mayet Gambit",
+        "variation": "Mayet Gambit (Accepted)",
         "puzzleCount": 19
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Other variations",
+        "variation": "Other variations (Accepted)",
         "puzzleCount": 17
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Breyer Gambit",
+        "variation": "Breyer Gambit (Accepted)",
         "puzzleCount": 10
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Villemson Gambit",
+        "variation": "Villemson Gambit (Accepted)",
         "puzzleCount": 10
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Eisenberg Variation",
+        "variation": "Eisenberg Variation (Accepted)",
         "puzzleCount": 8
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Wagenbach Defense",
+        "variation": "Wagenbach Defense (Accepted)",
         "puzzleCount": 8
       },
       {
-        "variation": "Indian Attack Kings Indian Attack Pachman System",
+        "variation": "Pachman System",
         "puzzleCount": 8
       },
       {
-        "variation": "Game Pachman Wing Gambit",
+        "variation": "Pachman Wing Gambit",
         "puzzleCount": 7
       },
       {
-        "variation": "Accepted Kings Gambit Accepted McDonnell Gambit",
+        "variation": "McDonnell Gambit (Accepted)",
         "puzzleCount": 6
       },
       {
-        "variation": "Declined Kings Gambit Declined Soller-Zilbermints Gambit",
+        "variation": "Soller-Zilbermints Gambit (Declined)",
         "puzzleCount": 6
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Muzio Gambit Accepted",
+        "variation": "Muzio Gambit Accepted (Accepted)",
         "puzzleCount": 5
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Silberschmidt Gambit",
+        "variation": "Silberschmidt Gambit (Accepted)",
         "puzzleCount": 5
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Stamma Gambit",
+        "variation": "Stamma Gambit (Accepted)",
         "puzzleCount": 5
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Tartakower Gambit",
+        "variation": "Tartakower Gambit (Accepted)",
         "puzzleCount": 5
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Tumbleweed",
+        "variation": "Tumbleweed (Accepted)",
         "puzzleCount": 4
       },
       {
-        "variation": "Indian Defense Kings Indian Defense Pomar System",
+        "variation": "Pomar System",
         "puzzleCount": 4
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Gaga Gambit",
+        "variation": "Gaga Gambit (Accepted)",
         "puzzleCount": 3
       },
       {
-        "variation": "Indian Attack Kings Indian Attack Smyslov Variation",
+        "variation": "Santasiere Variation",
         "puzzleCount": 3
       },
       {
-        "variation": "Indian Defense Kings Indian Defense Santasiere Variation",
+        "variation": "Philidor Gambit",
         "puzzleCount": 3
       },
       {
-        "variation": "Game Philidor Gambit",
-        "puzzleCount": 3
-      },
-      {
-        "variation": "Accepted Kings Gambit Accepted Paris Gambit",
+        "variation": "Paris Gambit (Accepted)",
         "puzzleCount": 2
       },
       {
-        "variation": "Declined Kings Gambit Declined Zilbermints Double Countergambit",
+        "variation": "Zilbermints Double Countergambit (Declined)",
         "puzzleCount": 2
       },
       {
-        "variation": "Game Bavarian Gambit",
+        "variation": "Bavarian Gambit",
         "puzzleCount": 2
       },
       {
-        "variation": "Game La Bourdonnais Gambit",
+        "variation": "La Bourdonnais Gambit",
         "puzzleCount": 2
       },
       {
@@ -1768,23 +1740,23 @@
         "puzzleCount": 2
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Basman Gambit",
+        "variation": "Basman Gambit (Accepted)",
         "puzzleCount": 1
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Carrera Gambit",
+        "variation": "Carrera Gambit (Accepted)",
         "puzzleCount": 1
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Dodo Variation",
+        "variation": "Dodo Variation (Accepted)",
         "puzzleCount": 1
       },
       {
-        "variation": "Accepted Kings Gambit Accepted Kotov Gambit",
+        "variation": "Kotov Gambit (Accepted)",
         "puzzleCount": 1
       },
       {
-        "variation": "Declined Kings Gambit Declined Zilbermints Double Gambit",
+        "variation": "Zilbermints Double Gambit (Declined)",
         "puzzleCount": 1
       },
       {
@@ -1917,7 +1889,7 @@
       },
       {
         "variation": "Other variations",
-        "puzzleCount": 3139
+        "puzzleCount": 4204
       },
       {
         "variation": "Agincourt Defense",
@@ -1930,10 +1902,6 @@
       {
         "variation": "Caro-Kann Defensive System",
         "puzzleCount": 1146
-      },
-      {
-        "variation": "Other variations",
-        "puzzleCount": 1065
       },
       {
         "variation": "Great Snake Variation",
@@ -2054,7 +2022,7 @@
     ]
   },
   {
-    "opening": "Ruy López",
+    "opening": "Ruy L\u00f3pez",
     "puzzleCount": 31201,
     "variations": [
       {
@@ -3079,7 +3047,7 @@
     "variations": [
       {
         "variation": "Other variations",
-        "puzzleCount": 4770
+        "puzzleCount": 5149
       },
       {
         "variation": "Exchange Variation",
@@ -3096,10 +3064,6 @@
       {
         "variation": "Quiet Variation",
         "puzzleCount": 948
-      },
-      {
-        "variation": "Indian Slav Indian Other variations",
-        "puzzleCount": 379
       },
       {
         "variation": "Gambit",
@@ -3170,7 +3134,7 @@
         "puzzleCount": 7
       },
       {
-        "variation": "Indian Slav Indian Kudischewitsch Gambit",
+        "variation": "Kudischewitsch Gambit",
         "puzzleCount": 4
       }
     ]
@@ -3282,7 +3246,7 @@
         "puzzleCount": 1068
       },
       {
-        "variation": "Declined Englund Gambit Declined Reversed French",
+        "variation": "Reversed French (Declined)",
         "puzzleCount": 1034
       },
       {
@@ -3302,7 +3266,7 @@
         "puzzleCount": 495
       },
       {
-        "variation": "Declined Englund Gambit Declined Other variations",
+        "variation": "Other variations (Declined)",
         "puzzleCount": 229
       },
       {
@@ -3314,7 +3278,7 @@
         "puzzleCount": 216
       },
       {
-        "variation": "Declined Englund Gambit Declined Reversed Krebs",
+        "variation": "Reversed Krebs (Declined)",
         "puzzleCount": 176
       },
       {
@@ -3322,7 +3286,7 @@
         "puzzleCount": 167
       },
       {
-        "variation": "Declined Englund Gambit Declined Reversed Alekhine",
+        "variation": "Reversed Alekhine (Declined)",
         "puzzleCount": 163
       },
       {
@@ -3346,7 +3310,7 @@
         "puzzleCount": 64
       },
       {
-        "variation": "Declined Englund Gambit Declined Reversed Mokele Mbembe",
+        "variation": "Reversed Mokele Mbembe (Declined)",
         "puzzleCount": 45
       },
       {
@@ -3354,7 +3318,7 @@
         "puzzleCount": 22
       },
       {
-        "variation": "Declined Englund Gambit Declined Reversed Brooklyn",
+        "variation": "Reversed Brooklyn (Declined)",
         "puzzleCount": 18
       },
       {
@@ -3370,7 +3334,7 @@
         "puzzleCount": 4
       },
       {
-        "variation": "Declined Englund Gambit Declined Diemer Counterattack",
+        "variation": "Diemer Counterattack (Declined)",
         "puzzleCount": 3
       }
     ]
@@ -4176,31 +4140,31 @@
         "puzzleCount": 2920
       },
       {
-        "variation": "Accepted Danish Gambit Accepted Other variations",
+        "variation": "Other variations (Accepted)",
         "puzzleCount": 1146
       },
       {
-        "variation": "Accepted Danish Gambit Accepted Copenhagen Defense",
+        "variation": "Copenhagen Defense (Accepted)",
         "puzzleCount": 718
       },
       {
-        "variation": "Declined Danish Gambit Declined Sorensen Defense",
+        "variation": "Sorensen Defense (Declined)",
         "puzzleCount": 542
       },
       {
-        "variation": "Accepted Danish Gambit Accepted Classical Defense",
+        "variation": "Classical Defense (Accepted)",
         "puzzleCount": 343
       },
       {
-        "variation": "Accepted Danish Gambit Accepted Schlechter Defense",
+        "variation": "Schlechter Defense (Accepted)",
         "puzzleCount": 123
       },
       {
-        "variation": "Accepted Danish Gambit Accepted Chigorin Defense",
+        "variation": "Chigorin Defense (Accepted)",
         "puzzleCount": 82
       },
       {
-        "variation": "Accepted Danish Gambit Accepted Svenonius Defense",
+        "variation": "Svenonius Defense (Accepted)",
         "puzzleCount": 9
       }
     ]
@@ -4258,7 +4222,7 @@
         "puzzleCount": 96
       },
       {
-        "variation": "Accepted Semi-Slav Defense Accepted Other variations",
+        "variation": "Other variations (Accepted)",
         "puzzleCount": 73
       },
       {
@@ -4320,11 +4284,11 @@
         "puzzleCount": 319
       },
       {
-        "variation": "Accepted Blackmar-Diemer Gambit Accepted Ryder Gambit",
+        "variation": "Ryder Gambit (Accepted)",
         "puzzleCount": 311
       },
       {
-        "variation": "Accepted Blackmar-Diemer Gambit Accepted Teichmann Defense",
+        "variation": "Teichmann Defense (Accepted)",
         "puzzleCount": 310
       },
       {
@@ -4336,7 +4300,7 @@
         "puzzleCount": 285
       },
       {
-        "variation": "Accepted Blackmar-Diemer Gambit Accepted Euwe Defense",
+        "variation": "Euwe Defense (Accepted)",
         "puzzleCount": 251
       },
       {
@@ -4352,7 +4316,7 @@
         "puzzleCount": 207
       },
       {
-        "variation": "Accepted Blackmar-Diemer Gambit Accepted Ziegler Defense",
+        "variation": "Ziegler Defense (Accepted)",
         "puzzleCount": 146
       },
       {
@@ -4364,11 +4328,11 @@
         "puzzleCount": 117
       },
       {
-        "variation": "Declined Blackmar-Diemer Gambit Declined Vienna Defense",
+        "variation": "Vienna Defense (Declined)",
         "puzzleCount": 109
       },
       {
-        "variation": "Declined Blackmar-Diemer Gambit Declined OKelly Defense",
+        "variation": "OKelly Defense (Declined)",
         "puzzleCount": 102
       },
       {
@@ -4376,15 +4340,15 @@
         "puzzleCount": 76
       },
       {
-        "variation": "Declined Blackmar-Diemer Gambit Declined Lamb Defense",
+        "variation": "Lamb Defense (Declined)",
         "puzzleCount": 76
       },
       {
-        "variation": "Declined Blackmar-Diemer Gambit Declined Weinsbach Declination",
+        "variation": "Weinsbach Declination (Declined)",
         "puzzleCount": 56
       },
       {
-        "variation": "Declined Blackmar-Diemer Gambit Declined Weinsbach Defense",
+        "variation": "Weinsbach Defense (Declined)",
         "puzzleCount": 54
       },
       {
@@ -4392,7 +4356,7 @@
         "puzzleCount": 50
       },
       {
-        "variation": "Accepted Blackmar-Diemer Gambit Accepted Pietrowsky Defense",
+        "variation": "Pietrowsky Defense (Accepted)",
         "puzzleCount": 45
       },
       {
@@ -4400,7 +4364,7 @@
         "puzzleCount": 38
       },
       {
-        "variation": "Accepted Blackmar-Diemer Gambit Accepted Gunderam Defense",
+        "variation": "Gunderam Defense (Accepted)",
         "puzzleCount": 36
       },
       {
@@ -4416,7 +4380,7 @@
         "puzzleCount": 32
       },
       {
-        "variation": "Declined Blackmar-Diemer Gambit Declined Elbert Countergambit",
+        "variation": "Elbert Countergambit (Declined)",
         "puzzleCount": 27
       },
       {
@@ -4424,7 +4388,7 @@
         "puzzleCount": 26
       },
       {
-        "variation": "Declined Blackmar-Diemer Gambit Declined Brombacher Countergambit",
+        "variation": "Brombacher Countergambit (Declined)",
         "puzzleCount": 24
       },
       {
@@ -4432,23 +4396,23 @@
         "puzzleCount": 23
       },
       {
-        "variation": "Declined Blackmar-Diemer Gambit Declined Langeheinecke Defense",
+        "variation": "Langeheinecke Defense (Declined)",
         "puzzleCount": 22
       },
       {
-        "variation": "Accepted Blackmar-Diemer Gambit Accepted Bogoljubow Defense",
+        "variation": "Bogoljubow Defense (Accepted)",
         "puzzleCount": 19
       },
       {
-        "variation": "Accepted Blackmar-Diemer Gambit Accepted Other variations",
+        "variation": "Other variations (Accepted)",
         "puzzleCount": 16
       },
       {
-        "variation": "Declined Blackmar-Diemer Gambit Declined Langeheinicke Defense",
+        "variation": "Langeheinicke Defense (Declined)",
         "puzzleCount": 13
       },
       {
-        "variation": "Accepted Blackmar-Diemer Gambit Accepted Kaulich Defense",
+        "variation": "Kaulich Defense (Accepted)",
         "puzzleCount": 6
       },
       {
@@ -4460,15 +4424,15 @@
         "puzzleCount": 5
       },
       {
-        "variation": "Accepted Blackmar-Diemer Gambit Accepted Ritter Defense",
+        "variation": "Ritter Defense (Accepted)",
         "puzzleCount": 3
       },
       {
-        "variation": "Accepted Blackmar-Diemer Gambit Accepted Schlutter Defense",
+        "variation": "Schlutter Defense (Accepted)",
         "puzzleCount": 3
       },
       {
-        "variation": "Accepted Blackmar-Diemer Gambit Accepted Tartakower Variation",
+        "variation": "Tartakower Variation (Accepted)",
         "puzzleCount": 1
       }
     ]
@@ -4514,7 +4478,7 @@
         "puzzleCount": 91
       },
       {
-        "variation": "Accepted Center Game Accepted Other variations",
+        "variation": "Other variations (Accepted)",
         "puzzleCount": 63
       },
       {
@@ -4759,15 +4723,11 @@
     "variations": [
       {
         "variation": "Other variations",
-        "puzzleCount": 2294
+        "puzzleCount": 2673
       },
       {
         "variation": "Czech Defense",
         "puzzleCount": 410
-      },
-      {
-        "variation": "Other variations",
-        "puzzleCount": 379
       },
       {
         "variation": "Bugayev Attack",
@@ -5062,7 +5022,7 @@
     "puzzleCount": 1906,
     "variations": [
       {
-        "variation": "Accepted Latvian Gambit Accepted Other variations",
+        "variation": "Other variations (Accepted)",
         "puzzleCount": 590
       },
       {
@@ -5086,11 +5046,11 @@
         "puzzleCount": 110
       },
       {
-        "variation": "Accepted Latvian Gambit Accepted Main Line",
+        "variation": "Main Line (Accepted)",
         "puzzleCount": 93
       },
       {
-        "variation": "Accepted Latvian Gambit Accepted Bilguer Variation",
+        "variation": "Bilguer Variation (Accepted)",
         "puzzleCount": 76
       },
       {
@@ -5098,7 +5058,7 @@
         "puzzleCount": 59
       },
       {
-        "variation": "Accepted Latvian Gambit Accepted Bronstein Attack",
+        "variation": "Bronstein Attack (Accepted)",
         "puzzleCount": 25
       },
       {
@@ -5106,7 +5066,7 @@
         "puzzleCount": 24
       },
       {
-        "variation": "Accepted Latvian Gambit Accepted Nimzowitsch Attack",
+        "variation": "Nimzowitsch Attack (Accepted)",
         "puzzleCount": 10
       },
       {
@@ -5114,11 +5074,11 @@
         "puzzleCount": 9
       },
       {
-        "variation": "Accepted Latvian Gambit Accepted Foltys-Leonhardt Variation",
+        "variation": "Foltys-Leonhardt Variation (Accepted)",
         "puzzleCount": 8
       },
       {
-        "variation": "Accepted Latvian Gambit Accepted Leonhardt Variation",
+        "variation": "Leonhardt Variation (Accepted)",
         "puzzleCount": 7
       },
       {
@@ -5126,11 +5086,11 @@
         "puzzleCount": 4
       },
       {
-        "variation": "Accepted Latvian Gambit Accepted Foltys Variation",
+        "variation": "Foltys Variation (Accepted)",
         "puzzleCount": 2
       },
       {
-        "variation": "Accepted Latvian Gambit Accepted Bronstein Gambit",
+        "variation": "Bronstein Gambit (Accepted)",
         "puzzleCount": 1
       }
     ]
@@ -5202,35 +5162,35 @@
     "puzzleCount": 1836,
     "variations": [
       {
-        "variation": "Indian Defense Old Indian Defense Other variations",
+        "variation": "Other variations",
         "puzzleCount": 1246
       },
       {
-        "variation": "Indian Defense Old Indian Defense Czech Variation",
+        "variation": "Czech Variation",
         "puzzleCount": 256
       },
       {
-        "variation": "Indian Defense Old Indian Defense Janowski Variation",
+        "variation": "Janowski Variation",
         "puzzleCount": 81
       },
       {
-        "variation": "Indian Defense Old Indian Defense Two Knights Variation",
+        "variation": "Two Knights Variation",
         "puzzleCount": 80
       },
       {
-        "variation": "Indian Defense Old Indian Defense Ukrainian Variation",
+        "variation": "Ukrainian Variation",
         "puzzleCount": 76
       },
       {
-        "variation": "Indian Defense Old Indian Defense Tartakower-Indian",
+        "variation": "Tartakower-Indian",
         "puzzleCount": 49
       },
       {
-        "variation": "Indian Defense Old Indian Defense Normal Variation",
+        "variation": "Normal Variation",
         "puzzleCount": 47
       },
       {
-        "variation": "Indian Defense Old Indian Defense Dus-Khotimirsky Variation",
+        "variation": "Dus-Khotimirsky Variation",
         "puzzleCount": 1
       }
     ]
@@ -5326,7 +5286,7 @@
         "puzzleCount": 561
       },
       {
-        "variation": "Accepted Benko Gambit Accepted Fully Accepted Variation",
+        "variation": "Fully Accepted Variation (Accepted)",
         "puzzleCount": 211
       },
       {
@@ -5334,27 +5294,27 @@
         "puzzleCount": 131
       },
       {
-        "variation": "Accepted Benko Gambit Accepted Modern Variation",
+        "variation": "Modern Variation (Accepted)",
         "puzzleCount": 98
       },
       {
-        "variation": "Accepted Benko Gambit Accepted Pawn Return Variation",
+        "variation": "Pawn Return Variation (Accepted)",
         "puzzleCount": 82
       },
       {
-        "variation": "Declined Benko Gambit Declined Main Line",
+        "variation": "Main Line (Declined)",
         "puzzleCount": 61
       },
       {
-        "variation": "Accepted Benko Gambit Accepted King Walk Variation",
+        "variation": "King Walk Variation (Accepted)",
         "puzzleCount": 41
       },
       {
-        "variation": "Accepted Benko Gambit Accepted Dlugy Variation",
+        "variation": "Dlugy Variation (Accepted)",
         "puzzleCount": 39
       },
       {
-        "variation": "Accepted Benko Gambit Accepted Yugoslav",
+        "variation": "Yugoslav (Accepted)",
         "puzzleCount": 27
       },
       {
@@ -5362,27 +5322,27 @@
         "puzzleCount": 27
       },
       {
-        "variation": "Accepted Benko Gambit Accepted Fianchetto Variation",
+        "variation": "Fianchetto Variation (Accepted)",
         "puzzleCount": 22
       },
       {
-        "variation": "Declined Benko Gambit Declined Bishop Attack",
+        "variation": "Bishop Attack (Declined)",
         "puzzleCount": 19
       },
       {
-        "variation": "Accepted Benko Gambit Accepted Other variations",
+        "variation": "Other variations (Accepted)",
         "puzzleCount": 15
       },
       {
-        "variation": "Declined Benko Gambit Declined Hjrring Countergambit",
+        "variation": "Hjrring Countergambit (Declined)",
         "puzzleCount": 15
       },
       {
-        "variation": "Declined Benko Gambit Declined Quiet Line",
+        "variation": "Quiet Line (Declined)",
         "puzzleCount": 15
       },
       {
-        "variation": "Declined Benko Gambit Declined Sosonko Variation",
+        "variation": "Sosonko Variation (Declined)",
         "puzzleCount": 10
       },
       {
@@ -5390,11 +5350,11 @@
         "puzzleCount": 9
       },
       {
-        "variation": "Declined Benko Gambit Declined Pseudo-Samisch",
+        "variation": "Pseudo-Samisch (Declined)",
         "puzzleCount": 9
       },
       {
-        "variation": "Accepted Benko Gambit Accepted Central Storming Variation",
+        "variation": "Central Storming Variation (Accepted)",
         "puzzleCount": 2
       },
       {
@@ -5526,7 +5486,7 @@
     "puzzleCount": 907,
     "variations": [
       {
-        "variation": "Indian Defense East Indian Defense Other variations",
+        "variation": "Other variations",
         "puzzleCount": 907
       }
     ]
@@ -5665,11 +5625,7 @@
     "variations": [
       {
         "variation": "Other variations",
-        "puzzleCount": 287
-      },
-      {
-        "variation": "Other variations",
-        "puzzleCount": 249
+        "puzzleCount": 536
       },
       {
         "variation": "Meadow Hay Trap",
@@ -5757,11 +5713,7 @@
     "variations": [
       {
         "variation": "Other variations",
-        "puzzleCount": 218
-      },
-      {
-        "variation": "Other variations",
-        "puzzleCount": 194
+        "puzzleCount": 412
       },
       {
         "variation": "Walkerling",
@@ -5812,16 +5764,12 @@
         "puzzleCount": 154
       },
       {
+        "variation": "Zilbermints Gambit",
+        "puzzleCount": 4
+      },
+      {
         "variation": "Troon Gambit",
         "puzzleCount": 3
-      },
-      {
-        "variation": "Zilbermints Gambit",
-        "puzzleCount": 3
-      },
-      {
-        "variation": "Zilbermints Gambit",
-        "puzzleCount": 1
       }
     ]
   },

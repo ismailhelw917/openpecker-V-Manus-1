@@ -1572,3 +1572,8 @@
 ## Round 48 - Deployment SSL Fix
 - [x] Fix generate-hierarchy.mjs SSL config error causing deployment failure
 - [x] Remove DB dependency from build step - use pre-generated hierarchy.json instead
+
+## Round 49 - Clean Up Redundant Variation Name Prefixes
+- [x] Fix parseVariationName to remove all redundant prefixes (Game, Declined, Accepted, etc.)
+- [x] Regenerate hierarchy.json with clean variation names - fixed 301 names, merged 13 duplicates
+- [x] Verify variation names display correctly
