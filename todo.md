@@ -1647,3 +1647,15 @@
 - [x] Verify registration portal has no Manus branding in Auth page (shows OpenPecker logo, "Login with Google", no Manus references)
 - [x] Verify OAuth callback redirects to openpecker.com (not Manus)
 - [x] Confirm session is maintained on professional site domain
+
+## Round 63 - Remove Manus Branding from Registration Portal
+- [ ] Update OAuth portal URL and configuration to use professional branding
+- [ ] Ensure registration portal redirects to openpecker.com (not Manus)
+- [ ] Remove any Manus references from the OAuth callback and auth flow
+- [ ] Test registration flow to verify professional branding throughout
+
+## Round 63 - Implement Google OAuth Directly (No Manus Branding)
+- [x] Set up Google OAuth credentials and configuration (Client ID and Secret added)
+- [x] Implement Google OAuth login endpoint on backend (google-oauth.ts with login and callback handlers)
+- [x] Update frontend to use Google OAuth directly (updated const.ts to use /api/oauth/google/login)
+- [x] Test the new Google OAuth flow end-to-end (6/6 tests passing)
