@@ -72,7 +72,7 @@ function App() {
         <ErrorBoundary>
           <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-20 sm:pb-24">
             {/* Premium Watermark for online users */}
-            {showPremiumWatermark && user?.isPremium === 1 && (
+            {showPremiumWatermark && user?.isPremium && (
               <div className="fixed top-4 right-4 bg-amber-500/20 border border-amber-400 rounded-lg px-4 py-2 text-sm text-amber-300 z-50 flex items-center gap-2">
                 <span>✨ Premium granted to all online users</span>
                 <button onClick={() => setShowPremiumWatermark(false)} className="ml-2 text-amber-300 hover:text-amber-200">×</button>

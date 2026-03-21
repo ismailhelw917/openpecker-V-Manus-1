@@ -74,6 +74,7 @@ export const openings = mysqlTable("openings", {
   name: varchar("name", { length: 255 }).notNull(),
   fen: text("fen").notNull(),
   ecoCode: varchar("ecoCode", { length: 10 }),
+  isPremium: int("isPremium").default(0).notNull(), // 1 = premium only, 0 = free
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 

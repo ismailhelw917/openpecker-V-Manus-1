@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE openings SET isPremium = 1 WHERE id IN ('opening_var083', 'opening_var102', 'opening_var114', 'opening_var141', 'opening_var057', 'opening_var054');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute UPDATE openings SET isPremium = 1 WHERE id IN ('opening_var083', 'opening_var102', 'opening_var114', 'opening_var141', 'opening_var057', 'opening_var054');",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1624
+}

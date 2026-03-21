@@ -1,0 +1,34 @@
+{
+  "query": "SELECT id, name FROM openings ORDER BY RAND() LIMIT 6;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT id, name FROM openings ORDER BY RAND() LIMIT 6;",
+  "rows": [
+    {
+      "id": "opening_var083",
+      "name": "Opening Variation 83"
+    },
+    {
+      "id": "opening_var102",
+      "name": "Opening Variation 102"
+    },
+    {
+      "id": "opening_var114",
+      "name": "Opening Variation 114"
+    },
+    {
+      "id": "opening_var141",
+      "name": "Opening Variation 141"
+    },
+    {
+      "id": "opening_var057",
+      "name": "Opening Variation 57"
+    },
+    {
+      "id": "opening_var054",
+      "name": "Opening Variation 54"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\nopening_var083\tOpening Variation 83\nopening_var102\tOpening Variation 102\nopening_var114\tOpening Variation 114\nopening_var141\tOpening Variation 141\nopening_var057\tOpening Variation 57\nopening_var054\tOpening Variation 54\n",
+  "stderr": "",
+  "execution_time_ms": 1628
+}

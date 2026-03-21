@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE openings SET isPremium = 1 WHERE name IN ('Kings_Gambit_Declined Kings_Gambit_Declined_Norwalde_Variation', 'Hungarian_Opening Hungarian_Opening_Sicilian_Invitation', 'Sicilian_Defense Sicilian_Defense_Chekhover_Variation', 'Kings_Indian_Defense Kings_Indian_Defense_Semi-Classical_Variation', 'Philidor_Defense Philidor_Defense_Lion_Variation', 'Semi-Slav_Defense Semi-Slav_Defense_Romih_Variation');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute UPDATE openings SET isPremium = 1 WHERE name IN ('Kings_Gambit_Declined Kings_Gambit_Declined_Norwalde_Variation', 'Hungarian_Opening Hungarian_Opening_Sicilian_Invitation', 'Sicilian_Defense Sicilian_Defense_Chekhover_Variation', 'Kings_Indian_Defense Kings_Indian_Defense_Semi-Classical_Variation', 'Philidor_Defense Philidor_Defense_Lion_Variation', 'Semi-Slav_Defense Semi-Slav_Defense_Romih_Variation');",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1563
+}

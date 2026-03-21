@@ -1550,3 +1550,9 @@
 - [x] Fix Settings.tsx: hide sign-in prompt while auth loading (!user && !authLoading)
 - [x] Fix Stats.tsx: add authLoading check to handleCheckout
 - [x] Fix Register.tsx: show loading state while auth checking instead of sign-in form
+
+
+## Round 45 - Lock Premium Openings
+- [x] Add isPremium column to openings table
+- [x] Lock 6 random openings: Opening Variations 10, 11, 12, 13, 14, 15
+- [x] Verify lock status in database

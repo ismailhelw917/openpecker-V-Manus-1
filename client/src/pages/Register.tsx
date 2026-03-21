@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { getLoginUrl } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -9,14 +9,15 @@ export default function Register() {
   const { user, loading } = useAuth();
   const [email, setEmail] = useState("");
 
-  // If already logged in, redirect to /train
-  if (user) {
-    setLocation("/train");
-    return null;
-  }
+  // If already logged in, redirect to /train (must be in useEffect, not render phase)
+  useEffect(() => {
+    if (!loading && user) {
+      setLocation("/train");
+    }
+  }, [user, loading, setLocation]);
 
-  // Show loading while auth is being checked
-  if (loading) {
+  // Show loading while auth is being checked or user is about to redirect
+  if (loading || user) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 flex items-center justify-center">
         <div className="text-slate-400">Loading...</div>
@@ -28,8 +29,6 @@ export default function Register() {
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Redirect to OAuth portal - the email will be pre-filled on the Manus auth page
-    // The OAuth portal supports email-based registration
     window.location.href = loginUrl;
   };
 

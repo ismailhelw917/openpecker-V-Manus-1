@@ -42,12 +42,15 @@ export function useAuth(options?: UseAuthOptions) {
   }, [logoutMutation, utils]);
 
   const state = useMemo(() => {
-    localStorage.setItem(
-      "manus-runtime-user-info",
-      JSON.stringify(meQuery.data)
-    );
+    // Normalize user data - ensure isPremium is always a boolean
+    const rawUser = meQuery.data ?? null;
+    const user = rawUser ? {
+      ...rawUser,
+      isPremium: Boolean(rawUser.isPremium),
+    } : null;
+
     return {
-      user: meQuery.data ?? null,
+      user,
       loading: meQuery.isLoading || logoutMutation.isPending,
       error: meQuery.error ?? logoutMutation.error ?? null,
       isAuthenticated: Boolean(meQuery.data),
@@ -59,6 +62,19 @@ export function useAuth(options?: UseAuthOptions) {
     logoutMutation.error,
     logoutMutation.isPending,
   ]);
+
+  // Move localStorage write to useEffect (side effects don't belong in useMemo)
+  // Wrap in try/catch for mobile private browsing compatibility
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        "manus-runtime-user-info",
+        JSON.stringify(state.user)
+      );
+    } catch {
+      // localStorage may be unavailable in private browsing mode - ignore
+    }
+  }, [state.user]);
 
   useEffect(() => {
     if (!redirectOnUnauthenticated) return;

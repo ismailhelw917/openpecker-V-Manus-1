@@ -1,0 +1,28 @@
+{
+  "query": "SELECT DISTINCT opening_name FROM puzzles ORDER BY RAND() LIMIT 6;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT DISTINCT opening_name FROM puzzles ORDER BY RAND() LIMIT 6;",
+  "rows": [
+    {
+      "opening_name": "Kings_Gambit_Declined Kings_Gambit_Declined_Norwalde_Variation"
+    },
+    {
+      "opening_name": "Hungarian_Opening Hungarian_Opening_Sicilian_Invitation"
+    },
+    {
+      "opening_name": "Sicilian_Defense Sicilian_Defense_Chekhover_Variation"
+    },
+    {
+      "opening_name": "Kings_Indian_Defense Kings_Indian_Defense_Semi-Classical_Variation"
+    },
+    {
+      "opening_name": "Philidor_Defense Philidor_Defense_Lion_Variation"
+    },
+    {
+      "opening_name": "Semi-Slav_Defense Semi-Slav_Defense_Romih_Variation"
+    }
+  ],
+  "messages": [],
+  "stdout": "opening_name\nKings_Gambit_Declined Kings_Gambit_Declined_Norwalde_Variation\nHungarian_Opening Hungarian_Opening_Sicilian_Invitation\nSicilian_Defense Sicilian_Defense_Chekhover_Variation\nKings_Indian_Defense Kings_Indian_Defense_Semi-Classical_Variation\nPhilidor_Defense Philidor_Defense_Lion_Variation\nSemi-Slav_Defense Semi-Slav_Defense_Romih_Variation\n",
+  "stderr": "",
+  "execution_time_ms": 3474
+}
