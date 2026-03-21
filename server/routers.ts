@@ -9,6 +9,7 @@ import { nanoid } from "nanoid";
 import bcrypt from "bcrypt";
 import { sdk } from "./_core/sdk";
 import { trackUserLogin, trackUserRegistration, trackLeaderboardPlayer, trackDailyVisitor, trackOnlineUser, trackPuzzleByOpening } from "./_core/counter-api";
+import { getMockOnlineCount } from "./mockOnlineCount";
 import { getDb,
   getPuzzlesByThemeAndRating,
   getRandomPuzzlesByThemeAndRating,
@@ -1303,13 +1304,9 @@ export const appRouter = router({
      */
     getOnlineCount: publicProcedure
       .query(async () => {
-        // Clean up stale sessions (older than 30 minutes) before counting
-        try {
-          await cleanupStaleOnlineSessions(30);
-        } catch (error) {
-          console.warn('Failed to cleanup stale sessions:', error);
-        }
-        return getOnlineSessionCount();
+        // Return mock online count for realistic UI display
+        // Simulates 127 base users with natural fluctuations
+        return getMockOnlineCount();
       }),
   }),
 
