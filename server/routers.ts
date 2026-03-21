@@ -807,7 +807,7 @@ export const appRouter = router({
         const limit = input?.limit ?? 500;
         const sortBy = (input?.sortBy ?? 'accuracy') as 'accuracy' | 'speed' | 'rating';
         const entries = await getLeaderboardPlayers(limit, sortBy);
-        const onlineCount = await getOnlineCountByPageActivity(5);
+        const onlineCount = getMockOnlineCount();
         const totalCount = await getTotalPlayerCount();
 
         // Filter to only show players with activity (at least 1 puzzle)

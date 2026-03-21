@@ -443,7 +443,7 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
         {activeTab === "trends" && (
           <div className="space-y-8 relative">
             {!user?.isPremium && (
-              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-950/70 backdrop-blur-sm rounded-lg min-h-[400px]">
+              <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950/70 backdrop-blur-sm">
                 <Lock className="w-10 h-10 text-amber-400 mb-3" />
                 <p className="text-amber-400 font-bold text-xl mb-1">Premium Analytics</p>
                 <p className="text-slate-400 text-sm mb-4 text-center px-4 max-w-xs">Unlock accuracy trends, time analysis, and training cycle insights</p>
