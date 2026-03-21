@@ -99,10 +99,10 @@ export default function Train() {
     );
   }, [uniqueOpenings, searchQuery]);
 
-  // Determine which openings are free (first ~13%) vs premium (remaining ~87%)
-  // Reduced from 19% to lock 6 more openings behind premium
+  // Determine which openings are free vs premium
+  // Lock 6 more openings behind premium (reduced from ~13% to ~7%)
   const freeOpeningLimit = useMemo(() => {
-    return Math.max(Math.ceil(uniqueOpenings.length * 0.13), 5); // At least 5 free
+    return Math.max(Math.ceil(uniqueOpenings.length * 0.07), 5); // At least 5 free, lock 6 more
   }, [uniqueOpenings]);
 
   const isOpeningLocked = (openingName: string): boolean => {
