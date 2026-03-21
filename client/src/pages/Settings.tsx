@@ -412,48 +412,7 @@ export default function Settings() {
               </div>
             </div>
 
-            {/* Promo Code in Modal */}
-            <div className="px-3 sm:px-4 py-3 sm:py-4 border-t border-amber-400/20">
-              <div className="flex gap-2 items-center">
-                <input
-                  type="text"
-                  placeholder="Enter promo code"
-                  value={promoCode}
-                  onChange={(e) => {
-                    setPromoCode(e.target.value.toUpperCase());
-                    setValidationResult(null);
-                  }}
-                  className="flex-1 min-w-0 px-3 py-2 bg-slate-800 border border-slate-700 rounded text-white text-sm placeholder-slate-500 focus:outline-none focus:border-amber-400"
-                />
-                <button
-                  onClick={handleValidate}
-                  disabled={isValidating}
-                  className="shrink-0 whitespace-nowrap px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm rounded font-semibold disabled:opacity-50 transition-colors"
-                  style={{ touchAction: "manipulation" }}
-                >
-                  {isValidating ? "..." : "Apply"}
-                </button>
-              </div>
-              {validationResult?.valid && (
-                <p className="text-teal-400 text-xs mt-2">&#10003; {validationResult.discountPercent}% off applied</p>
-              )}
-            </div>
 
-            {/* Sign-in prompt for non-authenticated users - only show when auth is done loading */}
-            {!user && !authLoading && (
-              <div className="px-3 sm:px-4 py-2">
-                <div className="bg-amber-900/20 border border-amber-700/30 rounded-lg p-3 text-center">
-                  <p className="text-amber-200 text-sm mb-2">Sign in to unlock premium features</p>
-                  <a
-                    href={getLoginUrl()}
-                    className="inline-block px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm rounded-lg transition-colors no-underline"
-                    style={{ touchAction: "manipulation", WebkitTapHighlightColor: "rgba(0,0,0,0.1)" }}
-                  >
-                    Sign In
-                  </a>
-                </div>
-              </div>
-            )}
 
             {/* Pricing */}
             <div className="px-3 sm:px-4 py-3 sm:py-4 space-y-2 sm:space-y-3">

@@ -165,20 +165,21 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
     );
   }
 
-  // Show premium prompt for unauthenticated users with no data
-  if (!user && !finalStats) {
+  // Paywall: require sign-in to view stats
+  if (!user && !authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <div className="text-6xl mb-6">📊</div>
-          <h2 className="text-3xl font-bold text-amber-400 mb-4">No Data Yet</h2>
-          <p className="text-slate-400 mb-8">Start training to see your statistics here!</p>
-          <Button
-            onClick={() => setLocation("/train")}
-            className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold"
+          <Lock className="w-16 h-16 text-amber-400 mx-auto mb-6" />
+          <h2 className="text-3xl font-bold text-amber-400 mb-4">Sign In Required</h2>
+          <p className="text-slate-400 mb-8">Sign in to view your detailed performance statistics, rating history, and training analytics.</p>
+          <a
+            href={getLoginUrl()}
+            className="inline-block px-8 py-3 bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold rounded-lg transition-colors no-underline"
+            style={{ touchAction: "manipulation" }}
           >
-            Start Training
-          </Button>
+            Sign In to View Stats
+          </a>
         </div>
       </div>
     );

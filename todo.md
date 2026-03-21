@@ -1608,3 +1608,9 @@
 - [x] Complete full E2E test: record 5 puzzles, complete cycle, verify all data points
 - [x] All data points verified: puzzles, accuracy, ELO (1248), cycles (1), time (52s), leaderboard entry created
 - [x] Cleaned up test data from database
+
+## Round 54 - Settings Cleanup + Stats Paywall
+- [x] Remove "Sign in to unlock premium features" box from Settings premium modal
+- [x] Remove promo code area from Settings premium modal
+- [x] Unauthenticated users clicking €4.99/€49 already redirect to login (handleCheckout checks !user)
+- [x] Put paywall on Stats page - shows Lock icon + "Sign In Required" for unauthenticated users
