@@ -149,20 +149,9 @@ export default function Settings() {
   }, []);
 
   const handleCheckout = async (priceId: string, planName: string) => {
-    // Debug logging
-    console.log('[Checkout] authLoading:', authLoading, 'isAuthenticated:', isAuthenticated, 'user:', user);
-    
-    // Don't proceed if auth is still loading
-    if (authLoading) {
-      toast.info("Loading your account information...");
-      console.log('[Checkout] Auth still loading, returning');
-      return;
-    }
-    
-    // Check if user is authenticated
-    if (!isAuthenticated || !user) {
-      console.log('[Checkout] User not authenticated, redirecting to login');
-      toast.info("Please sign in first to upgrade to premium");
+    // Button is already disabled while auth loads, so just check if user exists
+    if (!user) {
+      console.log('[Checkout] User not found, redirecting to login');
       window.location.href = getLoginUrl();
       return;
     }
