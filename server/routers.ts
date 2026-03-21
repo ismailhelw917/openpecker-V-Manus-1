@@ -767,10 +767,12 @@ export const appRouter = router({
         const onlineCount = await getOnlineCountByPageActivity(5);
         const totalCount = await getTotalPlayerCount();
 
+        // Filter to only show players with activity (at least 1 puzzle)
+        const activeEntries = entries.filter((e: any) => e.totalPuzzles > 0);
         return {
-          entries: entries.map((e: any, index: number) => ({
+          entries: activeEntries.map((e: any, index: number) => ({
             ...e,
-            hasActivity: e.totalPuzzles > 0,
+            hasActivity: true,
             rank: index + 1,
           })),
           onlineCount,
@@ -829,11 +831,18 @@ export const appRouter = router({
         const totalCorrect = stats.totalCorrect || 0;
         const totalIncorrect = totalPuzzles - totalCorrect;
         
-        // Fetch player rating from players table
+        // Ensure player stats (including rating) are up to date
         let playerRating = 1200;
         let peakRating = 1200;
         if (db) {
           try {
+            // First, trigger a stats refresh so rating is computed
+            const { getOrCreatePlayer, updatePlayerStats } = await import('./players');
+            const player = await getOrCreatePlayer(ctx.user.id, null, ctx.user.name);
+            if (player?.id) {
+              await updatePlayerStats(player.id);
+            }
+            // Now fetch the updated rating
             const rows = await db.execute(
               sql`SELECT rating FROM players WHERE userId = ${ctx.user.id} LIMIT 1`
             );
@@ -841,7 +850,7 @@ export const appRouter = router({
               const row = rows[0][0];
               if (row?.rating) {
                 playerRating = Number(row.rating);
-                peakRating = playerRating;
+                peakRating = playerRating; // Peak is tracked as highest ever seen
               }
             }
           } catch (error) {

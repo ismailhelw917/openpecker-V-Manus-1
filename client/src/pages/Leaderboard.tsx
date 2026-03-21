@@ -114,7 +114,7 @@ export function Leaderboard() {
                   const podiumRank = podiumOrder[i];
                   const isGold = podiumRank === 1;
                   const isSilver = podiumRank === 2;
-                  const isMe = entry.id === currentUserId && entry.id > 0;
+                  const isMe = (entry.userId === currentUserId || entry.id === currentUserId) && (currentUserId ?? 0) > 0;
                   return (
                     <div
                       key={`podium-${entry.id}-${i}`}
@@ -155,7 +155,7 @@ export function Leaderboard() {
             {activeEntries.length >= 1 && (
               <div className="sm:hidden space-y-3 mb-6">
                 {activeEntries.slice(0, 3).map((entry: any) => {
-                  const isMe = entry.id === currentUserId && entry.id > 0;
+                  const isMe = (entry.userId === currentUserId || entry.id === currentUserId) && (currentUserId ?? 0) > 0;
                   const medal = entry.rank === 1 ? '\u{1F947}' : entry.rank === 2 ? '\u{1F948}' : '\u{1F949}';
                   return (
                     <div
@@ -214,7 +214,7 @@ export function Leaderboard() {
                 </thead>
                 <tbody>
                   {activeEntries.map((entry: any) => {
-                    const isMe = entry.id === currentUserId && entry.id > 0;
+                    const isMe = (entry.userId === currentUserId || entry.id === currentUserId) && (currentUserId ?? 0) > 0;
                     return (
                       <tr
                         key={`row-${entry.id}`}
@@ -274,7 +274,7 @@ export function Leaderboard() {
             {/* Mobile List - Active (remaining after top 3) */}
             <div className="sm:hidden space-y-2 mb-6">
               {activeEntries.slice(3).map((entry: any) => {
-                const isMe = entry.id === currentUserId && entry.id > 0;
+                const isMe = (entry.userId === currentUserId || entry.id === currentUserId) && (currentUserId ?? 0) > 0;
                 return (
                   <div
                     key={entry.uniqueKey || `mobile-${entry.rank}`}

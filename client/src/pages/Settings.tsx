@@ -121,6 +121,7 @@ export default function Settings() {
 
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [checkoutPlan, setCheckoutPlan] = useState<string | null>(null);
 
   // Handle payment success/cancel from Stripe redirect
   useEffect(() => {
@@ -164,6 +165,7 @@ export default function Settings() {
     console.log('[Checkout] Proceeding with checkout for user:', user.id);
 
     setLoading(true);
+    setCheckoutPlan(planName);
     try {
       console.log('[Checkout] Creating checkout session with:', { priceId, userId: user.id, email: user.email });
       const response = await fetch("/api/create-checkout-session", {
@@ -201,6 +203,7 @@ export default function Settings() {
       console.error(error);
     } finally {
       setLoading(false);
+      setCheckoutPlan(null);
     }
   };
 
@@ -211,6 +214,24 @@ export default function Settings() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-24">
+      {/* Checkout Loading Overlay */}
+      {checkoutPlan && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/95 backdrop-blur-sm">
+          <div className="text-center space-y-6 px-8">
+            <div className="relative mx-auto w-16 h-16">
+              <div className="absolute inset-0 rounded-full border-4 border-amber-400/20"></div>
+              <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-amber-400 animate-spin"></div>
+              <CreditCard className="absolute inset-0 m-auto w-6 h-6 text-amber-400" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white mb-2">Redirecting to Checkout</h2>
+              <p className="text-slate-400 text-sm">Preparing your {checkoutPlan} plan...</p>
+              <p className="text-slate-500 text-xs mt-2">Secure payment powered by Stripe</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-slate-900/50 backdrop-blur border-b border-teal-900/30 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center gap-3 sm:gap-4">

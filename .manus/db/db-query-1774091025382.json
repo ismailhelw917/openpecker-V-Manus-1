@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO players (userId, name, email, type, isPremium, lastActivityAt)\nSELECT u.id, u.name, u.email, 'registered', COALESCE(u.isPremium, 0), u.updatedAt\nFROM users u\nLEFT JOIN players p ON p.userId = u.id\nWHERE p.id IS NULL\nORDER BY u.updatedAt DESC\nLIMIT 100;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute INSERT INTO players (userId, name, email, type, isPremium, lastActivityAt)\nSELECT u.id, u.name, u.email, 'registered', COALESCE(u.isPremium, 0), u.updatedAt\nFROM users u\nLEFT JOIN players p ON p.userId = u.id\nWHERE p.id IS NULL\nORDER BY u.updatedAt DESC\nLIMIT 100;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1621
+}

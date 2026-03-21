@@ -105,6 +105,24 @@ export async function updatePlayerStats(playerId: number) {
   const totalTimeMs = Math.max(attemptTimeMs, cycleTimeMs);
   const accuracy = totalPuzzles > 0 ? Math.round((totalCorrect / totalPuzzles) * 100) : 0;
 
+  // Calculate ELO rating based on performance
+  // Base rating 1200, gain/lose based on accuracy and volume
+  // Each puzzle solved adjusts rating: correct = +K, incorrect = -K
+  // K factor decreases as more puzzles are solved (more stable rating)
+  const kFactor = Math.max(4, 32 - Math.floor(totalPuzzles / 50)); // K decreases from 32 to 4
+  const expectedScore = 0.5; // Assume puzzles are matched to player level
+  const actualScore = totalPuzzles > 0 ? totalCorrect / totalPuzzles : 0.5;
+  // Rating change based on recent performance vs expected
+  const ratingChange = Math.round(kFactor * (actualScore - expectedScore) * Math.min(totalPuzzles, 100));
+  const newRating = Math.max(100, Math.min(3000, 1200 + ratingChange));
+
+  // Get current peak rating
+  const peakResult = await db.execute(sql`SELECT rating FROM players WHERE id = ${playerId} LIMIT 1`);
+  const pr = Array.isArray(peakResult) ? (Array.isArray(peakResult[0]) ? peakResult[0] : peakResult) : [];
+  const currentStoredRating = Number(pr[0]?.rating || 1200);
+  // Only update peak if new rating is higher
+  const peakRating = Math.max(currentStoredRating, newRating);
+
   await db.execute(sql`
     UPDATE players SET
       totalPuzzles = ${totalPuzzles},
@@ -112,6 +130,7 @@ export async function updatePlayerStats(playerId: number) {
       totalTimeMs = ${totalTimeMs},
       completedCycles = ${completedCycles},
       accuracy = ${accuracy},
+      rating = ${newRating},
       lastActivityAt = NOW()
     WHERE id = ${playerId}
   `);

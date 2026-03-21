@@ -28,7 +28,7 @@ export function registerStripeRoutes(app: express.Express) {
   // Create checkout session endpoint (needs its own JSON parser since registered before global express.json)
   app.post("/api/create-checkout-session", express.json(), async (req, res) => {
     try {
-      const { priceId, userId, email } = req.body;
+      const { priceId, userId, email, promoCode, discountPercent } = req.body;
 
       if (!priceId || !userId || !email) {
         return res.status(400).json({
@@ -96,13 +96,54 @@ export function registerStripeRoutes(app: express.Express) {
         success_url: `${origin}/settings?payment=success&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/settings?payment=cancelled`,
         client_reference_id: userId.toString(),
-        allow_promotion_codes: true,
         metadata: {
           userId: userId.toString(),
           email,
           plan: isMonthly ? "monthly" : "lifetime",
         },
       };
+
+      // Apply promo code as Stripe coupon if provided, otherwise allow manual entry
+      if (promoCode && discountPercent > 0) {
+        try {
+          // Try to find or create a Stripe coupon matching the promo code
+          const stripe = getStripe();
+          let couponId: string | undefined;
+          
+          // First try to find existing coupon by the promo code name
+          try {
+            const coupon = await stripe.coupons.retrieve(promoCode.toLowerCase());
+            couponId = coupon.id;
+          } catch {
+            // Coupon doesn't exist, create it
+            try {
+              const newCoupon = await stripe.coupons.create({
+                id: promoCode.toLowerCase(),
+                percent_off: discountPercent,
+                duration: 'once',
+                name: `Promo: ${promoCode.toUpperCase()} (${discountPercent}% off)`,
+              });
+              couponId = newCoupon.id;
+            } catch (createErr) {
+              console.warn('[Checkout] Could not create Stripe coupon:', createErr);
+            }
+          }
+          
+          if (couponId) {
+            sessionParams.discounts = [{ coupon: couponId }];
+            console.log(`[Checkout] Applied promo code ${promoCode} as coupon ${couponId}`);
+          } else {
+            // Fallback: let user enter promo on Stripe page
+            sessionParams.allow_promotion_codes = true;
+          }
+        } catch (promoErr) {
+          console.warn('[Checkout] Promo code application failed, enabling manual entry:', promoErr);
+          sessionParams.allow_promotion_codes = true;
+        }
+      } else {
+        // No promo code from app, let users enter on Stripe checkout page
+        sessionParams.allow_promotion_codes = true;
+      }
 
       // Use customer ID if available (skips email collection), otherwise fall back to customer_email
       if (stripeCustomerId) {

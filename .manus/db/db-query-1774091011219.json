@@ -1,0 +1,25 @@
+{
+  "query": "SELECT COUNT(DISTINCT userId) as users_with_sets FROM training_sets WHERE userId IS NOT NULL; SELECT COUNT(DISTINCT userId) as users_with_cycles FROM cycle_history WHERE userId IS NOT NULL; SELECT COUNT(DISTINCT ts.userId) as users_with_attempts FROM puzzle_attempts pa JOIN training_sets ts ON pa.trainingSetId = ts.id WHERE ts.userId IS NOT NULL;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT COUNT(DISTINCT userId) as users_with_sets FROM training_sets WHERE userId IS NOT NULL; SELECT COUNT(DISTINCT userId) as users_with_cycles FROM cycle_history WHERE userId IS NOT NULL; SELECT COUNT(DISTINCT ts.userId) as users_with_attempts FROM puzzle_attempts pa JOIN training_sets ts ON pa.trainingSetId = ts.id WHERE ts.userId IS NOT NULL;",
+  "rows": [
+    {
+      "users_with_sets": "5"
+    },
+    {
+      "users_with_sets": "users_with_cycles"
+    },
+    {
+      "users_with_sets": "4"
+    },
+    {
+      "users_with_sets": "users_with_attempts"
+    },
+    {
+      "users_with_sets": "2"
+    }
+  ],
+  "messages": [],
+  "stdout": "users_with_sets\n5\nusers_with_cycles\n4\nusers_with_attempts\n2\n",
+  "stderr": "",
+  "execution_time_ms": 1996
+}

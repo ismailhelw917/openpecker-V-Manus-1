@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, Zap, Shield, Loader, Users, TrendingUp, Lock } from "lucide-react";
+import { Download, Zap, Shield, Loader, Users, TrendingUp, Lock, CreditCard } from "lucide-react";
 import { StatsDisplay } from "@/components/StatsDisplay";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "@/_core/deviceId";
@@ -68,6 +68,7 @@ export default function Stats() {
   const { user, loading: authLoading, isAuthenticated } = useAuth();
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [checkoutPlan, setCheckoutPlan] = useState<string | null>(null);
   const [deviceId] = useState<string | null>(() => {
     try { return getOrCreateDeviceId(); } catch { return null; }
   });
@@ -87,6 +88,7 @@ export default function Stats() {
     
     console.log('[Stats Checkout] Proceeding with checkout for user:', user.id);
     setLoading(true);
+    setCheckoutPlan(planName);
     try {
       const response = await fetch("/api/create-checkout-session", {
         method: "POST",
@@ -104,6 +106,7 @@ export default function Stats() {
       toast.error(error instanceof Error ? error.message : "Failed to start checkout");
     } finally {
       setLoading(false);
+      setCheckoutPlan(null);
     }
   };
   const utils = trpc.useUtils();
@@ -183,6 +186,24 @@ const trackOnlineMutation = trpc.system.trackUserOnline.useMutation();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-20">
+      {/* Checkout Loading Overlay */}
+      {checkoutPlan && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/95 backdrop-blur-sm">
+          <div className="text-center space-y-6 px-8">
+            <div className="relative mx-auto w-16 h-16">
+              <div className="absolute inset-0 rounded-full border-4 border-amber-400/20"></div>
+              <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-amber-400 animate-spin"></div>
+              <CreditCard className="absolute inset-0 m-auto w-6 h-6 text-amber-400" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white mb-2">Redirecting to Checkout</h2>
+              <p className="text-slate-400 text-sm">Preparing your {checkoutPlan} plan...</p>
+              <p className="text-slate-500 text-xs mt-2">Secure payment powered by Stripe</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Premium Modal */}
       {showPremiumModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">

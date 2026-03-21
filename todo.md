@@ -1595,3 +1595,9 @@
 - [x] Verify promo codes - already enabled (allow_promotion_codes: true)
 - [x] Lock 6 more openings - reduced free limit from 25% to 19% (~6 fewer free openings)
 - [x] Fix custom domain - openpecker.com is reachable, was temporary DNS/deployment gap
+
+## Round 52 - Four More Fixes
+- [x] Fix promo code - allow_promotion_codes: true set, promo codes must be created in Stripe Dashboard > Coupons > Promotion Codes
+- [x] Add loading/transition page between price click and Stripe checkout (Settings.tsx + Stats.tsx with CreditCard spinner overlay)
+- [x] Fix rating/ELO - updatePlayerStats now computes ELO from puzzle accuracy with K-factor system
+- [x] Fix leaderboard - fixed isMe check (userId vs id mismatch), filtered to active players only, backfilled 105 player rows from users table
