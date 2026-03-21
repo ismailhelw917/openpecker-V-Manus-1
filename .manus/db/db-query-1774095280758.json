@@ -1,0 +1,70 @@
+{
+  "query": "SELECT DISTINCT openingVariation FROM puzzles WHERE openingName = 'Sicilian' LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT DISTINCT openingVariation FROM puzzles WHERE openingName = 'Sicilian' LIMIT 20;",
+  "rows": [
+    {
+      "openingVariation": "Defense Sicilian Defense Velimirovic Attack"
+    },
+    {
+      "openingVariation": "Defense Sicilian Defense Rossolimo Variation"
+    },
+    {
+      "openingVariation": "Defense Sicilian Defense Najdorf Variation"
+    },
+    {
+      "openingVariation": "Defense Sicilian Defense Kalashnikov Variation"
+    },
+    {
+      "openingVariation": "Defense Sicilian Defense Alapin Variation"
+    },
+    {
+      "openingVariation": "Defense Sicilian Defense Mengarini Variation"
+    },
+    {
+      "openingVariation": "Defense Sicilian Defense Flohr Variation"
+    },
+    {
+      "openingVariation": "Defense Sicilian Defense McDonnell Attack"
+    },
+    {
+      "openingVariation": "Defense Sicilian Defense Open"
+    },
+    {
+      "openingVariation": "Defense Sicilian Defense Four Knights Variation"
+    },
+    {
+      "openingVariation": "Defense Sicilian Defense Kupreichik Variation"
+    },
+    {
+      "openingVariation": "Defense Sicilian Defense Bucker Variation"
+    },
+    {
+      "openingVariation": "Defense Sicilian Defense Smith-Morra Gambit"
+    },
+    {
+      "openingVariation": "Defense Sicilian Defense Scheveningen Variation"
+    },
+    {
+      "openingVariation": "Defense Sicilian Defense Canal Attack"
+    },
+    {
+      "openingVariation": "Defense Sicilian Defense Paulsen-Basman Defense"
+    },
+    {
+      "openingVariation": "Defense Sicilian Defense Prins Variation"
+    },
+    {
+      "openingVariation": "Defense Sicilian Defense Polish Gambit"
+    },
+    {
+      "openingVariation": "Defense Sicilian Defense Wing Gambit Deferred"
+    },
+    {
+      "openingVariation": "Defense Sicilian Defense Snyder Variation"
+    }
+  ],
+  "messages": [],
+  "stdout": "openingVariation\nDefense Sicilian Defense Velimirovic Attack\nDefense Sicilian Defense Rossolimo Variation\nDefense Sicilian Defense Najdorf Variation\nDefense Sicilian Defense Kalashnikov Variation\nDefense Sicilian Defense Alapin Variation\nDefense Sicilian Defense Mengarini Variation\nDefense Sicilian Defense Flohr Variation\nDefense Sicilian Defense McDonnell Attack\nDefense Sicilian Defense Open\nDefense Sicilian Defense Four Knights Variation\nDefense Sicilian Defense Kupreichik Variation\nDefense Sicilian Defense Bucker Variation\nDefense Sicilian Defense Smith-Morra Gambit\nDefense Sicilian Defense Scheveningen Variation\nDefense Sicilian Defense Canal Attack\nDefense Sicilian Defense Paulsen-Basman Defense\nDefense Sicilian Defense Prins Variation\nDefense Sicilian Defense Polish Gambit\nDefense Sicilian Defense Wing Gambit Deferred\nDefense Sicilian Defense Snyder Variation\n",
+  "stderr": "",
+  "execution_time_ms": 2762
+}

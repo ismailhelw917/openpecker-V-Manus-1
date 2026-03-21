@@ -1,0 +1,8 @@
+{
+  "query": "SELECT opening_name, opening_variation, COUNT(*) as cnt FROM puzzles WHERE opening_name LIKE '%Sicilian%' GROUP BY opening_name, opening_variation ORDER BY cnt DESC LIMIT 30;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT opening_name, opening_variation, COUNT(*) as cnt FROM puzzles WHERE opening_name LIKE '%Sicilian%' GROUP BY opening_name, opening_variation ORDER BY cnt DESC LIMIT 30;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'opening_variation' in 'group statement'"
+  ]
+}

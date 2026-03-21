@@ -1,0 +1,22 @@
+{
+  "query": "SELECT openingName, COUNT(*) as cnt FROM puzzles WHERE openingName IS NULL OR openingName = '' OR openingName = 'Opening' OR openingName = 'Unknown' OR openingName = 'Unclassified' GROUP BY openingName LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT openingName, COUNT(*) as cnt FROM puzzles WHERE openingName IS NULL OR openingName = '' OR openingName = 'Opening' OR openingName = 'Unknown' OR openingName = 'Unclassified' GROUP BY openingName LIMIT 10;",
+  "rows": [
+    {
+      "openingName": "NULL",
+      "cnt": "2785"
+    },
+    {
+      "openingName": "Opening",
+      "cnt": "432"
+    },
+    {
+      "openingName": "Unclassified",
+      "cnt": "3831204"
+    }
+  ],
+  "messages": [],
+  "stdout": "openingName\tcnt\nNULL\t2785\nOpening\t432\nUnclassified\t3831204\n",
+  "stderr": "",
+  "execution_time_ms": 6208
+}

@@ -1625,3 +1625,7 @@
 - [x] Fix any issues found during review (silenced counter.dev errors, updated canonical URL to openpecker.com, fixed deprecated meta tag)
 - [x] Run tests to verify everything works (18/22 test files pass, 4 pre-existing failures in puzzle fetch/stats aggregation)
 - [x] Save checkpoint for publishing to restore openpecker.com
+
+## Round 56 - Two Bug Fixes
+- [x] Fix Sicilian variations all getting same puzzle set (uncommented and fixed variation filter in getRandomPuzzlesByOpeningAndRating to use openingVariation LIKE match)
+- [x] Hide unclassified puzzles from Train tab (removed from hierarchy.json and filtered from getUniqueOpenings SQL query)

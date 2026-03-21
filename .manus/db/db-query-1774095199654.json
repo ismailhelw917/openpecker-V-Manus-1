@@ -1,0 +1,110 @@
+{
+  "query": "SELECT openingName, openingVariation, COUNT(*) as cnt FROM puzzles WHERE openingName LIKE '%Sicilian%' GROUP BY openingName, openingVariation ORDER BY cnt DESC LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT openingName, openingVariation, COUNT(*) as cnt FROM puzzles WHERE openingName LIKE '%Sicilian%' GROUP BY openingName, openingVariation ORDER BY cnt DESC LIMIT 20;",
+  "rows": [
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense Old Sicilian",
+      "cnt": "10640"
+    },
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense Closed",
+      "cnt": "10624"
+    },
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense Bowdler Attack",
+      "cnt": "10520"
+    },
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense Alapin Variation",
+      "cnt": "10186"
+    },
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense Najdorf Variation",
+      "cnt": "8977"
+    },
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense Modern Variations",
+      "cnt": "8428"
+    },
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense Smith-Morra Gambit",
+      "cnt": "6862"
+    },
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense McDonnell Attack",
+      "cnt": "6001"
+    },
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense Other variations",
+      "cnt": "5647"
+    },
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense Taimanov Variation",
+      "cnt": "5485"
+    },
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense Open",
+      "cnt": "5243"
+    },
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense French Variation",
+      "cnt": "5000"
+    },
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense Nyezhmetdinov-Rossolimo Attack",
+      "cnt": "4608"
+    },
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense Accelerated Dragon",
+      "cnt": "4530"
+    },
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense Dragon Variation",
+      "cnt": "4383"
+    },
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense Kan Variation",
+      "cnt": "3766"
+    },
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense Smith-Morra Gambit Accepted",
+      "cnt": "3114"
+    },
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense Lowenthal Variation",
+      "cnt": "2896"
+    },
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense Lasker-Pelikan Variation",
+      "cnt": "2540"
+    },
+    {
+      "openingName": "Sicilian",
+      "openingVariation": "Defense Sicilian Defense Delayed Alapin Variation",
+      "cnt": "2395"
+    }
+  ],
+  "messages": [],
+  "stdout": "openingName\topeningVariation\tcnt\nSicilian\tDefense Sicilian Defense Old Sicilian\t10640\nSicilian\tDefense Sicilian Defense Closed\t10624\nSicilian\tDefense Sicilian Defense Bowdler Attack\t10520\nSicilian\tDefense Sicilian Defense Alapin Variation\t10186\nSicilian\tDefense Sicilian Defense Najdorf Variation\t8977\nSicilian\tDefense Sicilian Defense Modern Variations\t8428\nSicilian\tDefense Sicilian Defense Smith-Morra Gambit\t6862\nSicilian\tDefense Sicilian Defense McDonnell Attack\t6001\nSicilian\tDefense Sicilian Defense Other variations\t5647\nSicilian\tDefense Sicilian Defense Taimanov Variation\t5485\nSicilian\tDefense Sicilian Defense Open\t5243\nSicilian\tDefense Sicilian Defense French Variation\t5000\nSicilian\tDefense Sicilian Defense Nyezhmetdinov-Rossolimo Attack\t4608\nSicilian\tDefense Sicilian Defense Accelerated Dragon\t4530\nSicilian\tDefense Sicilian Defense Dragon Variation\t4383\nSicilian\tDefense Sicilian Defense Kan Variation\t3766\nSicilian\tDefense Sicilian Defense Smith-Morra Gambit Accepted\t3114\nSicilian\tDefense Sicilian Defense Lowenthal Variation\t2896\nSicilian\tDefense Sicilian Defense Lasker-Pelikan Variation\t2540\nSicilian\tDefense Sicilian Defense Delayed Alapin Variation\t2395\n",
+  "stderr": "",
+  "execution_time_ms": 2590
+}

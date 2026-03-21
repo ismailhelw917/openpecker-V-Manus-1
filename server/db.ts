@@ -191,7 +191,7 @@ export async function getUniqueOpenings() {
   try {
     // Use raw SQL to get distinct opening names
     const result = await db.execute(
-      `SELECT DISTINCT openingName FROM puzzles WHERE openingName IS NOT NULL AND openingName != '' ORDER BY openingName ASC`
+      `SELECT DISTINCT openingName FROM puzzles WHERE openingName IS NOT NULL AND openingName != '' AND openingName NOT IN ('Unclassified', 'Opening', 'Unknown') ORDER BY openingName ASC`
     );
     
     // Extract opening names from result
@@ -412,17 +412,13 @@ export async function getRandomPuzzlesByOpeningAndRating(
     lte(puzzles.rating, maxRating)
   );
 
-  // Skip variation filter for now - just search by opening name
-  // The variation names in the database don't match the hierarchy
-  // TODO: Fix variation matching logic
-  /*
+  // Filter by variation using openingVariation column (LIKE match)
   if (variation && variation.trim()) {
     const variationPattern = `%${variation}%`;
     console.log('[getRandomPuzzlesByOpeningAndRating] Filtering by variation:', variation);
     console.log('[getRandomPuzzlesByOpeningAndRating] LIKE pattern:', variationPattern);
-    whereConditions = and(whereConditions, like(puzzles.variation, variationPattern));
+    whereConditions = and(whereConditions, like(puzzles.openingVariation, variationPattern));
   }
-  */
 
   if (color && color !== 'both') {
     whereConditions = and(whereConditions, eq(puzzles.color, color));
