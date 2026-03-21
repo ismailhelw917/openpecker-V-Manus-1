@@ -149,7 +149,12 @@ export default function Settings() {
   }, []);
 
   const handleCheckout = async (priceId: string, planName: string) => {
-    // Button is already disabled while auth loads, so just check if user exists
+    // If auth is still loading, wait and retry
+    if (authLoading) {
+      toast.info("Please wait, loading your account...");
+      return;
+    }
+    // If user is not authenticated after auth has loaded, redirect to login
     if (!user) {
       console.log('[Checkout] User not found, redirecting to login');
       window.location.href = getLoginUrl();
@@ -413,8 +418,8 @@ export default function Settings() {
               )}
             </div>
 
-            {/* Sign-in prompt for non-authenticated users */}
-            {!user && (
+            {/* Sign-in prompt for non-authenticated users - only show when auth is done loading */}
+            {!user && !authLoading && (
               <div className="px-3 sm:px-4 py-2">
                 <div className="bg-amber-900/20 border border-amber-700/30 rounded-lg p-3 text-center">
                   <p className="text-amber-200 text-sm mb-2">Sign in to unlock premium features</p>

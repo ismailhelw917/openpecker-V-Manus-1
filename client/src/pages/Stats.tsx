@@ -73,7 +73,12 @@ export default function Stats() {
   });
 
   const handleCheckout = async (priceId: string, planName: string) => {
-    // Button is already disabled while auth loads, so just check if user exists
+    // If auth is still loading, wait and retry
+    if (authLoading) {
+      toast.info("Please wait, loading your account...");
+      return;
+    }
+    // If user is not authenticated after auth has loaded, redirect to login
     if (!user) {
       console.log('[Stats Checkout] User not found, redirecting to login');
       window.location.href = getLoginUrl();

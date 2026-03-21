@@ -107,7 +107,24 @@ export default function Home() {
             START TRAINING &rarr;
           </Button>
 
-          {!isAuthenticated ? (
+          {loading ? (
+            <div className="text-slate-500 text-sm py-2">Loading...</div>
+          ) : isAuthenticated ? (
+            <div className="space-y-2">
+              <div className="text-slate-700 text-sm">
+                Welcome, <span className="text-teal-600 font-semibold">{user?.name || user?.email}</span>
+              </div>
+              {!user?.isPremium && (
+                <Button
+                  onClick={handleUpgradeToPremium}
+                  className="w-full max-w-sm bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg transition-all"
+                  style={{ touchAction: "manipulation" }}
+                >
+                  Upgrade to Premium
+                </Button>
+              )}
+            </div>
+          ) : (
             <div className="space-y-2">
               {/* Register with Google - redirects to /train after login */}
               <a
@@ -145,21 +162,6 @@ export default function Home() {
                 </svg>
                 Register with Email
               </a>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <div className="text-slate-700 text-sm">
-                Welcome, <span className="text-teal-600 font-semibold">{user?.name || user?.email}</span>
-              </div>
-              {!user?.isPremium && (
-                <Button
-                  onClick={handleUpgradeToPremium}
-                  className="w-full max-w-sm bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg transition-all"
-                  style={{ touchAction: "manipulation" }}
-                >
-                  Upgrade to Premium
-                </Button>
-              )}
             </div>
           )}
         </div>

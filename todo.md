@@ -1542,3 +1542,11 @@
 - [x] Verify data persistence structure for micro and macro data
 - [x] Confirm all changes deployed to dev server
 - [x] Ready for launch
+
+## Round 44 - Critical Checkout & Auth Bugs
+- [x] Fix checkout buttons (4.99/49.99) redirecting to sign-in instead of Stripe checkout
+- [x] Remove sign-in buttons when user is already signed in
+- [x] Fix Home.tsx: 3-way conditional (loading/authenticated/unauthenticated) to prevent sign-in flash
+- [x] Fix Settings.tsx: hide sign-in prompt while auth loading (!user && !authLoading)
+- [x] Fix Stats.tsx: add authLoading check to handleCheckout
+- [x] Fix Register.tsx: show loading state while auth checking instead of sign-in form

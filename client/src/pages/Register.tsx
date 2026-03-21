@@ -6,13 +6,22 @@ import { Mail, ArrowLeft } from "lucide-react";
 
 export default function Register() {
   const [, setLocation] = useLocation();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [email, setEmail] = useState("");
 
   // If already logged in, redirect to /train
   if (user) {
     setLocation("/train");
     return null;
+  }
+
+  // Show loading while auth is being checked
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 flex items-center justify-center">
+        <div className="text-slate-400">Loading...</div>
+      </div>
+    );
   }
 
   const loginUrl = getLoginUrl("/train");
