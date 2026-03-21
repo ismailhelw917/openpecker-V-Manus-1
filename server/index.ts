@@ -4,7 +4,6 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { appRouter } from "./routers";
 import { createContext } from "./_core/context";
 import { registerOAuthRoutes } from "./_core/oauth";
-import { registerGoogleOAuthRoutes } from "./_core/google-oauth";
 import { registerStripeRoutes } from "./_core/stripeHandler";
 import { trackVisitor, getVisitorStats } from "./visitor-tracking";
 
@@ -19,7 +18,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // OAuth routes
 registerOAuthRoutes(app);
-registerGoogleOAuthRoutes(app);
 
 // Visitor tracking endpoint - lightweight, fire-and-forget
 app.post("/api/track", async (req, res) => {
