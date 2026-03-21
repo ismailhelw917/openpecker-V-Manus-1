@@ -4,7 +4,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 
 /**
- * Auth page - redirects to Manus OAuth login
+ * Auth page - handles user authentication
  * This app uses OAuth exclusively (no email/password auth)
  */
 export default function Auth() {

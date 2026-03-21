@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-interface ManusDialogProps {
+interface PremiumDialogProps {
   title?: string;
   logo?: string;
   open?: boolean;
@@ -18,14 +18,14 @@ interface ManusDialogProps {
   onClose?: () => void;
 }
 
-export function ManusDialog({
+export function PremiumDialog({
   title,
   logo,
   open = false,
   onLogin,
   onOpenChange,
   onClose,
-}: ManusDialogProps) {
+}: PremiumDialogProps) {
   const [internalOpen, setInternalOpen] = useState(open);
 
   useEffect(() => {

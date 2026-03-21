@@ -198,7 +198,7 @@ export function AnalyticsDashboard() {
       {/* Info Message */}
       <Card className="bg-teal-900/20 border-teal-500/30 p-4">
         <p className="text-teal-200 text-sm">
-          💡 Tip: Ask in Manus Chat "Show me puzzle statistics" to get real-time analytics powered by this dashboard.
+          💡 Tip: Your puzzle statistics are saved automatically and updated in real-time as you train.
         </p>
       </Card>
     </div>

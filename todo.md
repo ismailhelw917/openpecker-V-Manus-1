@@ -1634,3 +1634,8 @@
 - [x] Fix premium not activating after purchase (added checkout success handler to refresh auth state)
 - [x] Lock 6 more openings behind the paywall (reduced free opening limit from 19% to 13%)
 - [x] Fix lock icons and PRO badges not showing on mobile (improved responsive layout)
+
+## Round 60 - Remove Manus References
+- [x] Remove all Manus branding and references from frontend (localStorage key, dialog names, analytics tips, comments)
+- [x] Remove Manus domain fallback from Stripe handler (changed to openpecker.com)
+- [x] Keep internal Manus API references (these are backend infrastructure and not visible to users)

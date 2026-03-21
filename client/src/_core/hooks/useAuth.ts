@@ -68,7 +68,7 @@ export function useAuth(options?: UseAuthOptions) {
   useEffect(() => {
     try {
       localStorage.setItem(
-        "manus-runtime-user-info",
+        "openpecker-user-info",
         JSON.stringify(state.user)
       );
     } catch {

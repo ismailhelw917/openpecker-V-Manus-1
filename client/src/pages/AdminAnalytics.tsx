@@ -93,10 +93,10 @@ export default function AdminAnalytics() {
             <div className="p-4 bg-slate-800/50 rounded-lg">
               <h3 className="font-semibold text-white mb-2">Analytics Integration</h3>
               <p className="text-slate-400 text-sm mb-4">
-                These statistics are available in Manus Chat. Ask "Show me puzzle statistics" to get real-time data.
+                These statistics are automatically tracked and updated in real-time as you train.
               </p>
               <button className="px-4 py-2 bg-cyan-400 text-slate-900 font-semibold rounded-lg hover:bg-cyan-500 transition-colors">
-                View in Manus Chat
+                View Analytics
               </button>
             </div>
           </div>
@@ -105,7 +105,7 @@ export default function AdminAnalytics() {
         {/* Info */}
         <Card className="bg-blue-900/20 border-blue-500/30 p-4 mt-8">
           <p className="text-blue-200 text-sm">
-            <strong>Note:</strong> This analytics dashboard is connected to the MCP analytics server. All data is available for querying in Manus Chat.
+            <strong>Note:</strong> This analytics dashboard tracks your training progress and performance metrics in real-time.
           </p>
         </Card>
       </div>

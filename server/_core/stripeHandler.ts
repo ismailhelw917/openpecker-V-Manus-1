@@ -45,7 +45,7 @@ export function registerStripeRoutes(app: express.Express) {
       }
 
       // Get the origin from request headers for proper redirect URLs
-      const origin = req.headers.origin || "https://openpecker.manus.space";
+      const origin = req.headers.origin || "https://openpecker.com";
 
       // Create Stripe checkout session
       const stripe = getStripe();
