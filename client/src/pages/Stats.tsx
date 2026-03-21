@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, Zap, Shield, Loader, Users, TrendingUp, Lock, CreditCard } from "lucide-react";
+import { PremiumPaywall } from "@/components/PremiumPaywall";
 import { StatsDisplay } from "@/components/StatsDisplay";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "@/_core/deviceId";
@@ -66,7 +67,7 @@ export default function Stats() {
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
   const [selectedSet, setSelectedSet] = useState<string>("all");
   const { user, loading: authLoading, isAuthenticated } = useAuth();
-  const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [showPremiumPaywall, setShowPremiumPaywall] = useState(false);
   const [loading, setLoading] = useState(false);
   const [checkoutPlan, setCheckoutPlan] = useState<string | null>(null);
   const [deviceId] = useState<string | null>(() => {
@@ -226,7 +227,7 @@ export default function Stats() {
             ))}
           </ul>
           <Button
-            onClick={() => handleCheckout("price_yearly", "yearly")}
+            onClick={() => setShowPremiumPaywall(true)}
             className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-8 py-3 text-lg rounded-lg"
           >
             Upgrade to Premium
@@ -258,11 +259,11 @@ export default function Stats() {
       )}
 
       {/* Premium Modal */}
-      {showPremiumModal && (
+      {showPremiumPaywall && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <Card className="bg-gradient-to-b from-amber-950 via-slate-900 to-slate-950 border-amber-400/30 max-w-lg w-full max-h-[90vh] overflow-y-auto relative">
             <button
-              onClick={() => setShowPremiumModal(false)}
+              onClick={() => setShowPremiumPaywall(false)}
               className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
             >
               ✕
@@ -429,7 +430,7 @@ export default function Stats() {
                     <p className="text-amber-400 font-bold text-sm sm:text-lg mb-1">Premium Feature</p>
                     <p className="text-slate-400 text-xs sm:text-sm mb-3 sm:mb-4 text-center px-3">Unlock detailed rating progression charts</p>
                     <Button
-                      onClick={() => setShowPremiumModal(true)}
+                      onClick={() => setShowPremiumPaywall(true)}
                       className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-4 sm:px-6 text-sm"
                     >
                       <Zap className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" /> Upgrade
@@ -469,7 +470,7 @@ export default function Stats() {
                 <p className="text-amber-400 font-bold text-xl mb-1">Premium Analytics</p>
                 <p className="text-slate-400 text-sm mb-4 text-center px-4 max-w-xs">Unlock accuracy trends, time analysis, and training cycle insights</p>
                 <Button
-                  onClick={() => setShowPremiumModal(true)}
+                  onClick={() => setShowPremiumPaywall(true)}
                   className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-6"
                 >
                   <Zap className="w-4 h-4 mr-2" /> Upgrade to Premium
@@ -550,7 +551,7 @@ export default function Stats() {
                 <p className="text-amber-400 font-bold text-xl mb-1">Premium Feature</p>
                 <p className="text-slate-400 text-sm mb-4 text-center px-4 max-w-xs">Track your mastery of each opening with detailed breakdowns</p>
                 <Button
-                  onClick={() => setShowPremiumModal(true)}
+                  onClick={() => setShowPremiumPaywall(true)}
                   className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-6"
                 >
                   <Zap className="w-4 h-4 mr-2" /> Upgrade to Premium
