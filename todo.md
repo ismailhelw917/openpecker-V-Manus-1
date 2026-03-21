@@ -1639,3 +1639,6 @@
 - [x] Remove all Manus branding and references from frontend (localStorage key, dialog names, analytics tips, comments)
 - [x] Remove Manus domain fallback from Stripe handler (changed to openpecker.com)
 - [x] Keep internal Manus API references (these are backend infrastructure and not visible to users)
+
+## Round 61 - Verify Unclassified Puzzles Hidden
+- [x] Verify unclassified puzzles are completely hidden from UI (Train page shows 100 classified openings, no Unclassified/Opening/Unknown entries)
