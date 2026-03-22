@@ -77,12 +77,15 @@ export function registerOAuthRoutes(app: Express) {
       });
 
       const cookieOptions = getSessionCookieOptions(req);
+      console.log("[OAuth] Setting cookie with options:", { ...cookieOptions, maxAge: ONE_YEAR_MS });
+      console.log("[OAuth] Session token created for user:", userInfo.openId);
       res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
 
       let returnPath = parseReturnPath(state);
       if (upsertedUser && upsertedUser.hasRegistered === 0) {
         returnPath = "/stats?showPaywall=true";
       }
+      console.log("[OAuth] Redirecting to:", returnPath);
       res.redirect(302, returnPath);
     } catch (error) {
       console.error("[OAuth] Callback failed", error);
