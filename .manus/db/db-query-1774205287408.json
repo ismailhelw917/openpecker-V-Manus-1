@@ -1,0 +1,34 @@
+{
+  "query": "\nSELECT \n  id,\n  openingName,\n  puzzleCount,\n  LENGTH(puzzlesJson) as puzzlesJson_length,\n  SUBSTRING(puzzlesJson, 1, 50) as puzzlesJson_preview,\n  createdAt\nFROM training_sets\nORDER BY createdAt DESC\nLIMIT 3;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \nSELECT \n  id,\n  openingName,\n  puzzleCount,\n  LENGTH(puzzlesJson) as puzzlesJson_length,\n  SUBSTRING(puzzlesJson, 1, 50) as puzzlesJson_preview,\n  createdAt\nFROM training_sets\nORDER BY createdAt DESC\nLIMIT 3;\n",
+  "rows": [
+    {
+      "id": "e0tvtNsNJqgaV6x1-jpTV",
+      "openingName": "Queen's Gambit",
+      "puzzleCount": "50",
+      "puzzlesJson_length": "11690",
+      "puzzlesJson_preview": "[{\"id\":\"002IE\",\"fen\":\"r3brk1/5pp1/p1nqpn1p/P2pN3/2",
+      "createdAt": "2026-03-22 18:45:11"
+    },
+    {
+      "id": "aovAjTRg77auI04SQXhAz",
+      "openingName": "Queen's Gambit",
+      "puzzleCount": "50",
+      "puzzlesJson_length": "11690",
+      "puzzlesJson_preview": "[{\"id\":\"002IE\",\"fen\":\"r3brk1/5pp1/p1nqpn1p/P2pN3/2",
+      "createdAt": "2026-03-22 18:30:23"
+    },
+    {
+      "id": "Bl4x51pB2Tmawdpqksh-p",
+      "openingName": "Sicilian Defence",
+      "puzzleCount": "50",
+      "puzzlesJson_length": "2",
+      "puzzlesJson_preview": "[]",
+      "createdAt": "2026-03-22 18:28:39"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topeningName\tpuzzleCount\tpuzzlesJson_length\tpuzzlesJson_preview\tcreatedAt\ne0tvtNsNJqgaV6x1-jpTV\tQueen's Gambit\t50\t11690\t[{\"id\":\"002IE\",\"fen\":\"r3brk1/5pp1/p1nqpn1p/P2pN3/2\t2026-03-22 18:45:11\naovAjTRg77auI04SQXhAz\tQueen's Gambit\t50\t11690\t[{\"id\":\"002IE\",\"fen\":\"r3brk1/5pp1/p1nqpn1p/P2pN3/2\t2026-03-22 18:30:23\nBl4x51pB2Tmawdpqksh-p\tSicilian Defence\t50\t2\t[]\t2026-03-22 18:28:39\n",
+  "stderr": "",
+  "execution_time_ms": 1678
+}

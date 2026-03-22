@@ -71,18 +71,6 @@ export function Leaderboard() {
       </div>
 
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
-          <Card className="bg-white border border-slate-200 p-3 sm:p-4">
-            <div className="text-xs sm:text-sm font-medium text-slate-600 mb-1">Active Players</div>
-            <div className="text-xl sm:text-2xl font-bold text-teal-600">{summary.activePlayers}</div>
-          </Card>
-          <Card className="bg-white border border-slate-200 p-3 sm:p-4">
-            <div className="text-xs sm:text-sm font-medium text-slate-600 mb-1">Total Registered</div>
-            <div className="text-xl sm:text-2xl font-bold text-teal-600">{summary.totalPlayers}</div>
-          </Card>
-        </div>
-
         {/* Rank Tab - Gold Background */}
         <div className="mb-6 sm:mb-8">
           <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-lg p-3 sm:p-4 text-white">

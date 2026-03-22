@@ -2105,3 +2105,10 @@
 - [x] Fixed column names from 'opening' to 'openingName' and 'variation' to 'openingVariation'
 - [x] Verified training session now loads with 50 puzzles correctly
 - [x] Confirmed chessboard displays valid puzzle position
+
+
+## UI UPDATES: Leaderboard Page (Round 34)
+- [x] Remove "Active Players" stat container
+- [x] Remove "Total Registered" stat container
+- [x] Verify leaderboard table displays correctly without stat containers
+- [x] Save checkpoint with UI changes
