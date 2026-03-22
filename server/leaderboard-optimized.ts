@@ -25,7 +25,7 @@ interface LeaderboardCache {
 
 // In-memory cache for leaderboard
 const leaderboardCache: Map<string, LeaderboardCache> = new Map();
-const CACHE_TTL = 10000; // 10 second cache for frequent updates
+const CACHE_TTL = 3000; // 3 second cache for real-time updates
 
 /**
  * NOTE: Nakama is the primary source of truth for leaderboards.
@@ -221,9 +221,11 @@ export async function getLeaderboardSummary() {
     const countRows = Array.isArray(countResult) ? (Array.isArray(countResult[0]) ? countResult[0] : countResult) : [];
     const totalPlayers = Number(countRows[0]?.totalPlayers || 0);
 
-    // Get active players (those with training data)
+    // Get active players (those with at least 1 puzzle solved)
     const activeQuery = sql`
-      SELECT COUNT(DISTINCT userId) as activePlayers FROM cycle_history WHERE userId IS NOT NULL
+      SELECT COUNT(DISTINCT COALESCE(userId, deviceId)) as activePlayers 
+      FROM cycle_history 
+      WHERE totalPuzzles > 0
     `;
 
     const activeResult = await db.execute(activeQuery);
