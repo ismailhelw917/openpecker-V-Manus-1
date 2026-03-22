@@ -1,8 +1,8 @@
 /**
  * MCP Server for OpenPecker Analytics
- * Provides statistical queries accessible through Manus Chat
+ * Provides statistical queries for analytics
  * 
- * Usage in Manus Chat:
+ * Usage:
  * - "How many users are on the platform?"
  * - "What's the average accuracy across all users?"
  * - "Show me the top 10 openings by puzzle count"

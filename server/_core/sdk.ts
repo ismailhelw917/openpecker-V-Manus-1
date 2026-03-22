@@ -13,7 +13,7 @@ import type {
   GetUserInfoResponse,
   GetUserInfoWithJwtRequest,
   GetUserInfoWithJwtResponse,
-} from "./types/manusTypes";
+} from "./types/authTypes";
 // Utility function
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === "string" && value.length > 0;
@@ -177,10 +177,12 @@ class SDKServer {
 
   private parseCookies(cookieHeader: string | undefined) {
     if (!cookieHeader) {
+      console.log('[Auth] No cookie header provided');
       return new Map<string, string>();
     }
 
     const parsed = parseCookieHeader(cookieHeader);
+    console.log('[Auth] Parsed cookies:', Object.keys(parsed));
     return new Map(Object.entries(parsed));
   }
 
@@ -190,7 +192,7 @@ class SDKServer {
   }
 
   /**
-   * Create a session token for a Manus user openId
+   * Create a session token for a user openId
    * @example
    * const sessionToken = await sdk.createSessionToken(userInfo.openId);
    */
@@ -290,6 +292,9 @@ class SDKServer {
     // Regular authentication flow
     const cookies = this.parseCookies(req.headers.cookie);
     const sessionCookie = cookies.get(COOKIE_NAME);
+    console.log(`[Auth] Looking for cookie: ${COOKIE_NAME}`);
+    console.log(`[Auth] Available cookies: ${Array.from(cookies.keys()).join(', ')}`);
+    console.log(`[Auth] Session cookie found: ${!!sessionCookie}`);
     const session = await this.verifySession(sessionCookie);
 
     if (!session) {

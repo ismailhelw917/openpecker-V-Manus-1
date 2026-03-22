@@ -81,7 +81,7 @@ async function startServer() {
   }
 
   const preferredPort = parseInt(process.env.PORT || "3000");
-  // In production/Manus environment, always use the preferred port (3000)
+  // In production environment, always use the preferred port (3000)
   // Dynamic port selection breaks OAuth redirect URI matching
   const port = preferredPort;
   // Only try alternative ports in local development if explicitly needed

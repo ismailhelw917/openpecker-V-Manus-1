@@ -7,7 +7,7 @@ import { defineConfig, type Plugin, type ViteDevServer } from "vite";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
 
 // =============================================================================
-// Manus Debug Collector - Vite Plugin
+// Debug Collector - Vite Plugin
 // Writes browser logs directly to files, trimmed when exceeding size limit
 // =============================================================================
 
@@ -70,13 +70,13 @@ function writeToLogFile(source: LogSource, entries: unknown[]) {
 
 /**
  * Vite plugin to collect browser debug logs
- * - POST /__manus__/logs: Browser sends logs, written directly to files
+ * - POST /__debug__/logs: Browser sends logs, written directly to files
  * - Files: browserConsole.log, networkRequests.log, sessionReplay.log
  * - Auto-trimmed when exceeding 1MB (keeps newest entries)
  */
-function vitePluginManusDebugCollector(): Plugin {
+function vitePluginDebugCollector(): Plugin {
   return {
-    name: "manus-debug-collector",
+    name: "debug-collector",
 
     transformIndexHtml(html) {
       if (process.env.NODE_ENV === "production") {
@@ -88,7 +88,7 @@ function vitePluginManusDebugCollector(): Plugin {
           {
             tag: "script",
             attrs: {
-              src: "/__manus__/debug-collector.js",
+              src: "/__debug__/debug-collector.js",
               defer: true,
             },
             injectTo: "head",
@@ -98,8 +98,8 @@ function vitePluginManusDebugCollector(): Plugin {
     },
 
     configureServer(server: ViteDevServer) {
-      // POST /__manus__/logs: Browser sends logs (written directly to files)
-      server.middlewares.use("/__manus__/logs", (req, res, next) => {
+      // POST /__debug__/logs: Browser sends logs (written directly to files)
+      server.middlewares.use("/__debug__/logs", (req, res, next) => {
         if (req.method !== "POST") {
           return next();
         }
@@ -150,7 +150,7 @@ function vitePluginManusDebugCollector(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector()];
+const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginDebugCollector()];
 
 export default defineConfig({
   plugins,
