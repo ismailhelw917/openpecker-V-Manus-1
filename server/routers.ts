@@ -8,7 +8,7 @@ import { sql, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import bcrypt from "bcrypt";
 import { sdk } from "./_core/sdk";
-import { trackUserLogin, trackUserRegistration, trackLeaderboardPlayer, trackDailyVisitor, trackOnlineUser, trackPuzzleByOpening } from "./_core/counter-api";
+// Counter API removed - using database only
 import { getMockOnlineCount } from "./mockOnlineCount";
 import { getDb,
   getPuzzlesByThemeAndRating,
@@ -127,10 +127,8 @@ export const appRouter = router({
             email: userInfo.email,
           });
 
-          // Track user login with Counter API (record name for leaderboard)
+          // Ensure player row exists in players table for leaderboard
           if (user && user.id && user.name) {
-            await trackUserLogin(user.id, user.name);
-            // Ensure player row exists in players table for leaderboard
             try {
               const { getOrCreatePlayer, updatePlayerStats } = await import('./players');
               const player = await getOrCreatePlayer(
@@ -153,10 +151,7 @@ export const appRouter = router({
             }
           }
 
-          // Track registration if this is a new user
-          if (user && user.id && user.name && userInfo.email) {
-            await trackUserRegistration(user.id, user.name, userInfo.email);
-          }
+
 
           // Create session token
           const sessionToken = nanoid();

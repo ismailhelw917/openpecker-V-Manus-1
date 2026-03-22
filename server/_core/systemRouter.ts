@@ -2,7 +2,7 @@ import { notifyOwner } from "./notification";
 import { adminProcedure, publicProcedure, router } from "./trpc";
 import { getGlobalSettings, updateGlobalSettings, getUserAnalytics, getOnlineCount, getTotalPlayerCount } from "../db";
 import { classifyNullPuzzles, getPuzzleClassificationStats } from "../classify-puzzles-db";
-import { trackOnlineUser, trackDailyVisitor } from "./counter-api";
+// Counter API removed - using database only
 import { z } from "zod";
 
 export const systemRouter = router({
@@ -102,10 +102,7 @@ export const systemRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      if (input.userId && input.userName) {
-        await trackOnlineUser(input.userId, input.userName);
-      }
-      await trackDailyVisitor(input.userId || null, input.sessionId);
+      // Tracking now uses database only
       return { success: true };
     }),
 });

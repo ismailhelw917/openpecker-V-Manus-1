@@ -1,5 +1,3 @@
-import { trackEvent } from './counter-api';
-
 /**
  * Monitoring and uptime tracking
  */
@@ -88,31 +86,11 @@ export function startHealthTracking(interval: number = 60000) {
   setInterval(async () => {
     const metrics = healthMonitor.getMetrics();
 
-    // Track via Counter API
-    await trackEvent({
-      action: 'health_check',
-      metadata: {
-        status: metrics.status,
-        uptime: Math.floor(metrics.uptime).toString(),
-        responseTime: Math.round(metrics.responseTime).toString(),
-        errorRate: metrics.errorRate.toFixed(2),
-        rps: metrics.requestsPerSecond.toFixed(2),
-      },
-    });
-
     // Alert on unhealthy status
     if (metrics.status === 'unhealthy') {
       console.error('🚨 UNHEALTHY STATUS DETECTED', metrics);
-      await trackEvent({
-        action: 'health_alert_unhealthy',
-        metadata: { details: JSON.stringify(metrics) },
-      });
     } else if (metrics.status === 'degraded') {
       console.warn('⚠️ DEGRADED STATUS', metrics);
-      await trackEvent({
-        action: 'health_alert_degraded',
-        metadata: { details: JSON.stringify(metrics) },
-      });
     }
 
     // Reset counters for next interval
