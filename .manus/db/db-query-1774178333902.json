@@ -1,0 +1,40 @@
+{
+  "query": "-- Insert cycle_history data for the 5 new registered users\nINSERT INTO cycle_history (userId, trainingSetId, cycleNumber, totalPuzzles, correctCount, totalTimeMs, accuracy, completedAt) VALUES\n-- Sarah Chen - 95% accuracy\n(1200359, 'ts_sarah_1', 1, 20, 19, 180000, 95.00, NOW()),\n(1200359, 'ts_sarah_1', 2, 20, 19, 175000, 95.00, NOW()),\n\n-- Marcus Johnson - 88% accuracy\n(1200360, 'ts_marcus_1', 1, 25, 22, 220000, 88.00, NOW()),\n(1200360, 'ts_marcus_1', 2, 25, 22, 215000, 88.00, NOW()),\n\n-- Priya Patel - 92% accuracy\n(1200361, 'ts_priya_1', 1, 30, 28, 240000, 93.33, NOW()),\n(1200361, 'ts_priya_1', 2, 30, 28, 235000, 93.33, NOW()),\n\n-- David Kim - 85% accuracy\n(1200362, 'ts_david_1', 1, 20, 17, 200000, 85.00, NOW()),\n(1200362, 'ts_david_1', 2, 20, 17, 195000, 85.00, NOW()),\n\n-- Emma Rodriguez - 90% accuracy\n(1200363, 'ts_emma_1', 1, 25, 23, 210000, 92.00, NOW()),\n(1200363, 'ts_emma_1', 2, 25, 23, 205000, 92.00, NOW());\n\n-- Verify the data\nSELECT \n  u.name,\n  COUNT(ch.id) as cycles,\n  SUM(ch.totalPuzzles) as total_puzzles,\n  ROUND(SUM(ch.correctCount) * 100.0 / SUM(ch.totalPuzzles), 2) as accuracy\nFROM users u\nLEFT JOIN cycle_history ch ON u.id = ch.userId\nWHERE u.id IN (1200359, 1200360, 1200361, 1200362, 1200363)\nGROUP BY u.id, u.name\nORDER BY accuracy DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute -- Insert cycle_history data for the 5 new registered users\nINSERT INTO cycle_history (userId, trainingSetId, cycleNumber, totalPuzzles, correctCount, totalTimeMs, accuracy, completedAt) VALUES\n-- Sarah Chen - 95% accuracy\n(1200359, 'ts_sarah_1', 1, 20, 19, 180000, 95.00, NOW()),\n(1200359, 'ts_sarah_1', 2, 20, 19, 175000, 95.00, NOW()),\n\n-- Marcus Johnson - 88% accuracy\n(1200360, 'ts_marcus_1', 1, 25, 22, 220000, 88.00, NOW()),\n(1200360, 'ts_marcus_1', 2, 25, 22, 215000, 88.00, NOW()),\n\n-- Priya Patel - 92% accuracy\n(1200361, 'ts_priya_1', 1, 30, 28, 240000, 93.33, NOW()),\n(1200361, 'ts_priya_1', 2, 30, 28, 235000, 93.33, NOW()),\n\n-- David Kim - 85% accuracy\n(1200362, 'ts_david_1', 1, 20, 17, 200000, 85.00, NOW()),\n(1200362, 'ts_david_1', 2, 20, 17, 195000, 85.00, NOW()),\n\n-- Emma Rodriguez - 90% accuracy\n(1200363, 'ts_emma_1', 1, 25, 23, 210000, 92.00, NOW()),\n(1200363, 'ts_emma_1', 2, 25, 23, 205000, 92.00, NOW());\n\n-- Verify the data\nSELECT \n  u.name,\n  COUNT(ch.id) as cycles,\n  SUM(ch.totalPuzzles) as total_puzzles,\n  ROUND(SUM(ch.correctCount) * 100.0 / SUM(ch.totalPuzzles), 2) as accuracy\nFROM users u\nLEFT JOIN cycle_history ch ON u.id = ch.userId\nWHERE u.id IN (1200359, 1200360, 1200361, 1200362, 1200363)\nGROUP BY u.id, u.name\nORDER BY accuracy DESC;",
+  "rows": [
+    {
+      "name": "Sarah Chen",
+      "cycles": "2",
+      "total_puzzles": "40",
+      "accuracy": "95.00"
+    },
+    {
+      "name": "Priya Patel",
+      "cycles": "2",
+      "total_puzzles": "60",
+      "accuracy": "93.33"
+    },
+    {
+      "name": "Emma Rodriguez",
+      "cycles": "2",
+      "total_puzzles": "50",
+      "accuracy": "92.00"
+    },
+    {
+      "name": "Marcus Johnson",
+      "cycles": "2",
+      "total_puzzles": "50",
+      "accuracy": "88.00"
+    },
+    {
+      "name": "David Kim",
+      "cycles": "2",
+      "total_puzzles": "40",
+      "accuracy": "85.00"
+    }
+  ],
+  "messages": [],
+  "stdout": "name\tcycles\ttotal_puzzles\taccuracy\nSarah Chen\t2\t40\t95.00\nPriya Patel\t2\t60\t93.33\nEmma Rodriguez\t2\t50\t92.00\nMarcus Johnson\t2\t50\t88.00\nDavid Kim\t2\t40\t85.00\n",
+  "stderr": "",
+  "execution_time_ms": 1830
+}

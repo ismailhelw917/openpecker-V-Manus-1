@@ -1,0 +1,70 @@
+{
+  "query": "SELECT \n  playerName,\n  totalPuzzles,\n  accuracy,\n  rating\nFROM (\n  -- Registered users from cycle_history\n  SELECT \n    u.name as playerName,\n    COALESCE(SUM(ch.totalPuzzles), 0) as totalPuzzles,\n    CASE \n      WHEN SUM(ch.totalPuzzles) = 0 THEN 0\n      ELSE ROUND(SUM(ch.correctCount) * 100.0 / SUM(ch.totalPuzzles), 2)\n    END as accuracy,\n    1200 as rating\n  FROM users u\n  LEFT JOIN cycle_history ch ON u.id = ch.userId\n  WHERE u.id IS NOT NULL\n  GROUP BY u.id, u.name\n  HAVING SUM(ch.totalPuzzles) > 0\n  \n  UNION ALL\n  \n  -- Guest players from players table\n  SELECT \n    p.name as playerName,\n    COALESCE(p.totalPuzzles, 0) as totalPuzzles,\n    COALESCE(p.accuracy, 0) as accuracy,\n    COALESCE(p.rating, 1200) as rating\n  FROM players p\n  WHERE p.userId IS NULL AND p.totalPuzzles > 0\n) combined_players\nORDER BY accuracy DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT \n  playerName,\n  totalPuzzles,\n  accuracy,\n  rating\nFROM (\n  -- Registered users from cycle_history\n  SELECT \n    u.name as playerName,\n    COALESCE(SUM(ch.totalPuzzles), 0) as totalPuzzles,\n    CASE \n      WHEN SUM(ch.totalPuzzles) = 0 THEN 0\n      ELSE ROUND(SUM(ch.correctCount) * 100.0 / SUM(ch.totalPuzzles), 2)\n    END as accuracy,\n    1200 as rating\n  FROM users u\n  LEFT JOIN cycle_history ch ON u.id = ch.userId\n  WHERE u.id IS NOT NULL\n  GROUP BY u.id, u.name\n  HAVING SUM(ch.totalPuzzles) > 0\n  \n  UNION ALL\n  \n  -- Guest players from players table\n  SELECT \n    p.name as playerName,\n    COALESCE(p.totalPuzzles, 0) as totalPuzzles,\n    COALESCE(p.accuracy, 0) as accuracy,\n    COALESCE(p.rating, 1200) as rating\n  FROM players p\n  WHERE p.userId IS NULL AND p.totalPuzzles > 0\n) combined_players\nORDER BY accuracy DESC;",
+  "rows": [
+    {
+      "playerName": "Guest-5b6f7617",
+      "totalPuzzles": "2",
+      "accuracy": "100.00",
+      "rating": "1232"
+    },
+    {
+      "playerName": "Sarah Chen",
+      "totalPuzzles": "40",
+      "accuracy": "95.00",
+      "rating": "1200"
+    },
+    {
+      "playerName": "Priya Patel",
+      "totalPuzzles": "60",
+      "accuracy": "93.33",
+      "rating": "1200"
+    },
+    {
+      "playerName": "Emma Rodriguez",
+      "totalPuzzles": "50",
+      "accuracy": "92.00",
+      "rating": "1200"
+    },
+    {
+      "playerName": "Marcus Johnson",
+      "totalPuzzles": "50",
+      "accuracy": "88.00",
+      "rating": "1200"
+    },
+    {
+      "playerName": "Guest-c2651c39",
+      "totalPuzzles": "16",
+      "accuracy": "88.00",
+      "rating": "1392"
+    },
+    {
+      "playerName": "David Kim",
+      "totalPuzzles": "40",
+      "accuracy": "85.00",
+      "rating": "1200"
+    },
+    {
+      "playerName": "Guest-UzNp9qOl",
+      "totalPuzzles": "21",
+      "accuracy": "81.00",
+      "rating": "1408"
+    },
+    {
+      "playerName": "Guest-1eeac2ef",
+      "totalPuzzles": "63",
+      "accuracy": "68.00",
+      "rating": "1557"
+    },
+    {
+      "playerName": "Guest-eb6c2127",
+      "totalPuzzles": "5",
+      "accuracy": "60.00",
+      "rating": "1216"
+    }
+  ],
+  "messages": [],
+  "stdout": "playerName\ttotalPuzzles\taccuracy\trating\nGuest-5b6f7617\t2\t100.00\t1232\nSarah Chen\t40\t95.00\t1200\nPriya Patel\t60\t93.33\t1200\nEmma Rodriguez\t50\t92.00\t1200\nMarcus Johnson\t50\t88.00\t1200\nGuest-c2651c39\t16\t88.00\t1392\nDavid Kim\t40\t85.00\t1200\nGuest-UzNp9qOl\t21\t81.00\t1408\nGuest-1eeac2ef\t63\t68.00\t1557\nGuest-eb6c2127\t5\t60.00\t1216\n",
+  "stderr": "",
+  "execution_time_ms": 1637
+}

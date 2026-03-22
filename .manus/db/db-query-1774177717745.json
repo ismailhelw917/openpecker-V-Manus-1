@@ -1,0 +1,45 @@
+{
+  "query": "SELECT \n  id, name, totalPuzzles, accuracy, rating\nFROM players\nWHERE userId IS NULL AND totalPuzzles > 0\nORDER BY accuracy DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT \n  id, name, totalPuzzles, accuracy, rating\nFROM players\nWHERE userId IS NULL AND totalPuzzles > 0\nORDER BY accuracy DESC;",
+  "rows": [
+    {
+      "id": "90107",
+      "name": "Guest-5b6f7617",
+      "totalPuzzles": "2",
+      "accuracy": "100.00",
+      "rating": "1232"
+    },
+    {
+      "id": "150004",
+      "name": "Guest-c2651c39",
+      "totalPuzzles": "16",
+      "accuracy": "88.00",
+      "rating": "1392"
+    },
+    {
+      "id": "150001",
+      "name": "Guest-UzNp9qOl",
+      "totalPuzzles": "21",
+      "accuracy": "81.00",
+      "rating": "1408"
+    },
+    {
+      "id": "150002",
+      "name": "Guest-1eeac2ef",
+      "totalPuzzles": "63",
+      "accuracy": "68.00",
+      "rating": "1557"
+    },
+    {
+      "id": "120001",
+      "name": "Guest-eb6c2127",
+      "totalPuzzles": "5",
+      "accuracy": "60.00",
+      "rating": "1216"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\ttotalPuzzles\taccuracy\trating\n90107\tGuest-5b6f7617\t2\t100.00\t1232\n150004\tGuest-c2651c39\t16\t88.00\t1392\n150001\tGuest-UzNp9qOl\t21\t81.00\t1408\n150002\tGuest-1eeac2ef\t63\t68.00\t1557\n120001\tGuest-eb6c2127\t5\t60.00\t1216\n",
+  "stderr": "",
+  "execution_time_ms": 1619
+}

@@ -1,0 +1,28 @@
+{
+  "query": "SELECT \n  u.id, u.name,\n  COUNT(ch.id) as cycle_count,\n  SUM(ch.totalPuzzles) as total_puzzles\nFROM users u\nLEFT JOIN cycle_history ch ON u.id = ch.userId\nWHERE u.name IN ('N.Balaji', 'Ayush', 'BR')\nGROUP BY u.id, u.name;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT \n  u.id, u.name,\n  COUNT(ch.id) as cycle_count,\n  SUM(ch.totalPuzzles) as total_puzzles\nFROM users u\nLEFT JOIN cycle_history ch ON u.id = ch.userId\nWHERE u.name IN ('N.Balaji', 'Ayush', 'BR')\nGROUP BY u.id, u.name;",
+  "rows": [
+    {
+      "id": "750380",
+      "name": "BR",
+      "cycle_count": "0",
+      "total_puzzles": "NULL"
+    },
+    {
+      "id": "750255",
+      "name": "Ayush",
+      "cycle_count": "0",
+      "total_puzzles": "NULL"
+    },
+    {
+      "id": "750215",
+      "name": "N.Balaji",
+      "cycle_count": "10",
+      "total_puzzles": "75"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tcycle_count\ttotal_puzzles\n750380\tBR\t0\tNULL\n750255\tAyush\t0\tNULL\n750215\tN.Balaji\t10\t75\n",
+  "stderr": "",
+  "execution_time_ms": 1604
+}
