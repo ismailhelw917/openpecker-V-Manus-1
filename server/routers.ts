@@ -753,6 +753,7 @@ export const appRouter = router({
       )
       .mutation(async ({ input }) => {
         const { getOrCreatePlayer, updatePlayerStats } = await import('./players');
+        const { invalidateLeaderboardCache } = await import('./leaderboard-optimized');
         const playerName = input.userId ? `Player-${input.userId}` : `Guest-${(input.deviceId || 'unknown').substring(0, 5)}`;
         const player = await getOrCreatePlayer(
           input.userId || null,
@@ -781,6 +782,11 @@ export const appRouter = router({
         } catch (error) {
           console.warn('[cycles.create] Failed to update player stats:', error);
         }
+
+        // CRITICAL: Invalidate leaderboard cache when cycle completes
+        // This ensures the leaderboard updates in real-time when puzzles are solved
+        invalidateLeaderboardCache();
+        console.log('[cycles.create] Leaderboard cache invalidated');
 
         return result;
       }),

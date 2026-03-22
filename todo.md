@@ -2059,3 +2059,16 @@
 - [x] Verify accuracy percentages display correctly
 - [x] Verify historical player data is integrated
 - [ ] Save final checkpoint with real-time system
+
+
+## CRITICAL FIX: Leaderboard Cache Invalidation (Round 30 - User Report)
+- [x] Identify why leaderboard is not updating when puzzles complete
+- [x] Found root cause: cache invalidation was never called in cycles.create
+- [x] Add invalidateLeaderboardCache() call to cycles.create mutation
+- [x] Import invalidateLeaderboardCache from leaderboard-optimized.ts
+- [x] Add logging for cache invalidation
+- [x] Write and pass leaderboard cache invalidation tests
+- [x] Write and pass cycle creation cache integration tests
+- [x] Verify dev server running without errors
+- [x] Confirm leaderboard endpoint responding correctly
+- [x] Save checkpoint with critical fix
