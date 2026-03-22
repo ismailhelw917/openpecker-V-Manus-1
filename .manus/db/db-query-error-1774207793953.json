@@ -1,0 +1,8 @@
+{
+  "query": "\nSELECT \n  COUNT(DISTINCT CASE WHEN COALESCE(SUM(ch.totalPuzzles), 0) > 0 THEN u.id END) as active_users_with_puzzles,\n  COUNT(DISTINCT u.id) as total_users,\n  COUNT(DISTINCT CASE WHEN u.hasRegistered = 1 THEN u.id END) as registered_users,\n  COUNT(DISTINCT ch.userId) as users_with_cycles,\n  COUNT(DISTINCT ch.deviceId) as guest_devices\nFROM users u\nLEFT JOIN cycle_history ch ON u.id = ch.userId\nGROUP BY 1=1;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \nSELECT \n  COUNT(DISTINCT CASE WHEN COALESCE(SUM(ch.totalPuzzles), 0) > 0 THEN u.id END) as active_users_with_puzzles,\n  COUNT(DISTINCT u.id) as total_users,\n  COUNT(DISTINCT CASE WHEN u.hasRegistered = 1 THEN u.id END) as registered_users,\n  COUNT(DISTINCT ch.userId) as users_with_cycles,\n  COUNT(DISTINCT ch.deviceId) as guest_devices\nFROM users u\nLEFT JOIN cycle_history ch ON u.id = ch.userId\nGROUP BY 1=1;\n",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1111 (HY000) at line 2: Invalid use of group function"
+  ]
+}

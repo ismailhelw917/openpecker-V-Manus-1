@@ -2112,3 +2112,28 @@
 - [x] Remove "Total Registered" stat container
 - [x] Verify leaderboard table displays correctly without stat containers
 - [x] Save checkpoint with UI changes
+
+
+## CRITICAL: User Drop Investigation & Matomo Analytics (Round 35)
+- [ ] Investigate what's broken causing 55% user drop (2,124 → 946 active users)
+- [ ] Check server logs for errors or crashes
+- [ ] Test core features: training, puzzle loading, leaderboard
+- [ ] Set up Matomo analytics server
+- [ ] Install Matomo tracking library in frontend
+- [ ] Add event tracking for key user actions
+- [ ] Track page views, user sessions, feature usage
+- [ ] Create Matomo dashboard for monitoring
+- [ ] Test analytics data collection end-to-end
+
+
+## CRITICAL FIX: User Session Tracking (Round 35)
+- [x] Investigate 55% user drop (2,124 → 946 active users)
+- [x] Found root cause: userId not being tracked properly
+- [x] trainingSets.create accepting userId from client input (security issue)
+- [x] cycles.create was publicProcedure instead of protectedProcedure
+- [x] Fixed trainingSets.create to use ctx.user.id from auth context
+- [x] Fixed cycles.create to use ctx.user.id and require authentication
+- [x] Removed userId from client input parameters
+- [x] Updated Session component to not send userId
+- [x] Write and pass user tracking tests (5/5 passing)
+- [x] Verify leaderboard cache invalidation works

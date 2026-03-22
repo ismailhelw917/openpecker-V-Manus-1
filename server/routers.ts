@@ -472,7 +472,6 @@ export const appRouter = router({
     create: protectedProcedure
       .input(
         z.object({
-          userId: z.number().optional(),
           deviceId: z.string().optional(),
           opening: z.string(),
           subset: z.string().optional(),
@@ -484,7 +483,7 @@ export const appRouter = router({
           cycles: z.number().default(3),
         })
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const setId = `set_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         
         try {
@@ -492,6 +491,7 @@ export const appRouter = router({
             opening: input.opening,
             subset: input.subset,
             variation: input.variation,
+            userId: ctx.user.id,
           });
           
           const puzzleList = await getPuzzlesByOpeningHierarchy(
@@ -516,7 +516,7 @@ export const appRouter = router({
           
           const result = await createTrainingSet({
             id: setId,
-            userId: input.userId || null,
+            userId: ctx.user.id,
             deviceId: input.deviceId || null,
             openingName: input.opening,
             themes: JSON.stringify([input.opening]),
@@ -739,10 +739,9 @@ export const appRouter = router({
     /**
      * Create a cycle record
      */
-    create: publicProcedure
+    create: protectedProcedure
       .input(
         z.object({
-          userId: z.number().optional(),
           deviceId: z.string().optional(),
           trainingSetId: z.string(),
           totalPuzzles: z.number(),
@@ -751,12 +750,12 @@ export const appRouter = router({
           accuracy: z.number(),
         })
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const { getOrCreatePlayer, updatePlayerStats } = await import('./players');
         const { invalidateLeaderboardCache } = await import('./leaderboard-optimized');
-        const playerName = input.userId ? `Player-${input.userId}` : `Guest-${(input.deviceId || 'unknown').substring(0, 5)}`;
+        const playerName = `Player-${ctx.user.id}`;
         const player = await getOrCreatePlayer(
-          input.userId || null,
+          ctx.user.id,
           input.deviceId || null,
           playerName
         );

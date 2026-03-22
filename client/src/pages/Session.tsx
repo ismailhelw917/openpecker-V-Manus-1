@@ -374,7 +374,6 @@ export default function Session() {
       // Cycle completed - record cycle
       const accuracy = (correctCount / puzzles.length) * 100;
       completeCycleMutation.mutate({
-        userId: user?.id,
         deviceId: getOrCreateDeviceId(),
         trainingSetId: sessionId,
         totalPuzzles: puzzles.length,
