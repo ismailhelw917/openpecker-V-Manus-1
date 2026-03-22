@@ -1473,9 +1473,10 @@ export async function getPuzzleCountByOpeningHierarchy(
 
   try {
     let whereConditions = [];
-    if (opening) whereConditions.push(eq(puzzles.opening, opening));
+    // Use openingName for the main opening filter
+    if (opening) whereConditions.push(eq(puzzles.openingName, opening));
     if (subset) whereConditions.push(eq(puzzles.subset, subset));
-    if (variation) whereConditions.push(eq(puzzles.variation, variation));
+    if (variation) whereConditions.push(eq(puzzles.openingVariation, variation));
 
     const result = await db
       .select({ count: count() })
@@ -1509,9 +1510,10 @@ export async function getPuzzlesByOpeningHierarchy(
     whereConditions.push(gte(puzzles.rating, minRating));
     whereConditions.push(lte(puzzles.rating, maxRating));
 
-    if (opening) whereConditions.push(eq(puzzles.opening, opening));
+    // Use openingName for the main opening filter
+    if (opening) whereConditions.push(eq(puzzles.openingName, opening));
     if (subset) whereConditions.push(eq(puzzles.subset, subset));
-    if (variation) whereConditions.push(eq(puzzles.variation, variation));
+    if (variation) whereConditions.push(eq(puzzles.openingVariation, variation));
 
     const result = await db
       .select()

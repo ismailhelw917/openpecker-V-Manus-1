@@ -2093,3 +2093,15 @@
 - [x] Verified Mansoor KP (Ismail) now appears at rank 1 with 150 puzzles
 - [x] Confirmed leaderboard updates correctly with active user data
 - [x] Restarted server and verified fix is working
+
+
+## BUG INVESTIGATION: Real User Puzzle Data Not Being Recorded (Round 33)
+- [x] Check if cycles.create endpoint is being called when puzzles complete
+- [x] Verify the endpoint is saving data to cycle_history table
+- [x] Add server-side logging to track cycle creation calls
+- [x] Test end-to-end: play puzzle -> check database for new cycle record
+- [x] Identify why only manually created test data appears on leaderboard
+- [x] Found root cause: getPuzzlesByOpeningHierarchy was querying wrong column names
+- [x] Fixed column names from 'opening' to 'openingName' and 'variation' to 'openingVariation'
+- [x] Verified training session now loads with 50 puzzles correctly
+- [x] Confirmed chessboard displays valid puzzle position
