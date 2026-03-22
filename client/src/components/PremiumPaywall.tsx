@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { X, Check } from "lucide-react";
+import { useLocation } from "wouter";
 
 interface PremiumPaywallProps {
   onClose: () => void;
@@ -14,6 +15,11 @@ export function PremiumPaywall({
   onLifetimeClick,
   isLoading = false,
 }: PremiumPaywallProps) {
+  const [, setLocation] = useLocation();
+
+  const handleUpgradeClick = () => {
+    setLocation("/settings");
+  };
   const features = [
     "Unlock all 150+ opening variations",
     "Advanced performance analytics",
@@ -61,42 +67,13 @@ export function PremiumPaywall({
 
         {/* Pricing */}
         <div className="px-6 py-6 space-y-4">
-          {/* Monthly */}
+          {/* Upgrade Button - Redirects to Settings */}
           <button
-            onClick={onMonthlyClick}
+            onClick={handleUpgradeClick}
             disabled={isLoading}
-            className="w-full bg-slate-800 hover:bg-slate-700 disabled:opacity-50 border border-slate-700 rounded-lg p-4 text-left transition-colors group"
+            className="w-full bg-amber-400 hover:bg-amber-500 disabled:opacity-50 text-slate-900 font-bold py-3 rounded-lg transition-colors"
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-slate-400 text-sm font-semibold">MONTHLY</div>
-                <div className="text-white text-2xl font-bold">
-                  €4.99 <span className="text-sm text-slate-400 font-normal">/month</span>
-                </div>
-              </div>
-              <div className="text-amber-400 group-hover:text-amber-300 transition-colors">
-                ⚡
-              </div>
-            </div>
-          </button>
-
-          {/* Lifetime */}
-          <button
-            onClick={onLifetimeClick}
-            disabled={isLoading}
-            className="w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 disabled:opacity-50 border-2 border-amber-500 rounded-lg p-4 text-left transition-colors group"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-amber-100 text-sm font-semibold">LIFETIME ACCESS</div>
-                <div className="text-white text-2xl font-bold">
-                  €49 <span className="text-sm text-amber-100 font-normal">/once</span>
-                </div>
-              </div>
-              <div className="text-white group-hover:scale-110 transition-transform">
-                🛡️
-              </div>
-            </div>
+            UPGRADE TO PREMIUM
           </button>
         </div>
 
