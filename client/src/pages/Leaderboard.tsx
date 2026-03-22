@@ -1,200 +1,187 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trophy, Zap, Target } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Trophy, Zap, Target, Medal } from "lucide-react";
 
 export function Leaderboard() {
   const [sortBy, setSortBy] = useState<'accuracy' | 'speed' | 'rating'>('accuracy');
 
   // Fetch leaderboard data
   const { data: leaderboardData, isLoading, error } = trpc.stats.getLeaderboard.useQuery({
-    limit: 100,
+    limit: 50,
     sortBy,
   });
 
-  const entries = leaderboardData?.entries || [];
-  const totalCount = leaderboardData?.totalCount || 0;
-  const activeCount = leaderboardData?.activeCount || 0;
-
-  const getSortIcon = (type: string) => {
-    switch (type) {
-      case 'speed':
-        return <Zap className="w-4 h-4" />;
-      case 'rating':
-        return <Trophy className="w-4 h-4" />;
-      default:
-        return <Target className="w-4 h-4" />;
-    }
+  const players = leaderboardData?.players || [];
+  const stats = leaderboardData?.stats || {
+    activePlayerCount: 0,
+    totalPlayerCount: 0,
+    topAccuracy: 0,
+    topRating: 1200,
+    averageAccuracy: 0,
+    averageRating: 1200,
   };
 
-  const getSortLabel = (type: string) => {
-    switch (type) {
-      case 'speed':
-        return 'Fastest';
-      case 'rating':
-        return 'Highest Rated';
-      default:
-        return 'Most Accurate';
+  const getMedalColor = (rank: number) => {
+    if (rank === 1) return 'text-yellow-500';
+    if (rank === 2) return 'text-gray-400';
+    if (rank === 3) return 'text-orange-600';
+    return 'text-slate-400';
+  };
+
+  const getSortButtonClass = (type: string) => {
+    const baseClass = 'px-4 py-2 rounded-lg font-medium transition-all';
+    const isActive = sortBy === type;
+    if (isActive) {
+      return `${baseClass} bg-teal-600 text-white`;
     }
+    return `${baseClass} bg-slate-100 text-slate-700 hover:bg-slate-200`;
   };
 
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="container max-w-4xl mx-auto px-4">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Leaderboard</h1>
-          <p className="text-muted-foreground">
-            Top chess trainers ranked by accuracy, speed, and rating
-          </p>
+    <div className="min-h-screen bg-white pb-24">
+      {/* Header */}
+      <div className="bg-gradient-to-b from-teal-50 to-white px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center gap-3 mb-2">
+            <Trophy className="w-8 h-8 text-teal-600" />
+            <h1 className="text-3xl font-bold text-slate-900">Leaderboard</h1>
+          </div>
+          <p className="text-slate-600">Master the Woodpecker method with the best trainers</p>
         </div>
+      </div>
 
+      <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Stats Cards */}
         <div className="grid grid-cols-2 gap-4 mb-8">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Active Players
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-foreground">{activeCount}</div>
-            </CardContent>
+          <Card className="bg-white border border-slate-200 p-4">
+            <div className="text-sm font-medium text-slate-600 mb-1">Active Players</div>
+            <div className="text-2xl font-bold text-teal-600">{stats.activePlayerCount}</div>
           </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Total Registered
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-foreground">{totalCount}</div>
-            </CardContent>
+          <Card className="bg-white border border-slate-200 p-4">
+            <div className="text-sm font-medium text-slate-600 mb-1">Total Registered</div>
+            <div className="text-2xl font-bold text-teal-600">{stats.totalPlayerCount}</div>
           </Card>
         </div>
 
-        {/* Sort Tabs */}
-        <Tabs value={sortBy} onValueChange={(v) => setSortBy(v as any)} className="mb-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="accuracy" className="flex items-center gap-2">
-              {getSortIcon('accuracy')}
-              <span>Accuracy</span>
-            </TabsTrigger>
-            <TabsTrigger value="speed" className="flex items-center gap-2">
-              {getSortIcon('speed')}
-              <span>Speed</span>
-            </TabsTrigger>
-            <TabsTrigger value="rating" className="flex items-center gap-2">
-              {getSortIcon('rating')}
-              <span>Rating</span>
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        {/* Sort Buttons */}
+        <div className="flex gap-3 mb-8">
+          <Button
+            onClick={() => setSortBy('accuracy')}
+            className={getSortButtonClass('accuracy')}
+            variant="outline"
+          >
+            <Target className="w-4 h-4 mr-2" />
+            Accuracy
+          </Button>
+          <Button
+            onClick={() => setSortBy('speed')}
+            className={getSortButtonClass('speed')}
+            variant="outline"
+          >
+            <Zap className="w-4 h-4 mr-2" />
+            Speed
+          </Button>
+          <Button
+            onClick={() => setSortBy('rating')}
+            className={getSortButtonClass('rating')}
+            variant="outline"
+          >
+            <Medal className="w-4 h-4 mr-2" />
+            Rating
+          </Button>
+        </div>
 
         {/* Loading State */}
         {isLoading && (
-          <Card>
-            <CardContent className="py-12">
-              <div className="text-center text-muted-foreground">Loading leaderboard...</div>
-            </CardContent>
+          <Card className="bg-white border border-slate-200 p-12">
+            <div className="text-center text-slate-600">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto mb-4"></div>
+              Loading leaderboard...
+            </div>
           </Card>
         )}
 
         {/* Error State */}
         {error && (
-          <Card className="border-destructive">
-            <CardContent className="py-12">
-              <div className="text-center text-destructive">
-                Failed to load leaderboard: {error.message}
-              </div>
-            </CardContent>
+          <Card className="bg-red-50 border border-red-200 p-6">
+            <div className="text-center text-red-700">
+              Failed to load leaderboard: {error.message}
+            </div>
           </Card>
         )}
 
         {/* Leaderboard Table */}
-        {!isLoading && !error && entries.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                {getSortIcon(sortBy)}
-                {getSortLabel(sortBy)} Players
-              </CardTitle>
-              <CardDescription>
-                Showing top {entries.length} of {activeCount} active players
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-border">
-                      <th className="text-left py-3 px-4 font-semibold text-foreground">Rank</th>
-                      <th className="text-left py-3 px-4 font-semibold text-foreground">Player</th>
-                      <th className="text-right py-3 px-4 font-semibold text-foreground">Puzzles</th>
-                      <th className="text-right py-3 px-4 font-semibold text-foreground">Accuracy</th>
-                      <th className="text-right py-3 px-4 font-semibold text-foreground">Rating</th>
-                      <th className="text-right py-3 px-4 font-semibold text-foreground">
-                        {sortBy === 'speed' ? 'Avg Time' : 'Total Time'}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {entries.map((entry: any, index: number) => (
-                      <tr
-                        key={index}
-                        className="border-b border-border hover:bg-muted/50 transition-colors"
-                      >
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-2">
-                            {entry.rank <= 3 && (
-                              <Trophy
-                                className={`w-4 h-4 ${
-                                  entry.rank === 1
-                                    ? 'text-yellow-500'
-                                    : entry.rank === 2
-                                    ? 'text-gray-400'
-                                    : 'text-orange-600'
-                                }`}
-                              />
-                            )}
-                            <span className="font-semibold text-foreground">{entry.rank}</span>
-                          </div>
-                        </td>
-                        <td className="py-3 px-4 text-foreground font-medium">{entry.name}</td>
-                        <td className="py-3 px-4 text-right text-foreground">{entry.totalPuzzles}</td>
-                        <td className="py-3 px-4 text-right">
-                          <span className="text-foreground font-semibold">{entry.accuracy}%</span>
-                        </td>
-                        <td className="py-3 px-4 text-right">
-                          <span className="text-foreground font-semibold">{entry.rating}</span>
-                        </td>
-                        <td className="py-3 px-4 text-right text-foreground">
+        {!isLoading && !error && players.length > 0 && (
+          <Card className="bg-white border border-slate-200 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-slate-50 border-b border-slate-200">
+                  <tr>
+                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Rank</th>
+                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Player</th>
+                    <th className="text-right py-3 px-4 font-semibold text-slate-700">Puzzles</th>
+                    <th className="text-right py-3 px-4 font-semibold text-slate-700">Accuracy</th>
+                    <th className="text-right py-3 px-4 font-semibold text-slate-700">Rating</th>
+                    <th className="text-right py-3 px-4 font-semibold text-slate-700">
+                      {sortBy === 'speed' ? 'Avg Time' : 'Total Time'}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {players.map((player: any, index: number) => (
+                    <tr
+                      key={index}
+                      className={`border-b border-slate-100 hover:bg-slate-50 transition-colors ${
+                        index % 2 === 0 ? 'bg-white' : 'bg-slate-50'
+                      }`}
+                    >
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-2">
+                          {player.rank <= 3 && (
+                            <Medal className={`w-5 h-5 ${getMedalColor(player.rank)}`} />
+                          )}
+                          <span className="font-bold text-slate-900 w-8">{player.rank}</span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4">
+                        <span className="font-medium text-slate-900">{player.name}</span>
+                      </td>
+                      <td className="py-4 px-4 text-right">
+                        <span className="text-slate-700">{player.puzzlesSolved}</span>
+                      </td>
+                      <td className="py-4 px-4 text-right">
+                        <span className="font-semibold text-teal-600">{player.accuracy}%</span>
+                      </td>
+                      <td className="py-4 px-4 text-right">
+                        <span className="font-semibold text-slate-900">{player.rating}</span>
+                      </td>
+                      <td className="py-4 px-4 text-right">
+                        <span className="text-slate-700">
                           {sortBy === 'speed'
-                            ? entry.totalTimeMin > 0
-                              ? `${(entry.totalTimeMin / entry.totalPuzzles).toFixed(1)}m`
+                            ? player.puzzlesSolved > 0
+                              ? `${(player.totalTimeMinutes / player.puzzlesSolved).toFixed(1)}m`
                               : '-'
-                            : `${entry.totalTimeMin}m`}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
+                            : `${player.totalTimeMinutes}m`}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </Card>
         )}
 
         {/* Empty State */}
-        {!isLoading && !error && entries.length === 0 && (
-          <Card>
-            <CardContent className="py-12">
-              <div className="text-center">
-                <Trophy className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                <p className="text-muted-foreground">No players yet. Be the first to train!</p>
-              </div>
-            </CardContent>
+        {!isLoading && !error && players.length === 0 && (
+          <Card className="bg-white border border-slate-200 p-12">
+            <div className="text-center">
+              <Trophy className="w-12 h-12 mx-auto mb-4 text-slate-400" />
+              <p className="text-slate-600 font-medium">No players yet</p>
+              <p className="text-slate-500 text-sm">Start training to appear on the leaderboard!</p>
+            </div>
           </Card>
         )}
       </div>
