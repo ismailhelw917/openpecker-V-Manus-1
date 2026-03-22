@@ -29,9 +29,7 @@ export function getSessionCookieOptions(
   return {
     httpOnly: true,
     path: "/",
-    // Use 'lax' for same-site to allow cross-site cookie setting during OAuth callback
-    // 'none' requires secure: true which may not work in all environments
-    sameSite: isSecure ? "none" : "lax",
+    sameSite: "lax",
     secure: isSecure,
   };
 }
