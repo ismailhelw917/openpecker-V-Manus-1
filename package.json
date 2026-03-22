@@ -74,7 +74,6 @@
     "input-otp": "^1.4.2",
     "jose": "6.1.0",
     "lucide-react": "^0.453.0",
-    "matomo-tracker": "^2.2.4",
     "motion": "^12.38.0",
     "mysql2": "^3.15.1",
     "nanoid": "^5.1.5",

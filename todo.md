@@ -2149,3 +2149,5 @@
 - [x] Add custom dimensions for user metadata
 - [x] Test analytics data collection (9/9 tests passing)
 - [x] Verify data collection in frontend and backend
+- [x] Fix white page error - replaced matomo-tracker with gtag wrapper
+- [x] Verify app loads without errors

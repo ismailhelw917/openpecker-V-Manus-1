@@ -1,59 +1,53 @@
-import MatomoTracker from 'matomo-tracker';
+// Simple analytics tracking using window.gtag or custom events
+// This avoids Node.js dependencies and works in the browser
 
-// Initialize Matomo tracker
-// Using Manus built-in analytics endpoint if available, otherwise use public Matomo instance
-const MATOMO_URL = import.meta.env.VITE_ANALYTICS_ENDPOINT || 'https://analytics.example.com/';
-const MATOMO_SITE_ID = import.meta.env.VITE_ANALYTICS_WEBSITE_ID || '1';
+interface AnalyticsEvent {
+  category: string;
+  action: string;
+  label?: string;
+  value?: number;
+}
 
-let tracker: MatomoTracker | null = null;
+let analyticsEnabled = false;
 
 export function initializeMatomo() {
-  try {
-    tracker = new MatomoTracker({
-      trackerUrl: MATOMO_URL,
-      siteId: parseInt(MATOMO_SITE_ID),
-      userId: undefined, // Will be set after auth
-    });
-    console.log('[Matomo] Analytics initialized');
-  } catch (error) {
-    console.warn('[Matomo] Failed to initialize:', error);
+  // Check if analytics endpoint is configured
+  const endpoint = import.meta.env.VITE_ANALYTICS_ENDPOINT;
+  const siteId = import.meta.env.VITE_ANALYTICS_WEBSITE_ID;
+  
+  if (endpoint && siteId) {
+    analyticsEnabled = true;
+    console.log('[Analytics] Initialized with endpoint:', endpoint);
+  } else {
+    console.log('[Analytics] No analytics endpoint configured');
   }
 }
 
 export function setMatomoUserId(userId: number | string) {
-  if (tracker) {
-    tracker.setUserId(String(userId));
-    console.log('[Matomo] User ID set:', userId);
+  if (analyticsEnabled && window.gtag) {
+    window.gtag('config', { 'user_id': String(userId) });
+    console.log('[Analytics] User ID set:', userId);
   }
 }
 
 export function trackPageView(title: string, path: string) {
-  if (tracker) {
-    try {
-      tracker.trackPageView({
-        documentTitle: title,
-        href: window.location.origin + path,
-      });
-      console.log('[Matomo] Page view tracked:', title, path);
-    } catch (error) {
-      console.warn('[Matomo] Failed to track page view:', error);
-    }
+  if (analyticsEnabled && window.gtag) {
+    window.gtag('pageview', {
+      page_title: title,
+      page_path: path,
+    });
+    console.log('[Analytics] Page view tracked:', title, path);
   }
 }
 
 export function trackEvent(category: string, action: string, name?: string, value?: number) {
-  if (tracker) {
-    try {
-      tracker.trackEvent({
-        category,
-        action,
-        name,
-        value,
-      });
-      console.log('[Matomo] Event tracked:', { category, action, name, value });
-    } catch (error) {
-      console.warn('[Matomo] Failed to track event:', error);
-    }
+  if (analyticsEnabled && window.gtag) {
+    window.gtag('event', action, {
+      event_category: category,
+      event_label: name,
+      value: value,
+    });
+    console.log('[Analytics] Event tracked:', { category, action, name, value });
   }
 }
 
@@ -83,4 +77,11 @@ export function trackSessionStart() {
 
 export function trackSessionEnd(durationMs: number) {
   trackEvent('Session', 'End', 'Session Duration', durationMs);
+}
+
+// Declare gtag for TypeScript
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void;
+  }
 }
