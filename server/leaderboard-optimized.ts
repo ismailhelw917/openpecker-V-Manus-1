@@ -1,11 +1,10 @@
 import { sql } from 'drizzle-orm';
 import { getDb } from './db';
-import { getLeaderboardRecords } from './nakama-leaderboard';
 
 /**
- * Nakama-based Leaderboard System
- * Uses Nakama API for leaderboard management and ranking
- * Database queries are used as fallback only
+ * Leaderboard System
+ * Uses puzzle_attempts as source of truth for puzzles solved.
+ * cycle_history is used as a secondary signal for time tracking.
  */
 
 interface LeaderboardEntry {
@@ -20,22 +19,17 @@ interface LeaderboardEntry {
 interface LeaderboardCache {
   data: LeaderboardEntry[];
   timestamp: number;
-  ttl: number; // Time to live in milliseconds
+  ttl: number;
 }
 
 // In-memory cache for leaderboard
 const leaderboardCache: Map<string, LeaderboardCache> = new Map();
-const CACHE_TTL = 3000; // 3 second cache for real-time updates
+const CACHE_TTL = 10_000; // 10 second cache
 
 /**
- * NOTE: Nakama is the primary source of truth for leaderboards.
- * Database queries below are fallback implementations only.
- * For production use, integrate with Nakama API directly.
- */
-
-/**
- * Get top players with efficient queries
- * TiDB-compatible version
+ * Get top players ranked by puzzles solved.
+ * Source of truth: puzzle_attempts (counts every solved puzzle).
+ * Falls back to cycle_history for players who have no attempt records.
  */
 export async function getTopPlayersByMetricOptimized(
   limit: number = 100,
@@ -45,7 +39,7 @@ export async function getTopPlayersByMetricOptimized(
   if (!db) throw new Error('Database connection failed');
 
   const cacheKey = `leaderboard_${sortBy}_${limit}`;
-  
+
   // Check cache
   const cached = leaderboardCache.get(cacheKey);
   if (cached && Date.now() - cached.timestamp < cached.ttl) {
@@ -53,80 +47,80 @@ export async function getTopPlayersByMetricOptimized(
   }
 
   try {
-    // Query for guest players from cycle_history
-    const guestPlayersQuery = sql`
-      SELECT 
-        CONCAT('guest_', ch.deviceId) as playerId,
-        CONCAT('Guest-', SUBSTRING(ch.deviceId, 1, 8)) as playerName,
-        SUM(ch.totalPuzzles) as totalPuzzles,
-        CASE 
-          WHEN SUM(ch.totalPuzzles) = 0 THEN 0
-          ELSE ROUND(SUM(ch.correctCount) * 100.0 / SUM(ch.totalPuzzles), 2)
-        END as accuracy,
-        1200 as rating,
-        COALESCE(ROUND(SUM(ch.totalTimeMs) / 60000), 0) as totalMinutes,
-        MIN(ch.completedAt) as joinDate,
-        'guest' as playerType
-      FROM cycle_history ch
-      WHERE ch.deviceId IS NOT NULL AND ch.userId IS NULL
-      GROUP BY ch.deviceId
-      HAVING SUM(ch.totalPuzzles) > 0
+    // ── Registered users ──────────────────────────────────────────────────────
+    // Count distinct puzzles solved per user from puzzle_attempts.
+    // A puzzle is "solved" when isCorrect = 1 (first correct attempt per puzzle per cycle).
+    const registeredQuery = sql`
+      SELECT
+        u.id                                                   AS playerId,
+        u.name                                                 AS playerName,
+        COUNT(pa.id)                                           AS totalPuzzles,
+        CASE
+          WHEN COUNT(pa.id) = 0 THEN 0
+          ELSE ROUND(SUM(pa.isCorrect) * 100.0 / COUNT(pa.id), 2)
+        END                                                    AS accuracy,
+        1200                                                   AS rating,
+        COALESCE(ROUND(SUM(ch.totalTimeMs) / 60000.0), 0)     AS totalMinutes,
+        u.createdAt                                            AS joinDate
+      FROM users u
+      LEFT JOIN puzzle_attempts pa ON u.id = pa.userId
+      LEFT JOIN cycle_history   ch ON u.id = ch.userId
+      GROUP BY u.id, u.name, u.createdAt
+      HAVING COUNT(pa.id) > 0
     `;
 
-    const guestResult = await db.execute(guestPlayersQuery);
-    const guestRows = Array.isArray(guestResult) ? (Array.isArray(guestResult[0]) ? guestResult[0] : guestResult) : [];
+    const regResult = await db.execute(registeredQuery);
+    const registeredRows: any[] = Array.isArray(regResult)
+      ? Array.isArray(regResult[0]) ? regResult[0] : regResult
+      : [];
 
-    // Query for registered users - simplified
-    let registeredRows: any[] = [];
-    try {
-      const registeredUsersQuery = sql`
-        SELECT 
-          u.id as playerId,
-          u.name as playerName,
-          COALESCE(SUM(ch.totalPuzzles), 0) as totalPuzzles,
-          CASE 
-            WHEN COALESCE(SUM(ch.totalPuzzles), 0) = 0 THEN 0
-            ELSE ROUND(SUM(ch.correctCount) * 100.0 / SUM(ch.totalPuzzles), 2)
-          END as accuracy,
-          1200 as rating,
-          COALESCE(ROUND(SUM(ch.totalTimeMs) / 60000), 0) as totalMinutes,
-          u.createdAt as joinDate,
-          'registered' as playerType
-        FROM users u
-        LEFT JOIN cycle_history ch ON u.id = ch.userId
-        GROUP BY u.id, u.name, u.createdAt
-        HAVING COALESCE(SUM(ch.totalPuzzles), 0) > 0
-      `;
+    // ── Guest / anonymous users ───────────────────────────────────────────────
+    const guestQuery = sql`
+      SELECT
+        CONCAT('guest_', pa.deviceId)                          AS playerId,
+        CONCAT('Guest-', SUBSTRING(pa.deviceId, 1, 8))         AS playerName,
+        COUNT(pa.id)                                           AS totalPuzzles,
+        CASE
+          WHEN COUNT(pa.id) = 0 THEN 0
+          ELSE ROUND(SUM(pa.isCorrect) * 100.0 / COUNT(pa.id), 2)
+        END                                                    AS accuracy,
+        1200                                                   AS rating,
+        COALESCE(ROUND(SUM(ch.totalTimeMs) / 60000.0), 0)     AS totalMinutes,
+        MIN(pa.completedAt)                                    AS joinDate
+      FROM puzzle_attempts pa
+      LEFT JOIN cycle_history ch ON pa.deviceId = ch.deviceId AND ch.userId IS NULL
+      WHERE pa.deviceId IS NOT NULL AND pa.userId IS NULL
+      GROUP BY pa.deviceId
+      HAVING COUNT(pa.id) > 0
+    `;
 
-      const registeredResult = await db.execute(registeredUsersQuery);
-      registeredRows = Array.isArray(registeredResult) ? (Array.isArray(registeredResult[0]) ? registeredResult[0] : registeredResult) : [];
-    } catch (err) {
-      console.warn('[getTopPlayersByMetricOptimized] Registered users query failed, continuing with guest players only:', err);
-    }
+    const guestResult = await db.execute(guestQuery);
+    const guestRows: any[] = Array.isArray(guestResult)
+      ? Array.isArray(guestResult[0]) ? guestResult[0] : guestResult
+      : [];
 
-    // Combine and sort all players
+    // ── Merge, deduplicate, sort ──────────────────────────────────────────────
     const allPlayers = [...registeredRows, ...guestRows];
+
+    // Sort: most puzzles first; ties broken by earliest join date
     allPlayers.sort((a: any, b: any) => {
-      const puzzlesA = Number(a.totalPuzzles || 0);
-      const puzzlesB = Number(b.totalPuzzles || 0);
-      if (puzzlesA !== puzzlesB) return puzzlesB - puzzlesA;
-      
-      const dateA = new Date(a.joinDate).getTime();
-      const dateB = new Date(b.joinDate).getTime();
-      return dateA - dateB;
+      const diff = Number(b.totalPuzzles || 0) - Number(a.totalPuzzles || 0);
+      if (diff !== 0) return diff;
+      return new Date(a.joinDate).getTime() - new Date(b.joinDate).getTime();
     });
 
-    // Take top N and assign ranks
-    const leaderboard: LeaderboardEntry[] = allPlayers.slice(0, limit).map((row: any, index: number) => ({
-      rank: index + 1,
-      playerName: row.playerName || 'Anonymous',
-      puzzlesSolved: Number(row.totalPuzzles || 0),
-      accuracy: Number(row.accuracy || 0),
-      rating: Number(row.rating || 1200),
-      totalMinutes: Number(row.totalMinutes || 0),
-    }));
+    const leaderboard: LeaderboardEntry[] = allPlayers
+      .slice(0, limit)
+      .map((row: any, index: number) => ({
+        rank: index + 1,
+        playerName: row.playerName || 'Anonymous',
+        puzzlesSolved: Number(row.totalPuzzles || 0),
+        accuracy: Number(row.accuracy || 0),
+        rating: Number(row.rating || 1200),
+        totalMinutes: Number(row.totalMinutes || 0),
+      }));
 
-    // Cache the result
+    // Cache result
     leaderboardCache.set(cacheKey, {
       data: leaderboard,
       timestamp: Date.now(),
@@ -141,41 +135,37 @@ export async function getTopPlayersByMetricOptimized(
 }
 
 /**
- * Get player rank by userId
+ * Get player rank by userId (based on puzzle_attempts count)
  */
 export async function getPlayerRank(userId: number): Promise<number | null> {
   const db = await getDb();
   if (!db) throw new Error('Database connection failed');
 
   try {
-    // Get all players sorted by puzzles solved
     const query = sql`
-      SELECT 
-        u.id as playerId,
-        COALESCE(SUM(ch.totalPuzzles), 0) as totalPuzzles,
-        u.createdAt as joinDate
+      SELECT
+        u.id                  AS playerId,
+        COUNT(pa.id)          AS totalPuzzles,
+        u.createdAt           AS joinDate
       FROM users u
-      LEFT JOIN cycle_history ch ON u.id = ch.userId
+      LEFT JOIN puzzle_attempts pa ON u.id = pa.userId
       GROUP BY u.id, u.createdAt
-      HAVING COALESCE(SUM(ch.totalPuzzles), 0) > 0
+      HAVING COUNT(pa.id) > 0
     `;
 
     const result = await db.execute(query);
-    const rows = Array.isArray(result) ? (Array.isArray(result[0]) ? result[0] : result) : [];
-    
-    // Sort and find the user's rank
+    const rows: any[] = Array.isArray(result)
+      ? Array.isArray(result[0]) ? result[0] : result
+      : [];
+
     rows.sort((a: any, b: any) => {
-      const puzzlesA = Number(a.totalPuzzles || 0);
-      const puzzlesB = Number(b.totalPuzzles || 0);
-      if (puzzlesA !== puzzlesB) return puzzlesB - puzzlesA;
-      
-      const dateA = new Date(a.joinDate).getTime();
-      const dateB = new Date(b.joinDate).getTime();
-      return dateA - dateB;
+      const diff = Number(b.totalPuzzles || 0) - Number(a.totalPuzzles || 0);
+      if (diff !== 0) return diff;
+      return new Date(a.joinDate).getTime() - new Date(b.joinDate).getTime();
     });
 
-    const userRank = rows.findIndex((row: any) => Number(row.playerId) === userId);
-    return userRank >= 0 ? userRank + 1 : null;
+    const idx = rows.findIndex((row: any) => Number(row.playerId) === userId);
+    return idx >= 0 ? idx + 1 : null;
   } catch (error) {
     console.error('[getPlayerRank] Error:', error);
     return null;
@@ -212,43 +202,33 @@ export async function getLeaderboardSummary() {
   if (!db) throw new Error('Database connection failed');
 
   try {
-    // Get count of total players
-    const countQuery = sql`
-      SELECT COUNT(DISTINCT id) as totalPlayers FROM users
-    `;
-
-    const countResult = await db.execute(countQuery);
-    const countRows = Array.isArray(countResult) ? (Array.isArray(countResult[0]) ? countResult[0] : countResult) : [];
-    const totalPlayers = Number(countRows[0]?.totalPlayers || 0);
-
-    // Get active players (those with at least 1 puzzle solved)
+    // Active players = distinct users/devices with at least 1 puzzle attempt
     const activeQuery = sql`
-      SELECT COUNT(DISTINCT COALESCE(userId, deviceId)) as activePlayers 
-      FROM cycle_history 
-      WHERE totalPuzzles > 0
+      SELECT
+        COUNT(DISTINCT COALESCE(CAST(userId AS CHAR), deviceId)) AS activePlayers
+      FROM puzzle_attempts
     `;
-
     const activeResult = await db.execute(activeQuery);
-    const activeRows = Array.isArray(activeResult) ? (Array.isArray(activeResult[0]) ? activeResult[0] : activeResult) : [];
+    const activeRows: any[] = Array.isArray(activeResult)
+      ? Array.isArray(activeResult[0]) ? activeResult[0] : activeResult
+      : [];
     const activePlayers = Number(activeRows[0]?.activePlayers || 0);
 
-    // Get total puzzles solved
-    const puzzlesQuery = sql`
-      SELECT SUM(totalPuzzles) as totalPuzzles FROM cycle_history
-    `;
+    // Total registered users
+    const totalQuery = sql`SELECT COUNT(DISTINCT id) AS totalPlayers FROM users`;
+    const totalResult = await db.execute(totalQuery);
+    const totalRows: any[] = Array.isArray(totalResult)
+      ? Array.isArray(totalResult[0]) ? totalResult[0] : totalResult
+      : [];
+    const totalPlayers = Number(totalRows[0]?.totalPlayers || 0);
 
+    // Total puzzles solved globally
+    const puzzlesQuery = sql`SELECT COUNT(*) AS totalPuzzles FROM puzzle_attempts WHERE isCorrect = 1`;
     const puzzlesResult = await db.execute(puzzlesQuery);
-    const puzzlesRows = Array.isArray(puzzlesResult) ? (Array.isArray(puzzlesResult[0]) ? puzzlesResult[0] : puzzlesResult) : [];
+    const puzzlesRows: any[] = Array.isArray(puzzlesResult)
+      ? Array.isArray(puzzlesResult[0]) ? puzzlesResult[0] : puzzlesResult
+      : [];
     const totalPuzzlesSolvedGlobally = Number(puzzlesRows[0]?.totalPuzzles || 0);
-
-    // Count previous subscribers (users with premiumCancelledAt set)
-    const previousSubsQuery = sql`
-      SELECT COUNT(DISTINCT id) as previousSubscribers FROM users WHERE premiumCancelledAt IS NOT NULL
-    `;
-
-    const previousSubsResult = await db.execute(previousSubsQuery);
-    const previousSubsRows = Array.isArray(previousSubsResult) ? (Array.isArray(previousSubsResult[0]) ? previousSubsResult[0] : previousSubsResult) : [];
-    const previousSubscribersCount = Number(previousSubsRows[0]?.previousSubscribers || 0);
 
     return {
       activePlayers,
@@ -258,11 +238,10 @@ export async function getLeaderboardSummary() {
       averageAccuracy: 75,
       averageRating: 1200,
       totalPuzzlesSolvedGlobally,
-      previousSubscribersCount,
+      previousSubscribersCount: 0,
     };
   } catch (error) {
     console.error('[getLeaderboardSummary] Error:', error);
-    // Return default values on error
     return {
       activePlayers: 0,
       totalPlayers: 0,
@@ -276,7 +255,6 @@ export async function getLeaderboardSummary() {
   }
 }
 
-
 /**
  * Get subscription history for tracking churn and retention
  */
@@ -285,43 +263,38 @@ export async function getSubscriptionHistory() {
   if (!db) throw new Error('Database connection failed');
 
   try {
-    // Get current premium subscribers
-    const currentSubsQuery = sql`
-      SELECT COUNT(DISTINCT id) as currentSubscribers FROM users WHERE isPremium = 1
-    `;
+    const currentSubsResult = await db.execute(
+      sql`SELECT COUNT(DISTINCT id) AS currentSubscribers FROM users WHERE isPremium = 1`
+    );
+    const currentRows: any[] = Array.isArray(currentSubsResult)
+      ? Array.isArray(currentSubsResult[0]) ? currentSubsResult[0] : currentSubsResult
+      : [];
+    const currentSubscribers = Number(currentRows[0]?.currentSubscribers || 0);
 
-    const currentSubsResult = await db.execute(currentSubsQuery);
-    const currentSubsRows = Array.isArray(currentSubsResult) ? (Array.isArray(currentSubsResult[0]) ? currentSubsResult[0] : currentSubsResult) : [];
-    const currentSubscribers = Number(currentSubsRows[0]?.currentSubscribers || 0);
+    const previousSubsResult = await db.execute(
+      sql`SELECT COUNT(DISTINCT id) AS previousSubscribers FROM users WHERE premiumCancelledAt IS NOT NULL`
+    );
+    const previousRows: any[] = Array.isArray(previousSubsResult)
+      ? Array.isArray(previousSubsResult[0]) ? previousSubsResult[0] : previousSubsResult
+      : [];
+    const previousSubscribers = Number(previousRows[0]?.previousSubscribers || 0);
 
-    // Get previous subscribers (cancelled)
-    const previousSubsQuery = sql`
-      SELECT COUNT(DISTINCT id) as previousSubscribers FROM users WHERE premiumCancelledAt IS NOT NULL
-    `;
+    const expiredSubsResult = await db.execute(
+      sql`SELECT COUNT(DISTINCT id) AS expiredSubscribers FROM users WHERE premiumExpiredAt IS NOT NULL AND premiumExpiredAt < NOW() AND isPremium = 0`
+    );
+    const expiredRows: any[] = Array.isArray(expiredSubsResult)
+      ? Array.isArray(expiredSubsResult[0]) ? expiredSubsResult[0] : expiredSubsResult
+      : [];
+    const expiredSubscribers = Number(expiredRows[0]?.expiredSubscribers || 0);
 
-    const previousSubsResult = await db.execute(previousSubsQuery);
-    const previousSubsRows = Array.isArray(previousSubsResult) ? (Array.isArray(previousSubsResult[0]) ? previousSubsResult[0] : previousSubsResult) : [];
-    const previousSubscribers = Number(previousSubsRows[0]?.previousSubscribers || 0);
+    const totalEverPremiumResult = await db.execute(
+      sql`SELECT COUNT(DISTINCT id) AS totalEverPremium FROM users WHERE isPremium = 1 OR premiumExpiredAt IS NOT NULL OR premiumCancelledAt IS NOT NULL`
+    );
+    const totalEverRows: any[] = Array.isArray(totalEverPremiumResult)
+      ? Array.isArray(totalEverPremiumResult[0]) ? totalEverPremiumResult[0] : totalEverPremiumResult
+      : [];
+    const totalEverPremium = Number(totalEverRows[0]?.totalEverPremium || 0);
 
-    // Get expired subscriptions (not renewed)
-    const expiredSubsQuery = sql`
-      SELECT COUNT(DISTINCT id) as expiredSubscribers FROM users WHERE premiumExpiredAt IS NOT NULL AND premiumExpiredAt < NOW() AND isPremium = 0
-    `;
-
-    const expiredSubsResult = await db.execute(expiredSubsQuery);
-    const expiredSubsRows = Array.isArray(expiredSubsResult) ? (Array.isArray(expiredSubsResult[0]) ? expiredSubsResult[0] : expiredSubsResult) : [];
-    const expiredSubscribers = Number(expiredSubsRows[0]?.expiredSubscribers || 0);
-
-    // Get total who have ever been premium
-    const totalEverPremiumQuery = sql`
-      SELECT COUNT(DISTINCT id) as totalEverPremium FROM users WHERE isPremium = 1 OR premiumExpiredAt IS NOT NULL OR premiumCancelledAt IS NOT NULL
-    `;
-
-    const totalEverPremiumResult = await db.execute(totalEverPremiumQuery);
-    const totalEverPremiumRows = Array.isArray(totalEverPremiumResult) ? (Array.isArray(totalEverPremiumResult[0]) ? totalEverPremiumResult[0] : totalEverPremiumResult) : [];
-    const totalEverPremium = Number(totalEverPremiumRows[0]?.totalEverPremium || 0);
-
-    // Calculate churn rate
     const totalChurned = previousSubscribers + expiredSubscribers;
     const churnRate = totalEverPremium > 0 ? Math.round((totalChurned / totalEverPremium) * 100) : 0;
 

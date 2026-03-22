@@ -1206,23 +1206,12 @@ export const appRouter = router({
           isCorrect: input.isCorrect ? 1 : 0,
           timeMs: input.timeMs,
         });
-        // Update player stats in leaderboard after each attempt
-        if (input.userId || input.deviceId) {
-          try {
-            const { getOrCreatePlayer, updatePlayerStats } = await import('./players');
-            const player = await getOrCreatePlayer(
-              input.userId || null,
-              input.deviceId || null,
-              null,
-              null,
-              0
-            );
-            if (player?.id) {
-              await updatePlayerStats(player.id);
-            }
-          } catch (e) {
-            console.warn('[record] Failed to update player stats:', e);
-          }
+        // Invalidate leaderboard cache so the next fetch reflects this attempt
+        try {
+          const { invalidateLeaderboardCache } = await import('./leaderboard-optimized');
+          invalidateLeaderboardCache();
+        } catch (e) {
+          console.warn('[record] Failed to invalidate leaderboard cache:', e);
         }
         return result;
       }),

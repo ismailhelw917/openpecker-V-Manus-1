@@ -432,18 +432,6 @@ export default function Stats() {
         {/* Overview Tab */}
         {activeTab === "overview" && (
           <div className="space-y-4 sm:space-y-8">
-            {/* Global Stats Containers */}
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              <Card className="bg-white border border-slate-200 p-3 sm:p-4">
-                <div className="text-xs sm:text-sm font-medium text-slate-600 mb-1">Active Players</div>
-                <div className="text-xl sm:text-2xl font-bold text-teal-600">{leaderboardData?.summary?.activePlayers ?? 0}</div>
-              </Card>
-              <Card className="bg-white border border-slate-200 p-3 sm:p-4">
-                <div className="text-xs sm:text-sm font-medium text-slate-600 mb-1">Total Registered</div>
-                <div className="text-xl sm:text-2xl font-bold text-teal-600">{leaderboardData?.summary?.totalPlayers ?? 0}</div>
-              </Card>
-            </div>
-
             {/* Key Metrics Grid */}
             <StatsDisplay stats={finalStats} isLoading={isLoading} />
 
