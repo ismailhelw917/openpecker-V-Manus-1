@@ -35,6 +35,9 @@ export function Leaderboard() {
     const baseClass = 'px-4 py-2 rounded-lg font-medium transition-all';
     const isActive = sortBy === type;
     if (isActive) {
+      if (type === 'rating') {
+        return `${baseClass} bg-yellow-500 text-white`;
+      }
       return `${baseClass} bg-teal-600 text-white`;
     }
     return `${baseClass} bg-slate-100 text-slate-700 hover:bg-slate-200`;

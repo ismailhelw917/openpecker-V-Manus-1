@@ -1,0 +1,16 @@
+{
+  "query": "SELECT \n  COUNT(DISTINCT u.id) as total_users,\n  COUNT(DISTINCT ts.userId) as users_with_training_sets,\n  COUNT(DISTINCT pa.id) as total_puzzle_attempts,\n  COUNT(DISTINCT CASE WHEN pa.id IS NOT NULL THEN ts.userId END) as users_with_attempts\nFROM users u\nLEFT JOIN training_sets ts ON u.id = ts.userId\nLEFT JOIN puzzle_attempts pa ON ts.id = pa.trainingSetId;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT \n  COUNT(DISTINCT u.id) as total_users,\n  COUNT(DISTINCT ts.userId) as users_with_training_sets,\n  COUNT(DISTINCT pa.id) as total_puzzle_attempts,\n  COUNT(DISTINCT CASE WHEN pa.id IS NOT NULL THEN ts.userId END) as users_with_attempts\nFROM users u\nLEFT JOIN training_sets ts ON u.id = ts.userId\nLEFT JOIN puzzle_attempts pa ON ts.id = pa.trainingSetId;",
+  "rows": [
+    {
+      "total_users": "4017",
+      "users_with_training_sets": "3",
+      "total_puzzle_attempts": "46",
+      "users_with_attempts": "2"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_users\tusers_with_training_sets\ttotal_puzzle_attempts\tusers_with_attempts\n4017\t3\t46\t2\n",
+  "stderr": "",
+  "execution_time_ms": 1740
+}

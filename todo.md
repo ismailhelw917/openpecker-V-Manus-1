@@ -1947,3 +1947,14 @@
 - [x] Updated ORDER BY clause to use totalMinutes instead of totalTimeMs
 - [x] All 20 tests passing with complete player data
 - [x] Leaderboard now shows all players with puzzle attempts (registered + guests)
+
+
+## Round 105 - Fix Leaderboard Data Source & Change Rank Tab to Gold
+- [x] Changed rank tab background to gold (yellow-500)
+- [x] Investigated why only 8 of 4022 players had training data
+- [x] Discovered actual training data is in cycle_history table, not puzzle_attempts
+- [x] Found 4 registered users with 46 cycles of training data
+- [x] Rebuilt leaderboard to use cycle_history as primary data source
+- [x] Combined registered users, guest players from cycle_history, and fallback from players table
+- [x] All 14 tests passing for leaderboard-complete
+- [x] Dev server running with zero TypeScript errors

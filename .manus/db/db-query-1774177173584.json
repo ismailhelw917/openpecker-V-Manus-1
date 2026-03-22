@@ -1,0 +1,14 @@
+{
+  "query": "SELECT COUNT(*) as total_stats, COUNT(DISTINCT playerId) as unique_players FROM player_stats WHERE totalPuzzlesSolved > 0;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT COUNT(*) as total_stats, COUNT(DISTINCT playerId) as unique_players FROM player_stats WHERE totalPuzzlesSolved > 0;",
+  "rows": [
+    {
+      "total_stats": "0",
+      "unique_players": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_stats\tunique_players\n0\t0\n",
+  "stderr": "",
+  "execution_time_ms": 1624
+}

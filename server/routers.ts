@@ -800,7 +800,7 @@ export const appRouter = router({
         }).nullish()
       )
       .query(async ({ input }) => {
-        const { getTopPlayersByMetric, countActivePlayers, countAllPlayers, getLeaderboardSummary } = await import('./leaderboard-fresh');
+        const { getTopPlayersByMetric, countActivePlayers, countAllPlayers, getLeaderboardSummary } = await import('./leaderboard-complete');
         
         const limit = input?.limit ?? 50;
         const sortBy = (input?.sortBy ?? 'accuracy') as 'accuracy' | 'speed' | 'rating';
