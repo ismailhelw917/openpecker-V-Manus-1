@@ -69,6 +69,7 @@ export default function Stats() {
   const [selectedSet, setSelectedSet] = useState<string>("all");
   const { user, loading: authLoading, isAuthenticated } = useAuth();
   const [showPremiumPaywall, setShowPremiumPaywall] = useState(false);
+  const completeRegistrationMutation = trpc.auth.completeRegistration.useMutation();
   
   // Check if we should show paywall for new users
   useEffect(() => {
@@ -76,8 +77,12 @@ export default function Stats() {
     if (params.get('showPaywall') === 'true') {
       console.log('[Stats] Opening paywall for new user');
       setShowPremiumPaywall(true);
+      // Mark user as registered when they reach the paywall
+      if (user && user.hasRegistered === 0) {
+        completeRegistrationMutation.mutate();
+      }
     }
-  }, [location]);
+  }, [location, user, completeRegistrationMutation]);
   const [loading, setLoading] = useState(false);
   const [checkoutPlan, setCheckoutPlan] = useState<string | null>(null);
   const [deviceId] = useState<string | null>(() => {

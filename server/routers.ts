@@ -175,6 +175,28 @@ export const appRouter = router({
       }),
 
     /**
+     * Mark user as registered after first login
+     */
+    completeRegistration: protectedProcedure.mutation(async ({ ctx }) => {
+      if (!ctx.user?.id) {
+        throw new Error('User not authenticated');
+      }
+
+      const db = await getDb();
+      if (!db) {
+        throw new Error('Database not available');
+      }
+
+      const { users: usersTable } = await import('../drizzle/schema');
+      await db
+        .update(usersTable)
+        .set({ hasRegistered: 1 })
+        .where(eq(usersTable.id, ctx.user.id));
+
+      return { success: true };
+    }),
+
+    /**
      * Logout user
      */
     logout: publicProcedure.mutation(async ({ ctx }) => {
