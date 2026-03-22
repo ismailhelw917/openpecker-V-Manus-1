@@ -112,25 +112,6 @@ export default function ProAnalytics() {
           <p className="text-slate-300 mb-6">
             Advanced Analytics is available for Premium subscribers only. Upgrade your account to access detailed platform statistics.
           </p>
-          <Button 
-            onClick={() => setShowPremiumPaywall(true)}
-            className="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold"
-          >
-            Upgrade to Premium
-          </Button>
-          {showPremiumPaywall && (
-            <PremiumPaywall
-              onClose={() => setShowPremiumPaywall(false)}
-              onMonthlyClick={() => {
-                console.log('[ProAnalytics] Monthly subscription clicked');
-                setShowPremiumPaywall(false);
-              }}
-              onLifetimeClick={() => {
-                console.log('[ProAnalytics] Lifetime subscription clicked');
-                setShowPremiumPaywall(false);
-              }}
-            />
-          )}
         </Card>
       </div>
     );

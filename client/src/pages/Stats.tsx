@@ -272,25 +272,7 @@ export default function Stats() {
               </li>
             ))}
           </ul>
-          <Button
-            onTouchEnd={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log('[Stats] Upgrade button touched on mobile');
-              setShowPremiumPaywall(true);
-            }}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log('[Stats] Upgrade button clicked, setting showPremiumPaywall to true');
-              setShowPremiumPaywall(true);
-            }}
-            className="bg-amber-400 hover:bg-amber-500 active:bg-amber-600 text-slate-900 font-bold px-8 py-3 text-lg rounded-lg w-full pointer-events-auto touch-none"
-            type="button"
-          >
-            Upgrade to Premium
-          </Button>
-          <p className="text-slate-500 text-sm mt-3">Cancel anytime. 7-day free trial included.</p>
+
         </div>
       </div>
     );
@@ -529,12 +511,6 @@ export default function Stats() {
                 <Lock className="w-10 h-10 text-amber-400 mb-3" />
                 <p className="text-amber-400 font-bold text-xl mb-1">Premium Analytics</p>
                 <p className="text-slate-400 text-sm mb-4 text-center px-4 max-w-xs">Unlock accuracy trends, time analysis, and training cycle insights</p>
-                <Button
-                  onClick={() => setShowPremiumPaywall(true)}
-                  className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-6"
-                >
-                  <Zap className="w-4 h-4 mr-2" /> Upgrade to Premium
-                </Button>
               </div>
             )}
             {/* Accuracy Trend */}
@@ -610,12 +586,6 @@ export default function Stats() {
                 <Lock className="w-10 h-10 text-amber-400 mb-3" />
                 <p className="text-amber-400 font-bold text-xl mb-1">Premium Feature</p>
                 <p className="text-slate-400 text-sm mb-4 text-center px-4 max-w-xs">Track your mastery of each opening with detailed breakdowns</p>
-                <Button
-                  onClick={() => setShowPremiumPaywall(true)}
-                  className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-6"
-                >
-                  <Zap className="w-4 h-4 mr-2" /> Upgrade to Premium
-                </Button>
               </div>
             )}
             <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-6">

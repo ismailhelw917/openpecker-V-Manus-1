@@ -1845,3 +1845,9 @@
 - [x] Removed handleUpgradeClick function
 - [x] Removed useLocation import
 - [x] Modal now shows only features and close button
+## Round 94 - Remove All Upgrade to Premium Buttons
+- [x] Removed "Upgrade to Premium" button from ProAnalytics.tsx
+- [x] Removed "Upgrade to Premium" button from Stats.tsx Trends tab
+- [x] Removed "Upgrade to Premium" button from Stats.tsx Openings tab
+- [x] Removed all related onClick handlers and paywall triggers
+- [x] Verified all buttons are removed from codebase
