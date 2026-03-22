@@ -46,8 +46,12 @@ function parseReturnPath(state: string): string {
 
 export function registerOAuthRoutes(app: Express) {
   app.get("/api/oauth/callback", async (req: Request, res: Response) => {
+    console.log("[OAuth] Callback route hit!");
+    console.log("[OAuth] Query params:", req.query);
     const code = getQueryParam(req, "code");
     const state = getQueryParam(req, "state");
+    console.log("[OAuth] Code:", code ? "present" : "missing");
+    console.log("[OAuth] State:", state ? "present" : "missing");
 
     if (!code || !state) {
       res.status(400).json({ error: "code and state are required" });
@@ -88,8 +92,9 @@ export function registerOAuthRoutes(app: Express) {
       console.log("[OAuth] Redirecting to:", returnPath);
       res.redirect(302, returnPath);
     } catch (error) {
-      console.error("[OAuth] Callback failed", error);
-      res.status(500).json({ error: "OAuth callback failed" });
+      console.error("[OAuth] Callback failed:", error instanceof Error ? error.message : String(error));
+      console.error("[OAuth] Full error:", error);
+      res.status(500).json({ error: "OAuth callback failed", details: error instanceof Error ? error.message : String(error) });
     }
   });
 }

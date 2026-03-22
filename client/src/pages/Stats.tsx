@@ -375,15 +375,25 @@ export default function Stats() {
       {/* Header */}
       <div className="bg-slate-900/50 backdrop-blur border-b border-teal-900/30 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-6">
-          <div className="flex items-start justify-between mb-3 sm:mb-4">
-            <div>
-              <h1 className="text-xl sm:text-4xl font-bold text-amber-400 mb-0.5 sm:mb-2">Performance</h1>
-              <p className="text-xs sm:text-base text-slate-400">Track your opening mastery progress.</p>
-            </div>
+                  <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1">Performance Stats</h1>
+            <p className="text-xs sm:text-base text-slate-400">Track your opening mastery progress.</p>
+          </div>
+          <div className="flex items-center gap-2">
+            {!user?.isPremium && (
+              <button
+                onClick={() => setShowPremiumPaywall(true)}
+                className="px-3 sm:px-4 py-2 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-900 font-bold rounded-lg transition-all text-xs sm:text-sm whitespace-nowrap"
+              >
+                GET PREMIUM
+              </button>
+            )}
             <button className="text-slate-400 hover:text-white transition-colors p-1">
               <Download className="w-4 sm:w-5 h-4 sm:h-5" />
             </button>
           </div>
+        </div>
 
           {/* Controls */}
           <div className="flex items-center gap-1.5 sm:gap-3 flex-wrap">
