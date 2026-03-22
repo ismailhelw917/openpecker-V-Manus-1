@@ -1856,3 +1856,9 @@
 - [x] Verified player records are created with stats (8 players with data)
 - [x] Fixed getLeaderboardPlayers function to use simpler, more reliable SQL
 - [x] Added logging to debug leaderboard queries
+## Round 96 - Fix Leaderboard Data Accuracy
+- [x] Conducted wide research on leaderboard data flow (6 subtasks)
+- [x] Identified missing calculated fields (speed, totalTimeMin)
+- [x] Fixed API response to calculate and format fields correctly
+- [x] Created comprehensive test suite for data transformation (7 tests)
+- [x] All tests passing for speed, time, accuracy, and rating calculations
