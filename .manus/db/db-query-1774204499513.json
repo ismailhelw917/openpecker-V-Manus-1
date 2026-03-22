@@ -1,0 +1,108 @@
+{
+  "query": "\n-- Check the current leaderboard data with correct column names\nSELECT \n  deviceId,\n  userId,\n  COUNT(*) as total_cycles,\n  SUM(totalPuzzles) as total_puzzles,\n  MAX(completedAt) as last_completed\nFROM cycle_history\nGROUP BY deviceId, userId\nORDER BY total_puzzles DESC\nLIMIT 20;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \n-- Check the current leaderboard data with correct column names\nSELECT \n  deviceId,\n  userId,\n  COUNT(*) as total_cycles,\n  SUM(totalPuzzles) as total_puzzles,\n  MAX(completedAt) as last_completed\nFROM cycle_history\nGROUP BY deviceId, userId\nORDER BY total_puzzles DESC\nLIMIT 20;\n",
+  "rows": [
+    {
+      "deviceId": "NULL",
+      "userId": "1141733",
+      "total_cycles": "3",
+      "total_puzzles": "150",
+      "last_completed": "2026-03-22 16:28:05"
+    },
+    {
+      "deviceId": "NULL",
+      "userId": "NULL",
+      "total_cycles": "18",
+      "total_puzzles": "135",
+      "last_completed": "2026-03-19 06:05:01"
+    },
+    {
+      "deviceId": "test-device-456",
+      "userId": "NULL",
+      "total_cycles": "2",
+      "total_puzzles": "50",
+      "last_completed": "2026-03-22 18:16:54"
+    },
+    {
+      "deviceId": "1eeac2ef60ea3985aa895481028b6a68",
+      "userId": "NULL",
+      "total_cycles": "1",
+      "total_puzzles": "50",
+      "last_completed": "2026-03-21 16:52:47"
+    },
+    {
+      "deviceId": "NULL",
+      "userId": "1261098",
+      "total_cycles": "20",
+      "total_puzzles": "20",
+      "last_completed": "2026-03-21 17:02:33"
+    },
+    {
+      "deviceId": "NULL",
+      "userId": "1261095",
+      "total_cycles": "20",
+      "total_puzzles": "20",
+      "last_completed": "2026-03-21 17:02:33"
+    },
+    {
+      "deviceId": "NULL",
+      "userId": "1261097",
+      "total_cycles": "20",
+      "total_puzzles": "20",
+      "last_completed": "2026-03-21 17:02:33"
+    },
+    {
+      "deviceId": "NULL",
+      "userId": "1261094",
+      "total_cycles": "20",
+      "total_puzzles": "20",
+      "last_completed": "2026-03-21 17:02:33"
+    },
+    {
+      "deviceId": "NULL",
+      "userId": "1261093",
+      "total_cycles": "20",
+      "total_puzzles": "20",
+      "last_completed": "2026-03-21 17:02:33"
+    },
+    {
+      "deviceId": "NULL",
+      "userId": "1261099",
+      "total_cycles": "20",
+      "total_puzzles": "20",
+      "last_completed": "2026-03-21 17:02:33"
+    },
+    {
+      "deviceId": "NULL",
+      "userId": "1261096",
+      "total_cycles": "20",
+      "total_puzzles": "20",
+      "last_completed": "2026-03-21 17:02:33"
+    },
+    {
+      "deviceId": "NULL",
+      "userId": "1261102",
+      "total_cycles": "20",
+      "total_puzzles": "20",
+      "last_completed": "2026-03-21 17:02:33"
+    },
+    {
+      "deviceId": "NULL",
+      "userId": "1261101",
+      "total_cycles": "20",
+      "total_puzzles": "20",
+      "last_completed": "2026-03-21 17:02:33"
+    },
+    {
+      "deviceId": "NULL",
+      "userId": "1261100",
+      "total_cycles": "20",
+      "total_puzzles": "20",
+      "last_completed": "2026-03-21 17:02:33"
+    }
+  ],
+  "messages": [],
+  "stdout": "deviceId\tuserId\ttotal_cycles\ttotal_puzzles\tlast_completed\nNULL\t1141733\t3\t150\t2026-03-22 16:28:05\nNULL\tNULL\t18\t135\t2026-03-19 06:05:01\ntest-device-456\tNULL\t2\t50\t2026-03-22 18:16:54\n1eeac2ef60ea3985aa895481028b6a68\tNULL\t1\t50\t2026-03-21 16:52:47\nNULL\t1261098\t20\t20\t2026-03-21 17:02:33\nNULL\t1261095\t20\t20\t2026-03-21 17:02:33\nNULL\t1261097\t20\t20\t2026-03-21 17:02:33\nNULL\t1261094\t20\t20\t2026-03-21 17:02:33\nNULL\t1261093\t20\t20\t2026-03-21 17:02:33\nNULL\t1261099\t20\t20\t2026-03-21 17:02:33\nNULL\t1261096\t20\t20\t2026-03-21 17:02:33\nNULL\t1261102\t20\t20\t2026-03-21 17:02:33\nNULL\t1261101\t20\t20\t2026-03-21 17:02:33\nNULL\t1261100\t20\t20\t2026-03-21 17:02:33\n",
+  "stderr": "",
+  "execution_time_ms": 1644
+}

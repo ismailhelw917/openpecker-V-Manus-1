@@ -2083,3 +2083,13 @@
 - [x] Verified test cycle created successfully and appears in leaderboard
 - [x] Confirmed Active Players count updated to 13 (was 12)
 - [x] Confirmed new test player appears at rank 2 with 50 puzzles
+
+
+## CRITICAL BUG FIX: Leaderboard Not Showing Active Players (Round 32 - User Report)
+- [x] Identified that Ismail's 150 puzzles weren't appearing on leaderboard
+- [x] Found root cause: `WHERE u.hasRegistered = 1` filter was excluding users with hasRegistered=0
+- [x] Removed hasRegistered filter from leaderboard query in leaderboard-optimized.ts
+- [x] Added HAVING clause to only show users with puzzles > 0
+- [x] Verified Mansoor KP (Ismail) now appears at rank 1 with 150 puzzles
+- [x] Confirmed leaderboard updates correctly with active user data
+- [x] Restarted server and verified fix is working
