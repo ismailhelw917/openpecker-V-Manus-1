@@ -1805,7 +1805,14 @@
 - [x] Preserve user state during redirect
 
 ## Round 87 - Route Protection & Auth Guards
-- [ ] Create ProtectedRoute component for authentication guards
+- [x] Create ProtectedRoute component for authentication guards
 - [ ] Apply ProtectedRoute to /stats, /train, /sets, /rank, /settings
 - [ ] Redirect unauthenticated users to login instead of showing protected page
 - [ ] Test navigation flow on mobile and desktop
+## Round 88 - OAuth Login Redirect Bug Fix
+- [x] Fix OAuth redirect losing returnPath after login
+- [x] Updated ProtectedRoute to pass current pathname as returnPath
+- [x] Updated main.tsx global unauthorized redirect to pass current pathname
+- [x] Fixed useAuth hook redirect guard comparison
+- [x] Created comprehensive test suite for OAuth redirect parsing
+- [x] All 11 tests passing for redirect security and functionality

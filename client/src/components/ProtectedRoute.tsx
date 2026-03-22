@@ -18,10 +18,12 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
   const [, setLocation] = useLocation();
 
   useEffect(() => {
-    // If not loading and not authenticated, redirect to login
+    // If not loading and not authenticated, redirect to login with return path
     if (!loading && !isAuthenticated) {
       console.log('[ProtectedRoute] Unauthenticated user, redirecting to login');
-      window.location.href = getLoginUrl();
+      // Pass current pathname as returnPath so user returns here after login
+      const currentPath = typeof window !== 'undefined' ? window.location.pathname : '/';
+      window.location.href = getLoginUrl(currentPath);
       return;
     }
 
