@@ -1816,3 +1816,9 @@
 - [x] Fixed useAuth hook redirect guard comparison
 - [x] Created comprehensive test suite for OAuth redirect parsing
 - [x] All 11 tests passing for redirect security and functionality
+## Round 89 - OAuth State Decoding Fix
+- [x] Fixed OAuth login not completing - user stuck on account selection
+- [x] Updated sdk.ts decodeState function to handle new JSON format
+- [x] Added support for both new JSON format (with returnPath) and legacy format
+- [x] Created comprehensive test suite for state decoding (9 tests)
+- [x] All 9 tests passing for state decoding with both formats
