@@ -739,7 +739,7 @@ export const appRouter = router({
     /**
      * Create a cycle record
      */
-    create: protectedProcedure
+    create: publicProcedure
       .input(
         z.object({
           deviceId: z.string().optional(),
@@ -753,9 +753,11 @@ export const appRouter = router({
       .mutation(async ({ input, ctx }) => {
         const { getOrCreatePlayer, updatePlayerStats } = await import('./players');
         const { invalidateLeaderboardCache } = await import('./leaderboard-optimized');
-        const playerName = `Player-${ctx.user.id}`;
+        // Support both authenticated and anonymous users
+        const userId = ctx.user?.id || null;
+        const playerName = userId ? `Player-${userId}` : `Anonymous-${input.deviceId || 'unknown'}`;
         const player = await getOrCreatePlayer(
-          ctx.user.id,
+          userId,
           input.deviceId || null,
           playerName
         );
