@@ -23,6 +23,7 @@ import { trpc } from "./lib/trpc";
 
 import { usePageTracking } from "./hooks/usePageTracking";
 import { useSessionTracking } from "./hooks/useSessionTracking";
+import { useHeartbeat } from "./hooks/useHeartbeat";
 
 function Router() {
   return (
@@ -51,6 +52,9 @@ function App() {
   
   // Track user sessions with heartbeats
   useSessionTracking();
+  
+  // Track active sessions with real user names
+  useHeartbeat();
 
   const [showPremiumWatermark, setShowPremiumWatermark] = useState(true);
   const [showNameDialog, setShowNameDialog] = useState(false);

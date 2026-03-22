@@ -92,38 +92,38 @@ export function Leaderboard() {
           <Card className="bg-white border border-slate-200 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm sm:text-base">
-                <thead className="bg-slate-50 border-b border-slate-200">
+                <thead className="bg-teal-600 border-b border-teal-700">
                   <tr>
-                    <th className="text-left py-2 sm:py-3 px-2 sm:px-4 font-semibold text-slate-700 w-10 sm:w-12">Rank</th>
-                    <th className="text-left py-2 sm:py-3 px-2 sm:px-4 font-semibold text-slate-700 min-w-24 sm:min-w-32">Player</th>
-                    <th className="text-right py-2 sm:py-3 px-2 sm:px-4 font-semibold text-slate-700 w-16 sm:w-20">Puzzles</th>
-                    <th className="hidden sm:table-cell text-right py-2 sm:py-3 px-2 sm:px-4 font-semibold text-slate-700 w-20">Accuracy</th>
+                    <th className="text-left py-3 sm:py-4 px-3 sm:px-6 font-semibold text-white w-12 sm:w-16">Rank</th>
+                    <th className="text-left py-3 sm:py-4 px-3 sm:px-6 font-semibold text-white min-w-32 sm:min-w-40">Player</th>
+                    <th className="text-right py-3 sm:py-4 px-3 sm:px-6 font-semibold text-white w-20 sm:w-24">Puzzles</th>
+                    <th className="hidden sm:table-cell text-right py-3 sm:py-4 px-3 sm:px-6 font-semibold text-white w-24 sm:w-28">Accuracy</th>
                   </tr>
                 </thead>
                 <tbody>
                   {players.map((player: any, index: number) => (
                     <tr
                       key={index}
-                      className={`border-b border-slate-100 hover:bg-slate-50 transition-colors ${
-                        index % 2 === 0 ? 'bg-white' : 'bg-slate-50'
+                      className={`border-b border-teal-600 hover:bg-teal-400 transition-colors ${
+                        index % 2 === 0 ? 'bg-teal-500' : 'bg-teal-400'
                       }`}
                     >
-                      <td className="py-2 sm:py-4 px-2 sm:px-4 w-10 sm:w-12">
-                        <div className="flex items-center gap-1 sm:gap-2">
+                      <td className="py-3 sm:py-4 px-3 sm:px-6 w-12 sm:w-16">
+                        <div className="flex items-center gap-2 sm:gap-3">
                           {player.rank <= 3 && (
-                            <Medal className={`w-4 h-4 sm:w-5 sm:h-5 ${getMedalColor(player.rank)}`} />
+                            <Medal className={`w-5 h-5 sm:w-6 sm:h-6 ${getMedalColor(player.rank)}`} />
                           )}
-                          <span className="font-bold text-slate-900 text-sm sm:text-base">{player.rank}</span>
+                          <span className="font-bold text-white text-sm sm:text-base">{player.rank}</span>
                         </div>
                       </td>
-                      <td className="py-2 sm:py-4 px-2 sm:px-4 min-w-24 sm:min-w-32">
-                        <span className="font-medium text-slate-900 text-sm sm:text-base truncate block">{player.playerName}</span>
+                      <td className="py-3 sm:py-4 px-3 sm:px-6 min-w-32 sm:min-w-40">
+                        <span className="font-medium text-white text-sm sm:text-base truncate block">{player.playerName}</span>
                       </td>
-                      <td className="py-2 sm:py-4 px-2 sm:px-4 text-right w-16 sm:w-20">
-                        <span className="text-slate-700 font-semibold text-sm sm:text-base">{player.puzzlesSolved}</span>
+                      <td className="py-3 sm:py-4 px-3 sm:px-6 text-right w-20 sm:w-24">
+                        <span className="text-white font-semibold text-sm sm:text-base">{player.puzzlesSolved}</span>
                       </td>
-                      <td className="hidden sm:table-cell py-2 sm:py-4 px-2 sm:px-4 text-right w-20">
-                        <span className="font-semibold text-teal-600 text-sm sm:text-base">{player.accuracy}%</span>
+                      <td className="hidden sm:table-cell py-3 sm:py-4 px-3 sm:px-6 text-right w-24 sm:w-28">
+                        <span className="font-semibold text-yellow-300 text-sm sm:text-base">{player.accuracy}%</span>
                       </td>
                     </tr>
                   ))}

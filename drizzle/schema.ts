@@ -254,6 +254,28 @@ export type Session = typeof sessions.$inferSelect;
 export type InsertSession = typeof sessions.$inferInsert;
 
 /**
+ * Active Sessions - tracks currently active players with real-time data
+ */
+export const activeSessions = mysqlTable("active_sessions", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  userId: int("userId"),
+  deviceId: varchar("deviceId", { length: 64 }),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 320 }),
+  isGuest: int("isGuest").default(1).notNull(),
+  currentPath: varchar("currentPath", { length: 255 }),
+  lastActive: timestamp("lastActive").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("idx_activeSessions_userId").on(table.userId),
+  deviceIdIdx: index("idx_activeSessions_deviceId").on(table.deviceId),
+  lastActiveIdx: index("idx_activeSessions_lastActive").on(table.lastActive),
+}));
+
+export type ActiveSession = typeof activeSessions.$inferSelect;
+export type InsertActiveSession = typeof activeSessions.$inferInsert;
+
+/**
  * Daily Stats - aggregated daily statistics
  */
 export const dailyStats = mysqlTable("dailyStats", {
