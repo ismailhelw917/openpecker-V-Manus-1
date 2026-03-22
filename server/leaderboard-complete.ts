@@ -89,6 +89,7 @@ export async function getTopPlayersByMetric(
         WHERE p.userId IS NULL
           AND p.deviceId NOT IN (SELECT DISTINCT deviceId FROM cycle_history WHERE deviceId IS NOT NULL)
       ) combined_players
+      WHERE totalPuzzles > 0
       ${orderClause}
       LIMIT ${limit}
     `
