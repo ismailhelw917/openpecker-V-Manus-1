@@ -1,0 +1,16 @@
+{
+  "query": "SELECT \n  COUNT(*) as total_players,\n  COUNT(CASE WHEN totalPuzzles > 0 THEN 1 END) as players_with_activity,\n  SUM(totalPuzzles) as total_puzzles_all,\n  SUM(completedCycles) as total_cycles_all\nFROM players;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT \n  COUNT(*) as total_players,\n  COUNT(CASE WHEN totalPuzzles > 0 THEN 1 END) as players_with_activity,\n  SUM(totalPuzzles) as total_puzzles_all,\n  SUM(completedCycles) as total_cycles_all\nFROM players;",
+  "rows": [
+    {
+      "total_players": "111",
+      "players_with_activity": "8",
+      "total_puzzles_all": "213",
+      "total_cycles_all": "11"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_players\tplayers_with_activity\ttotal_puzzles_all\ttotal_cycles_all\n111\t8\t213\t11\n",
+  "stderr": "",
+  "execution_time_ms": 1678
+}

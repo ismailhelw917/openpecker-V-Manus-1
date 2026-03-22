@@ -1862,3 +1862,9 @@
 - [x] Fixed API response to calculate and format fields correctly
 - [x] Created comprehensive test suite for data transformation (7 tests)
 - [x] All tests passing for speed, time, accuracy, and rating calculations
+## Round 97 - Fix Leaderboard userId Mismatch
+- [x] Identified cycle distribution: 19 NULL, 16 userId 999, 10 each for 750380/750255/750215
+- [x] Found root cause: 19 cycles have NULL userId (not associated with any player)
+- [x] Fixed cycles.create to ensure player is created before cycle is saved
+- [x] Created 6-test suite validating player creation and cycle userId assignment
+- [x] All tests passing - cycles now always have valid userId
