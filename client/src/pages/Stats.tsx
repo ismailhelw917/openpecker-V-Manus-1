@@ -180,6 +180,12 @@ export default function Stats() {
     { enabled: !!deviceId || !!user, retry: 1, retryDelay: 1000 }
   );
 
+  // Fetch leaderboard summary for global stats
+  const { data: leaderboardData } = trpc.stats.getLeaderboard.useQuery(
+    { limit: 100, sortBy: 'accuracy' },
+    { retry: 1, retryDelay: 1000 }
+  );
+
   // Fetch Counter API metrics
   const { data: onlineData } = trpc.system.getOnlineCount.useQuery(undefined, {
     retry: 1,
@@ -238,50 +244,9 @@ export default function Stats() {
     );
   }
 
-  // Paywall: require sign-in to view stats
-  if (!user && !authLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center px-4">
-        <div className="text-center max-w-md">
-          <Lock className="w-16 h-16 text-amber-400 mx-auto mb-6" />
-          <h2 className="text-3xl font-bold text-amber-400 mb-4">Sign In Required</h2>
-          <p className="text-slate-400 mb-8">Sign in to view your detailed performance statistics, rating history, and training analytics.</p>
-          <a
-            href={getLoginUrl()}
-            className="inline-block px-8 py-3 bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold rounded-lg transition-colors no-underline"
-            style={{ touchAction: "manipulation" }}
-          >
-            Sign In to View Stats
-          </a>
-        </div>
-      </div>
-    );
-  }
+  // Stats page is now free for all users - no sign-in required
 
-  // Premium paywall: require premium subscription for full Stats tab
-  if (user && !user.isPremium) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center px-4">
-        <div className="text-center max-w-lg">
-          <div className="relative inline-block mb-6">
-            <Shield className="w-20 h-20 text-amber-400" />
-            <Lock className="w-8 h-8 text-slate-900 absolute bottom-0 right-0 bg-amber-400 rounded-full p-1.5" />
-          </div>
-          <h2 className="text-3xl font-bold text-amber-400 mb-3">Premium Feature</h2>
-          <p className="text-slate-400 mb-6 text-lg">Unlock detailed performance analytics, rating history, opening mastery tracking, and more with OpenPecker Premium.</p>
-          <ul className="text-left text-slate-300 space-y-2 mb-8 max-w-sm mx-auto">
-            {PREMIUM_FEATURES.map((f, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <Zap className="w-4 h-4 text-amber-400 mt-1 shrink-0" />
-                <span>{f}</span>
-              </li>
-            ))}
-          </ul>
-
-        </div>
-      </div>
-    );
-  }
+  // Stats page is now free for all users
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-20">
@@ -381,14 +346,6 @@ export default function Stats() {
             <p className="text-xs sm:text-base text-slate-400">Track your opening mastery progress.</p>
           </div>
           <div className="flex items-center gap-2">
-            {!user?.isPremium && (
-              <button
-                onClick={() => setShowPremiumPaywall(true)}
-                className="px-3 sm:px-4 py-2 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-900 font-bold rounded-lg transition-all text-xs sm:text-sm whitespace-nowrap"
-              >
-                GET PREMIUM
-              </button>
-            )}
             <button className="text-slate-400 hover:text-white transition-colors p-1">
               <Download className="w-4 sm:w-5 h-4 sm:h-5" />
             </button>
@@ -475,26 +432,25 @@ export default function Stats() {
         {/* Overview Tab */}
         {activeTab === "overview" && (
           <div className="space-y-4 sm:space-y-8">
+            {/* Global Stats Containers */}
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              <Card className="bg-white border border-slate-200 p-3 sm:p-4">
+                <div className="text-xs sm:text-sm font-medium text-slate-600 mb-1">Active Players</div>
+                <div className="text-xl sm:text-2xl font-bold text-teal-600">{leaderboardData?.summary?.activePlayers ?? 0}</div>
+              </Card>
+              <Card className="bg-white border border-slate-200 p-3 sm:p-4">
+                <div className="text-xs sm:text-sm font-medium text-slate-600 mb-1">Total Registered</div>
+                <div className="text-xl sm:text-2xl font-bold text-teal-600">{leaderboardData?.summary?.totalPlayers ?? 0}</div>
+              </Card>
+            </div>
+
             {/* Key Metrics Grid */}
             <StatsDisplay stats={finalStats} isLoading={isLoading} />
 
-            {/* Rating Trend Chart - Premium locked */}
+            {/* Rating Trend Chart */}
             {finalStats && (
               <div className="relative">
-                {!user?.isPremium && (
-                  <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-950/70 backdrop-blur-sm rounded-lg">
-                    <Lock className="w-6 sm:w-8 h-6 sm:h-8 text-amber-400 mb-2 sm:mb-3" />
-                    <p className="text-amber-400 font-bold text-sm sm:text-lg mb-1">Premium Feature</p>
-                    <p className="text-slate-400 text-xs sm:text-sm mb-3 sm:mb-4 text-center px-3">Unlock detailed rating progression charts</p>
-                    <Button
-                      onClick={() => setShowPremiumPaywall(true)}
-                      className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-4 sm:px-6 text-sm"
-                    >
-                      <Zap className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" /> Upgrade
-                    </Button>
-                  </div>
-                )}
-                <Card className={`bg-slate-900/50 border-teal-900/30 p-2.5 sm:p-6 ${!user?.isPremium ? 'blur-[2px] pointer-events-none select-none' : ''}`}>
+                <Card className="bg-slate-900/50 border-teal-900/30 p-2.5 sm:p-6">
                   <h3 className="text-sm sm:text-xl font-bold text-white mb-3 sm:mb-6">Rating Progression</h3>
                   <ResponsiveContainer width="100%" height={window.innerWidth < 640 ? 200 : 250}>
                     <LineChart data={MOCK_RATING_TREND}>

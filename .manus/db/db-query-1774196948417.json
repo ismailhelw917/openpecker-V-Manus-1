@@ -1,0 +1,170 @@
+{
+  "query": "SELECT u.id, u.name, u.hasRegistered,\n       COUNT(ch.id) as cycleCount,\n       SUM(ch.totalPuzzles) as totalPuzzles,\n       SUM(ch.correctCount) as correctCount\nFROM users u\nLEFT JOIN cycle_history ch ON u.id = ch.userId\nWHERE u.hasRegistered = 1\nGROUP BY u.id, u.name, u.hasRegistered\nORDER BY totalPuzzles DESC\nLIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT u.id, u.name, u.hasRegistered,\n       COUNT(ch.id) as cycleCount,\n       SUM(ch.totalPuzzles) as totalPuzzles,\n       SUM(ch.correctCount) as correctCount\nFROM users u\nLEFT JOIN cycle_history ch ON u.id = ch.userId\nWHERE u.hasRegistered = 1\nGROUP BY u.id, u.name, u.hasRegistered\nORDER BY totalPuzzles DESC\nLIMIT 20;",
+  "rows": [
+    {
+      "id": "1200446",
+      "name": "Morgan Martin",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    },
+    {
+      "id": "1200444",
+      "name": "Jordan White",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    },
+    {
+      "id": "1200474",
+      "name": "Riley Davis",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    },
+    {
+      "id": "1200477",
+      "name": "Blake Anderson",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    },
+    {
+      "id": "1200386",
+      "name": "Quinn Taylor",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    },
+    {
+      "id": "1200402",
+      "name": "Riley Wilson",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    },
+    {
+      "id": "1200407",
+      "name": "Cameron Jackson",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    },
+    {
+      "id": "1200478",
+      "name": "Drew Thomas",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    },
+    {
+      "id": "1200405",
+      "name": "Blake Anderson",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    },
+    {
+      "id": "1200452",
+      "name": "Cameron Taylor",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    },
+    {
+      "id": "1200467",
+      "name": "Quinn Rodriguez",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    },
+    {
+      "id": "1200381",
+      "name": "Jordan Smith",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    },
+    {
+      "id": "1200458",
+      "name": "Quinn Moore",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    },
+    {
+      "id": "1200463",
+      "name": "Casey Harris",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    },
+    {
+      "id": "1200406",
+      "name": "Drew Thomas",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    },
+    {
+      "id": "1200418",
+      "name": "Casey Jones",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    },
+    {
+      "id": "1200427",
+      "name": "Casey Harris",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    },
+    {
+      "id": "1200430",
+      "name": "Taylor Garcia",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    },
+    {
+      "id": "1200455",
+      "name": "Morgan Miller",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    },
+    {
+      "id": "1200425",
+      "name": "Cameron Jackson",
+      "hasRegistered": "1",
+      "cycleCount": "0",
+      "totalPuzzles": "NULL",
+      "correctCount": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\thasRegistered\tcycleCount\ttotalPuzzles\tcorrectCount\n1200446\tMorgan Martin\t1\t0\tNULL\tNULL\n1200444\tJordan White\t1\t0\tNULL\tNULL\n1200474\tRiley Davis\t1\t0\tNULL\tNULL\n1200477\tBlake Anderson\t1\t0\tNULL\tNULL\n1200386\tQuinn Taylor\t1\t0\tNULL\tNULL\n1200402\tRiley Wilson\t1\t0\tNULL\tNULL\n1200407\tCameron Jackson\t1\t0\tNULL\tNULL\n1200478\tDrew Thomas\t1\t0\tNULL\tNULL\n1200405\tBlake Anderson\t1\t0\tNULL\tNULL\n1200452\tCameron Taylor\t1\t0\tNULL\tNULL\n1200467\tQuinn Rodriguez\t1\t0\tNULL\tNULL\n1200381\tJordan Smith\t1\t0\tNULL\tNULL\n1200458\tQuinn Moore\t1\t0\tNULL\tNULL\n1200463\tCasey Harris\t1\t0\tNULL\tNULL\n1200406\tDrew Thomas\t1\t0\tNULL\tNULL\n1200418\tCasey Jones\t1\t0\tNULL\tNULL\n1200427\tCasey Harris\t1\t0\tNULL\tNULL\n1200430\tTaylor Garcia\t1\t0\tNULL\tNULL\n1200455\tMorgan Miller\t1\t0\tNULL\tNULL\n1200425\tCameron Jackson\t1\t0\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 1605
+}

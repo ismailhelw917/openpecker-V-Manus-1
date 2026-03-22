@@ -86,8 +86,8 @@ export async function getTopPlayersByMetricOptimized(
           'registered' as playerType
         FROM users u
         LEFT JOIN cycle_history ch ON u.id = ch.userId
+        WHERE u.hasRegistered = 1
         GROUP BY u.id, u.name, u.createdAt
-        HAVING COALESCE(SUM(ch.totalPuzzles), 0) > 0
       `;
 
       const registeredResult = await db.execute(registeredUsersQuery);
@@ -179,6 +179,21 @@ export async function getPlayerRank(userId: number): Promise<number | null> {
  */
 export function invalidateLeaderboardCache(): void {
   leaderboardCache.clear();
+}
+
+/**
+ * Get cache status for debugging
+ */
+export function getLeaderboardCacheStatus() {
+  return {
+    cacheSize: leaderboardCache.size,
+    entries: Array.from(leaderboardCache.entries()).map(([key, value]) => ({
+      key,
+      timestamp: new Date(value.timestamp).toISOString(),
+      ttl: value.ttl,
+      dataCount: value.data.length,
+    })),
+  };
 }
 
 /**

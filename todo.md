@@ -1997,4 +1997,16 @@
 - [x] Fix registered users query in leaderboard (now working with proper aggregations)
 - [x] Test subscription tracking with multiple users
 - [x] Verify leaderboard updates with new cache TTL
-- [ ] Save checkpoint
+- [x] Refresh tracking to count registered users not showing on leaderboard
+- [x] Include all registered users (100 total) on leaderboard even with 0 puzzles
+- [x] Save checkpoint
+
+
+## Remove Stats Paywall (Round 26 - User Request)
+- [x] Find and remove premium paywall from Stats page component
+- [x] Unlock stats analytics for free users
+- [x] Test Stats page loads without paywall for free users
+- [x] Verify all stats data displays correctly
+- [x] Add global stats containers using new leaderboard API
+- [x] Display Active Players and Total Registered counts
+- [x] Save checkpoint
