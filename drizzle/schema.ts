@@ -23,6 +23,8 @@ export const users = mysqlTable("users", {
   isPremium: int("isPremium").default(0).notNull(),
   hasRegistered: int("hasRegistered").default(0).notNull(),
   deviceId: varchar("deviceId", { length: 64 }),
+  premiumExpiredAt: timestamp("premiumExpiredAt"), // When premium subscription expires
+  premiumCancelledAt: timestamp("premiumCancelledAt"), // When premium was cancelled
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),

@@ -812,6 +812,16 @@ export const appRouter = router({
   // ==================== STATS ====================
   stats: router({
     /**
+     * Get subscription history and churn metrics
+     */
+    getSubscriptionHistory: publicProcedure
+      .input(z.object({}).nullish())
+      .query(async () => {
+        const { getSubscriptionHistory } = await import('./leaderboard-optimized');
+        return await getSubscriptionHistory();
+      }),
+
+    /**
      * Get leaderboard
      */
     getLeaderboard: publicProcedure

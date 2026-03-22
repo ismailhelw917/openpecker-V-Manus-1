@@ -23,7 +23,7 @@ interface LeaderboardCache {
 
 // In-memory cache for leaderboard
 const leaderboardCache: Map<string, LeaderboardCache> = new Map();
-const CACHE_TTL = 60000; // 1 minute cache
+const CACHE_TTL = 10000; // 10 second cache for frequent updates
 
 /**
  * Get top players with efficient queries
@@ -216,6 +216,15 @@ export async function getLeaderboardSummary() {
     const puzzlesRows = Array.isArray(puzzlesResult) ? (Array.isArray(puzzlesResult[0]) ? puzzlesResult[0] : puzzlesResult) : [];
     const totalPuzzlesSolvedGlobally = Number(puzzlesRows[0]?.totalPuzzles || 0);
 
+    // Count previous subscribers (users with premiumCancelledAt set)
+    const previousSubsQuery = sql`
+      SELECT COUNT(DISTINCT id) as previousSubscribers FROM users WHERE premiumCancelledAt IS NOT NULL
+    `;
+
+    const previousSubsResult = await db.execute(previousSubsQuery);
+    const previousSubsRows = Array.isArray(previousSubsResult) ? (Array.isArray(previousSubsResult[0]) ? previousSubsResult[0] : previousSubsResult) : [];
+    const previousSubscribersCount = Number(previousSubsRows[0]?.previousSubscribers || 0);
+
     return {
       activePlayers,
       totalPlayers,
@@ -224,6 +233,7 @@ export async function getLeaderboardSummary() {
       averageAccuracy: 75,
       averageRating: 1200,
       totalPuzzlesSolvedGlobally,
+      previousSubscribersCount,
     };
   } catch (error) {
     console.error('[getLeaderboardSummary] Error:', error);
@@ -236,6 +246,79 @@ export async function getLeaderboardSummary() {
       averageAccuracy: 0,
       averageRating: 1200,
       totalPuzzlesSolvedGlobally: 0,
+      previousSubscribersCount: 0,
+    };
+  }
+}
+
+
+/**
+ * Get subscription history for tracking churn and retention
+ */
+export async function getSubscriptionHistory() {
+  const db = await getDb();
+  if (!db) throw new Error('Database connection failed');
+
+  try {
+    // Get current premium subscribers
+    const currentSubsQuery = sql`
+      SELECT COUNT(DISTINCT id) as currentSubscribers FROM users WHERE isPremium = 1
+    `;
+
+    const currentSubsResult = await db.execute(currentSubsQuery);
+    const currentSubsRows = Array.isArray(currentSubsResult) ? (Array.isArray(currentSubsResult[0]) ? currentSubsResult[0] : currentSubsResult) : [];
+    const currentSubscribers = Number(currentSubsRows[0]?.currentSubscribers || 0);
+
+    // Get previous subscribers (cancelled)
+    const previousSubsQuery = sql`
+      SELECT COUNT(DISTINCT id) as previousSubscribers FROM users WHERE premiumCancelledAt IS NOT NULL
+    `;
+
+    const previousSubsResult = await db.execute(previousSubsQuery);
+    const previousSubsRows = Array.isArray(previousSubsResult) ? (Array.isArray(previousSubsResult[0]) ? previousSubsResult[0] : previousSubsResult) : [];
+    const previousSubscribers = Number(previousSubsRows[0]?.previousSubscribers || 0);
+
+    // Get expired subscriptions (not renewed)
+    const expiredSubsQuery = sql`
+      SELECT COUNT(DISTINCT id) as expiredSubscribers FROM users WHERE premiumExpiredAt IS NOT NULL AND premiumExpiredAt < NOW() AND isPremium = 0
+    `;
+
+    const expiredSubsResult = await db.execute(expiredSubsQuery);
+    const expiredSubsRows = Array.isArray(expiredSubsResult) ? (Array.isArray(expiredSubsResult[0]) ? expiredSubsResult[0] : expiredSubsResult) : [];
+    const expiredSubscribers = Number(expiredSubsRows[0]?.expiredSubscribers || 0);
+
+    // Get total who have ever been premium
+    const totalEverPremiumQuery = sql`
+      SELECT COUNT(DISTINCT id) as totalEverPremium FROM users WHERE isPremium = 1 OR premiumExpiredAt IS NOT NULL OR premiumCancelledAt IS NOT NULL
+    `;
+
+    const totalEverPremiumResult = await db.execute(totalEverPremiumQuery);
+    const totalEverPremiumRows = Array.isArray(totalEverPremiumResult) ? (Array.isArray(totalEverPremiumResult[0]) ? totalEverPremiumResult[0] : totalEverPremiumResult) : [];
+    const totalEverPremium = Number(totalEverPremiumRows[0]?.totalEverPremium || 0);
+
+    // Calculate churn rate
+    const totalChurned = previousSubscribers + expiredSubscribers;
+    const churnRate = totalEverPremium > 0 ? Math.round((totalChurned / totalEverPremium) * 100) : 0;
+
+    return {
+      currentSubscribers,
+      previousSubscribers,
+      expiredSubscribers,
+      totalEverPremium,
+      totalChurned,
+      churnRate,
+      retentionRate: 100 - churnRate,
+    };
+  } catch (error) {
+    console.error('[getSubscriptionHistory] Error:', error);
+    return {
+      currentSubscribers: 0,
+      previousSubscribers: 0,
+      expiredSubscribers: 0,
+      totalEverPremium: 0,
+      totalChurned: 0,
+      churnRate: 0,
+      retentionRate: 100,
     };
   }
 }

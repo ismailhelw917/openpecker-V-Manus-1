@@ -1987,3 +1987,14 @@
 - [x] Updated leaderboard limit from 50 to 100 players
 - [x] All 14 leaderboard tests passing
 - [x] Dev server running with zero errors
+
+
+## Subscription Tracking & Leaderboard Fix (Round 25 - User Request)
+- [x] Add premiumExpiredAt and premiumCancelledAt columns to users table
+- [x] Reduce leaderboard cache TTL from 60s to 10s for more frequent updates
+- [x] Add previousSubscribersCount to leaderboard summary
+- [x] Create subscriptionHistory endpoint to track subscription changes
+- [x] Fix registered users query in leaderboard (now working with proper aggregations)
+- [x] Test subscription tracking with multiple users
+- [x] Verify leaderboard updates with new cache TTL
+- [ ] Save checkpoint
