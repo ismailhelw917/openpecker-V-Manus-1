@@ -1938,3 +1938,12 @@
 - [x] Verified leaderboard uses database-only data (20 tests passing)
 - [x] Confirmed no test players (Ayush, BR) in leaderboard
 - [x] Dev server running with zero TypeScript errors
+
+
+## Round 104 - Fix Leaderboard to Include All Players
+- [x] Identified missing registered users (Ismail, salem el sayed, Ayush) not appearing on leaderboard
+- [x] Rebuilt leaderboard query to combine registered users and guest players
+- [x] Fixed SQL GROUP BY clauses for users table (no rating column)
+- [x] Updated ORDER BY clause to use totalMinutes instead of totalTimeMs
+- [x] All 20 tests passing with complete player data
+- [x] Leaderboard now shows all players with puzzle attempts (registered + guests)
