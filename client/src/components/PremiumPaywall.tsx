@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { X, Check } from "lucide-react";
-import { useLocation } from "wouter";
 
 interface PremiumPaywallProps {
   onClose: () => void;
@@ -15,11 +14,6 @@ export function PremiumPaywall({
   onLifetimeClick,
   isLoading = false,
 }: PremiumPaywallProps) {
-  const [, setLocation] = useLocation();
-
-  const handleUpgradeClick = () => {
-    setLocation("/settings");
-  };
   const features = [
     "Unlock all 150+ opening variations",
     "Advanced performance analytics",
@@ -65,17 +59,7 @@ export function PremiumPaywall({
           </div>
         </div>
 
-        {/* Pricing */}
-        <div className="px-6 py-6 space-y-4">
-          {/* Upgrade Button - Redirects to Settings */}
-          <button
-            onClick={handleUpgradeClick}
-            disabled={isLoading}
-            className="w-full bg-amber-400 hover:bg-amber-500 disabled:opacity-50 text-slate-900 font-bold py-3 rounded-lg transition-colors"
-          >
-            UPGRADE TO PREMIUM
-          </button>
-        </div>
+
 
         {/* Footer */}
         <div className="px-6 pb-6 text-center">

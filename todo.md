@@ -1840,3 +1840,8 @@
 - [x] Changed modal button from showing pricing options to redirecting to /settings
 - [x] Added useLocation hook to PremiumPaywall component
 - [x] Simplified modal to show features and single "UPGRADE TO PREMIUM" button
+## Round 93 - Remove Upgrade Button from Premium Modal
+- [x] Removed "Upgrade to Premium" button from PremiumPaywall component
+- [x] Removed handleUpgradeClick function
+- [x] Removed useLocation import
+- [x] Modal now shows only features and close button
