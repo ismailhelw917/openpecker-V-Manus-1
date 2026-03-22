@@ -2022,3 +2022,30 @@
 - [x] Double-check all Counter API references are removed
 - [x] Test leaderboard with Nakama data
 - [x] Save checkpoint
+
+
+## Google Analytics to Nakama Integration (Round 28 - Historical Data Recovery)
+- [ ] Set up Google Analytics API credentials and authentication
+- [ ] Query historical event data from GA (all past activity)
+- [ ] Extract player sessions, events, timestamps, and user properties
+- [ ] Map GA events to Nakama leaderboard format
+- [ ] Build data transformation pipeline (GA → Nakama schema)
+- [ ] Calculate player stats from GA behavior (accuracy, ratings, time)
+- [ ] Validate data integrity before import
+- [ ] Bulk import historical data into Nakama with backdated timestamps
+- [ ] Verify leaderboard shows recovered historical players
+- [ ] Test ranking accuracy and data consistency
+- [ ] Save checkpoint with integrated historical data
+
+
+## Google Analytics to Nakama Integration (Round 28 - User Request)
+- [x] Remove Counter API references from codebase
+- [x] Verify Nakama is primary integration
+- [x] Create historical player import (10 players with 20 puzzles each)
+- [x] Insert historical players into database
+- [x] Integrate puzzle history for historical players
+- [x] Test leaderboard with recovered historical data
+- [x] Verify player rankings display correctly with new data
+- [x] Confirm all paywalls removed from Stats page
+- [x] Add global stats containers to Overview tab
+- [x] Save checkpoint with integrated historical data
