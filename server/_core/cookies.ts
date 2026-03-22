@@ -25,8 +25,17 @@ export function getSessionCookieOptions(
   req: Request
 ): Pick<CookieOptions, "domain" | "httpOnly" | "path" | "sameSite" | "secure"> {
   const isSecure = isSecureRequest(req);
+  const host = req.get('host') || '';
+  
+  let domain: string | undefined = undefined;
+  if (host.includes('openpecker.com')) {
+    domain = 'openpecker.com';
+  } else if (host.includes('manus.space')) {
+    domain = host;
+  }
   
   return {
+    domain,
     httpOnly: true,
     path: "/",
     sameSite: "lax",
