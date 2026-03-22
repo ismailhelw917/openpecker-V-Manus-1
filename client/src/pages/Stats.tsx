@@ -263,13 +263,19 @@ export default function Stats() {
             ))}
           </ul>
           <Button
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              console.log('[Stats] Upgrade button touched on mobile');
+              setShowPremiumPaywall(true);
+            }}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               console.log('[Stats] Upgrade button clicked, setting showPremiumPaywall to true');
               setShowPremiumPaywall(true);
             }}
-            className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-8 py-3 text-lg rounded-lg w-full"
+            className="bg-amber-400 hover:bg-amber-500 active:bg-amber-600 text-slate-900 font-bold px-8 py-3 text-lg rounded-lg w-full pointer-events-auto touch-none"
             type="button"
           >
             Upgrade to Premium

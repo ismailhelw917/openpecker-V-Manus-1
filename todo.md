@@ -1790,3 +1790,9 @@
 - [x] Task 2: Fixed paywall button with proper event handling and z-index (z-[9999])
 - [x] Task 3: Created puzzle classification helper with ECO codes and hierarchy
 - [x] Task 4: Created iOS/Android setup guide with Capacitor (2-3 week timeline)
+
+## Round 85 - Mobile Bug Fix
+- [x] Fix "Upgrade to Premium" button not responding on mobile
+- [x] Added onTouchEnd handler for mobile touch events
+- [x] Added pointer-events-auto and touch-none classes
+- [x] Added active:bg-amber-600 for visual feedback on mobile
