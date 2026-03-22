@@ -6,16 +6,25 @@ import { getLoginUrl } from "@/const";
 /**
  * Auth page - handles user authentication
  * This app uses OAuth exclusively (no email/password auth)
+ * New users are redirected to /stats with paywall modal
+ * Existing users are redirected to home
  */
 export default function Auth() {
   const [, setLocation] = useLocation();
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
 
   useEffect(() => {
-    if (!loading && isAuthenticated) {
-      setLocation("/");
+    if (!loading && isAuthenticated && user) {
+      // If user is new (hasRegistered = 0), redirect to stats with paywall
+      if (user.hasRegistered === 0) {
+        console.log('[Auth] New user detected, redirecting to paywall');
+        setLocation("/stats?showPaywall=true");
+      } else {
+        // Existing user, go to home
+        setLocation("/");
+      }
     }
-  }, [isAuthenticated, loading, setLocation]);
+  }, [isAuthenticated, loading, user, setLocation]);
 
   useEffect(() => {
     // Auto-redirect to OAuth login

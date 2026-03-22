@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -62,12 +62,22 @@ const MOCK_CYCLES_PER_DAY = [
 ];
 
 export default function Stats() {
+  const [location] = useLocation();
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
   const [selectedSet, setSelectedSet] = useState<string>("all");
   const { user, loading: authLoading, isAuthenticated } = useAuth();
   const [showPremiumPaywall, setShowPremiumPaywall] = useState(false);
+  
+  // Check if we should show paywall for new users
+  useEffect(() => {
+    const params = new URLSearchParams(location.split('?')[1] || '');
+    if (params.get('showPaywall') === 'true') {
+      console.log('[Stats] Opening paywall for new user');
+      setShowPremiumPaywall(true);
+    }
+  }, [location]);
   const [loading, setLoading] = useState(false);
   const [checkoutPlan, setCheckoutPlan] = useState<string | null>(null);
   const [deviceId] = useState<string | null>(() => {

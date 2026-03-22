@@ -1796,3 +1796,10 @@
 - [x] Added onTouchEnd handler for mobile touch events
 - [x] Added pointer-events-auto and touch-none classes
 - [x] Added active:bg-amber-600 for visual feedback on mobile
+
+## Round 86 - Paywall Redirect After Sign Up
+- [x] Add redirect to paywall after OAuth sign up
+- [x] Check if user is new (hasRegistered = 0)
+- [x] Redirect to /stats with paywall modal open (showPaywall=true query param)
+- [x] Handle query parameter in Stats page to auto-open paywall modal
+- [x] Preserve user state during redirect
