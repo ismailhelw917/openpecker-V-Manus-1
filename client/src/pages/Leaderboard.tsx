@@ -14,13 +14,14 @@ export function Leaderboard() {
   });
 
   const players = leaderboardData?.players || [];
-  const stats = leaderboardData?.stats || {
-    activePlayerCount: 0,
-    totalPlayerCount: 0,
+  const summary = leaderboardData?.summary || {
+    activePlayers: 0,
+    totalPlayers: 0,
     topAccuracy: 0,
     topRating: 1200,
     averageAccuracy: 0,
     averageRating: 1200,
+    totalPuzzlesSolvedGlobally: 0,
   };
 
   const getMedalColor = (rank: number) => {
@@ -57,11 +58,11 @@ export function Leaderboard() {
         <div className="grid grid-cols-2 gap-4 mb-8">
           <Card className="bg-white border border-slate-200 p-4">
             <div className="text-sm font-medium text-slate-600 mb-1">Active Players</div>
-            <div className="text-2xl font-bold text-teal-600">{stats.activePlayerCount}</div>
+            <div className="text-2xl font-bold text-teal-600">{summary.activePlayers}</div>
           </Card>
           <Card className="bg-white border border-slate-200 p-4">
             <div className="text-sm font-medium text-slate-600 mb-1">Total Registered</div>
-            <div className="text-2xl font-bold text-teal-600">{stats.totalPlayerCount}</div>
+            <div className="text-2xl font-bold text-teal-600">{summary.totalPlayers}</div>
           </Card>
         </div>
 
@@ -146,7 +147,7 @@ export function Leaderboard() {
                         </div>
                       </td>
                       <td className="py-4 px-4">
-                        <span className="font-medium text-slate-900">{player.name}</span>
+                        <span className="font-medium text-slate-900">{player.playerName}</span>
                       </td>
                       <td className="py-4 px-4 text-right">
                         <span className="text-slate-700">{player.puzzlesSolved}</span>
@@ -161,9 +162,9 @@ export function Leaderboard() {
                         <span className="text-slate-700">
                           {sortBy === 'speed'
                             ? player.puzzlesSolved > 0
-                              ? `${(player.totalTimeMinutes / player.puzzlesSolved).toFixed(1)}m`
+                              ? `${(player.totalMinutes / player.puzzlesSolved).toFixed(1)}m`
                               : '-'
-                            : `${player.totalTimeMinutes}m`}
+                            : `${player.totalMinutes}m`}
                         </span>
                       </td>
                     </tr>

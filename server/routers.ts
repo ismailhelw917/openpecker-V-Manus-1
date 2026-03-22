@@ -805,20 +805,20 @@ export const appRouter = router({
         }).nullish()
       )
       .query(async ({ input }) => {
-        const { getTopPlayers, getActivePlayerCount, getTotalPlayerCount, getLeaderboardStats } = await import('./leaderboard-clean');
+        const { getTopPlayersByMetric, countActivePlayers, countAllPlayers, getLeaderboardSummary } = await import('./leaderboard-fresh');
         
         const limit = input?.limit ?? 50;
         const sortBy = (input?.sortBy ?? 'accuracy') as 'accuracy' | 'speed' | 'rating';
         
         // Get leaderboard entries
-        const players = await getTopPlayers(limit, sortBy);
+        const players = await getTopPlayersByMetric(limit, sortBy);
         
-        // Get stats
-        const stats = await getLeaderboardStats();
+        // Get summary stats
+        const summary = await getLeaderboardSummary();
         
         return {
           players,
-          stats,
+          summary,
         };
       }),
 

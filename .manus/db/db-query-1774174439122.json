@@ -1,0 +1,45 @@
+{
+  "query": "SELECT id, name, totalPuzzles FROM players WHERE totalPuzzles > 0 ORDER BY totalPuzzles DESC LIMIT 20",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT id, name, totalPuzzles FROM players WHERE totalPuzzles > 0 ORDER BY totalPuzzles DESC LIMIT 20",
+  "rows": [
+    {
+      "id": "90003",
+      "name": "BR",
+      "totalPuzzles": "75"
+    },
+    {
+      "id": "90106",
+      "name": "Test-Player",
+      "totalPuzzles": "75"
+    },
+    {
+      "id": "150002",
+      "name": "Guest-1eeac2ef",
+      "totalPuzzles": "63"
+    },
+    {
+      "id": "150001",
+      "name": "Guest-UzNp9qOl",
+      "totalPuzzles": "21"
+    },
+    {
+      "id": "150004",
+      "name": "Guest-c2651c39",
+      "totalPuzzles": "16"
+    },
+    {
+      "id": "120001",
+      "name": "Guest-eb6c2127",
+      "totalPuzzles": "5"
+    },
+    {
+      "id": "90107",
+      "name": "Guest-5b6f7617",
+      "totalPuzzles": "2"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\ttotalPuzzles\n90003\tBR\t75\n90106\tTest-Player\t75\n150002\tGuest-1eeac2ef\t63\n150001\tGuest-UzNp9qOl\t21\n150004\tGuest-c2651c39\t16\n120001\tGuest-eb6c2127\t5\n90107\tGuest-5b6f7617\t2\n",
+  "stderr": "",
+  "execution_time_ms": 1634
+}
