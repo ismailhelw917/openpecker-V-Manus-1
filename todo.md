@@ -2072,3 +2072,14 @@
 - [x] Verify dev server running without errors
 - [x] Confirm leaderboard endpoint responding correctly
 - [x] Save checkpoint with critical fix
+
+
+## CRITICAL BUG: Puzzle Count Not Updating (Round 31 - User Report)
+- [x] Investigate why puzzle data is not being recorded when users complete puzzles
+- [x] Check if Session component is calling cycles.create endpoint
+- [x] Verify cycle data is being saved to database
+- [x] Confirm leaderboard query is reading updated data
+- [x] Test end-to-end: complete puzzle -> data saved -> leaderboard updates
+- [x] Verified test cycle created successfully and appears in leaderboard
+- [x] Confirmed Active Players count updated to 13 (was 12)
+- [x] Confirmed new test player appears at rank 2 with 50 puzzles

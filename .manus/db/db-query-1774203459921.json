@@ -1,0 +1,34 @@
+{
+  "query": "SELECT * FROM cycle_history WHERE deviceId = 'test-device-456' ORDER BY completedAt DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT * FROM cycle_history WHERE deviceId = 'test-device-456' ORDER BY completedAt DESC LIMIT 5;",
+  "rows": [
+    {
+      "id": "330235",
+      "userId": "NULL",
+      "deviceId": "test-device-456",
+      "trainingSetId": "test-set-456",
+      "cycleNumber": "1",
+      "totalPuzzles": "25",
+      "correctCount": "20",
+      "totalTimeMs": "120000",
+      "accuracy": "80.00",
+      "completedAt": "2026-03-22 18:16:54"
+    },
+    {
+      "id": "330234",
+      "userId": "NULL",
+      "deviceId": "test-device-456",
+      "trainingSetId": "test-set-456",
+      "cycleNumber": "1",
+      "totalPuzzles": "25",
+      "correctCount": "20",
+      "totalTimeMs": "120000",
+      "accuracy": "80.00",
+      "completedAt": "2026-03-22 18:16:49"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\tdeviceId\ttrainingSetId\tcycleNumber\ttotalPuzzles\tcorrectCount\ttotalTimeMs\taccuracy\tcompletedAt\n330235\tNULL\ttest-device-456\ttest-set-456\t1\t25\t20\t120000\t80.00\t2026-03-22 18:16:54\n330234\tNULL\ttest-device-456\ttest-set-456\t1\t25\t20\t120000\t80.00\t2026-03-22 18:16:49\n",
+  "stderr": "",
+  "execution_time_ms": 1538
+}

@@ -1,0 +1,22 @@
+{
+  "query": "SELECT deviceId, COUNT(*) as cycle_count, SUM(totalPuzzles) as total_puzzles, MAX(completedAt) as last_completed FROM cycle_history GROUP BY deviceId ORDER BY total_puzzles DESC LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT deviceId, COUNT(*) as cycle_count, SUM(totalPuzzles) as total_puzzles, MAX(completedAt) as last_completed FROM cycle_history GROUP BY deviceId ORDER BY total_puzzles DESC LIMIT 20;",
+  "rows": [
+    {
+      "deviceId": "NULL",
+      "cycle_count": "221",
+      "total_puzzles": "485",
+      "last_completed": "2026-03-22 16:28:05"
+    },
+    {
+      "deviceId": "1eeac2ef60ea3985aa895481028b6a68",
+      "cycle_count": "1",
+      "total_puzzles": "50",
+      "last_completed": "2026-03-21 16:52:47"
+    }
+  ],
+  "messages": [],
+  "stdout": "deviceId\tcycle_count\ttotal_puzzles\tlast_completed\nNULL\t221\t485\t2026-03-22 16:28:05\n1eeac2ef60ea3985aa895481028b6a68\t1\t50\t2026-03-21 16:52:47\n",
+  "stderr": "",
+  "execution_time_ms": 1699
+}

@@ -849,6 +849,8 @@ export const appRouter = router({
         // Get summary stats
         const summary = await getLeaderboardSummary();
         
+        console.log('[stats.getLeaderboard] Returning', players.length, 'players and summary');
+        
         return {
           players,
           summary,

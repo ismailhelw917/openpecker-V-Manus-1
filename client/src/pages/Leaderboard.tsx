@@ -31,6 +31,7 @@ export function Leaderboard() {
     return () => clearInterval(interval);
   }, [refetch]);
 
+  // Handle response data
   const players = leaderboardData?.players || [];
   const summary = leaderboardData?.summary || {
     activePlayers: 0,
