@@ -177,32 +177,43 @@ export async function getLeaderboardPlayers(limit: number = 500, sortBy: 'accura
   const db = await getDb();
   if (!db) throw new Error('Database not available');
 
-  // Build ORDER BY clause based on sort preference
-  // Default: weighted average (40% accuracy, 30% speed, 20% rating, 10% puzzles)
-  let orderBy = 'CASE WHEN totalPuzzles = 0 THEN 0 ELSE ((0.4 * ROUND((totalCorrect / totalPuzzles) * 100)) + (0.3 * (100 - LEAST(100, ROUND((totalTimeMs / totalPuzzles / 1000) * 5)))) + (0.2 * LEAST(100, (COALESCE(rating, 1200) - 1200) / 10)) + (0.1 * LEAST(100, totalPuzzles / 100))) END DESC, totalPuzzles DESC';
-  if (sortBy === 'speed') {
-    orderBy = 'CASE WHEN totalPuzzles = 0 THEN 999999 ELSE ROUND(totalTimeMs / totalPuzzles / 1000) END ASC, totalPuzzles DESC';
-  } else if (sortBy === 'rating') {
-    orderBy = 'CASE WHEN rating IS NULL THEN 1200 ELSE rating END DESC, totalPuzzles DESC';
+  try {
+    // Build ORDER BY clause based on sort preference
+    let orderByClause = '';
+    if (sortBy === 'speed') {
+      orderByClause = 'ORDER BY CASE WHEN totalPuzzles = 0 THEN 999999 ELSE ROUND(totalTimeMs / totalPuzzles / 1000) END ASC, totalPuzzles DESC';
+    } else if (sortBy === 'rating') {
+      orderByClause = 'ORDER BY COALESCE(rating, 1200) DESC, totalPuzzles DESC';
+    } else {
+      // Default: accuracy
+      orderByClause = 'ORDER BY COALESCE(accuracy, 0) DESC, totalPuzzles DESC';
+    }
+
+    // Get all players ranked by performance, only show those with activity
+    const query = `
+      SELECT 
+        id, userId, deviceId, name, email, type, isPremium,
+        COALESCE(totalPuzzles, 0) as totalPuzzles, 
+        COALESCE(totalCorrect, 0) as totalCorrect, 
+        COALESCE(totalTimeMs, 0) as totalTimeMs, 
+        COALESCE(completedCycles, 0) as completedCycles, 
+        COALESCE(accuracy, 0) as accuracy, 
+        COALESCE(rating, 1200) as rating,
+        lastActivityAt, createdAt
+      FROM players
+      WHERE totalPuzzles > 0
+      ${orderByClause}
+      LIMIT ${limit}
+    `;
+    
+    console.log('[getLeaderboardPlayers] Executing query with sortBy:', sortBy);
+    const result = await db.execute(sql.raw(query));
+    
+    const rows = Array.isArray(result) ? (Array.isArray(result[0]) ? result[0] : result) : [];
+    console.log('[getLeaderboardPlayers] Returned', rows.length, 'players');
+    return rows;
+  } catch (error) {
+    console.error('[getLeaderboardPlayers] Error:', error);
+    throw error;
   }
-
-  // Get all players ranked by performance, only show those with activity
-  const result = await db.execute(sql`
-    SELECT 
-      id, userId, deviceId, name, email, type, isPremium,
-      COALESCE(totalPuzzles, 0) as totalPuzzles, 
-      COALESCE(totalCorrect, 0) as totalCorrect, 
-      COALESCE(totalTimeMs, 0) as totalTimeMs, 
-      COALESCE(completedCycles, 0) as completedCycles, 
-      COALESCE(accuracy, 0) as accuracy, 
-      COALESCE(rating, 1200) as rating,
-      lastActivityAt, createdAt
-    FROM players
-    WHERE totalPuzzles > 0
-    ORDER BY ${sql.raw(orderBy)}
-    LIMIT ${limit}
-  `);
-
-  const rows = Array.isArray(result) ? (Array.isArray(result[0]) ? result[0] : result) : [];
-  return rows;
 }

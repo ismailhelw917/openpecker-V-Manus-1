@@ -1851,3 +1851,8 @@
 - [x] Removed "Upgrade to Premium" button from Stats.tsx Openings tab
 - [x] Removed all related onClick handlers and paywall triggers
 - [x] Verified all buttons are removed from codebase
+## Round 95 - Fix Leaderboard Not Updating
+- [x] Verified cycle data is being saved to database (65 cycles, 278 attempts)
+- [x] Verified player records are created with stats (8 players with data)
+- [x] Fixed getLeaderboardPlayers function to use simpler, more reliable SQL
+- [x] Added logging to debug leaderboard queries
