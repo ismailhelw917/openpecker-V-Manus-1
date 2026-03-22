@@ -63,7 +63,7 @@ export function registerOAuthRoutes(app: Express) {
         return;
       }
 
-      await db.upsertUser({
+      const upsertedUser = await db.upsertUser({
         openId: userInfo.openId,
         name: userInfo.name || null,
         email: userInfo.email ?? null,
@@ -79,7 +79,10 @@ export function registerOAuthRoutes(app: Express) {
       const cookieOptions = getSessionCookieOptions(req);
       res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
 
-      const returnPath = parseReturnPath(state);
+      let returnPath = parseReturnPath(state);
+      if (upsertedUser && upsertedUser.hasRegistered === 0) {
+        returnPath = "/stats?showPaywall=true";
+      }
       res.redirect(302, returnPath);
     } catch (error) {
       console.error("[OAuth] Callback failed", error);
