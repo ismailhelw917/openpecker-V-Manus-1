@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
+import { PremiumPaywall } from "@/components/PremiumPaywall";
 import { useVisitorStats } from "@/hooks/useVisitorStats";
 import {
   Users,
@@ -42,6 +43,7 @@ interface UserStats {
 export default function ProAnalytics() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
+  const [showPremiumPaywall, setShowPremiumPaywall] = useState(false);
   const [puzzleStats, setPuzzleStats] = useState<PuzzleStats | null>(null);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -111,11 +113,24 @@ export default function ProAnalytics() {
             Advanced Analytics is available for Premium subscribers only. Upgrade your account to access detailed platform statistics.
           </p>
           <Button 
-            onClick={() => setLocation("/settings")}
+            onClick={() => setShowPremiumPaywall(true)}
             className="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold"
           >
             Upgrade to Premium
           </Button>
+          {showPremiumPaywall && (
+            <PremiumPaywall
+              onClose={() => setShowPremiumPaywall(false)}
+              onMonthlyClick={() => {
+                console.log('[ProAnalytics] Monthly subscription clicked');
+                setShowPremiumPaywall(false);
+              }}
+              onLifetimeClick={() => {
+                console.log('[ProAnalytics] Lifetime subscription clicked');
+                setShowPremiumPaywall(false);
+              }}
+            />
+          )}
         </Card>
       </div>
     );
