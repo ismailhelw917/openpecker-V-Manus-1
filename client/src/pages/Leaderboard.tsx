@@ -60,13 +60,13 @@ export function Leaderboard() {
   return (
     <div className="min-h-screen bg-yellow-400 pb-24">
       {/* Header */}
-      <div className="bg-gradient-to-b from-teal-50 to-white px-4 py-6 sm:py-8">
+      <div className="bg-gradient-to-b from-slate-900 to-slate-800 px-4 py-6 sm:py-8">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center gap-2 sm:gap-3 mb-2">
             <Trophy className="w-6 sm:w-8 h-6 sm:h-8 text-teal-600" />
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Leaderboard</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">Leaderboard</h1>
           </div>
-          <p className="text-sm sm:text-base text-slate-600">Master the Woodpecker method with the best trainers</p>
+          <p className="text-sm sm:text-base text-slate-300">Master the Woodpecker method with the best trainers</p>
         </div>
       </div>
 
