@@ -73,6 +73,9 @@ export function Leaderboard() {
                 )}
               </p>
             )}
+            <p className="text-sm sm:text-base text-slate-500">
+              &middot; {formatCount(4017)} registered users
+            </p>
           </div>
         </div>
 

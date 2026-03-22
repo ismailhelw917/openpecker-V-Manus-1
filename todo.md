@@ -1803,3 +1803,9 @@
 - [x] Redirect to /stats with paywall modal open (showPaywall=true query param)
 - [x] Handle query parameter in Stats page to auto-open paywall modal
 - [x] Preserve user state during redirect
+
+## Round 87 - Route Protection & Auth Guards
+- [ ] Create ProtectedRoute component for authentication guards
+- [ ] Apply ProtectedRoute to /stats, /train, /sets, /rank, /settings
+- [ ] Redirect unauthenticated users to login instead of showing protected page
+- [ ] Test navigation flow on mobile and desktop
