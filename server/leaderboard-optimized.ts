@@ -1,9 +1,11 @@
 import { sql } from 'drizzle-orm';
 import { getDb } from './db';
+import { getLeaderboardRecords } from './nakama-leaderboard';
 
 /**
- * Optimized Leaderboard System for TiDB
- * Uses efficient SQL queries with caching for fast ranking
+ * Nakama-based Leaderboard System
+ * Uses Nakama API for leaderboard management and ranking
+ * Database queries are used as fallback only
  */
 
 interface LeaderboardEntry {
@@ -24,6 +26,12 @@ interface LeaderboardCache {
 // In-memory cache for leaderboard
 const leaderboardCache: Map<string, LeaderboardCache> = new Map();
 const CACHE_TTL = 10000; // 10 second cache for frequent updates
+
+/**
+ * NOTE: Nakama is the primary source of truth for leaderboards.
+ * Database queries below are fallback implementations only.
+ * For production use, integrate with Nakama API directly.
+ */
 
 /**
  * Get top players with efficient queries

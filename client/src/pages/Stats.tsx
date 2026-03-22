@@ -186,7 +186,7 @@ export default function Stats() {
     { retry: 1, retryDelay: 1000 }
   );
 
-  // Fetch Counter API metrics
+  // Fetch online count and total players (Nakama-based)
   const { data: onlineData } = trpc.system.getOnlineCount.useQuery(undefined, {
     retry: 1,
     retryDelay: 1000,
@@ -447,6 +447,36 @@ export default function Stats() {
             {/* Key Metrics Grid */}
             <StatsDisplay stats={finalStats} isLoading={isLoading} />
 
+            {/* Global Leaderboard Stats */}
+            {leaderboardData?.summary && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
+                <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-4">
+                  <div className="text-xs sm:text-sm font-medium text-slate-400 mb-1">Top Accuracy</div>
+                  <div className="text-lg sm:text-2xl font-bold text-teal-400">{leaderboardData.summary.topAccuracy}%</div>
+                </Card>
+                <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-4">
+                  <div className="text-xs sm:text-sm font-medium text-slate-400 mb-1">Avg Accuracy</div>
+                  <div className="text-lg sm:text-2xl font-bold text-teal-400">{leaderboardData.summary.averageAccuracy}%</div>
+                </Card>
+                <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-4">
+                  <div className="text-xs sm:text-sm font-medium text-slate-400 mb-1">Top Rating</div>
+                  <div className="text-lg sm:text-2xl font-bold text-amber-400">{leaderboardData.summary.topRating}</div>
+                </Card>
+                <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-4">
+                  <div className="text-xs sm:text-sm font-medium text-slate-400 mb-1">Global Puzzles</div>
+                  <div className="text-lg sm:text-2xl font-bold text-teal-400">{leaderboardData.summary.totalPuzzlesSolvedGlobally}</div>
+                </Card>
+                <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-4">
+                  <div className="text-xs sm:text-sm font-medium text-slate-400 mb-1">Previous Subs</div>
+                  <div className="text-lg sm:text-2xl font-bold text-amber-400">{leaderboardData.summary.previousSubscribersCount}</div>
+                </Card>
+                <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-4">
+                  <div className="text-xs sm:text-sm font-medium text-slate-400 mb-1">Avg Rating</div>
+                  <div className="text-lg sm:text-2xl font-bold text-amber-400">{leaderboardData.summary.averageRating}</div>
+                </Card>
+              </div>
+            )}
+
             {/* Rating Trend Chart */}
             {finalStats && (
               <div className="relative">
@@ -474,16 +504,9 @@ export default function Stats() {
           </div>
         )}
 
-        {/* Trends Tab - Premium locked */}
+        {/* Trends Tab - Now free for all users */}
         {activeTab === "trends" && (
           <div className="space-y-8 relative">
-            {!user?.isPremium && (
-              <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950/70 backdrop-blur-sm">
-                <Lock className="w-10 h-10 text-amber-400 mb-3" />
-                <p className="text-amber-400 font-bold text-xl mb-1">Premium Analytics</p>
-                <p className="text-slate-400 text-sm mb-4 text-center px-4 max-w-xs">Unlock accuracy trends, time analysis, and training cycle insights</p>
-              </div>
-            )}
             {/* Accuracy Trend */}
             <Card className="bg-slate-900/50 border-teal-900/30 p-2.5 sm:p-6">
               <h3 className="text-sm sm:text-xl font-bold text-white mb-3 sm:mb-6">Accuracy Trend (7 Days)</h3>
@@ -549,16 +572,9 @@ export default function Stats() {
           </div>
         )}
 
-        {/* Openings Tab - Premium locked */}
+        {/* Openings Tab - Now free for all users */}
         {activeTab === "openings" && (
           <div className="space-y-8 relative">
-            {!user?.isPremium && (
-              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-950/70 backdrop-blur-sm rounded-lg min-h-[300px]">
-                <Lock className="w-10 h-10 text-amber-400 mb-3" />
-                <p className="text-amber-400 font-bold text-xl mb-1">Premium Feature</p>
-                <p className="text-slate-400 text-sm mb-4 text-center px-4 max-w-xs">Track your mastery of each opening with detailed breakdowns</p>
-              </div>
-            )}
             <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-6">
               <h3 className="text-base sm:text-xl font-bold text-white mb-4 sm:mb-6">Opening Mastery</h3>
               <div className="space-y-3 sm:space-y-4">

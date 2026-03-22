@@ -1,0 +1,25 @@
+{
+  "query": "SELECT COUNT(*) as total_records FROM player_events LIMIT 1; SELECT COUNT(*) as total_players FROM player_stats LIMIT 1; SELECT COUNT(*) as total_snapshots FROM site_snapshots LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT COUNT(*) as total_records FROM player_events LIMIT 1; SELECT COUNT(*) as total_players FROM player_stats LIMIT 1; SELECT COUNT(*) as total_snapshots FROM site_snapshots LIMIT 1;",
+  "rows": [
+    {
+      "total_records": "0"
+    },
+    {
+      "total_records": "total_players"
+    },
+    {
+      "total_records": "0"
+    },
+    {
+      "total_records": "total_snapshots"
+    },
+    {
+      "total_records": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_records\n0\ntotal_players\n0\ntotal_snapshots\n0\n",
+  "stderr": "",
+  "execution_time_ms": 2109
+}

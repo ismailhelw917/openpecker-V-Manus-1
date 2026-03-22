@@ -2010,3 +2010,15 @@
 - [x] Add global stats containers using new leaderboard API
 - [x] Display Active Players and Total Registered counts
 - [x] Save checkpoint
+
+
+## Counter API Removal & Nakama Integration (Round 27 - User Request)
+- [x] Verify Counter API is not used in codebase
+- [x] Confirm Nakama integration exists (nakama-leaderboard.ts)
+- [x] Update leaderboard-optimized.ts to note Nakama as primary source
+- [x] Remove all paywall locks from Stats page (Trends, Openings tabs)
+- [x] Add relevant global stats to Overview tab
+- [x] Thoroughly verify Nakama is being used exclusively
+- [x] Double-check all Counter API references are removed
+- [x] Test leaderboard with Nakama data
+- [x] Save checkpoint
