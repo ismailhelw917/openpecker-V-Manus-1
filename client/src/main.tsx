@@ -6,7 +6,11 @@ import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import App from "./App";
 import { getLoginUrl } from "./const";
+import { initializeMatomo } from "./lib/matomo";
 import "./index.css";
+
+// Initialize Matomo analytics
+initializeMatomo();
 
 const queryClient = new QueryClient({
   defaultOptions: {

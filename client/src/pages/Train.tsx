@@ -2,6 +2,7 @@ import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "@/_core/deviceId";
+import { trackTrainingStart } from "@/lib/matomo";
 import { useHierarchyCache } from "@/hooks/useHierarchyCache";
 import { PremiumPaywall } from "@/components/PremiumPaywall";
 import { toast } from "sonner";
@@ -179,6 +180,9 @@ export default function Train() {
 
     try {
       const deviceId = getOrCreateDeviceId();
+      
+      // Track training start in Matomo
+      trackTrainingStart(`${selectedOpening} - ${selectedVariation}`, puzzleCount);
 
       const session = await createSessionMutation.mutateAsync({
         opening: selectedOpening,

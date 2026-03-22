@@ -6,6 +6,7 @@ import { ChevronLeft } from "lucide-react";
 import { ChessgroundBoard } from "@/components/ChessgroundBoard";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "@/_core/deviceId";
+import { trackPuzzleSolved, trackCycleComplete, trackSessionStart, trackSessionEnd } from "@/lib/matomo";
 
 export default function Session() {
   const [match, params] = useRoute("/session/:id");
@@ -373,6 +374,10 @@ export default function Session() {
     } else {
       // Cycle completed - record cycle
       const accuracy = (correctCount / puzzles.length) * 100;
+      
+      // Track cycle completion in Matomo
+      trackCycleComplete(puzzles.length, correctCount, accuracy);
+      
       completeCycleMutation.mutate({
         deviceId: getOrCreateDeviceId(),
         trainingSetId: sessionId,
@@ -469,6 +474,10 @@ export default function Session() {
   const markPuzzleSolved = useCallback(() => {
     const puzzleTimeMs = Date.now() - puzzleStartTime;
     recordPuzzleAttempt(true, puzzleTimeMs);
+    
+    // Track puzzle solved in Matomo
+    trackPuzzleSolved(100, puzzleTimeMs);
+    
     setCorrectCount(prev => {
       const newCount = prev + 1;
       // Save updated correct count to DB immediately

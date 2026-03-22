@@ -2137,3 +2137,15 @@
 - [x] Updated Session component to not send userId
 - [x] Write and pass user tracking tests (5/5 passing)
 - [x] Verify leaderboard cache invalidation works
+
+
+## IMPLEMENTATION: Matomo Analytics Tracking (Round 36)
+- [x] Install Matomo tracking library (matomo-tracker)
+- [x] Configure Matomo site ID and tracker URL
+- [x] Add Matomo initialization in main.tsx
+- [x] Track page views for all routes (leaderboard, stats)
+- [x] Track user events: training start, puzzle solve, cycle complete
+- [x] Track user engagement: session duration, features used
+- [x] Add custom dimensions for user metadata
+- [x] Test analytics data collection (9/9 tests passing)
+- [x] Verify data collection in frontend and backend
