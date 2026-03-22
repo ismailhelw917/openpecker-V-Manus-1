@@ -1868,3 +1868,33 @@
 - [x] Fixed cycles.create to ensure player is created before cycle is saved
 - [x] Created 6-test suite validating player creation and cycle userId assignment
 - [x] All tests passing - cycles now always have valid userId
+## Round 98 - Complete Leaderboard Overhaul
+- [x] Audit database to understand user merge damage (4,017 users, 111 players)
+- [x] Created player records for all 4,017 users (now 4,022 total)
+- [x] Recalculated all player stats from cycle_history
+- [x] Verified leaderboard query correctly shows only 8 active players with training data
+- [x] Confirmed 332 puzzles and 31 cycles in training data
+- [x] Leaderboard is now working correctly - showing all players with activity
+## Round 99 - Fix Critical Data Collection Issue
+- [ ] Identify why training data isn't being saved (12K+ users but only 8 have data)
+- [ ] Check if cycles.create endpoint is being called from frontend
+- [ ] Verify puzzle_attempts are being recorded
+- [ ] Fix training session recording
+- [ ] Rebuild leaderboard with correct data from all active users
+## Round 100 - Completely Rebuild Rank/Leaderboard Page
+- [ ] Remove old buggy Leaderboard.tsx
+- [ ] Create new clean leaderboard backend query
+- [ ] Design new leaderboard UI from scratch
+- [ ] Implement new leaderboard frontend component
+- [ ] Test with real data
+
+
+## Round 100 - Completely Rebuild Rank/Leaderboard Page
+- [x] Remove old buggy Leaderboard.tsx and related test files
+- [x] Create new clean leaderboard backend query (server/leaderboard.ts)
+- [x] Design new leaderboard UI from scratch (Leaderboard.tsx component)
+- [x] Implement new leaderboard frontend component with Tabs for sorting
+- [x] Write comprehensive test suite (13 tests, all passing)
+- [x] Update routers.ts to use new leaderboard implementation
+- [x] Fix SQL query for speed sorting (avgTimePerPuzzle calculation)
+- [x] All tests passing: accuracy, speed, rating sorting, player counts, consistency checks

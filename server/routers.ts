@@ -800,49 +800,26 @@ export const appRouter = router({
     getLeaderboard: publicProcedure
       .input(
         z.object({
-          limit: z.number().default(500),
+          limit: z.number().default(100),
           sortBy: z.enum(['accuracy', 'speed', 'rating']).default('accuracy'),
         }).nullish()
       )
       .query(async ({ input }) => {
-        const limit = input?.limit ?? 500;
+        const { getLeaderboard, getActivePlayerCount, getTotalRegisteredPlayerCount } = await import('./leaderboard');
+        
+        const limit = input?.limit ?? 100;
         const sortBy = (input?.sortBy ?? 'accuracy') as 'accuracy' | 'speed' | 'rating';
-        const entries = await getLeaderboardPlayers(limit, sortBy);
-        const onlineCount = getMockOnlineCount();
-        const totalCount = await getTotalPlayerCount();
-
-        // Filter to only show players with activity (at least 1 puzzle)
-        const activeEntries = entries.filter((e: any) => e.totalPuzzles > 0);
+        
+        // Get leaderboard entries
+        const entries = await getLeaderboard(limit, sortBy);
+        
+        // Get player counts
+        const activeCount = await getActivePlayerCount();
+        const totalCount = await getTotalRegisteredPlayerCount();
+        
         return {
-          entries: activeEntries.map((e: any, index: number) => {
-            // Calculate derived fields from raw data
-            const totalTimeMs = Number(e.totalTimeMs) || 0;
-            const totalPuzzles = Number(e.totalPuzzles) || 0;
-            const completedCycles = Number(e.completedCycles) || 0;
-            const totalCorrect = Number(e.totalCorrect) || 0;
-            const accuracy = Number(e.accuracy) || 0;
-            const rating = Number(e.rating) || 1200;
-            
-            // Calculate speed (average seconds per puzzle)
-            const speed = totalPuzzles > 0 ? Math.round((totalTimeMs / totalPuzzles) / 1000) : 0;
-            
-            // Calculate total time in minutes
-            const totalTimeMin = Math.round(totalTimeMs / 1000 / 60);
-            
-            return {
-              ...e,
-              totalPuzzles,
-              completedCycles,
-              totalCorrect,
-              accuracy: Math.round(accuracy * 100) / 100,
-              rating,
-              speed,
-              totalTimeMin,
-              hasActivity: true,
-              rank: index + 1,
-            };
-          }),
-          onlineCount,
+          entries,
+          activeCount,
           totalCount,
         };
       }),
