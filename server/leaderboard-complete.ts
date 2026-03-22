@@ -28,39 +28,35 @@ export async function getTopPlayersByMetric(
   if (!db) throw new Error('Database connection failed');
 
   try {
-    // Build ORDER BY clause based on sort preference
-    let orderClause = '';
-    if (sortBy === 'speed') {
-      orderClause = 'ORDER BY CASE WHEN totalPuzzles = 0 THEN 999999 ELSE ROUND(totalMinutes * 60 / totalPuzzles) END ASC, totalPuzzles DESC';
-    } else if (sortBy === 'rating') {
-      orderClause = 'ORDER BY COALESCE(rating, 1200) DESC, totalPuzzles DESC';
-    } else {
-      orderClause = 'ORDER BY COALESCE(accuracy, 0) DESC, totalPuzzles DESC';
-    }
+    // Always sort by puzzles solved first, then by join date
+    // This shows all players ranked by training progress
+    let orderClause = 'ORDER BY totalPuzzles DESC, joinDate ASC';
 
-    // Query that uses cycle_history as the primary data source
+    // Query that includes ALL users (with or without training data)
     const query = `
       SELECT 
         playerName,
         totalPuzzles,
         accuracy,
         rating,
-        totalMinutes
+        totalMinutes,
+        joinDate
       FROM (
-        -- Registered users from cycle_history
+        -- Registered users - include all with or without training
         SELECT 
           u.name as playerName,
           COALESCE(SUM(ch.totalPuzzles), 0) as totalPuzzles,
           CASE 
-            WHEN SUM(ch.totalPuzzles) = 0 THEN 0
+            WHEN COALESCE(SUM(ch.totalPuzzles), 0) = 0 THEN 0
             ELSE ROUND(SUM(ch.correctCount) * 100.0 / SUM(ch.totalPuzzles), 2)
           END as accuracy,
           1200 as rating,
-          COALESCE(ROUND(SUM(ch.totalTimeMs) / 60000), 0) as totalMinutes
+          COALESCE(ROUND(SUM(ch.totalTimeMs) / 60000), 0) as totalMinutes,
+          u.createdAt as joinDate
         FROM users u
         LEFT JOIN cycle_history ch ON u.id = ch.userId
         WHERE u.id IS NOT NULL
-        GROUP BY u.id, u.name
+        GROUP BY u.id, u.name, u.createdAt
         
         UNION ALL
         
@@ -73,28 +69,29 @@ export async function getTopPlayersByMetric(
             ELSE ROUND(SUM(ch.correctCount) * 100.0 / SUM(ch.totalPuzzles), 2)
           END as accuracy,
           1200 as rating,
-          COALESCE(ROUND(SUM(ch.totalTimeMs) / 60000), 0) as totalMinutes
+          COALESCE(ROUND(SUM(ch.totalTimeMs) / 60000), 0) as totalMinutes,
+          NOW() as joinDate
         FROM cycle_history ch
         WHERE ch.deviceId IS NOT NULL AND ch.userId IS NULL
         GROUP BY ch.deviceId
         
         UNION ALL
         
-        -- Fallback: Guest players from players table (for those without cycle_history)
+        -- Fallback: Guest players from players table
         SELECT 
           p.name as playerName,
           COALESCE(p.totalPuzzles, 0) as totalPuzzles,
           COALESCE(p.accuracy, 0) as accuracy,
           COALESCE(p.rating, 1200) as rating,
-          COALESCE(ROUND(p.totalTimeMs / 60000), 0) as totalMinutes
+          COALESCE(ROUND(p.totalTimeMs / 60000), 0) as totalMinutes,
+          p.createdAt as joinDate
         FROM players p
-        WHERE p.userId IS NULL AND p.totalPuzzles > 0
+        WHERE p.userId IS NULL
           AND p.deviceId NOT IN (SELECT DISTINCT deviceId FROM cycle_history WHERE deviceId IS NOT NULL)
       ) combined_players
-      WHERE totalPuzzles > 0
       ${orderClause}
       LIMIT ${limit}
-    `;
+    `
 
     const result = await db.execute(sql.raw(query));
     const rows = Array.isArray(result) ? (Array.isArray(result[0]) ? result[0] : result) : [];
