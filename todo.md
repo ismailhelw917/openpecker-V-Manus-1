@@ -1822,3 +1822,11 @@
 - [x] Added support for both new JSON format (with returnPath) and legacy format
 - [x] Created comprehensive test suite for state decoding (9 tests)
 - [x] All 9 tests passing for state decoding with both formats
+## Round 90 - OAuth URL-Safe Base64 Encoding Fix
+- [x] Fixed OAuth state parameter encoding corruption (+ / = characters)
+- [x] Implemented URL-safe base64 encoding (RFC 4648) in const.ts
+- [x] Updated sdk.ts decodeState to handle URL-safe base64 format
+- [x] Updated oauth.ts parseReturnPath to handle URL-safe base64 format
+- [x] Disabled dynamic port selection to always use port 3000
+- [x] Created comprehensive test suite for URL-safe base64 (10 tests)
+- [x] All 10 tests passing for URL-safe encoding with all domain types

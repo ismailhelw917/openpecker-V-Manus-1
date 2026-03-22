@@ -11,7 +11,12 @@ function getQueryParam(req: Request, key: string): string | undefined {
 
 function parseReturnPath(state: string): string {
   try {
-    const decoded = atob(state);
+    // First try URL-safe base64 (new format)
+    const urlSafeBase64 = state.replace(/-/g, '+').replace(/_/g, '/');
+    // Add padding if needed
+    const padded = urlSafeBase64 + '='.repeat((4 - (urlSafeBase64.length % 4)) % 4);
+    const decoded = atob(padded);
+    
     // Try JSON format first (new format with returnPath)
     const parsed = JSON.parse(decoded);
     if (parsed && typeof parsed.returnPath === "string") {
@@ -22,7 +27,19 @@ function parseReturnPath(state: string): string {
       }
     }
   } catch {
-    // Legacy format: state is just btoa(redirectUri), redirect to /
+    // Try legacy format: state is just btoa(redirectUri)
+    try {
+      const decoded = atob(state);
+      const parsed = JSON.parse(decoded);
+      if (parsed && typeof parsed.returnPath === "string") {
+        const path = parsed.returnPath;
+        if (path.startsWith("/") && !path.startsWith("//")) {
+          return path;
+        }
+      }
+    } catch {
+      // Not JSON, return default
+    }
   }
   return "/";
 }

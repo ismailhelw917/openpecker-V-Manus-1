@@ -40,17 +40,37 @@ class OAuthService {
 
   private decodeState(state: string): string {
     try {
-      const decoded = atob(state);
+      // First try URL-safe base64 (new format)
+      const urlSafeBase64 = state.replace(/-/g, '+').replace(/_/g, '/');
+      // Add padding if needed
+      const padded = urlSafeBase64 + '='.repeat((4 - (urlSafeBase64.length % 4)) % 4);
+      const decoded = atob(padded);
+      
       // Try JSON format first (new format with returnPath)
       const parsed = JSON.parse(decoded);
       if (parsed && typeof parsed.redirectUri === "string") {
         return parsed.redirectUri;
       }
     } catch {
-      // Legacy format: state is just btoa(redirectUri)
+      // Try legacy format: state is just btoa(redirectUri)
+      try {
+        const decoded = atob(state);
+        // Check if it's JSON
+        const parsed = JSON.parse(decoded);
+        if (parsed && typeof parsed.redirectUri === "string") {
+          return parsed.redirectUri;
+        }
+      } catch {
+        // Not JSON, assume it's just the redirectUri
+      }
     }
-    // Fallback: assume it's the legacy format
-    return atob(state);
+    
+    // Fallback: assume it's the legacy format (plain base64)
+    try {
+      return atob(state);
+    } catch {
+      throw new Error("Failed to decode state parameter");
+    }
   }
 
   async getTokenByCode(

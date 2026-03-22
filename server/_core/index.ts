@@ -81,11 +81,14 @@ async function startServer() {
   }
 
   const preferredPort = parseInt(process.env.PORT || "3000");
-  const port = await findAvailablePort(preferredPort);
-
-  if (port !== preferredPort) {
-    console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
-  }
+  // In production/Manus environment, always use the preferred port (3000)
+  // Dynamic port selection breaks OAuth redirect URI matching
+  const port = preferredPort;
+  // Only try alternative ports in local development if explicitly needed
+  // const port = await findAvailablePort(preferredPort);
+  // if (port !== preferredPort) {
+  //   console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
+  // }
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
