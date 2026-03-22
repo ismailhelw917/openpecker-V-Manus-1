@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -6,12 +6,30 @@ import { Trophy, Medal } from "lucide-react";
 
 export function Leaderboard() {
   const [sortBy, setSortBy] = useState<'accuracy' | 'speed' | 'rating'>('accuracy');
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   // Fetch leaderboard data - always sorted by puzzles solved
-  const { data: leaderboardData, isLoading, error } = trpc.stats.getLeaderboard.useQuery({
+  const { data: leaderboardData, isLoading, error, refetch } = trpc.stats.getLeaderboard.useQuery({
     limit: 100,
     sortBy: 'accuracy',
   });
+
+  // Listen for real-time leaderboard updates
+  useEffect(() => {
+    // Simulate listening for leaderboard updates
+    // In a real Nakama setup, this would connect to Nakama's notification system
+    const handleLeaderboardUpdate = () => {
+      console.log('[Leaderboard] Received update notification, refreshing...');
+      refetch();
+    };
+
+    // Check for updates every 3 seconds (fallback polling)
+    const interval = setInterval(() => {
+      handleLeaderboardUpdate();
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [refetch]);
 
   const players = leaderboardData?.players || [];
   const summary = leaderboardData?.summary || {
@@ -23,6 +41,13 @@ export function Leaderboard() {
     averageRating: 1200,
     totalPuzzlesSolvedGlobally: 0,
   };
+
+  // Trigger refresh when refreshTrigger changes
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      refetch();
+    }
+  }, [refreshTrigger, refetch]);
 
   const getMedalColor = (rank: number) => {
     if (rank === 1) return 'text-yellow-500';
