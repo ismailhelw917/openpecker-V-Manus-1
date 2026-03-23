@@ -5,7 +5,6 @@ import { Card } from "@/components/ui/card";
 import { ChevronLeft, Lock, Zap, Shield, CreditCard, Loader, Check, Gift, Tag } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "@/_core/deviceId";
-import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 
@@ -160,7 +159,7 @@ export default function Settings() {
     // If user is not authenticated after auth has loaded, redirect to login
     if (!user) {
       console.log('[Checkout] User not found, redirecting to login');
-      window.location.href = getLoginUrl();
+      window.location.href = "/auth";
       return;
     }
     

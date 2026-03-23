@@ -2372,3 +2372,9 @@
 - [x] Create password_reset_tokens DB table
 - [x] Write 16 vitest tests - all passing
 - [x] Test full auth flow end to end
+
+## UI Cleanup (User Request - Mar 23)
+- [x] Remove "Register with Google" button from Home page (replaced with single Sign In / Register button)
+- [x] Remove "Continue with Google" button from Register page (now redirects to /auth)
+- [x] Remove Google OAuth redirect from Settings checkout handler
+- [x] Delete Rank/Leaderboard tab from bottom navigation
