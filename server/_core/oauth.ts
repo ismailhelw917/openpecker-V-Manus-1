@@ -12,35 +12,41 @@ function getQueryParam(req: Request, key: string): string | undefined {
 
 function parseReturnPath(state: string): string {
   try {
-    // First try URL-safe base64 (new format)
-    const urlSafeBase64 = state.replace(/-/g, '+').replace(/_/g, '/');
+    // URL-decode the state first (OAuth portal may URL-encode it)
+    let normalizedState = state;
+    try {
+      normalizedState = decodeURIComponent(state);
+    } catch {
+      // Already decoded, use as-is
+    }
+
+    // Convert URL-safe base64 to standard base64
+    const standardBase64 = normalizedState.replace(/-/g, '+').replace(/_/g, '/');
     // Add padding if needed
-    const padded = urlSafeBase64 + '='.repeat((4 - (urlSafeBase64.length % 4)) % 4);
+    const padded = standardBase64 + '='.repeat((4 - (standardBase64.length % 4)) % 4);
     const decoded = atob(padded);
     
-    // Try JSON format first (new format with returnPath)
+    console.log('[OAuth] Decoded state JSON:', decoded);
     const parsed = JSON.parse(decoded);
+    
     if (parsed && typeof parsed.returnPath === "string") {
-      // Only allow relative paths to prevent open redirect
-      const path = parsed.returnPath;
-      if (path.startsWith("/") && !path.startsWith("//")) {
+      const path = parsed.returnPath.trim();
+      console.log('[OAuth] Extracted returnPath:', path);
+      
+      // Strict validation: must start with /, must not contain protocol indicators
+      if (
+        path.startsWith("/") &&
+        !path.startsWith("//") &&
+        !path.includes("://") &&
+        !path.includes("%2F%2F") &&
+        !path.includes("%3A%2F%2F")
+      ) {
         return path;
       }
+      console.warn('[OAuth] returnPath failed validation, using default:', path);
     }
-  } catch {
-    // Try legacy format: state is just btoa(redirectUri)
-    try {
-      const decoded = atob(state);
-      const parsed = JSON.parse(decoded);
-      if (parsed && typeof parsed.returnPath === "string") {
-        const path = parsed.returnPath;
-        if (path.startsWith("/") && !path.startsWith("//")) {
-          return path;
-        }
-      }
-    } catch {
-      // Not JSON, return default
-    }
+  } catch (err) {
+    console.error('[OAuth] Failed to parse state:', err instanceof Error ? err.message : err);
   }
   return "/";
 }
@@ -94,7 +100,15 @@ export function registerOAuthRoutes(app: Express) {
         returnPath = "/stats?showPaywall=true";
       }
       console.log("[OAuth] Redirecting to:", returnPath);
-      res.redirect(302, returnPath);
+      // Use HTML redirect instead of 302 for Safari ITP compatibility.
+      // Safari blocks cross-site 302 redirects after OAuth flows, causing a 404.
+      // A same-origin HTML page with JS redirect works correctly on all browsers.
+      res.status(200).set('Content-Type', 'text/html').send(
+        `<!DOCTYPE html><html><head><meta charset="utf-8">
+        <meta http-equiv="refresh" content="0;url=${returnPath}">
+        <script>window.location.replace(${JSON.stringify(returnPath)});</script>
+        </head><body>Redirecting...</body></html>`
+      );
     } catch (error) {
       const errMsg = error instanceof Error ? error.message : String(error);
       console.error("[OAuth] Callback failed:", errMsg);
@@ -128,7 +142,12 @@ export function registerOAuthRoutes(app: Express) {
             returnPath = "/stats?showPaywall=true";
           }
           console.log("[OAuth] Retry succeeded, redirecting to:", returnPath);
-          res.redirect(302, returnPath);
+          res.status(200).set('Content-Type', 'text/html').send(
+            `<!DOCTYPE html><html><head><meta charset="utf-8">
+            <meta http-equiv="refresh" content="0;url=${returnPath}">
+            <script>window.location.replace(${JSON.stringify(returnPath)});</script>
+            </head><body>Redirecting...</body></html>`
+          );
           return;
         } catch (retryError) {
           console.error("[OAuth] Retry also failed:", retryError);
@@ -136,8 +155,13 @@ export function registerOAuthRoutes(app: Express) {
       }
 
       // Redirect to /auth with error instead of showing JSON/404
-      // Using /auth route so the SPA can show a proper error message with retry button
-      res.redirect(302, "/auth?loginError=true");
+      // Using HTML redirect for Safari ITP compatibility
+      res.status(200).set('Content-Type', 'text/html').send(
+        `<!DOCTYPE html><html><head><meta charset="utf-8">
+        <meta http-equiv="refresh" content="0;url=/auth?loginError=true">
+        <script>window.location.replace('/auth?loginError=true');</script>
+        </head><body>Redirecting...</body></html>`
+      );
     }
   });
 }
