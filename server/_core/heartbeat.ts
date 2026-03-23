@@ -1,14 +1,12 @@
 import type { Express, Request, Response } from "express";
-import { recordHeartbeat, getOnlineCount } from "../leaderboard-optimized";
+import { redisHeartbeat, redisOnlineCount } from "../redis";
 
 /**
- * Heartbeat system v2
- * 
+ * Heartbeat system — Redis edition
+ *
  * Frontend sends a ping every 30 seconds.
- * Backend upserts into user_heartbeats with current timestamp.
- * "Online Now" = COUNT(*) WHERE lastPing > NOW() - 45 seconds.
- * 
- * No cleanup cron needed — stale entries are simply excluded by the 45s window.
+ * Backend calls SETEX user:online:[ID] 45 <name>
+ * "Online Now" = count of user:online:* keys (all have TTL, auto-expire after 45s)
  */
 export function registerHeartbeatRoutes(app: Express) {
   /**
@@ -23,28 +21,25 @@ export function registerHeartbeatRoutes(app: Express) {
         return;
       }
 
-      await recordHeartbeat({
-        userId: userId ? Number(userId) : null,
-        deviceId: deviceId || null,
-        playerName: name || undefined,
-      });
+      const id = userId ? `user:${userId}` : `device:${deviceId}`;
+      await redisHeartbeat(id, name || id);
 
       res.json({ success: true });
     } catch (error) {
-      console.error("[Heartbeat] Failed", error);
+      console.error("[Heartbeat] Redis failed", error);
       res.status(500).json({ error: "Heartbeat failed" });
     }
   });
 
   /**
-   * GET /api/heartbeat/active — get online user count
+   * GET /api/heartbeat/active — get online user count from Redis
    */
   app.get("/api/heartbeat/active", async (_req: Request, res: Response) => {
     try {
-      const count = await getOnlineCount();
+      const count = await redisOnlineCount();
       res.json({ onlineCount: count });
     } catch (error) {
-      console.error("[Heartbeat Active] Failed", error);
+      console.error("[Heartbeat Active] Redis failed", error);
       res.status(500).json({ error: "Failed to fetch online count" });
     }
   });

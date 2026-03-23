@@ -72,6 +72,7 @@
     "google-auth-library": "^10.6.2",
     "googleapis": "^171.4.0",
     "input-otp": "^1.4.2",
+    "ioredis": "^5.10.1",
     "jose": "6.1.0",
     "lucide-react": "^0.453.0",
     "motion": "^12.38.0",

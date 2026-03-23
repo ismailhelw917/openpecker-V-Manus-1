@@ -839,22 +839,28 @@ export const appRouter = router({
         }).nullish()
       )
       .query(async ({ input }) => {
-        const { getTopPlayersByMetricOptimized, getLeaderboardSummary } = await import('./leaderboard-optimized');
-        
-        const limit = input?.limit ?? 50;
-        const sortBy = (input?.sortBy ?? 'accuracy') as 'accuracy' | 'speed' | 'rating';
-        
-        // Get leaderboard entries
-        const players = await getTopPlayersByMetricOptimized(limit, sortBy);
-        
-        // Get summary stats
-        const summary = await getLeaderboardSummary();
-        
-        console.log('[stats.getLeaderboard] Returning', players.length, 'players and summary');
-        
+        const { redisGetLeaderboard, redisOnlineCount } = await import('./redis');
+        const limit = input?.limit ?? 100;
+
+        const players = await redisGetLeaderboard(limit);
+        const onlineNow = await redisOnlineCount();
+
+        console.log('[stats.getLeaderboard] Redis: returning', players.length, 'players,', onlineNow, 'online');
+
         return {
           players,
-          summary,
+          summary: {
+            activePlayers: onlineNow,
+            totalPlayers: players.length,
+            topAccuracy: players[0]?.accuracy ?? 0,
+            topRating: players[0]?.rating ?? 1200,
+            averageAccuracy: players.length > 0
+              ? Math.round(players.reduce((s, p) => s + p.accuracy, 0) / players.length)
+              : 0,
+            averageRating: 1200,
+            totalPuzzlesSolvedGlobally: players.reduce((s, p) => s + p.puzzlesSolved, 0),
+            previousSubscribersCount: 0,
+          },
         };
       }),
 
@@ -1207,38 +1213,43 @@ export const appRouter = router({
           isCorrect: input.isCorrect ? 1 : 0,
           timeMs: input.timeMs,
         });
-        // Update denormalized leaderboard score
+        // Update Redis leaderboard score
         try {
-          const { updateLeaderboardScore, invalidateLeaderboardCache } = await import('./leaderboard-optimized');
-          // Get updated totals for this user/device
+          const { redisUpdateScore } = await import('./redis');
           const db = await getDb();
           if (db) {
-            let totalRow: any;
             if (input.userId) {
               const r = await db.execute(sql`SELECT COUNT(*) as total, SUM(isCorrect) as correct FROM puzzle_attempts WHERE userId = ${input.userId}`);
-              totalRow = Array.isArray(r) ? (Array.isArray(r[0]) ? r[0][0] : r[0]) : null;
+              const totalRow: any = Array.isArray(r) ? (Array.isArray(r[0]) ? r[0][0] : r[0]) : null;
               const user = await db.execute(sql`SELECT name FROM users WHERE id = ${input.userId}`);
               const userRows: any[] = Array.isArray(user) ? (Array.isArray(user[0]) ? user[0] : user) : [];
-              await updateLeaderboardScore({
-                userId: input.userId,
+              const total = Number(totalRow?.total || 0);
+              const correct = Number(totalRow?.correct || 0);
+              await redisUpdateScore(`user:${input.userId}`, {
                 playerName: userRows[0]?.name || `Player-${input.userId}`,
-                puzzlesSolved: Number(totalRow?.total || 0),
-                correctPuzzles: Number(totalRow?.correct || 0),
+                totalPuzzles: total,
+                correctPuzzles: correct,
+                accuracy: total > 0 ? Math.round((correct / total) * 100 * 100) / 100 : 0,
+                rating: 1200,
+                totalMinutes: 0,
               });
             } else if (input.deviceId) {
               const r = await db.execute(sql`SELECT COUNT(*) as total, SUM(isCorrect) as correct FROM puzzle_attempts WHERE deviceId = ${input.deviceId} AND userId IS NULL`);
-              totalRow = Array.isArray(r) ? (Array.isArray(r[0]) ? r[0][0] : r[0]) : null;
-              await updateLeaderboardScore({
-                deviceId: input.deviceId,
+              const totalRow: any = Array.isArray(r) ? (Array.isArray(r[0]) ? r[0][0] : r[0]) : null;
+              const total = Number(totalRow?.total || 0);
+              const correct = Number(totalRow?.correct || 0);
+              await redisUpdateScore(`device:${input.deviceId}`, {
                 playerName: `Guest-${input.deviceId.substring(0, 8)}`,
-                puzzlesSolved: Number(totalRow?.total || 0),
-                correctPuzzles: Number(totalRow?.correct || 0),
+                totalPuzzles: total,
+                correctPuzzles: correct,
+                accuracy: total > 0 ? Math.round((correct / total) * 100 * 100) / 100 : 0,
+                rating: 1200,
+                totalMinutes: 0,
               });
             }
           }
-          invalidateLeaderboardCache();
         } catch (e) {
-          console.warn('[record] Failed to update leaderboard score:', e);
+          console.warn('[record] Failed to update Redis leaderboard:', e);
         }
         return result;
       }),

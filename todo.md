@@ -2253,3 +2253,14 @@
 - [x] Online Now count = active heartbeats within 45s window
 - [ ] Test login flow end-to-end
 - [ ] Fix 129 placeholder openings with no puzzles (Opening Variation XXX stubs)
+
+## URGENT: Leaderboard Still Not Working
+- [ ] Trace exact failure: DB → tRPC procedure → frontend display
+
+## Redis Implementation
+- [x] Set up local Redis server (open source, running on port 6379)
+- [x] Redis sorted set leaderboard (ZADD/ZREVRANGE)
+- [x] Update score in Redis on every puzzle attempt
+- [x] Redis heartbeat: user:online:[ID] key with 45s TTL
+- [x] Online Now = KEYS user:online:* count
+- [x] Seeded all existing puzzle_attempts into Redis (22 players)
