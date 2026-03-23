@@ -2215,3 +2215,7 @@
 ## Board Theme + Size Fix (Round 2)
 - [x] Board theme CSS injection not working — board still shows classic brown
 - [x] Board still cut off at bottom (rank 1 missing)
+
+## Board Theme Glitch Fix
+- [x] Dark squares rendering as solid blocks (glitchy) with custom SVG approach
+- [x] Board size slightly too large, getting overshadowed at edges

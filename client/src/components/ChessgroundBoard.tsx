@@ -12,23 +12,21 @@ const THEME_COLORS: Record<string, { light: string; dark: string }> = {
   brown:   { light: '#f0d9b5', dark: '#b58863' },
   classic: { light: '#f0d9b5', dark: '#b58863' },
   green:   { light: '#ffffcc', dark: '#7cb342' },
-  blue:    { light: '#e8f4f8', dark: '#2c5aa0' },
-  purple:  { light: '#f0e6ff', dark: '#6b4c9a' },
+  blue:    { light: '#dce9f5', dark: '#4a7fc1' },
+  purple:  { light: '#ede0f5', dark: '#7c5aa0' },
 };
 
 /**
- * Chessground renders the board as a background-image SVG on the <cg-board> element.
- * The SVG uses opacity=0 for light squares (shows background-color) and a colored
- * rect for dark squares. We override both:
- *   1. background-color → light square color
- *   2. background-image → new SVG with the correct dark square color
+ * Chessground uses background-image (SVG) on cg-board for square colors.
+ * The most reliable override is a CSS repeating-linear-gradient checkerboard
+ * which doesn't depend on SVG encoding at all.
  *
- * We inject a <style> tag with !important so it always beats chessground.brown.css.
+ * A standard 8×8 board has squares of size (100/8)% = 12.5%.
+ * The checkerboard repeating gradient tiles a 2×2 square pattern (25%×25%),
+ * with alternating light/dark cells.
  */
-function buildBoardSVG(darkColor: string): string {
-  // Encode the dark color as a fill in the SVG pattern
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 8 8" shape-rendering="crispEdges"><g id="a"><g id="b"><g id="c"><g id="d"><rect width="1" height="1" id="e" fill="none"/><use x="1" y="1" href="#e"/><rect y="1" width="1" height="1" id="f" fill="${darkColor}"/><use x="1" y="-1" href="#f"/></g><use x="2" href="#c"/></g><use x="4" href="#b"/></g><use y="2" href="#a"/></g><use y="4" href="#a"/></svg>`;
-  return `url('data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}')`;
+function buildCheckerboardCSS(light: string, dark: string): string {
+  return `repeating-conic-gradient(${light} 0% 25%, ${dark} 0% 50%) 0 0 / 25% 25%`;
 }
 
 let themeStyleEl: HTMLStyleElement | null = null;
@@ -40,11 +38,10 @@ function applyGlobalTheme(theme: string) {
     themeStyleEl.id = 'cg-theme-override';
     document.head.appendChild(themeStyleEl);
   }
-  const bgImage = buildBoardSVG(colors.dark);
+  const bg = buildCheckerboardCSS(colors.light, colors.dark);
   themeStyleEl.textContent = `
     cg-board {
-      background-color: ${colors.light} !important;
-      background-image: ${bgImage} !important;
+      background: ${bg} !important;
     }
   `;
 }
@@ -117,7 +114,7 @@ export const ChessgroundBoard: React.FC<ChessgroundBoardProps> = ({
 
   const inCheck = check !== undefined ? !!check : isInCheck(fen);
 
-  // Apply theme by overriding cg-board background — runs on every theme change
+  // Apply theme via global style — runs on every theme change
   useEffect(() => {
     applyGlobalTheme(theme);
   }, [theme]);
@@ -156,7 +153,6 @@ export const ChessgroundBoard: React.FC<ChessgroundBoardProps> = ({
 
     if (!cgRef.current) {
       cgRef.current = ChessgroundAPI(boardRef.current, config);
-      // Apply theme immediately after board init
       applyGlobalTheme(theme);
     } else {
       cgRef.current.set(config);

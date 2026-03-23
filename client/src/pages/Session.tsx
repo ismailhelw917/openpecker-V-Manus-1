@@ -364,12 +364,12 @@ export default function Session() {
       if (el) {
         const { width, height } = el.getBoundingClientRect();
         // Use the smaller of width/height minus 16px padding on each side
-        setBoardSize(Math.min(width - 16, height - 16, 600));
+        setBoardSize(Math.min(width - 32, height - 32, 520));
       } else {
         // Fallback before ref is attached
         const w = window.innerWidth;
         const h = window.innerHeight;
-        setBoardSize(Math.min(w - 32, h - 136, 600));
+        setBoardSize(Math.min(w - 48, h - 160, 520));
       }
     };
     const ro = new ResizeObserver(measure);
