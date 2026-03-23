@@ -122,7 +122,7 @@ function ChessPreview() {
           })
         )}
       </div>
-      <p className="text-[10px] text-slate-500 tracking-wide uppercase">Sicilian Defence · Najdorf</p>
+
     </div>
   );
 }
