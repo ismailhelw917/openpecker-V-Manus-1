@@ -2151,3 +2151,12 @@
 - [x] Verify data collection in frontend and backend
 - [x] Fix white page error - replaced matomo-tracker with gtag wrapper
 - [x] Verify app loads without errors
+
+## PWA (Progressive Web App) - Android & iOS Install Support
+- [x] Create web app manifest (manifest.json) with name, icons, theme color, display mode
+- [x] Generate PWA icons (192x192 and 512x512) from OpenPecker logo
+- [x] Add apple-touch-icon and iOS meta tags to index.html
+- [x] Install and configure vite-plugin-pwa for service worker + caching
+- [x] Add "Add to Home Screen" install prompt banner in the app
+- [x] Test PWA installability on Android and iOS
+- [ ] Save checkpoint

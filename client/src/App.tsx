@@ -15,6 +15,7 @@ import { Leaderboard } from "./pages/Leaderboard";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import NameSelectionDialog from "./components/NameSelectionDialog";
+import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 
 import { useEffect, useState } from "react";
 import { useAuth } from "./_core/hooks/useAuth";
@@ -124,6 +125,9 @@ function App() {
             <div className="max-w-screen-xl mx-auto">
               <Router />
             </div>
+
+            {/* PWA Install Prompt */}
+            <PWAInstallPrompt />
 
             {/* Bottom Navigation */}
             <BottomNav />

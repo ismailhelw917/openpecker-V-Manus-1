@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { defineConfig, type Plugin, type ViteDevServer } from "vite";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
+import { VitePWA } from "vite-plugin-pwa";
 
 // =============================================================================
 // Debug Collector - Vite Plugin
@@ -150,7 +151,61 @@ function vitePluginDebugCollector(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginDebugCollector()];
+const plugins = [
+  react(),
+  tailwindcss(),
+  jsxLocPlugin(),
+  vitePluginManusRuntime(),
+  vitePluginDebugCollector(),
+  VitePWA({
+    registerType: "autoUpdate",
+    includeAssets: ["favicon.ico"],
+    manifest: {
+      name: "OpenPecker - Chess Training",
+      short_name: "OpenPecker",
+      description: "Master opening tactics through deliberate repetition. The Woodpecker Method for chess.",
+      theme_color: "#0f172a",
+      background_color: "#0f172a",
+      display: "standalone",
+      orientation: "portrait",
+      scope: "/",
+      start_url: "/",
+      icons: [
+        {
+          src: "https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/icon-192x192_e08cd5dd.png",
+          sizes: "192x192",
+          type: "image/png",
+          purpose: "any maskable",
+        },
+        {
+          src: "https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/icon-512x512_35458014.png",
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "any maskable",
+        },
+      ],
+    },
+    workbox: {
+      // Cache the app shell and key assets
+      globPatterns: ["**/*.{js,css,html}"],
+      runtimeCaching: [
+        {
+          urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+          handler: "CacheFirst",
+          options: { cacheName: "google-fonts-cache", expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 } },
+        },
+        {
+          urlPattern: /^https:\/\/d2xsxph8kpxj0f\.cloudfront\.net\/.*/i,
+          handler: "CacheFirst",
+          options: { cacheName: "cdn-assets-cache", expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 30 } },
+        },
+      ],
+    },
+    devOptions: {
+      enabled: false, // Don't activate SW in dev to avoid caching issues
+    },
+  }),
+];
 
 export default defineConfig({
   plugins,

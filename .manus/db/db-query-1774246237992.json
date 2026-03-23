@@ -1,0 +1,230 @@
+{
+  "query": "SELECT name, type, totalPuzzles, totalCorrect, accuracy, rating, peakRating, completedCycles, lastActivityAt\nFROM players\nORDER BY totalPuzzles DESC\nLIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT name, type, totalPuzzles, totalCorrect, accuracy, rating, peakRating, completedCycles, lastActivityAt\nFROM players\nORDER BY totalPuzzles DESC\nLIMIT 20;",
+  "rows": [
+    {
+      "name": "Mansoor KP",
+      "type": "registered",
+      "totalPuzzles": "150",
+      "totalCorrect": "126",
+      "accuracy": "84.00",
+      "rating": "2186",
+      "peakRating": "2186",
+      "completedCycles": "3",
+      "lastActivityAt": "2026-03-22 16:28:05"
+    },
+    {
+      "name": "Player-999",
+      "type": "registered",
+      "totalPuzzles": "150",
+      "totalCorrect": "135",
+      "accuracy": "90.00",
+      "rating": "2360",
+      "peakRating": "2360",
+      "completedCycles": "3",
+      "lastActivityAt": "2026-03-22 20:40:11"
+    },
+    {
+      "name": "Player-456",
+      "type": "registered",
+      "totalPuzzles": "100",
+      "totalCorrect": "80",
+      "accuracy": "80.00",
+      "rating": "2100",
+      "peakRating": "2100",
+      "completedCycles": "2",
+      "lastActivityAt": "2026-03-22 20:40:09"
+    },
+    {
+      "name": "Guest-1eeac2ef",
+      "type": "anonymous",
+      "totalPuzzles": "63",
+      "totalCorrect": "43",
+      "accuracy": "68.00",
+      "rating": "1557",
+      "peakRating": "1557",
+      "completedCycles": "1",
+      "lastActivityAt": "2026-03-21 16:52:47"
+    },
+    {
+      "name": "Ismail",
+      "type": "registered",
+      "totalPuzzles": "58",
+      "totalCorrect": "29",
+      "accuracy": "50.00",
+      "rating": "1200",
+      "peakRating": "1200",
+      "completedCycles": "0",
+      "lastActivityAt": "2026-03-23 05:54:36"
+    },
+    {
+      "name": "Guest-test-",
+      "type": "anonymous",
+      "totalPuzzles": "50",
+      "totalCorrect": "40",
+      "accuracy": "80.00",
+      "rating": "1665",
+      "peakRating": "1665",
+      "completedCycles": "2",
+      "lastActivityAt": "2026-03-22 18:16:55"
+    },
+    {
+      "name": "Guest-UzNp9qOl",
+      "type": "anonymous",
+      "totalPuzzles": "21",
+      "totalCorrect": "17",
+      "accuracy": "81.00",
+      "rating": "1408",
+      "peakRating": "1408",
+      "completedCycles": "0",
+      "lastActivityAt": "2026-03-22 09:28:17"
+    },
+    {
+      "name": "Guest-c2651c39",
+      "type": "anonymous",
+      "totalPuzzles": "16",
+      "totalCorrect": "14",
+      "accuracy": "88.00",
+      "rating": "1392",
+      "peakRating": "1392",
+      "completedCycles": "0",
+      "lastActivityAt": "2026-03-21 18:11:38"
+    },
+    {
+      "name": "Guest-429771ff",
+      "type": "anonymous",
+      "totalPuzzles": "8",
+      "totalCorrect": "6",
+      "accuracy": "75.00",
+      "rating": "1264",
+      "peakRating": "1264",
+      "completedCycles": "0",
+      "lastActivityAt": "2026-03-22 20:30:04"
+    },
+    {
+      "name": "Guest-eb6c2127",
+      "type": "anonymous",
+      "totalPuzzles": "5",
+      "totalCorrect": "3",
+      "accuracy": "60.00",
+      "rating": "1216",
+      "peakRating": "1216",
+      "completedCycles": "0",
+      "lastActivityAt": "2026-03-21 17:07:28"
+    },
+    {
+      "name": "Guest-ba51fbf9",
+      "type": "anonymous",
+      "totalPuzzles": "3",
+      "totalCorrect": "2",
+      "accuracy": "67.00",
+      "rating": "1216",
+      "peakRating": "1216",
+      "completedCycles": "0",
+      "lastActivityAt": "2026-03-22 17:32:13"
+    },
+    {
+      "name": "Guest-5b6f7617",
+      "type": "anonymous",
+      "totalPuzzles": "2",
+      "totalCorrect": "2",
+      "accuracy": "100.00",
+      "rating": "1232",
+      "peakRating": "1232",
+      "completedCycles": "0",
+      "lastActivityAt": "2026-03-21 12:06:28"
+    },
+    {
+      "name": "Player-1098140",
+      "type": "registered",
+      "totalPuzzles": "1",
+      "totalCorrect": "0",
+      "accuracy": "0.00",
+      "rating": "1184",
+      "peakRating": "1184",
+      "completedCycles": "0",
+      "lastActivityAt": "2026-03-22 16:26:31"
+    },
+    {
+      "name": "Guest-5d20f1e8",
+      "type": "anonymous",
+      "totalPuzzles": "1",
+      "totalCorrect": "0",
+      "accuracy": "0.00",
+      "rating": "1184",
+      "peakRating": "1184",
+      "completedCycles": "0",
+      "lastActivityAt": "2026-03-22 15:23:17"
+    },
+    {
+      "name": "Guest-fc8b7454",
+      "type": "registered",
+      "totalPuzzles": "0",
+      "totalCorrect": "0",
+      "accuracy": "0.00",
+      "rating": "1200",
+      "peakRating": "1200",
+      "completedCycles": "0",
+      "lastActivityAt": "2026-03-19 12:34:49"
+    },
+    {
+      "name": "Guest-afd29d8d",
+      "type": "registered",
+      "totalPuzzles": "0",
+      "totalCorrect": "0",
+      "accuracy": "0.00",
+      "rating": "1200",
+      "peakRating": "1200",
+      "completedCycles": "0",
+      "lastActivityAt": "2026-03-19 12:35:04"
+    },
+    {
+      "name": "Guest-eaf83339",
+      "type": "registered",
+      "totalPuzzles": "0",
+      "totalCorrect": "0",
+      "accuracy": "0.00",
+      "rating": "1200",
+      "peakRating": "1200",
+      "completedCycles": "0",
+      "lastActivityAt": "2026-03-19 12:35:29"
+    },
+    {
+      "name": "Guest-9e9cbed0",
+      "type": "registered",
+      "totalPuzzles": "0",
+      "totalCorrect": "0",
+      "accuracy": "0.00",
+      "rating": "1200",
+      "peakRating": "1200",
+      "completedCycles": "0",
+      "lastActivityAt": "2026-03-19 12:33:53"
+    },
+    {
+      "name": "Guest-971db462",
+      "type": "registered",
+      "totalPuzzles": "0",
+      "totalCorrect": "0",
+      "accuracy": "0.00",
+      "rating": "1200",
+      "peakRating": "1200",
+      "completedCycles": "0",
+      "lastActivityAt": "2026-03-19 12:34:07"
+    },
+    {
+      "name": "Guest-0aa9c89f",
+      "type": "registered",
+      "totalPuzzles": "0",
+      "totalCorrect": "0",
+      "accuracy": "0.00",
+      "rating": "1200",
+      "peakRating": "1200",
+      "completedCycles": "0",
+      "lastActivityAt": "2026-03-19 12:33:54"
+    }
+  ],
+  "messages": [],
+  "stdout": "name\ttype\ttotalPuzzles\ttotalCorrect\taccuracy\trating\tpeakRating\tcompletedCycles\tlastActivityAt\nMansoor KP\tregistered\t150\t126\t84.00\t2186\t2186\t3\t2026-03-22 16:28:05\nPlayer-999\tregistered\t150\t135\t90.00\t2360\t2360\t3\t2026-03-22 20:40:11\nPlayer-456\tregistered\t100\t80\t80.00\t2100\t2100\t2\t2026-03-22 20:40:09\nGuest-1eeac2ef\tanonymous\t63\t43\t68.00\t1557\t1557\t1\t2026-03-21 16:52:47\nIsmail\tregistered\t58\t29\t50.00\t1200\t1200\t0\t2026-03-23 05:54:36\nGuest-test-\tanonymous\t50\t40\t80.00\t1665\t1665\t2\t2026-03-22 18:16:55\nGuest-UzNp9qOl\tanonymous\t21\t17\t81.00\t1408\t1408\t0\t2026-03-22 09:28:17\nGuest-c2651c39\tanonymous\t16\t14\t88.00\t1392\t1392\t0\t2026-03-21 18:11:38\nGuest-429771ff\tanonymous\t8\t6\t75.00\t1264\t1264\t0\t2026-03-22 20:30:04\nGuest-eb6c2127\tanonymous\t5\t3\t60.00\t1216\t1216\t0\t2026-03-21 17:07:28\nGuest-ba51fbf9\tanonymous\t3\t2\t67.00\t1216\t1216\t0\t2026-03-22 17:32:13\nGuest-5b6f7617\tanonymous\t2\t2\t100.00\t1232\t1232\t0\t2026-03-21 12:06:28\nPlayer-1098140\tregistered\t1\t0\t0.00\t1184\t1184\t0\t2026-03-22 16:26:31\nGuest-5d20f1e8\tanonymous\t1\t0\t0.00\t1184\t1184\t0\t2026-03-22 15:23:17\nGuest-fc8b7454\tregistered\t0\t0\t0.00\t1200\t1200\t0\t2026-03-19 12:34:49\nGuest-afd29d8d\tregistered\t0\t0\t0.00\t1200\t1200\t0\t2026-03-19 12:35:04\nGuest-eaf83339\tregistered\t0\t0\t0.00\t1200\t1200\t0\t2026-03-19 12:35:29\nGuest-9e9cbed0\tregistered\t0\t0\t0.00\t1200\t1200\t0\t2026-03-19 12:33:53\nGuest-971db462\tregistered\t0\t0\t0.00\t1200\t1200\t0\t2026-03-19 12:34:07\nGuest-0aa9c89f\tregistered\t0\t0\t0.00\t1200\t1200\t0\t2026-03-19 12:33:54\n",
+  "stderr": "",
+  "execution_time_ms": 1593
+}
