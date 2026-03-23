@@ -842,8 +842,10 @@ export const appRouter = router({
         const { redisGetLeaderboard, redisOnlineCount } = await import('./redis');
         const limit = input?.limit ?? 100;
 
-        const players = await redisGetLeaderboard(limit);
+        const rawPlayers = await redisGetLeaderboard(limit);
         const onlineNow = await redisOnlineCount();
+        // Strip internal playerId (Redis key) — not needed on the frontend
+        const players = rawPlayers.map(({ playerId: _pid, ...rest }) => rest);
 
         console.log('[stats.getLeaderboard] Redis: returning', players.length, 'players,', onlineNow, 'online');
 

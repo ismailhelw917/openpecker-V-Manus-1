@@ -2296,3 +2296,12 @@
 - [x] Add trust proxy to Express for correct HTTPS detection on openpecker.com
 - [x] Fix cookie domain detection to use x-forwarded-host header
 - [ ] Fix Google OAuth login error on openpecker.com live domain (debug logging added, needs live test)
+
+## Leaderboard Security Audit + UI Fix (Mar 23)
+- [x] Audit all leaderboard-related public procedures for sensitive data exposure
+- [x] Strip playerId (internal Redis key) from public leaderboard API response
+- [x] Fix leaderboard page to fit screen without overflow (mobile + desktop)
+- [x] Ensure leaderboard table is scrollable within viewport, not full-page scroll
+- [x] Add live online count pill and total players pill to leaderboard header
+- [x] Color-coded accuracy (green ≥80%, yellow ≥60%, red <60%)
+- [x] Medal icons for top 3 with highlighted row backgrounds
