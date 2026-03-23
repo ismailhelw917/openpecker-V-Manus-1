@@ -1,0 +1,15 @@
+{
+  "query": "SELECT COUNT(*) as total, SUM(CASE WHEN userId IS NOT NULL THEN 1 ELSE 0 END) as registered, SUM(CASE WHEN userId IS NULL THEN 1 ELSE 0 END) as guests FROM leaderboard_scores;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT COUNT(*) as total, SUM(CASE WHEN userId IS NOT NULL THEN 1 ELSE 0 END) as registered, SUM(CASE WHEN userId IS NULL THEN 1 ELSE 0 END) as guests FROM leaderboard_scores;",
+  "rows": [
+    {
+      "total": "4144",
+      "registered": "4125",
+      "guests": "19"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\tregistered\tguests\n4144\t4125\t19\n",
+  "stderr": "",
+  "execution_time_ms": 1585
+}

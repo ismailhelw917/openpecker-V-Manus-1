@@ -2340,3 +2340,14 @@
 - [x] Auth page (/auth) now shows proper error message + "Try Again" button when ?loginError=true
 - [x] Auto-redirect on /auth suppressed when loginError is present (prevents redirect loop)
 - [ ] Publish to production and test Google sign-in on openpecker.com
+
+## Leaderboard Bug Report (Mar 23 - User Report)
+- [ ] Investigate what's wrong with leaderboard data
+- [ ] Fix leaderboard issues
+- [ ] Verify and publish fix
+
+## Leaderboard Fake Data Bug (Mar 23 - Critical)
+- [x] Remove Player-999 and Player-456 fake test entries from production in-memory cache
+- [x] Fix Redis/in-memory seeding to always read from real DB on startup (wipe+reseed on every startup)
+- [x] Ensure production leaderboard never shows test data
+- [ ] Verify GA 730 users vs 14 leaderboard players discrepancy (expected - most visitors haven't solved puzzles)

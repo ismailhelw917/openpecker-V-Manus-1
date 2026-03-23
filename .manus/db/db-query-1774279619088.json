@@ -1,0 +1,98 @@
+{
+  "query": "DESCRIBE leaderboard_scores;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute DESCRIBE leaderboard_scores;",
+  "rows": [
+    {
+      "Field": "id",
+      "Type": "int",
+      "Null": "NO",
+      "Key": "PRI",
+      "Default": "NULL",
+      "Extra": "auto_increment"
+    },
+    {
+      "Field": "userId",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "UNI",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "deviceId",
+      "Type": "varchar(255)",
+      "Null": "YES",
+      "Key": "UNI",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "playerName",
+      "Type": "varchar(255)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "totalPuzzles",
+      "Type": "int",
+      "Null": "NO",
+      "Key": "MUL",
+      "Default": "0",
+      "Extra": ""
+    },
+    {
+      "Field": "correctPuzzles",
+      "Type": "int",
+      "Null": "NO",
+      "Key": "",
+      "Default": "0",
+      "Extra": ""
+    },
+    {
+      "Field": "accuracy",
+      "Type": "decimal(5,2)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "0",
+      "Extra": ""
+    },
+    {
+      "Field": "rating",
+      "Type": "int",
+      "Null": "NO",
+      "Key": "",
+      "Default": "1200",
+      "Extra": ""
+    },
+    {
+      "Field": "totalMinutes",
+      "Type": "decimal(10,2)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "0",
+      "Extra": ""
+    },
+    {
+      "Field": "lastUpdated",
+      "Type": "bigint",
+      "Null": "NO",
+      "Key": "MUL",
+      "Default": "0",
+      "Extra": ""
+    },
+    {
+      "Field": "createdAt",
+      "Type": "bigint",
+      "Null": "NO",
+      "Key": "",
+      "Default": "0",
+      "Extra": ""
+    }
+  ],
+  "messages": [],
+  "stdout": "Field\tType\tNull\tKey\tDefault\tExtra\nid\tint\tNO\tPRI\tNULL\tauto_increment\nuserId\tint\tYES\tUNI\tNULL\t\ndeviceId\tvarchar(255)\tYES\tUNI\tNULL\t\nplayerName\tvarchar(255)\tNO\t\tNULL\t\ntotalPuzzles\tint\tNO\tMUL\t0\t\ncorrectPuzzles\tint\tNO\t\t0\t\naccuracy\tdecimal(5,2)\tNO\t\t0\t\nrating\tint\tNO\t\t1200\t\ntotalMinutes\tdecimal(10,2)\tNO\t\t0\t\nlastUpdated\tbigint\tNO\tMUL\t0\t\ncreatedAt\tbigint\tNO\t\t0\t\n",
+  "stderr": "",
+  "execution_time_ms": 1541
+}

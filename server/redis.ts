@@ -306,14 +306,56 @@ async function seedFallbackFromDB(): Promise<void> {
   }
 }
 
+// ─── Wipe and reseed Redis leaderboard from DB on startup ───────────────────
+// This ensures stale or test data never persists across deployments.
+async function wipeAndReseedRedis(): Promise<void> {
+  const redis = getRedis();
+  if (!redis || !redisAvailable) return;
+  try {
+    // Wipe the leaderboard sorted set and all player meta hashes
+    const keys = await redis.keys(`${PLAYER_META_PREFIX}*`);
+    const pipe = redis.pipeline();
+    pipe.del(LEADERBOARD_KEY);
+    for (const key of keys) pipe.del(key);
+    await pipe.exec();
+    console.log(`[Redis] Wiped leaderboard + ${keys.length} meta keys`);
+
+    // Reseed from DB
+    const { getLeaderboardPlayers } = await import('./players');
+    const players = await getLeaderboardPlayers(100, 'accuracy');
+    console.log(`[Redis] Reseeding from DB: ${players.length} players`);
+    for (const p of players as any[]) {
+      const memberId = p.userId ? `user:${p.userId}` : `device:${p.deviceId}`;
+      const totalPuzzles = Number(p.totalPuzzles || 0);
+      if (totalPuzzles === 0) continue; // Skip zero-puzzle users
+      const totalCorrect = Number(p.totalCorrect || 0);
+      const accuracy = totalPuzzles > 0 ? (totalCorrect / totalPuzzles) * 100 : 0;
+      await redisUpdateScore(memberId, {
+        playerName: p.name || (p.deviceId ? `Guest-${String(p.deviceId).slice(0, 8)}` : 'Unknown'),
+        accuracy: Math.round(accuracy * 100) / 100,
+        rating: Number(p.rating || 1200),
+        totalMinutes: Math.round(Number(p.totalTimeMs || 0) / 60000 * 10) / 10,
+        totalPuzzles,
+        correctPuzzles: totalCorrect,
+      });
+    }
+    console.log('[Redis] Reseed complete — leaderboard is now clean');
+  } catch (err) {
+    console.error('[Redis] Wipe+reseed failed:', err);
+  }
+}
+
 // ─── Initialise Redis connection eagerly ─────────────────────────────────────
 // This ensures the connection is attempted at startup, not on first use.
 getRedis();
 
-// Seed fallback after a short delay (gives Redis time to connect first)
-setTimeout(() => {
-  if (!redisAvailable) {
+// After a short delay: wipe+reseed Redis (if available) OR seed in-memory fallback
+setTimeout(async () => {
+  if (redisAvailable) {
+    console.log('[Redis] Available — wiping stale data and reseeding from DB');
+    await wipeAndReseedRedis();
+  } else {
     console.log('[Redis] Not available — seeding in-memory fallback from DB');
-    seedFallbackFromDB();
+    await seedFallbackFromDB();
   }
 }, 3000);

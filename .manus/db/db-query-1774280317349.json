@@ -1,0 +1,98 @@
+{
+  "query": "SELECT id, userId, deviceId, name, totalPuzzles, accuracy FROM players WHERE totalPuzzles > 0 ORDER BY totalPuzzles DESC LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT id, userId, deviceId, name, totalPuzzles, accuracy FROM players WHERE totalPuzzles > 0 ORDER BY totalPuzzles DESC LIMIT 20;",
+  "rows": [
+    {
+      "id": "150003",
+      "userId": "1141733",
+      "deviceId": "NULL",
+      "name": "Mansoor KP",
+      "totalPuzzles": "150",
+      "accuracy": "84.00"
+    },
+    {
+      "id": "150002",
+      "userId": "NULL",
+      "deviceId": "1eeac2ef60ea3985aa895481028b6a68",
+      "name": "Guest-1eeac2ef",
+      "totalPuzzles": "63",
+      "accuracy": "68.00"
+    },
+    {
+      "id": "90001",
+      "userId": "750572",
+      "deviceId": "NULL",
+      "name": "Ismail",
+      "totalPuzzles": "59",
+      "accuracy": "49.00"
+    },
+    {
+      "id": "150001",
+      "userId": "NULL",
+      "deviceId": "UzNp9qOlKuNMHaSJ28Wtp",
+      "name": "Guest-UzNp9qOl",
+      "totalPuzzles": "21",
+      "accuracy": "81.00"
+    },
+    {
+      "id": "150004",
+      "userId": "NULL",
+      "deviceId": "c2651c39433676af687e3195aa87e884",
+      "name": "Guest-c2651c39",
+      "totalPuzzles": "16",
+      "accuracy": "88.00"
+    },
+    {
+      "id": "210006",
+      "userId": "NULL",
+      "deviceId": "429771ff4174c5b156b056457d1ec974",
+      "name": "Guest-429771ff",
+      "totalPuzzles": "8",
+      "accuracy": "75.00"
+    },
+    {
+      "id": "120001",
+      "userId": "NULL",
+      "deviceId": "eb6c2127ddb8fb27e03060ea1d128867",
+      "name": "Guest-eb6c2127",
+      "totalPuzzles": "5",
+      "accuracy": "60.00"
+    },
+    {
+      "id": "210002",
+      "userId": "NULL",
+      "deviceId": "ba51fbf91ce893cbff98de393dc25aec",
+      "name": "Guest-ba51fbf9",
+      "totalPuzzles": "3",
+      "accuracy": "67.00"
+    },
+    {
+      "id": "90107",
+      "userId": "NULL",
+      "deviceId": "5b6f76175fa9edb4e1f92c3c453e0915",
+      "name": "Guest-5b6f7617",
+      "totalPuzzles": "2",
+      "accuracy": "100.00"
+    },
+    {
+      "id": "210001",
+      "userId": "NULL",
+      "deviceId": "5d20f1e84ccafc0c640a3a9de89c3a23",
+      "name": "Guest-5d20f1e8",
+      "totalPuzzles": "1",
+      "accuracy": "0.00"
+    },
+    {
+      "id": "120002",
+      "userId": "1098140",
+      "deviceId": "296053513e40b141ee98f7954a2e634c",
+      "name": "Player-1098140",
+      "totalPuzzles": "1",
+      "accuracy": "0.00"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\tdeviceId\tname\ttotalPuzzles\taccuracy\n150003\t1141733\tNULL\tMansoor KP\t150\t84.00\n150002\tNULL\t1eeac2ef60ea3985aa895481028b6a68\tGuest-1eeac2ef\t63\t68.00\n90001\t750572\tNULL\tIsmail\t59\t49.00\n150001\tNULL\tUzNp9qOlKuNMHaSJ28Wtp\tGuest-UzNp9qOl\t21\t81.00\n150004\tNULL\tc2651c39433676af687e3195aa87e884\tGuest-c2651c39\t16\t88.00\n210006\tNULL\t429771ff4174c5b156b056457d1ec974\tGuest-429771ff\t8\t75.00\n120001\tNULL\teb6c2127ddb8fb27e03060ea1d128867\tGuest-eb6c2127\t5\t60.00\n210002\tNULL\tba51fbf91ce893cbff98de393dc25aec\tGuest-ba51fbf9\t3\t67.00\n90107\tNULL\t5b6f76175fa9edb4e1f92c3c453e0915\tGuest-5b6f7617\t2\t100.00\n210001\tNULL\t5d20f1e84ccafc0c640a3a9de89c3a23\tGuest-5d20f1e8\t1\t0.00\n120002\t1098140\t296053513e40b141ee98f7954a2e634c\tPlayer-1098140\t1\t0.00\n",
+  "stderr": "",
+  "execution_time_ms": 1519
+}
