@@ -378,6 +378,7 @@ export const players = mysqlTable("players", {
   completedCycles: int("completedCycles").default(0).notNull(),
   accuracy: decimal("accuracy", { precision: 5, scale: 2 }).default("0"),
   rating: int("rating").default(1200).notNull(),
+  peakRating: int("peakRating").default(1200).notNull(),
   lastActivityAt: timestamp("lastActivityAt").defaultNow().notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

@@ -920,15 +920,16 @@ export const appRouter = router({
             if (player?.id) {
               await updatePlayerStats(player.id);
             }
-            // Now fetch the updated rating
+            // Now fetch the updated rating and peak rating
             const rows = await db.execute(
-              sql`SELECT rating FROM players WHERE userId = ${ctx.user.id} LIMIT 1`
+              sql`SELECT rating, peakRating FROM players WHERE userId = ${ctx.user.id} LIMIT 1`
             );
-            if (Array.isArray(rows) && rows.length > 0 && Array.isArray(rows[0]) && rows[0].length > 0) {
-              const row = rows[0][0];
+            const ratingRows = Array.isArray(rows) ? (Array.isArray(rows[0]) ? rows[0] : rows) : [];
+            if (ratingRows.length > 0) {
+              const row = ratingRows[0];
               if (row?.rating) {
                 playerRating = Number(row.rating);
-                peakRating = playerRating; // Peak is tracked as highest ever seen
+                peakRating   = Number(row.peakRating ?? row.rating);
               }
             }
           } catch (error) {

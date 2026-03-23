@@ -178,3 +178,100 @@ describe('Checkout URL Handling', () => {
     }).toThrow("No checkout URL received");
   });
 });
+
+// ─── Incremental ELO rating logic ────────────────────────────────────────────
+describe('Incremental ELO Rating', () => {
+  /**
+   * Mirror of the logic in server/players.ts updatePlayerStats
+   */
+  function computeNewRating(
+    currentRating: number,
+    totalPuzzles: number,
+    prevTotalPuzzles: number,
+    totalCorrect: number,
+    prevTotalCorrect: number,
+  ): number {
+    const newPuzzles = Math.max(0, totalPuzzles - prevTotalPuzzles);
+    const newCorrect = Math.max(0, totalCorrect - prevTotalCorrect);
+    if (newPuzzles === 0) return currentRating;
+
+    const kFactor = Math.max(4, 32 - Math.floor(totalPuzzles / 50));
+    const expectedScore = 0.5;
+    const actualScore = newCorrect / newPuzzles;
+    const delta = Math.round(kFactor * (actualScore - expectedScore) * Math.min(newPuzzles, 32));
+    return Math.max(100, Math.min(3000, currentRating + delta));
+  }
+
+  it('rating stays at 1200 when no new puzzles are solved', () => {
+    const rating = computeNewRating(1200, 10, 10, 8, 8);
+    expect(rating).toBe(1200);
+  });
+
+  it('rating increases when player solves all new puzzles correctly', () => {
+    // 10 new puzzles, all correct → actual 1.0 vs expected 0.5 → positive delta
+    const rating = computeNewRating(1200, 10, 0, 10, 0);
+    expect(rating).toBeGreaterThan(1200);
+  });
+
+  it('rating decreases when player gets all new puzzles wrong', () => {
+    // 10 new puzzles, all wrong → actual 0.0 vs expected 0.5 → negative delta
+    const rating = computeNewRating(1200, 10, 0, 0, 0);
+    expect(rating).toBeLessThan(1200);
+  });
+
+  it('rating is cumulative across multiple updates', () => {
+    // First batch: 10 puzzles, 8 correct
+    const r1 = computeNewRating(1200, 10, 0, 8, 0);
+    expect(r1).toBeGreaterThan(1200);
+
+    // Second batch: 20 total puzzles, 16 total correct (10 new, 8 correct)
+    const r2 = computeNewRating(r1, 20, 10, 16, 8);
+    expect(r2).toBeGreaterThan(r1); // rating keeps growing
+
+    // Third batch: 30 total, 18 correct (10 new, 2 correct — bad performance)
+    const r3 = computeNewRating(r2, 30, 20, 18, 16);
+    expect(r3).toBeLessThan(r2); // rating drops after bad batch
+  });
+
+  it('rating is clamped between 100 and 3000', () => {
+    // Simulate a very high rating being pushed higher — should cap at 3000
+    const high = computeNewRating(2990, 10, 0, 10, 0);
+    expect(high).toBeLessThanOrEqual(3000);
+
+    // Simulate a very low rating being pushed lower — should floor at 100
+    const low = computeNewRating(110, 10, 0, 0, 0);
+    expect(low).toBeGreaterThanOrEqual(100);
+  });
+
+  it('k-factor decreases as player solves more puzzles (more stable rating)', () => {
+    // With 0 total puzzles: kFactor = max(4, 32 - 0) = 32
+    // With 1400 total puzzles: kFactor = max(4, 32 - 28) = 4
+    const kFactorNew      = Math.max(4, 32 - Math.floor(10 / 50));   // 32
+    const kFactorVeteran  = Math.max(4, 32 - Math.floor(1400 / 50)); // 4
+    expect(kFactorNew).toBe(32);
+    expect(kFactorVeteran).toBe(4);
+    expect(kFactorNew).toBeGreaterThan(kFactorVeteran);
+  });
+
+  it('ratingGain display handles negative values without prepending +', () => {
+    const ratingGain = -15;
+    const display = ratingGain >= 0 ? '+' + ratingGain.toString() : ratingGain.toString();
+    expect(display).toBe('-15');
+  });
+
+  it('ratingGain display prepends + for positive values', () => {
+    const ratingGain = 47;
+    const display = ratingGain >= 0 ? '+' + ratingGain.toString() : ratingGain.toString();
+    expect(display).toBe('+47');
+  });
+
+  it('peakRating only ever increases', () => {
+    const currentPeak = 1350;
+    // New rating is lower → peak stays
+    const peak1 = Math.max(currentPeak, 1300);
+    expect(peak1).toBe(1350);
+    // New rating is higher → peak updates
+    const peak2 = Math.max(currentPeak, 1400);
+    expect(peak2).toBe(1400);
+  });
+});

@@ -1,0 +1,1 @@
+ALTER TABLE `players` ADD `peakRating` int DEFAULT 1200 NOT NULL;

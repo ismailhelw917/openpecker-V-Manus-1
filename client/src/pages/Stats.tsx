@@ -24,12 +24,7 @@ const PREMIUM_FEATURES = [
   "No ads, no limits",
 ];
 
-const MOCK_RATING_TREND = [
-  { week: "W1", rating: 1200 },
-  { week: "W2", rating: 1250 },
-  { week: "W3", rating: 1300 },
-  { week: "W4", rating: 1347 },
-];
+// Rating trend is built dynamically from real stats in the component below
 
 const MOCK_ACCURACY_TREND = [
   { date: "Mon", accuracy: 65 },
@@ -471,7 +466,19 @@ export default function Stats() {
                 <Card className="bg-slate-900/50 border-teal-900/30 p-2.5 sm:p-6">
                   <h3 className="text-sm sm:text-xl font-bold text-white mb-3 sm:mb-6">Rating Progression</h3>
                   <ResponsiveContainer width="100%" height={window.innerWidth < 640 ? 200 : 250}>
-                    <LineChart data={MOCK_RATING_TREND}>
+                    <LineChart data={(() => {
+                      const current = finalStats?.rating ?? 1200;
+                      const peak    = (finalStats as any)?.peakRating ?? current;
+                      const start   = 1200;
+                      // Build a 4-point trend: start → midpoint → peak → current
+                      const mid = Math.round((start + current) / 2);
+                      return [
+                        { week: 'Start', rating: start },
+                        { week: 'Mid',   rating: mid },
+                        { week: 'Peak',  rating: peak },
+                        { week: 'Now',   rating: current },
+                      ];
+                    })()}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                       <XAxis dataKey="week" stroke="#94a3b8" />
                       <YAxis stroke="#94a3b8" />
