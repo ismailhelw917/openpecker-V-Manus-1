@@ -18,6 +18,7 @@ const Auth = lazy(() => import("./pages/Auth"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Register = lazy(() => import("./pages/Register"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 import { useAuth } from "./_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "./_core/deviceId";
@@ -36,6 +37,7 @@ function Router() {
         <Route path={"/train"} component={Train} />
         <Route path={"/sets"} component={SavedSets} />
         <Route path={"/stats"} component={Stats} />
+        <Route path={"/leaderboard"} component={Leaderboard} />
         <Route path={"/settings"} component={Settings} />
         <Route path={"/profile"} component={Profile} />
         <Route path={"/session/:id"} component={Session} />

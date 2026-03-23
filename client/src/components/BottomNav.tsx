@@ -10,6 +10,7 @@ export default function BottomNav() {
     { icon: Home, label: t.nav.home, path: "/" },
     { icon: Play, label: t.nav.train, path: "/train" },
     { icon: BookOpen, label: t.nav.sets, path: "/sets" },
+    { icon: null, label: "#", path: "/leaderboard" },
     { icon: BarChart3, label: t.nav.stats, path: "/stats" },
     { icon: Settings, label: t.nav.more, path: "/settings" },
   ];
@@ -39,7 +40,11 @@ export default function BottomNav() {
                 WebkitTapHighlightColor: "rgba(0,0,0,0.1)",
               }}
             >
-              <Icon className="w-5 h-5 sm:w-6 sm:h-6 mb-0.5 sm:mb-1 shrink-0" />
+              {Icon ? (
+                <Icon className="w-5 h-5 sm:w-6 sm:h-6 mb-0.5 sm:mb-1 shrink-0" />
+              ) : (
+                <span className="text-lg sm:text-xl font-black mb-0.5 sm:mb-1 leading-none">#</span>
+              )}
               <span className="text-[9px] sm:text-xs font-semibold truncate max-w-full px-0.5">{item.label}</span>
             </button>
           );

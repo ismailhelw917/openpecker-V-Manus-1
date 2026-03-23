@@ -16,7 +16,6 @@ export const translations = {
       home: 'HOME',
       train: 'TRAIN',
       sets: 'SETS',
-      rank: 'RANK',
       stats: 'STATS',
       more: 'MORE',
     },
@@ -217,8 +216,7 @@ export const translations = {
       home: 'होम',
       train: 'अभ्यास',
       sets: 'सेट',
-      rank: 'रैंक',
-      stats: 'आँकड़े',
+      stats: 'STATS',
       more: 'अधिक',
     },
 
