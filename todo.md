@@ -2175,3 +2175,20 @@
 - [x] Remove feature cards (5.8M Puzzles, Advanced Stats, Customizable, Woodpecker Method)
 - [x] Make home page non-scrollable (fits one screen)
 - [x] PWA banner trigger on Rank/Stats visit
+
+## Bug Fixes (Mar 23)
+- [x] Fix Session page: board cuts off top, header/puzzle info not visible
+- [x] Fix board themes: selected theme not applying to board colors
+- [x] Verify rating updates actually persist to DB after puzzle attempts
+
+## Bug Fixes (Mar 23)
+- [x] Fix Session page: board cuts off top, header/puzzle info not visible
+- [x] Fix board themes: selected theme not applying to board colors
+- [x] Verify rating updates actually persist to DB after puzzle attempts
+
+## App Store Launch
+- [x] Research Play Store TWA submission requirements
+- [x] Research App Store PWA/WebKit submission requirements
+- [x] Generate app store assets (icon, screenshots, feature graphic)
+- [x] Write app store listing copy (title, description, keywords)
+- [x] Produce step-by-step submission guide for both stores

@@ -7,6 +7,15 @@ import 'chessground/assets/chessground.base.css';
 import 'chessground/assets/chessground.brown.css';
 import 'chessground/assets/chessground.cburnett.css';
 
+// Theme color map — light square, dark square
+const THEME_COLORS: Record<string, { light: string; dark: string }> = {
+  brown:   { light: '#f0d9b5', dark: '#b58863' },
+  classic: { light: '#f0d9b5', dark: '#b58863' },
+  green:   { light: '#ffffcc', dark: '#7cb342' },
+  blue:    { light: '#e8f4f8', dark: '#2c5aa0' },
+  purple:  { light: '#f0e6ff', dark: '#6b4c9a' },
+};
+
 interface ChessgroundBoardProps {
   fen: string;
   orientation?: 'white' | 'black';
@@ -16,14 +25,10 @@ interface ChessgroundBoardProps {
   check?: string | null;
   turnColor?: 'white' | 'black';
   boardSize?: number;
-  theme?: 'brown' | 'blue' | 'green';
+  theme?: 'brown' | 'classic' | 'blue' | 'green' | 'purple';
   interactive?: boolean;
 }
 
-/**
- * Compute legal move destinations from a FEN string using chess.js.
- * Returns a Map<square, square[]> that Chessground uses for `movable.dests`.
- */
 function computeDestsFromFen(fen: string): Map<string, string[]> {
   const dests = new Map<string, string[]>();
   try {
@@ -31,11 +36,8 @@ function computeDestsFromFen(fen: string): Map<string, string[]> {
     const moves = chess.moves({ verbose: true });
     for (const move of moves) {
       const existing = dests.get(move.from);
-      if (existing) {
-        existing.push(move.to);
-      } else {
-        dests.set(move.from, [move.to]);
-      }
+      if (existing) existing.push(move.to);
+      else dests.set(move.from, [move.to]);
     }
   } catch (e) {
     console.error('Failed to compute legal moves from FEN:', e);
@@ -43,24 +45,12 @@ function computeDestsFromFen(fen: string): Map<string, string[]> {
   return dests;
 }
 
-/**
- * Determine the turn color from a FEN string.
- */
 function turnColorFromFen(fen: string): 'white' | 'black' {
-  const parts = fen.split(' ');
-  return parts[1] === 'b' ? 'black' : 'white';
+  return fen.split(' ')[1] === 'b' ? 'black' : 'white';
 }
 
-/**
- * Determine if the king is in check from a FEN string.
- */
 function isInCheck(fen: string): boolean {
-  try {
-    const chess = new Chess(fen);
-    return chess.isCheck();
-  } catch {
-    return false;
-  }
+  try { return new Chess(fen).isCheck(); } catch { return false; }
 }
 
 export const ChessgroundBoard: React.FC<ChessgroundBoardProps> = ({
@@ -72,21 +62,18 @@ export const ChessgroundBoard: React.FC<ChessgroundBoardProps> = ({
   check,
   turnColor,
   boardSize = 400,
+  theme = 'brown',
   interactive = true,
 }) => {
   const boardRef = useRef<HTMLDivElement>(null);
   const cgRef = useRef<Api | null>(null);
   const onMoveRef = useRef(onMove);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // Keep onMove ref up to date without triggering re-renders
-  useEffect(() => {
-    onMoveRef.current = onMove;
-  }, [onMove]);
+  useEffect(() => { onMoveRef.current = onMove; }, [onMove]);
 
-  // Derive turn color from FEN if not explicitly provided
   const derivedTurnColor = turnColor || turnColorFromFen(fen);
 
-  // Compute legal moves from FEN if not explicitly provided
   const destsMap = useMemo(() => {
     if (!interactive) return new Map<string, string[]>();
     if (legalMoves) {
@@ -96,12 +83,27 @@ export const ChessgroundBoard: React.FC<ChessgroundBoardProps> = ({
     return computeDestsFromFen(fen);
   }, [fen, legalMoves, interactive]);
 
-  // Determine check state
-  const inCheck = check !== undefined ? (check ? true : false) : isInCheck(fen);
+  const inCheck = check !== undefined ? !!check : isInCheck(fen);
+
+  // Apply theme colors via CSS custom properties on the wrapper
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const colors = THEME_COLORS[theme] || THEME_COLORS.brown;
+    // Override chessground square colors
+    el.style.setProperty('--cg-light', colors.light);
+    el.style.setProperty('--cg-dark', colors.dark);
+    // Directly patch all square elements for immediate effect
+    const squares = el.querySelectorAll<HTMLElement>('cg-board square');
+    squares.forEach((sq) => {
+      const cls = sq.className;
+      if (cls.includes('light')) sq.style.background = colors.light;
+      else if (cls.includes('dark')) sq.style.background = colors.dark;
+    });
+  }, [theme, boardSize]);
 
   useEffect(() => {
     if (!boardRef.current) return;
-
     const config: Config = {
       fen,
       orientation,
@@ -118,9 +120,7 @@ export const ChessgroundBoard: React.FC<ChessgroundBoardProps> = ({
               const result = onMoveRef.current(from, to);
               if (result instanceof Promise) {
                 result.then((isValid) => {
-                  if (!isValid && cgRef.current) {
-                    cgRef.current.set({ fen });
-                  }
+                  if (!isValid && cgRef.current) cgRef.current.set({ fen });
                 });
               } else if (!result && cgRef.current) {
                 cgRef.current.set({ fen });
@@ -129,15 +129,9 @@ export const ChessgroundBoard: React.FC<ChessgroundBoardProps> = ({
           },
         },
       },
-      drawable: {
-        enabled: true,
-        visible: true,
-      },
+      drawable: { enabled: true, visible: true },
       coordinates: true,
-      animation: {
-        enabled: true,
-        duration: 200,
-      },
+      animation: { enabled: true, duration: 200 },
     };
 
     if (!cgRef.current) {
@@ -145,27 +139,42 @@ export const ChessgroundBoard: React.FC<ChessgroundBoardProps> = ({
     } else {
       cgRef.current.set(config);
     }
+
+    // Re-apply theme colors after board renders
+    const el = wrapperRef.current;
+    if (el) {
+      const colors = THEME_COLORS[theme] || THEME_COLORS.brown;
+      requestAnimationFrame(() => {
+        const squares = el.querySelectorAll<HTMLElement>('cg-board square');
+        squares.forEach((sq) => {
+          if (sq.className.includes('light')) sq.style.background = colors.light;
+          else if (sq.className.includes('dark')) sq.style.background = colors.dark;
+        });
+      });
+    }
   }, [fen, orientation, lastMove, destsMap, inCheck, derivedTurnColor, interactive]);
 
-  // Cleanup on unmount only
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (cgRef.current) {
-        cgRef.current.destroy();
-        cgRef.current = null;
-      }
+      if (cgRef.current) { cgRef.current.destroy(); cgRef.current = null; }
     };
   }, []);
 
   return (
     <div
-      ref={boardRef}
-      style={{
-        width: `${boardSize}px`,
-        height: `${boardSize}px`,
-        touchAction: 'none', // Critical for mobile drag support
-      }}
-      className="cg-wrap"
-    />
+      ref={wrapperRef}
+      style={{ width: `${boardSize}px`, height: `${boardSize}px` }}
+    >
+      <div
+        ref={boardRef}
+        style={{
+          width: `${boardSize}px`,
+          height: `${boardSize}px`,
+          touchAction: 'none',
+        }}
+        className="cg-wrap"
+      />
+    </div>
   );
 };

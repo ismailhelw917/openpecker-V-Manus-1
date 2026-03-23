@@ -349,7 +349,8 @@ export default function Session() {
     const handleResize = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
-      setBoardSize(Math.min(w - 32, h - 200, 500));
+      // Reserve: ~64px header + ~56px bottom nav spacer + 16px padding = 136px
+      setBoardSize(Math.min(w - 32, h - 136, 500));
     };
     window.addEventListener('resize', handleResize);
     handleResize();
@@ -749,7 +750,7 @@ export default function Session() {
             onMove={handleMove}
             orientation={boardOrientation}
             boardSize={boardSize}
-            theme="brown"
+            theme={boardTheme}
           />
 
           {/* Star Animation for Correct Solutions */}
