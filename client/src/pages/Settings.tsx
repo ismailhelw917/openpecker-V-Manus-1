@@ -116,6 +116,8 @@ export default function Settings() {
   const handleThemeChange = (themeId: 'classic' | 'green' | 'blue' | 'purple') => {
     setSelectedTheme(themeId);
     localStorage.setItem('board-theme', themeId);
+    // Dispatch storage event so same-tab listeners (Session page) pick up the change
+    window.dispatchEvent(new StorageEvent('storage', { key: 'board-theme', newValue: themeId }));
     toast.success(`Board theme changed to ${themeId}`);
   };
 

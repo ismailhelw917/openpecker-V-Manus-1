@@ -153,6 +153,18 @@ export default function Session() {
     });
   }, [puzzles, currentPuzzleIndex, user, sessionId, currentCycle]);
 
+  // Keep boardTheme in sync if user changes it in Settings (same tab)
+  useEffect(() => {
+    const onStorage = () => {
+      const saved = localStorage.getItem('board-theme');
+      if (saved) setBoardTheme(saved as 'classic' | 'green' | 'blue' | 'purple');
+    };
+    window.addEventListener('storage', onStorage);
+    // Also poll once on mount in case it changed before this component mounted
+    onStorage();
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
   // Session timer
   useEffect(() => {
     if (isLoading || !puzzles.length) return;

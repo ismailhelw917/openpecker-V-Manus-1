@@ -2208,3 +2208,6 @@
 ## Session Board Layout Fix
 - [x] Board cut off at top (rank 8 missing) — fix board size calculation
 - [x] Page scrolls when clicking pieces — prevent all scroll on session page
+
+## Board Theme Fix
+- [x] Board theme selection in Settings not applying to session board

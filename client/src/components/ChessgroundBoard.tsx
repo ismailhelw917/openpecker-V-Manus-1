@@ -16,6 +16,26 @@ const THEME_COLORS: Record<string, { light: string; dark: string }> = {
   purple:  { light: '#f0e6ff', dark: '#6b4c9a' },
 };
 
+// A single shared <style> element is injected into <head> and updated whenever
+// the theme changes. Using !important ensures these rules always beat the
+// bundled chessground.brown.css regardless of specificity or render order.
+let themeStyleEl: HTMLStyleElement | null = null;
+
+function applyGlobalTheme(theme: string) {
+  const colors = THEME_COLORS[theme] || THEME_COLORS.brown;
+  if (!themeStyleEl) {
+    themeStyleEl = document.createElement('style');
+    themeStyleEl.id = 'cg-theme-override';
+    document.head.appendChild(themeStyleEl);
+  }
+  themeStyleEl.textContent = `
+    cg-board square.light { background-color: ${colors.light} !important; }
+    cg-board square.dark  { background-color: ${colors.dark}  !important; }
+    cg-board square.last-move.light { background-color: color-mix(in srgb, ${colors.light} 70%, #f6f669 30%) !important; }
+    cg-board square.last-move.dark  { background-color: color-mix(in srgb, ${colors.dark}  70%, #f6f669 30%) !important; }
+  `;
+}
+
 interface ChessgroundBoardProps {
   fen: string;
   orientation?: 'white' | 'black';
@@ -68,7 +88,6 @@ export const ChessgroundBoard: React.FC<ChessgroundBoardProps> = ({
   const boardRef = useRef<HTMLDivElement>(null);
   const cgRef = useRef<Api | null>(null);
   const onMoveRef = useRef(onMove);
-  const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { onMoveRef.current = onMove; }, [onMove]);
 
@@ -85,22 +104,10 @@ export const ChessgroundBoard: React.FC<ChessgroundBoardProps> = ({
 
   const inCheck = check !== undefined ? !!check : isInCheck(fen);
 
-  // Apply theme colors via CSS custom properties on the wrapper
+  // Apply theme via global style injection — fires on every theme change
   useEffect(() => {
-    const el = wrapperRef.current;
-    if (!el) return;
-    const colors = THEME_COLORS[theme] || THEME_COLORS.brown;
-    // Override chessground square colors
-    el.style.setProperty('--cg-light', colors.light);
-    el.style.setProperty('--cg-dark', colors.dark);
-    // Directly patch all square elements for immediate effect
-    const squares = el.querySelectorAll<HTMLElement>('cg-board square');
-    squares.forEach((sq) => {
-      const cls = sq.className;
-      if (cls.includes('light')) sq.style.background = colors.light;
-      else if (cls.includes('dark')) sq.style.background = colors.dark;
-    });
-  }, [theme, boardSize]);
+    applyGlobalTheme(theme);
+  }, [theme]);
 
   useEffect(() => {
     if (!boardRef.current) return;
@@ -139,19 +146,6 @@ export const ChessgroundBoard: React.FC<ChessgroundBoardProps> = ({
     } else {
       cgRef.current.set(config);
     }
-
-    // Re-apply theme colors after board renders
-    const el = wrapperRef.current;
-    if (el) {
-      const colors = THEME_COLORS[theme] || THEME_COLORS.brown;
-      requestAnimationFrame(() => {
-        const squares = el.querySelectorAll<HTMLElement>('cg-board square');
-        squares.forEach((sq) => {
-          if (sq.className.includes('light')) sq.style.background = colors.light;
-          else if (sq.className.includes('dark')) sq.style.background = colors.dark;
-        });
-      });
-    }
   }, [fen, orientation, lastMove, destsMap, inCheck, derivedTurnColor, interactive]);
 
   // Cleanup on unmount
@@ -162,10 +156,7 @@ export const ChessgroundBoard: React.FC<ChessgroundBoardProps> = ({
   }, []);
 
   return (
-    <div
-      ref={wrapperRef}
-      style={{ width: `${boardSize}px`, height: `${boardSize}px` }}
-    >
+    <div style={{ width: `${boardSize}px`, height: `${boardSize}px` }}>
       <div
         ref={boardRef}
         style={{
