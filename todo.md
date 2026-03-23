@@ -2326,3 +2326,17 @@
 - [x] Fix: OAuth callback redirects to /?loginError=true instead of showing JSON/404
 - [x] Fix: tRPC onError handler auto-resets DB pool on connection errors
 - [x] Leaderboard not hacked — DB connection was dead so no new data was being recorded
+
+## Preview Fix (Mar 23)
+- [ ] Fix preview not loading in Manus Management UI
+
+## Login Still Broken (Mar 23)
+- [ ] Diagnose why login still fails on openpecker.com after DB pool fix
+
+## OAuth Login Fix (Mar 23 - Critical)
+- [x] DB connection pool fix with keepAlive, connectionLimit=10, idleTimeout (checkpoint fff67cec)
+- [x] OAuth callback auto-retry on "Connection is closed" errors
+- [x] Changed error redirect from /?loginError=true to /auth?loginError=true
+- [x] Auth page (/auth) now shows proper error message + "Try Again" button when ?loginError=true
+- [x] Auto-redirect on /auth suppressed when loginError is present (prevents redirect loop)
+- [ ] Publish to production and test Google sign-in on openpecker.com

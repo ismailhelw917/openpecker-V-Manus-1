@@ -135,8 +135,9 @@ export function registerOAuthRoutes(app: Express) {
         }
       }
 
-      // Redirect to home with error instead of showing JSON/404
-      res.redirect(302, "/?loginError=true");
+      // Redirect to /auth with error instead of showing JSON/404
+      // Using /auth route so the SPA can show a proper error message with retry button
+      res.redirect(302, "/auth?loginError=true");
     }
   });
 }
