@@ -81,6 +81,9 @@ export function registerOAuthRoutes(app: Express) {
       });
 
       const cookieOptions = getSessionCookieOptions(req);
+      console.log("[OAuth] Host header:", req.get('host'));
+      console.log("[OAuth] X-Forwarded-Host:", req.headers['x-forwarded-host']);
+      console.log("[OAuth] X-Forwarded-Proto:", req.headers['x-forwarded-proto']);
       console.log("[OAuth] Setting cookie with options:", { ...cookieOptions, maxAge: ONE_YEAR_MS });
       console.log("[OAuth] Session token created for user:", userInfo.openId);
       res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });

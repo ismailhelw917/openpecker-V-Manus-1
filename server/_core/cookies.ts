@@ -25,7 +25,12 @@ export function getSessionCookieOptions(
   req: Request
 ): Pick<CookieOptions, "domain" | "httpOnly" | "path" | "sameSite" | "secure"> {
   const isSecure = isSecureRequest(req);
-  const host = req.get('host') || '';
+  // With trust proxy = 1, req.get('host') returns x-forwarded-host when available.
+  // Also check x-forwarded-host directly as a fallback.
+  const forwardedHost = req.headers['x-forwarded-host'];
+  const rawHost = (Array.isArray(forwardedHost) ? forwardedHost[0] : forwardedHost) || req.get('host') || '';
+  // Strip port from host (e.g. "openpecker.com:443" -> "openpecker.com")
+  const host = rawHost.split(':')[0];
   
   let domain: string | undefined = undefined;
   if (host.includes('openpecker.com')) {

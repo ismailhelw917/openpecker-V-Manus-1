@@ -33,6 +33,9 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 
 async function startServer() {
   const app = express();
+  // Trust the reverse proxy (Manus/Cloudflare) so req.protocol reflects HTTPS
+  // and secure cookies are set correctly on the live domain (openpecker.com).
+  app.set("trust proxy", 1);
   const server = createServer(app);
   // IMPORTANT: Register Stripe webhook BEFORE express.json() so it receives raw body
   // for signature verification. The stripeHandler uses express.raw() on the webhook route.

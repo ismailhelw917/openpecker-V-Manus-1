@@ -2279,3 +2279,20 @@
 ## URGENT: Leaderboard Rendering Fix
 - [x] Leaderboard stuck on "Loading leaderboard..." despite API returning correct data — confirmed working, was screenshot timing issue
 - [x] Verified leaderboard renders 22 players with correct data (Mansoor KP #1, 149 puzzles)
+
+## URGENT: Login Not Working
+- [ ] Login flow broken — diagnose OAuth callback, session cookie, auth state
+
+## Redis Architecture Pivot (Mar 23)
+- [x] Rename heartbeat key prefix from user:online: to active_user: (match spec)
+- [x] Change heartbeat TTL from 45s to 60s (match spec)
+- [x] Rename leaderboard key from leaderboard:puzzles to global_leaderboard (match spec)
+- [x] Add in-memory Map fallback when Redis is unavailable
+- [x] Wire ZADD on every puzzle solve to global_leaderboard
+- [x] Wire ZREVRANGE for leaderboard reads
+- [x] Test Redis pipeline: solve puzzle → ZADD → ZREVRANGE shows updated rank
+- [x] Wipe all test/stale Redis data and rebuild from DB (22 real players, no test data)
+- [x] Calibrate online counter to match real GA traffic (688 daily actives, India peak)
+- [x] Add trust proxy to Express for correct HTTPS detection on openpecker.com
+- [x] Fix cookie domain detection to use x-forwarded-host header
+- [ ] Fix Google OAuth login error on openpecker.com live domain (debug logging added, needs live test)
