@@ -12,6 +12,7 @@ import Settings from "./pages/Settings";
 import Session from "./pages/Session";
 import Auth from "./pages/Auth";
 import { Leaderboard } from "./pages/Leaderboard";
+import { LiveLeaderboard } from "./pages/LiveLeaderboard";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import ResetPassword from "./pages/ResetPassword";
@@ -35,7 +36,7 @@ function Router() {
       <Route path={"/train"} component={Train} />
       <Route path={"/sets"} component={SavedSets} />
       <Route path={"/stats"} component={Stats} />
-      <Route path={"/leaderboard"} component={Leaderboard} />
+      <Route path={"/leaderboard"} component={LiveLeaderboard} />
       <Route path={"/settings"} component={Settings} />
       <Route path={"/profile"} component={Profile} />
       <Route path={"/session/:id"} component={Session} />

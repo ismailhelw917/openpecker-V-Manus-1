@@ -2378,3 +2378,9 @@
 - [x] Remove "Continue with Google" button from Register page (now redirects to /auth)
 - [x] Remove Google OAuth redirect from Settings checkout handler
 - [x] Delete Rank/Leaderboard tab from bottom navigation
+
+## Batch Tasks (User Request - Mar 23)
+- [x] Grant lifetime premium to all 4,125 users (was 0 non-premium before)
+- [x] Audit puzzle/variation names — 4.8M puzzles checked, moves format is space-separated (handled correctly), no broken data found
+- [x] Re-add Leaderboard (Trophy) tab to bottom nav
+- [x] New LiveLeaderboard page with 30s countdown ring, LIVE badge, progress bar, auto-refetch
