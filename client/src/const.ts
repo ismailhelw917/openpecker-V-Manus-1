@@ -8,12 +8,19 @@ function encodeStateBase64Url(obj: any): string {
   return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 }
 
-// Generate login URL at runtime so redirect URI reflects the current origin.
+// The registered OAuth redirect URI must match exactly what's in the Manus OAuth app config.
+// Always use openpecker.com so login works from any domain (preview domains are not registered).
+const PRODUCTION_ORIGIN = "https://openpecker.com";
+
+// Generate login URL at runtime.
 // returnPath: optional path to redirect to after successful login (e.g., "/train")
 export const getLoginUrl = (returnPath?: string) => {
   const oauthPortalUrl = import.meta.env.VITE_OAUTH_PORTAL_URL;
   const appId = import.meta.env.VITE_APP_ID;
-  const redirectUri = `${window.location.origin}/api/oauth/callback`;
+
+  // Always use the production origin for the redirect URI so it matches the registered OAuth app.
+  // This ensures login works from preview domains (openpecker-eorxrxcp.manus.space) too.
+  const redirectUri = `${PRODUCTION_ORIGIN}/api/oauth/callback`;
 
   // Encode both redirectUri and returnPath in state using URL-safe base64
   const stateObj = { redirectUri, returnPath: returnPath || "/" };

@@ -2351,3 +2351,8 @@
 - [x] Fix Redis/in-memory seeding to always read from real DB on startup (wipe+reseed on every startup)
 - [x] Ensure production leaderboard never shows test data
 - [ ] Verify GA 730 users vs 14 leaderboard players discrepancy (expected - most visitors haven't solved puzzles)
+
+## OAuth Login 404 After Redirect (Mar 23 - Still Broken)
+- [ ] Diagnose what path the OAuth callback redirects to that causes SPA 404
+- [ ] Fix the SPA routing or redirect path
+- [ ] Verify login works on both openpecker.com and preview domain
