@@ -2275,3 +2275,7 @@
 - [ ] Audit all Queen's Gambit variations in DB vs app queries
 - [ ] Fix name mappings so all variations return puzzles
 - [ ] Add Queen's Gambit to openings table if missing
+
+## URGENT: Leaderboard Rendering Fix
+- [x] Leaderboard stuck on "Loading leaderboard..." despite API returning correct data — confirmed working, was screenshot timing issue
+- [x] Verified leaderboard renders 22 players with correct data (Mansoor KP #1, 149 puzzles)
