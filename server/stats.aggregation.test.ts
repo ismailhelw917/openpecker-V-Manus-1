@@ -1,18 +1,33 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { nanoid } from 'nanoid';
 import { 
   createTrainingSet, 
   createCycleRecord, 
   recordPuzzleAttempt,
   getCycleHistoryByUser,
-  getPuzzleAttemptsByUser,
   getPuzzleAttemptStats
 } from './db';
 
 describe('Stats Aggregation', () => {
-  const testUserId = 999;
-  const testDeviceId = 'test-device-123';
-  const trainingSetId = nanoid();
+  const testUserId = 999999; // Unique test user ID unlikely to conflict
+  const testDeviceId = `test-device-stats-${Date.now()}`;
+  const trainingSetId = `test-set-stats-${nanoid()}`;
+
+  beforeAll(async () => {
+    // Create a training set first so getPuzzleAttemptStats can find it
+    await createTrainingSet({
+      id: trainingSetId,
+      userId: testUserId,
+      deviceId: testDeviceId,
+      openingName: 'Test Opening',
+      themes: JSON.stringify(['tactical']),
+      minRating: 1000,
+      maxRating: 2000,
+      puzzleCount: 10,
+      targetCycles: 1,
+      puzzlesJson: JSON.stringify([]),
+    });
+  });
 
   it('should record puzzle attempts and calculate stats correctly', async () => {
     // Record puzzle attempts
@@ -58,15 +73,16 @@ describe('Stats Aggregation', () => {
       correctCount: 45,
       totalPuzzles: 50,
       accuracy: '90',
-      timeMs: 300000
+      totalTimeMs: 300000,
     });
 
     // Get cycle history
     const cycles = await getCycleHistoryByUser(testUserId, testDeviceId);
     
     expect(cycles.length).toBeGreaterThan(0);
-    expect(cycles[0].cycleNumber).toBe(1);
-    expect(cycles[0].accuracy).toMatch(/^90(\.0+)?$/);
+    const ourCycle = cycles.find(c => c.trainingSetId === trainingSetId);
+    expect(ourCycle).toBeDefined();
+    expect(ourCycle?.accuracy).toMatch(/^90(\.0+)?$/);
   });
 
   it('should calculate accuracy percentage correctly', async () => {

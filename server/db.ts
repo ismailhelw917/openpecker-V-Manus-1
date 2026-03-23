@@ -172,8 +172,9 @@ export async function getPuzzlesByThemeAndRating(
   const db = await getDb();
   if (!db) return [];
 
+  // Use LIKE to handle both JSON arrays and space-separated theme strings
   let whereConditions = and(
-    sql`JSON_CONTAINS(${puzzles.themes}, JSON_QUOTE(${theme}))`,
+    sql`${puzzles.themes} LIKE ${'%' + theme + '%'}`,
     gte(puzzles.rating, minRating),
     lte(puzzles.rating, maxRating)
   );
@@ -200,8 +201,9 @@ export async function getRandomPuzzlesByThemeAndRating(
   const db = await getDb();
   if (!db) return [];
 
+  // Use LIKE to handle both JSON arrays and space-separated theme strings
   let whereConditions = and(
-    sql`JSON_CONTAINS(${puzzles.themes}, JSON_QUOTE(${theme}))`,
+    sql`${puzzles.themes} LIKE ${'%' + theme + '%'}`,
     gte(puzzles.rating, minRating),
     lte(puzzles.rating, maxRating)
   );

@@ -203,6 +203,23 @@ export function invalidateLeaderboardCache(): void {
 }
 
 /**
+ * Get the current cache status.
+ */
+export function getLeaderboardCacheStatus(): {
+  isCached: boolean;
+  cachedAt: Date | null;
+  cacheSize: number;
+  entries: LeaderboardEntry[];
+} {
+  return {
+    isCached: cachedLeaderboard !== null,
+    cachedAt: cachedLeaderboard ? new Date(cachedLeaderboard.ts) : null,
+    cacheSize: cachedLeaderboard ? cachedLeaderboard.data.length : 0,
+    entries: cachedLeaderboard ? cachedLeaderboard.data : [],
+  };
+}
+
+/**
  * Get player rank by userId.
  */
 export async function getPlayerRank(userId: number): Promise<number | null> {

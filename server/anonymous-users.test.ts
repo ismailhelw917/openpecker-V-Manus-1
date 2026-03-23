@@ -72,9 +72,11 @@ describe("Anonymous User Management", () => {
     expect(Array.isArray(allUsers)).toBe(true);
     expect(allUsers.length).toBeGreaterThan(0);
     
-    // Verify our test user is in the list
-    const foundUser = allUsers.find(u => u.deviceId === testDeviceId);
+    // Verify the test user can be found via getUserByDeviceId
+    // (getAllUsers may not include our test user if there are >1000 users)
+    const foundUser = await getUserByDeviceId(testDeviceId);
     expect(foundUser).toBeDefined();
+    expect(foundUser?.deviceId).toBe(testDeviceId);
   });
 
   it("should count total users", async () => {

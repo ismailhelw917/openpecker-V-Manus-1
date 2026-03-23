@@ -28,10 +28,11 @@ describe("Heartbeat and Active Sessions", () => {
     const result = await db.execute(sql`
       SELECT * FROM active_sessions WHERE id = ${sessionId}
     `);
-
-    expect(result).toBeDefined();
-    expect(result.length).toBeGreaterThan(0);
-    expect(result[0].name).toBe(name);
+    // MySQL2 returns [rows, fields] tuple; rows is result[0]
+    const rows = Array.isArray(result[0]) ? result[0] : result;
+    expect(rows).toBeDefined();
+    expect(rows.length).toBeGreaterThan(0);
+    expect(rows[0].name).toBe(name);
   });
 
   it("should update active session on duplicate heartbeat", async () => {
@@ -58,9 +59,9 @@ describe("Heartbeat and Active Sessions", () => {
     const result = await db.execute(sql`
       SELECT * FROM active_sessions WHERE id = ${sessionId}
     `);
-
-    expect(result[0].name).toBe(name2);
-    expect(result[0].currentPath).toBe('/leaderboard');
+    const rows = Array.isArray(result[0]) ? result[0] : result;
+    expect(rows[0].name).toBe(name2);
+    expect(rows[0].currentPath).toBe('/leaderboard');
   });
 
   it("should retrieve active sessions within 60 seconds", async () => {
@@ -76,8 +77,8 @@ describe("Heartbeat and Active Sessions", () => {
       WHERE lastActive > DATE_SUB(NOW(), INTERVAL 60 SECOND)
       AND id = ${sessionId}
     `);
-
-    expect(result.length).toBeGreaterThan(0);
+    const rows = Array.isArray(result[0]) ? result[0] : result;
+    expect(rows.length).toBeGreaterThan(0);
   });
 
   it("should not retrieve inactive sessions older than 60 seconds", async () => {
@@ -94,8 +95,8 @@ describe("Heartbeat and Active Sessions", () => {
       WHERE lastActive > DATE_SUB(NOW(), INTERVAL 60 SECOND)
       AND id = ${sessionId}
     `);
-
-    expect(result.length).toBe(0);
+    const rows = Array.isArray(result[0]) ? result[0] : result;
+    expect(rows.length).toBe(0);
   });
 
   it("should distinguish between guest and registered users", async () => {
@@ -115,14 +116,16 @@ describe("Heartbeat and Active Sessions", () => {
     const guests = await db.execute(sql`
       SELECT * FROM active_sessions WHERE isGuest = 1 AND id = ${guestId}
     `);
+    const guestRows = Array.isArray(guests[0]) ? guests[0] : guests;
 
     const users = await db.execute(sql`
       SELECT * FROM active_sessions WHERE isGuest = 0 AND id = ${userId}
     `);
+    const userRows = Array.isArray(users[0]) ? users[0] : users;
 
-    expect(guests.length).toBeGreaterThan(0);
-    expect(guests[0].isGuest).toBe(1);
-    expect(users.length).toBeGreaterThan(0);
-    expect(users[0].isGuest).toBe(0);
+    expect(guestRows.length).toBeGreaterThan(0);
+    expect(Number(guestRows[0].isGuest)).toBe(1);
+    expect(userRows.length).toBeGreaterThan(0);
+    expect(Number(userRows[0].isGuest)).toBe(0);
   });
 });

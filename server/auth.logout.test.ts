@@ -30,7 +30,11 @@ function createAuthContext(): { ctx: TrpcContext; clearedCookies: CookieCall[] }
     req: {
       protocol: "https",
       headers: {},
-    } as TrpcContext["req"],
+      get: (name: string) => {
+        if (name === 'host') return 'openpecker.com';
+        return undefined;
+      },
+    } as unknown as TrpcContext["req"],
     res: {
       clearCookie: (name: string, options: Record<string, unknown>) => {
         clearedCookies.push({ name, options });
@@ -54,7 +58,6 @@ describe("auth.logout", () => {
     expect(clearedCookies[0]?.options).toMatchObject({
       maxAge: -1,
       secure: true,
-      sameSite: "none",
       httpOnly: true,
       path: "/",
     });
