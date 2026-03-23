@@ -469,26 +469,38 @@ export async function getRandomPuzzlesByOpeningAndRating(
     });
 
     // Use Drizzle ORM query builder
-    const result = await db
+    let result = await db
       .select()
       .from(puzzles)
       .where(whereConditions)
       .limit(puzzleCount);
     
-    console.log('[getRandomPuzzlesByOpeningAndRating] Query result type:', typeof result, 'length:', result?.length);
     console.log('[getRandomPuzzlesByOpeningAndRating] Found:', result?.length || 0, 'puzzles');
     
+    // Fallback 1: no rating filter (keeps variation + color)
     if (!result || result.length === 0) {
-      console.warn('[getRandomPuzzlesByOpeningAndRating] NO PUZZLES FOUND!');
+      console.warn('[getRandomPuzzlesByOpeningAndRating] 0 results with rating filter — retrying without rating constraints');
+      let fb1: any = eq(puzzles.openingName, dbOpeningName);
+      if (variation && variation.trim()) fb1 = and(fb1, like(puzzles.openingVariation, `%${variation}%`));
+      if (color && color !== 'both') fb1 = and(fb1, eq(puzzles.color, color));
+      result = await db.select().from(puzzles).where(fb1).limit(puzzleCount);
+      console.log('[getRandomPuzzlesByOpeningAndRating] Fallback-1 found:', result?.length || 0, 'puzzles');
     }
-    
-    if (result && result.length > 0) {
-      console.log('[getRandomPuzzlesByOpeningAndRating] First puzzle:', {
-        id: result[0].id,
-        openingName: result[0].openingName,
-        fen: result[0].fen?.substring(0, 50),
-        rating: result[0].rating
-      });
+
+    // Fallback 2: no variation filter (keeps rating + color)
+    if (!result || result.length === 0) {
+      console.warn('[getRandomPuzzlesByOpeningAndRating] 0 results — retrying without variation filter');
+      let fb2: any = and(eq(puzzles.openingName, dbOpeningName), gte(puzzles.rating, minRating), lte(puzzles.rating, maxRating));
+      if (color && color !== 'both') fb2 = and(fb2, eq(puzzles.color, color));
+      result = await db.select().from(puzzles).where(fb2).limit(puzzleCount);
+      console.log('[getRandomPuzzlesByOpeningAndRating] Fallback-2 found:', result?.length || 0, 'puzzles');
+    }
+
+    // Fallback 3: opening only (no rating, no variation, no color)
+    if (!result || result.length === 0) {
+      console.warn('[getRandomPuzzlesByOpeningAndRating] Final fallback: opening name only');
+      result = await db.select().from(puzzles).where(eq(puzzles.openingName, dbOpeningName)).limit(puzzleCount);
+      console.log('[getRandomPuzzlesByOpeningAndRating] Fallback-3 found:', result?.length || 0, 'puzzles');
     }
     
     return result || [];

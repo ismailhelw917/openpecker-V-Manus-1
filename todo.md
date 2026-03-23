@@ -2384,3 +2384,11 @@
 - [x] Audit puzzle/variation names — 4.8M puzzles checked, moves format is space-separated (handled correctly), no broken data found
 - [x] Re-add Leaderboard (Trophy) tab to bottom nav
 - [x] New LiveLeaderboard page with 30s countdown ring, LIVE badge, progress bar, auto-refetch
+
+## Variation Audit (User Request - Mar 23)
+- [x] Audited all 1,378 variations in hierarchy.json - no zero-count variations
+- [x] Root cause: tight rating filters on small openings (e.g. Crab=26 puzzles) return 0 results
+- [x] Fixed: added 3-tier fallback in getRandomPuzzlesByOpeningAndRating
+  - Fallback 1: retry without rating filter (keeps variation + color)
+  - Fallback 2: retry without variation filter (keeps rating + color)
+  - Fallback 3: opening name only (guarantees results for any valid opening)
