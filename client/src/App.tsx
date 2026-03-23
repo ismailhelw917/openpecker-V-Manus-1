@@ -15,7 +15,6 @@ const Stats = lazy(() => import("./pages/Stats"));
 const Settings = lazy(() => import("./pages/Settings"));
 const Session = lazy(() => import("./pages/Session"));
 const Auth = lazy(() => import("./pages/Auth"));
-const LiveLeaderboard = lazy(() => import("./pages/LiveLeaderboard").then(m => ({ default: m.LiveLeaderboard })));
 const Profile = lazy(() => import("./pages/Profile"));
 const Register = lazy(() => import("./pages/Register"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
@@ -37,7 +36,6 @@ function Router() {
         <Route path={"/train"} component={Train} />
         <Route path={"/sets"} component={SavedSets} />
         <Route path={"/stats"} component={Stats} />
-        <Route path={"/leaderboard"} component={LiveLeaderboard} />
         <Route path={"/settings"} component={Settings} />
         <Route path={"/profile"} component={Profile} />
         <Route path={"/session/:id"} component={Session} />
@@ -71,7 +69,7 @@ function App() {
 
   // Trigger PWA banner when user visits Rank or Stats
   useEffect(() => {
-    if (location === "/leaderboard" || location === "/stats") {
+    if (location === "/stats") {
       setPwaTriggered(true);
     }
   }, [location]);
