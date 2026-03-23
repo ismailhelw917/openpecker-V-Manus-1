@@ -1,25 +1,25 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
 import BottomNav from "@/components/BottomNav";
-import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import Home from "./pages/Home";
-import Train from "./pages/Train";
-import SavedSets from "./pages/SavedSets";
-import Stats from "./pages/Stats";
-import Settings from "./pages/Settings";
-import Session from "./pages/Session";
-import Auth from "./pages/Auth";
-import { Leaderboard } from "./pages/Leaderboard";
-import { LiveLeaderboard } from "./pages/LiveLeaderboard";
-import Profile from "./pages/Profile";
-import Register from "./pages/Register";
-import ResetPassword from "./pages/ResetPassword";
+import { lazy, Suspense, useEffect, useState, useMemo } from "react";
 import NameSelectionDialog from "./components/NameSelectionDialog";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 
-import { useEffect, useState, useMemo } from "react";
+// Lazy-load all pages for code splitting
+const Home = lazy(() => import("./pages/Home"));
+const Train = lazy(() => import("./pages/Train"));
+const SavedSets = lazy(() => import("./pages/SavedSets"));
+const Stats = lazy(() => import("./pages/Stats"));
+const Settings = lazy(() => import("./pages/Settings"));
+const Session = lazy(() => import("./pages/Session"));
+const Auth = lazy(() => import("./pages/Auth"));
+const LiveLeaderboard = lazy(() => import("./pages/LiveLeaderboard").then(m => ({ default: m.LiveLeaderboard })));
+const Profile = lazy(() => import("./pages/Profile"));
+const Register = lazy(() => import("./pages/Register"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 import { useAuth } from "./_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "./_core/deviceId";
 import { trpc } from "./lib/trpc";
@@ -31,23 +31,25 @@ import { useHeartbeat } from "./hooks/useHeartbeat";
 
 function Router() {
   return (
-    <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/train"} component={Train} />
-      <Route path={"/sets"} component={SavedSets} />
-      <Route path={"/stats"} component={Stats} />
-      <Route path={"/leaderboard"} component={LiveLeaderboard} />
-      <Route path={"/settings"} component={Settings} />
-      <Route path={"/profile"} component={Profile} />
-      <Route path={"/session/:id"} component={Session} />
-      <Route path={"/auth"} component={Auth} />
-      <Route path={"/register"} component={Register} />
-      <Route path={"/reset-password"} component={ResetPassword} />
-      <Route path={"/play/:id"} component={Session} />
+    <Suspense fallback={<div className="flex items-center justify-center h-screen bg-slate-900"><div className="w-8 h-8 border-2 border-amber-400 border-t-transparent rounded-full animate-spin" /></div>}>
+      <Switch>
+        <Route path={"/"} component={Home} />
+        <Route path={"/train"} component={Train} />
+        <Route path={"/sets"} component={SavedSets} />
+        <Route path={"/stats"} component={Stats} />
+        <Route path={"/leaderboard"} component={LiveLeaderboard} />
+        <Route path={"/settings"} component={Settings} />
+        <Route path={"/profile"} component={Profile} />
+        <Route path={"/session/:id"} component={Session} />
+        <Route path={"/auth"} component={Auth} />
+        <Route path={"/register"} component={Register} />
+        <Route path={"/reset-password"} component={ResetPassword} />
+        <Route path={"/play/:id"} component={Session} />
 
-      <Route path={"/404"} component={NotFound} />
-      <Route component={NotFound} />
-    </Switch>
+        <Route path={"/404"} component={NotFound} />
+        <Route component={NotFound} />
+      </Switch>
+    </Suspense>
   );
 }
 
