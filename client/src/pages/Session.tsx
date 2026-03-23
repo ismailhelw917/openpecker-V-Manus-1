@@ -116,6 +116,20 @@ export default function Session() {
     },
   });
 
+  // Heartbeat — keeps the user marked as online in Redis every 30 s
+  const heartbeatMutation = trpc.stats.heartbeat.useMutation();
+  useEffect(() => {
+    const deviceId = getOrCreateDeviceId();
+    const id = user?.id ? `user:${user.id}` : `device:${deviceId}`;
+    const name = user?.name || user?.email || undefined;
+    heartbeatMutation.mutate({ id, name });
+    const hbInterval = setInterval(() => {
+      heartbeatMutation.mutate({ id, name });
+    }, 30_000);
+    return () => clearInterval(hbInterval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
+
   // Track cumulative totalAttempts and totalTimeMs for the training set
   const totalAttemptsRef = useRef(0);
   const totalTimeMsRef = useRef(0);

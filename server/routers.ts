@@ -1307,6 +1307,37 @@ export const appRouter = router({
           return { success: false, message: 'Failed to aggregate stats' };
         }
       }),
+
+    /**
+     * Get the top-100 leaderboard from Redis Sorted Set.
+     * Falls back to in-memory map when Redis is unavailable.
+     */
+    getLeaderboard: publicProcedure
+      .input(z.object({ limit: z.number().min(1).max(200).default(100) }).optional())
+      .query(async ({ input }) => {
+        const { redisGetLeaderboard, redisOnlineCount } = await import('./redis');
+        const limit = input?.limit ?? 100;
+        const [players, onlineCount] = await Promise.all([
+          redisGetLeaderboard(limit),
+          redisOnlineCount(),
+        ]);
+        return { players, onlineCount };
+      }),
+
+    /**
+     * Heartbeat — called every 30 s from the frontend.
+     * Sets active_user:[id] in Redis with 45 s TTL.
+     */
+    heartbeat: publicProcedure
+      .input(z.object({
+        id: z.string(),
+        name: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { redisHeartbeat } = await import('./redis');
+        await redisHeartbeat(input.id, input.name);
+        return { ok: true };
+      }),
   }),
 
   // ==================== PREMIUM ====================

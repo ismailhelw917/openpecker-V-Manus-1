@@ -1,4 +1,7 @@
+import { useEffect } from "react";
+import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { getOrCreateDeviceId } from "@/_core/deviceId";
 
 const MEDAL: Record<number, string> = { 1: "🥇", 2: "🥈", 3: "🥉" };
 
@@ -22,22 +25,34 @@ function AccuracyBar({ value }: { value: number }) {
   );
 }
 
-// Placeholder type until backend is rebuilt
-type Player = {
-  rank: number;
-  playerName: string;
-  puzzlesSolved: number;
-  accuracy: number;
-  rating: number;
-};
-
 export default function Leaderboard() {
   const { user } = useAuth();
 
-  // Leaderboard backend is being rebuilt — no data yet
-  const players: Player[] = [];
-  const isLoading = false;
+  // Heartbeat — keeps the user marked as online while viewing the leaderboard
+  const heartbeatMutation = trpc.stats.heartbeat.useMutation();
+  useEffect(() => {
+    const deviceId = getOrCreateDeviceId();
+    const id = user?.id ? `user:${user.id}` : `device:${deviceId}`;
+    const name = user?.name || user?.email || undefined;
+    heartbeatMutation.mutate({ id, name });
+    const hbInterval = setInterval(() => {
+      heartbeatMutation.mutate({ id, name });
+    }, 30_000);
+    return () => clearInterval(hbInterval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
+
+  // Fetch leaderboard from Redis
+  const { data, isLoading } = trpc.stats.getLeaderboard.useQuery(
+    { limit: 100 },
+    { staleTime: 30_000, refetchInterval: 60_000 }
+  );
+
+  const players = data?.players ?? [];
+  const onlineCount = data?.onlineCount ?? 0;
+
   const myName = user?.name || user?.email || null;
+  const myEntry = myName ? players.find(p => p.playerName === myName) ?? null : null;
 
   return (
     <div className="min-h-[calc(100dvh-5rem)] bg-slate-950 flex flex-col">
@@ -51,7 +66,22 @@ export default function Leaderboard() {
           >
             # Leaderboard
           </h1>
+          <div className="flex items-center gap-1.5 bg-slate-800 border border-slate-700 rounded-full px-3 py-1">
+            <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
+            <span className="text-xs font-semibold text-teal-300">{onlineCount} online</span>
+          </div>
         </div>
+
+        {/* My rank callout */}
+        {myEntry && (
+          <div className="mt-2 bg-teal-900/30 border border-teal-700/50 rounded-xl px-4 py-2.5 flex items-center gap-3">
+            <span className="text-teal-400 text-lg font-black">#{myEntry.rank}</span>
+            <div className="min-w-0">
+              <p className="text-xs text-teal-300 font-semibold truncate">Your rank</p>
+              <p className="text-[11px] text-slate-400 truncate">{myName}</p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Table header */}
@@ -71,10 +101,10 @@ export default function Leaderboard() {
         ) : players.length === 0 ? (
           <div className="flex flex-col items-center justify-center pt-16 gap-3">
             <span className="text-4xl">♟</span>
-            <p className="text-slate-400 text-sm">Leaderboard coming soon.</p>
+            <p className="text-slate-400 text-sm">No players yet — solve some puzzles to appear here!</p>
           </div>
         ) : (
-          players.map((p: Player) => {
+          players.map((p) => {
             const isMe = !!(myName && p.playerName === myName);
             const medal = MEDAL[p.rank];
             return (
@@ -107,6 +137,17 @@ export default function Leaderboard() {
           })
         )}
       </div>
+
+      {/* Sticky footer: show user's rank if they're outside the visible list */}
+      {myName && !isLoading && players.length > 0 && !myEntry && (
+        <div className="sticky bottom-0 bg-slate-900 border-t border-slate-700 px-4 py-3 flex items-center gap-3">
+          <span className="text-slate-400 text-sm font-bold">You</span>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm text-slate-300 truncate">{myName}</p>
+          </div>
+          <span className="text-xs text-slate-500">Not ranked yet — solve puzzles to appear</span>
+        </div>
+      )}
     </div>
   );
 }
