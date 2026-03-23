@@ -124,7 +124,7 @@ export const trainingSets = mysqlTable("training_sets", {
   totalTimeMs: int("totalTimeMs").default(0),
   
   // Puzzle data
-  puzzlesJson: text("puzzlesJson").notNull(), // JSON array of puzzle objects
+  puzzlesJson: text("puzzlesJson").notNull(), // JSON array of puzzle objects (LONGTEXT - altered via SQL)
   
   // Timestamps
   createdAt: timestamp("createdAt").defaultNow().notNull(),

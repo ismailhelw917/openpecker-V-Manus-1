@@ -2192,3 +2192,6 @@
 - [x] Generate app store assets (icon, screenshots, feature graphic)
 - [x] Write app store listing copy (title, description, keywords)
 - [x] Produce step-by-step submission guide for both stores
+
+## Bug Fix: training_sets insert failure
+- [x] Migrate puzzlesJson column from TEXT to LONGTEXT to support 300+ puzzle sets
