@@ -186,6 +186,9 @@ const plugins = [
       ],
     },
     workbox: {
+      // Force immediate activation of new service worker
+      skipWaiting: true,
+      clientsClaim: true,
       // Cache the app shell and key assets
       globPatterns: ["**/*.{js,css,html}"],
       runtimeCaching: [
