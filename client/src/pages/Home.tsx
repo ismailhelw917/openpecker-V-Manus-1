@@ -211,14 +211,7 @@ export default function Home() {
           <span className="text-teal-400 text-sm">♟</span>
           <span className="text-xs font-semibold text-slate-200">4,800,000+ puzzles</span>
         </div>
-        {totalPlayers > 10 && (
-          <div className="flex items-center gap-1.5 bg-slate-800/80 border border-slate-700 rounded-full px-3 py-1.5">
-            <span className="text-teal-400 text-sm">👥</span>
-            <span className="text-xs font-semibold text-slate-200">
-              {totalPlayers.toLocaleString()} players
-            </span>
-          </div>
-        )}
+
         {topPlayer && (
           <div className="flex items-center gap-1.5 bg-yellow-500/10 border border-yellow-500/30 rounded-full px-3 py-1.5">
             <span className="text-sm">🥇</span>
