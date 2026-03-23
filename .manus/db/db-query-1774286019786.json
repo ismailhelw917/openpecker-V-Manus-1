@@ -1,0 +1,19 @@
+{
+  "query": "\n-- Unique devices active today from active_sessions (guests + logged in)\nSELECT \n  COUNT(DISTINCT deviceId) AS total_unique_devices_today,\n  SUM(CASE WHEN isGuest = 1 THEN 1 ELSE 0 END) AS guest_sessions_today,\n  SUM(CASE WHEN isGuest = 0 THEN 1 ELSE 0 END) AS logged_in_sessions_today,\n  COUNT(DISTINCT CASE WHEN isGuest = 1 THEN deviceId END) AS unique_guest_devices_today\nFROM active_sessions\nWHERE DATE(lastActive) = CURDATE();\n\n-- Unique fingerprints from visitor_tracking today\nSELECT COUNT(DISTINCT fingerprint) AS unique_visitors_today, COUNT(*) AS total_pageviews_today\nFROM visitor_tracking\nWHERE DATE(timestamp) = CURDATE();\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \n-- Unique devices active today from active_sessions (guests + logged in)\nSELECT \n  COUNT(DISTINCT deviceId) AS total_unique_devices_today,\n  SUM(CASE WHEN isGuest = 1 THEN 1 ELSE 0 END) AS guest_sessions_today,\n  SUM(CASE WHEN isGuest = 0 THEN 1 ELSE 0 END) AS logged_in_sessions_today,\n  COUNT(DISTINCT CASE WHEN isGuest = 1 THEN deviceId END) AS unique_guest_devices_today\nFROM active_sessions\nWHERE DATE(lastActive) = CURDATE();\n\n-- Unique fingerprints from visitor_tracking today\nSELECT COUNT(DISTINCT fingerprint) AS unique_visitors_today, COUNT(*) AS total_pageviews_today\nFROM visitor_tracking\nWHERE DATE(timestamp) = CURDATE();\n",
+  "rows": [
+    {
+      "total_unique_devices_today": "7",
+      "guest_sessions_today": "2",
+      "logged_in_sessions_today": "10",
+      "unique_guest_devices_today": "2"
+    }
+  ],
+  "messages": [
+    "unique_visitors_today\ttotal_pageviews_today",
+    "1037\t1544"
+  ],
+  "stdout": "total_unique_devices_today\tguest_sessions_today\tlogged_in_sessions_today\tunique_guest_devices_today\n7\t2\t10\t2\nunique_visitors_today\ttotal_pageviews_today\n1037\t1544\n",
+  "stderr": "",
+  "execution_time_ms": 1846
+}

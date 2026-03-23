@@ -1,0 +1,170 @@
+{
+  "query": "\nSELECT \n  id,\n  name,\n  email,\n  loginMethod,\n  lastSignedIn,\n  createdAt\nFROM users\nORDER BY lastSignedIn DESC\nLIMIT 20;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \nSELECT \n  id,\n  name,\n  email,\n  loginMethod,\n  lastSignedIn,\n  createdAt\nFROM users\nORDER BY lastSignedIn DESC\nLIMIT 20;\n",
+  "rows": [
+    {
+      "id": "1040530",
+      "name": "Ismail El Helw",
+      "email": "ismail.helw@gmail.com",
+      "loginMethod": "google",
+      "lastSignedIn": "2026-03-23 16:19:00",
+      "createdAt": "2026-03-21 10:17:11"
+    },
+    {
+      "id": "750572",
+      "name": "Ismail",
+      "email": "happychesspenguin@gmail.com",
+      "loginMethod": "google",
+      "lastSignedIn": "2026-03-23 15:53:51",
+      "createdAt": "2026-03-18 14:11:23"
+    },
+    {
+      "id": "1264247",
+      "name": "Zorez Shabkhez",
+      "email": "zorezshabkhez2@gmail.com",
+      "loginMethod": "google",
+      "lastSignedIn": "2026-03-22 20:44:20",
+      "createdAt": "2026-03-22 20:37:49"
+    },
+    {
+      "id": "1261101",
+      "name": "Blake Thomas",
+      "email": "1008@ga-import.local",
+      "loginMethod": "ga_import",
+      "lastSignedIn": "2026-03-22 17:01:43",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1261102",
+      "name": "Drew Jackson",
+      "email": "1009@ga-import.local",
+      "loginMethod": "ga_import",
+      "lastSignedIn": "2026-03-22 17:01:43",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1261098",
+      "name": "Riley Martinez",
+      "email": "1005@ga-import.local",
+      "loginMethod": "ga_import",
+      "lastSignedIn": "2026-03-22 17:01:43",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1261094",
+      "name": "Alex Thompson",
+      "email": "1001@ga-import.local",
+      "loginMethod": "ga_import",
+      "lastSignedIn": "2026-03-22 17:01:43",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1261097",
+      "name": "Morgan Davis",
+      "email": "1004@ga-import.local",
+      "loginMethod": "ga_import",
+      "lastSignedIn": "2026-03-22 17:01:43",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1261099",
+      "name": "Taylor Anderson",
+      "email": "1006@ga-import.local",
+      "loginMethod": "ga_import",
+      "lastSignedIn": "2026-03-22 17:01:43",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1261100",
+      "name": "Quinn Taylor",
+      "email": "1007@ga-import.local",
+      "loginMethod": "ga_import",
+      "lastSignedIn": "2026-03-22 17:01:43",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1261096",
+      "name": "Casey Wilson",
+      "email": "1003@ga-import.local",
+      "loginMethod": "ga_import",
+      "lastSignedIn": "2026-03-22 17:01:43",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1261095",
+      "name": "Jordan Smith",
+      "email": "1002@ga-import.local",
+      "loginMethod": "ga_import",
+      "lastSignedIn": "2026-03-22 17:01:43",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1261093",
+      "name": "Mansoor KP",
+      "email": "1000@ga-import.local",
+      "loginMethod": "ga_import",
+      "lastSignedIn": "2026-03-22 17:01:43",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1141733",
+      "name": "Mansoor KP",
+      "email": "mansoorkp2002@gmail.com",
+      "loginMethod": "google",
+      "lastSignedIn": "2026-03-22 16:29:48",
+      "createdAt": "2026-03-21 16:39:48"
+    },
+    {
+      "id": "1098140",
+      "name": "salem el sayed",
+      "email": "salem.t.elsayed@gmail.com",
+      "loginMethod": "google",
+      "lastSignedIn": "2026-03-22 16:26:52",
+      "createdAt": "2026-03-21 13:53:28"
+    },
+    {
+      "id": "1200380",
+      "name": "Alex Thompson",
+      "email": "alex.thompson@example.com",
+      "loginMethod": "NULL",
+      "lastSignedIn": "2026-03-22 11:47:07",
+      "createdAt": "2025-12-22 11:47:07"
+    },
+    {
+      "id": "1200385",
+      "name": "Taylor Anderson",
+      "email": "taylor.anderson@example.com",
+      "loginMethod": "NULL",
+      "lastSignedIn": "2026-03-22 11:47:07",
+      "createdAt": "2025-12-27 11:47:07"
+    },
+    {
+      "id": "1200391",
+      "name": "Casey Martin",
+      "email": "casey.martin@example.com",
+      "loginMethod": "NULL",
+      "lastSignedIn": "2026-03-22 11:47:07",
+      "createdAt": "2026-01-02 11:47:07"
+    },
+    {
+      "id": "1200390",
+      "name": "Jordan Harris",
+      "email": "jordan.harris@example.com",
+      "loginMethod": "NULL",
+      "lastSignedIn": "2026-03-22 11:47:07",
+      "createdAt": "2026-01-01 11:47:07"
+    },
+    {
+      "id": "1200381",
+      "name": "Jordan Smith",
+      "email": "jordan.smith@example.com",
+      "loginMethod": "NULL",
+      "lastSignedIn": "2026-03-22 11:47:07",
+      "createdAt": "2025-12-23 11:47:07"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\tloginMethod\tlastSignedIn\tcreatedAt\n1040530\tIsmail El Helw\tismail.helw@gmail.com\tgoogle\t2026-03-23 16:19:00\t2026-03-21 10:17:11\n750572\tIsmail\thappychesspenguin@gmail.com\tgoogle\t2026-03-23 15:53:51\t2026-03-18 14:11:23\n1264247\tZorez Shabkhez\tzorezshabkhez2@gmail.com\tgoogle\t2026-03-22 20:44:20\t2026-03-22 20:37:49\n1261101\tBlake Thomas\t1008@ga-import.local\tga_import\t2026-03-22 17:01:43\t2026-03-22 17:01:43\n1261102\tDrew Jackson\t1009@ga-import.local\tga_import\t2026-03-22 17:01:43\t2026-03-22 17:01:43\n1261098\tRiley Martinez\t1005@ga-import.local\tga_import\t2026-03-22 17:01:43\t2026-03-22 17:01:43\n1261094\tAlex Thompson\t1001@ga-import.local\tga_import\t2026-03-22 17:01:43\t2026-03-22 17:01:43\n1261097\tMorgan Davis\t1004@ga-import.local\tga_import\t2026-03-22 17:01:43\t2026-03-22 17:01:43\n1261099\tTaylor Anderson\t1006@ga-import.local\tga_import\t2026-03-22 17:01:43\t2026-03-22 17:01:43\n1261100\tQuinn Taylor\t1007@ga-import.local\tga_import\t2026-03-22 17:01:43\t2026-03-22 17:01:43\n1261096\tCasey Wilson\t1003@ga-import.local\tga_import\t2026-03-22 17:01:43\t2026-03-22 17:01:43\n1261095\tJordan Smith\t1002@ga-import.local\tga_import\t2026-03-22 17:01:43\t2026-03-22 17:01:43\n1261093\tMansoor KP\t1000@ga-import.local\tga_import\t2026-03-22 17:01:43\t2026-03-22 17:01:43\n1141733\tMansoor KP\tmansoorkp2002@gmail.com\tgoogle\t2026-03-22 16:29:48\t2026-03-21 16:39:48\n1098140\tsalem el sayed\tsalem.t.elsayed@gmail.com\tgoogle\t2026-03-22 16:26:52\t2026-03-21 13:53:28\n1200380\tAlex Thompson\talex.thompson@example.com\tNULL\t2026-03-22 11:47:07\t2025-12-22 11:47:07\n1200385\tTaylor Anderson\ttaylor.anderson@example.com\tNULL\t2026-03-22 11:47:07\t2025-12-27 11:47:07\n1200391\tCasey Martin\tcasey.martin@example.com\tNULL\t2026-03-22 11:47:07\t2026-01-02 11:47:07\n1200390\tJordan Harris\tjordan.harris@example.com\tNULL\t2026-03-22 11:47:07\t2026-01-01 11:47:07\n1200381\tJordan Smith\tjordan.smith@example.com\tNULL\t2026-03-22 11:47:07\t2025-12-23 11:47:07\n",
+  "stderr": "",
+  "execution_time_ms": 1517
+}

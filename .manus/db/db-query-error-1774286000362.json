@@ -1,0 +1,8 @@
+{
+  "query": "\n-- Check visitor_tracking table for today\nSELECT COUNT(DISTINCT visitorId) AS unique_visitors_today, COUNT(*) AS total_visits\nFROM visitor_tracking\nWHERE DATE(firstSeen) = CURDATE() OR DATE(lastSeen) = CURDATE();\n\n-- Check most recent data in pageViews to understand what's being tracked\nSELECT MAX(timestamp) AS latest_pageview, MIN(timestamp) AS oldest_pageview, COUNT(*) AS total\nFROM pageViews;\n\n-- Check active_sessions for today\nSELECT COUNT(*) AS active_today\nFROM active_sessions\nWHERE DATE(lastSeen) = CURDATE();\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \n-- Check visitor_tracking table for today\nSELECT COUNT(DISTINCT visitorId) AS unique_visitors_today, COUNT(*) AS total_visits\nFROM visitor_tracking\nWHERE DATE(firstSeen) = CURDATE() OR DATE(lastSeen) = CURDATE();\n\n-- Check most recent data in pageViews to understand what's being tracked\nSELECT MAX(timestamp) AS latest_pageview, MIN(timestamp) AS oldest_pageview, COUNT(*) AS total\nFROM pageViews;\n\n-- Check active_sessions for today\nSELECT COUNT(*) AS active_today\nFROM active_sessions\nWHERE DATE(lastSeen) = CURDATE();\n",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 3: Unknown column 'firstseen' in 'where clause'"
+  ]
+}

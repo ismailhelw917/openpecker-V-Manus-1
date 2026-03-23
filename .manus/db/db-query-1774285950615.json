@@ -1,0 +1,15 @@
+{
+  "query": "\nSELECT \n  COUNT(DISTINCT id) AS real_users_today,\n  SUM(CASE WHEN loginMethod = 'google' THEN 1 ELSE 0 END) AS google_users,\n  SUM(CASE WHEN loginMethod = 'email' THEN 1 ELSE 0 END) AS email_users\nFROM users\nWHERE DATE(lastSignedIn) = CURDATE()\n  AND loginMethod NOT IN ('ga_import', 'NULL')\n  AND loginMethod IS NOT NULL;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \nSELECT \n  COUNT(DISTINCT id) AS real_users_today,\n  SUM(CASE WHEN loginMethod = 'google' THEN 1 ELSE 0 END) AS google_users,\n  SUM(CASE WHEN loginMethod = 'email' THEN 1 ELSE 0 END) AS email_users\nFROM users\nWHERE DATE(lastSignedIn) = CURDATE()\n  AND loginMethod NOT IN ('ga_import', 'NULL')\n  AND loginMethod IS NOT NULL;\n",
+  "rows": [
+    {
+      "real_users_today": "2",
+      "google_users": "2",
+      "email_users": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "real_users_today\tgoogle_users\temail_users\n2\t2\t0\n",
+  "stderr": "",
+  "execution_time_ms": 1646
+}
