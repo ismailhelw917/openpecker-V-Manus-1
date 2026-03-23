@@ -716,8 +716,10 @@ export default function Session() {
           Back
         </button>
         <div className="text-center flex-1 px-2 sm:px-4 min-w-0">
-          {currentPuzzle?.openingName && (
-            <p className="text-[10px] sm:text-xs text-teal-300 mb-1 sm:mb-2 font-semibold truncate">{currentPuzzle.openingName}</p>
+          {(getTrainingSet.data?.openingName || currentPuzzle?.openingName) && (
+            <p className="text-xs sm:text-sm text-teal-300 mb-1 sm:mb-2 font-semibold">
+              {getTrainingSet.data?.openingName || currentPuzzle?.openingName}
+            </p>
           )}
           <div className="flex items-center justify-center gap-3 sm:gap-4 mb-1">
             <div>
@@ -725,7 +727,7 @@ export default function Session() {
               <p className="text-sm font-bold text-amber-400">{formatTime(sessionTime)}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-400">Cycles</p>
+              <p className="text-xs text-slate-400">Sets</p>
               <p className="text-sm font-bold text-amber-400">{currentCycle}/{targetCycles}</p>
             </div>
           </div>

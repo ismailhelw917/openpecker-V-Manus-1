@@ -2200,3 +2200,7 @@
 - [x] Lock all openings except Sicilian Defence and Queen's Gambit
 - [x] Show locked state (lock icon, greyed out) on restricted openings in Train UI
 - [x] Prevent starting a session with a locked opening
+
+## Session Header Fix
+- [x] Show full opening name in header (not truncated)
+- [x] Rename "Cycles" label to "Sets"
