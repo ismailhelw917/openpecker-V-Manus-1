@@ -27,8 +27,8 @@ export function useHierarchyCache() {
         setIsLoading(true);
         setError(null);
 
-        // Load from static JSON file (bundled with app)
-        const response = await fetch('/hierarchy.json');
+        // Load from static JSON file with cache-busting to bypass stale service worker cache
+        const response = await fetch('/hierarchy.json', { cache: 'no-store' });
         if (!response.ok) {
           throw new Error(`Failed to load hierarchy: ${response.statusText}`);
         }
