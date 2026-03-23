@@ -89,7 +89,6 @@ export default function Session() {
   const completeCycleMutation = trpc.cycles.create.useMutation({
     onSuccess: () => {
       utils.stats.getUserStats.invalidate();
-      utils.stats.getLeaderboard.invalidate();
       utils.trainingSets.getById.invalidate({ id: sessionId });
     },
   });
@@ -99,7 +98,6 @@ export default function Session() {
     onSuccess: () => {
       utils.stats.getUserStats.invalidate();
       utils.stats.getSummary.invalidate();
-      utils.stats.getLeaderboard.invalidate();
     },
   });
 

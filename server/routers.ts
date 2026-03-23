@@ -58,10 +58,6 @@ import { getDb,
 } from "./db";
 import { sendPasswordResetEmail, sendWelcomeEmail } from "./_core/email";
 import {
-  getOnlineCount,
-  getOnlineCountByPageActivity,
-  getTotalPlayerCount,
-  getLeaderboardPlayers,
 } from "./players";
 
 export const appRouter = router({
@@ -948,7 +944,6 @@ export const appRouter = router({
       )
       .mutation(async ({ input, ctx }) => {
         const { getOrCreatePlayer, updatePlayerStats } = await import('./players');
-        const { invalidateLeaderboardCache } = await import('./leaderboard-optimized');
         // Support both authenticated and anonymous users
         const userId = ctx.user?.id || null;
         const playerName = userId ? `Player-${userId}` : `Anonymous-${input.deviceId || 'unknown'}`;
@@ -980,12 +975,7 @@ export const appRouter = router({
           console.warn('[cycles.create] Failed to update player stats:', error);
         }
 
-        // CRITICAL: Invalidate leaderboard cache when cycle completes
-        // This ensures the leaderboard updates in real-time when puzzles are solved
-        invalidateLeaderboardCache();
-        console.log('[cycles.create] Leaderboard cache invalidated');
-
-        return result;
+         return result;
       }),
 
     /**
@@ -1014,54 +1004,6 @@ export const appRouter = router({
 
   // ==================== STATS ====================
   stats: router({
-    /**
-     * Get subscription history and churn metrics
-     */
-    getSubscriptionHistory: publicProcedure
-      .input(z.object({}).nullish())
-      .query(async () => {
-        const { getSubscriptionHistory } = await import('./leaderboard-optimized');
-        return await getSubscriptionHistory();
-      }),
-
-    /**
-     * Get leaderboard
-     */
-    getLeaderboard: publicProcedure
-      .input(
-        z.object({
-          limit: z.number().default(100),
-          sortBy: z.enum(['accuracy', 'speed', 'rating']).default('accuracy'),
-        }).nullish()
-      )
-      .query(async ({ input }) => {
-        const { redisGetLeaderboard, redisOnlineCount } = await import('./redis');
-        const limit = input?.limit ?? 100;
-
-        const rawPlayers = await redisGetLeaderboard(limit);
-        const onlineNow = await redisOnlineCount();
-        // Strip internal playerId (Redis key) — not needed on the frontend
-        const players = rawPlayers.map(({ playerId: _pid, ...rest }) => rest);
-
-        console.log('[stats.getLeaderboard] Redis: returning', players.length, 'players,', onlineNow, 'online');
-
-        return {
-          players,
-          summary: {
-            activePlayers: onlineNow,
-            totalPlayers: players.length,
-            topAccuracy: players[0]?.accuracy ?? 0,
-            topRating: players[0]?.rating ?? 1200,
-            averageAccuracy: players.length > 0
-              ? Math.round(players.reduce((s, p) => s + p.accuracy, 0) / players.length)
-              : 0,
-            averageRating: 1200,
-            totalPuzzlesSolvedGlobally: players.reduce((s, p) => s + p.puzzlesSolved, 0),
-            previousSubscribersCount: 0,
-          },
-        };
-      }),
-
     /**
      * Get puzzle attempt stats
      */
@@ -1365,94 +1307,6 @@ export const appRouter = router({
           return { success: false, message: 'Failed to aggregate stats' };
         }
       }),
-    /**
-     * Get leaderboard filtered by time period (all | week | today)
-     */
-    getTimedLeaderboard: publicProcedure
-      .input(z.object({
-        period: z.enum(['all', 'week', 'today']).default('all'),
-        limit: z.number().default(100),
-      }).nullish())
-      .query(async ({ input }) => {
-        const period = input?.period ?? 'all';
-        const limit = input?.limit ?? 100;
-
-        if (period === 'all') {
-          const { redisGetLeaderboard, redisOnlineCount } = await import('./redis');
-          const rawPlayers = await redisGetLeaderboard(limit);
-          const onlineNow = await redisOnlineCount();
-          const players = rawPlayers.map(({ playerId: _pid, ...rest }) => rest);
-          return { players, onlineNow };
-        }
-
-        const now = new Date();
-        const since = period === 'today'
-          ? new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)
-          : new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-        const db = await getDb();
-        if (!db) return { players: [], onlineNow: 0 };
-
-        const rows = await db.execute(
-          sql`SELECT
-             COALESCE(p.name, CONCAT('Guest-', SUBSTRING(pa.deviceId, 1, 8))) AS playerName,
-             COUNT(*) AS puzzlesSolved,
-             ROUND(SUM(pa.isCorrect) * 100.0 / COUNT(*), 1) AS accuracy,
-             COALESCE(p.rating, 1200) AS rating
-           FROM puzzle_attempts pa
-           LEFT JOIN players p ON (pa.userId IS NOT NULL AND p.userId = pa.userId)
-                                OR (pa.userId IS NULL AND p.deviceId = pa.deviceId)
-           WHERE pa.completedAt >= ${since}
-           GROUP BY COALESCE(p.name, CONCAT('Guest-', SUBSTRING(pa.deviceId, 1, 8))), COALESCE(p.rating, 1200)
-           ORDER BY puzzlesSolved DESC
-           LIMIT ${limit}`
-        );
-
-        const rawRows = Array.isArray(rows) ? (Array.isArray(rows[0]) ? rows[0] : rows) : [];
-        const players = (rawRows as any[]).map((r: any, i: number) => ({
-          rank: i + 1,
-          playerName: r.playerName ?? 'Unknown',
-          puzzlesSolved: Number(r.puzzlesSolved ?? 0),
-          accuracy: Number(r.accuracy ?? 0),
-          rating: Number(r.rating ?? 1200),
-          totalMinutes: 0,
-        }));
-
-        const { redisOnlineCount } = await import('./redis');
-        const onlineNow = await redisOnlineCount();
-        return { players, onlineNow };
-      }),
-    /**
-     * Get today's top solver (most puzzles solved today)
-     */
-    getTodayTopSolver: publicProcedure
-      .query(async () => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const db = await getDb();
-        if (!db) return null;
-        const rows = await db.execute(
-          sql`SELECT
-             COALESCE(p.name, CONCAT('Guest-', SUBSTRING(pa.deviceId, 1, 8))) AS playerName,
-             COUNT(*) AS puzzlesSolved,
-             ROUND(SUM(pa.isCorrect) * 100.0 / COUNT(*), 1) AS accuracy
-           FROM puzzle_attempts pa
-           LEFT JOIN players p ON (pa.userId IS NOT NULL AND p.userId = pa.userId)
-                                OR (pa.userId IS NULL AND p.deviceId = pa.deviceId)
-           WHERE pa.completedAt >= ${today}
-           GROUP BY COALESCE(p.name, CONCAT('Guest-', SUBSTRING(pa.deviceId, 1, 8)))
-           ORDER BY puzzlesSolved DESC
-           LIMIT 1`
-        );
-        const rawRows = Array.isArray(rows) ? (Array.isArray(rows[0]) ? rows[0] : rows) : [];
-        const top = (rawRows as any[])[0];
-        if (!top) return null;
-        return {
-          playerName: top.playerName as string,
-          puzzlesSolved: Number(top.puzzlesSolved),
-          accuracy: Number(top.accuracy),
-        };
-      }),
   }),
 
   // ==================== PREMIUM ====================
@@ -1645,16 +1499,6 @@ export const appRouter = router({
       .input(z.object({ playerId: z.number() }))
       .mutation(async ({ input }) => {
         return endOnlineSession(input.playerId);
-      }),
-
-    /**
-     * Get current online count
-     */
-    getOnlineCount: publicProcedure
-      .query(async () => {
-        // Return mock online count for realistic UI display
-        // Simulates 127 base users with natural fluctuations
-        return getMockOnlineCount();
       }),
 
     /**

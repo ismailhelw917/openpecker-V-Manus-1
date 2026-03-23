@@ -175,12 +175,6 @@ export default function Stats() {
     { enabled: !!deviceId || !!user, retry: 1, retryDelay: 1000 }
   );
 
-  // Fetch leaderboard summary for global stats
-  const { data: leaderboardData } = trpc.stats.getLeaderboard.useQuery(
-    { limit: 100, sortBy: 'accuracy' },
-    { retry: 1, retryDelay: 1000 }
-  );
-
   // Fetch online count and total players (Nakama-based)
   const { data: onlineData } = trpc.system.getOnlineCount.useQuery(undefined, {
     retry: 1,
@@ -430,35 +424,6 @@ export default function Stats() {
             {/* Key Metrics Grid */}
             <StatsDisplay stats={finalStats} isLoading={isLoading} />
 
-            {/* Global Leaderboard Stats */}
-            {leaderboardData?.summary && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
-                <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-4">
-                  <div className="text-xs sm:text-sm font-medium text-slate-400 mb-1">Top Accuracy</div>
-                  <div className="text-lg sm:text-2xl font-bold text-teal-400">{leaderboardData.summary.topAccuracy}%</div>
-                </Card>
-                <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-4">
-                  <div className="text-xs sm:text-sm font-medium text-slate-400 mb-1">Avg Accuracy</div>
-                  <div className="text-lg sm:text-2xl font-bold text-teal-400">{leaderboardData.summary.averageAccuracy}%</div>
-                </Card>
-                <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-4">
-                  <div className="text-xs sm:text-sm font-medium text-slate-400 mb-1">Top Rating</div>
-                  <div className="text-lg sm:text-2xl font-bold text-amber-400">{leaderboardData.summary.topRating}</div>
-                </Card>
-                <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-4">
-                  <div className="text-xs sm:text-sm font-medium text-slate-400 mb-1">Global Puzzles</div>
-                  <div className="text-lg sm:text-2xl font-bold text-teal-400">{leaderboardData.summary.totalPuzzlesSolvedGlobally}</div>
-                </Card>
-                <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-4">
-                  <div className="text-xs sm:text-sm font-medium text-slate-400 mb-1">Previous Subs</div>
-                  <div className="text-lg sm:text-2xl font-bold text-amber-400">{leaderboardData.summary.previousSubscribersCount}</div>
-                </Card>
-                <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-4">
-                  <div className="text-xs sm:text-sm font-medium text-slate-400 mb-1">Avg Rating</div>
-                  <div className="text-lg sm:text-2xl font-bold text-amber-400">{leaderboardData.summary.averageRating}</div>
-                </Card>
-              </div>
-            )}
 
             {/* Rating Trend Chart */}
             {finalStats && (

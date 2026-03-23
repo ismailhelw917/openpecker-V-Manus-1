@@ -3,11 +3,6 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { trpc } from "@/lib/trpc";
-
-// Stable query input
-const LB_INPUT = { limit: 1, sortBy: "accuracy" as const };
-
 // ── cburnett piece URLs (same set used by the main board via chessground) ─────
 const CDN = "https://cdn.jsdelivr.net/gh/lichess-org/lila@master/public/piece/cburnett";
 // Map from our piece key → cburnett filename: {color}{TYPE}.svg
@@ -146,14 +141,6 @@ export default function Home() {
   const { user, isAuthenticated, loading } = useAuth();
   const [premiumNotified, setPremiumNotified] = useState(false);
   const { language, setLanguage, t } = useLanguage();
-
-  const { data: lbData } = trpc.stats.getLeaderboard.useQuery(LB_INPUT, {
-    staleTime: 60_000,
-    refetchOnWindowFocus: false,
-  });
-
-  // We still fetch but no longer display topPlayer
-  void lbData;
 
   useEffect(() => {
     if (isAuthenticated && user && !premiumNotified && user.isPremium) {
