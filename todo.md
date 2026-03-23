@@ -2318,3 +2318,11 @@
 - [x] Fix "PUZZLES SOLVED" and "ACCURACY" column headers wrapping
 - [x] Use shorter column labels on mobile ("Solved" and "Acc")
 - [x] Ensure production leaderboard loads from DB when Redis unavailable (auto-seed fallback)
+
+## OAuth 404 + Leaderboard Hack (Mar 23)
+- [x] Root cause: production DB connection pool dying ("Connection is closed") — broke BOTH login AND leaderboard
+- [x] Fix: replaced raw URL drizzle() with mysql2.createPool() with keepAlive, connectionLimit, idleTimeout
+- [x] Fix: OAuth callback now auto-retries with DB reset on connection errors
+- [x] Fix: OAuth callback redirects to /?loginError=true instead of showing JSON/404
+- [x] Fix: tRPC onError handler auto-resets DB pool on connection errors
+- [x] Leaderboard not hacked — DB connection was dead so no new data was being recorded

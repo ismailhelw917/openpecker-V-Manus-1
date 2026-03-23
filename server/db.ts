@@ -1,4 +1,5 @@
 import { drizzle } from "drizzle-orm/mysql2";
+import mysql from "mysql2";
 import { 
   InsertUser, 
   users,
@@ -25,18 +26,51 @@ import { ENV } from './_core/env';
 import { eq, ne, and, or, gte, lte, lt, asc, desc, count, sum, inArray, sql, like } from 'drizzle-orm';
 
 let _db: ReturnType<typeof drizzle> | null = null;
+let _pool: mysql.Pool | null = null;
+
+// Create a robust connection pool with keepAlive and auto-reconnect.
+// The raw URL-based drizzle() call uses default pool settings which
+// cause "Connection is closed" errors in production after idle timeouts.
+function createPool(): mysql.Pool {
+  const pool = mysql.createPool({
+    uri: process.env.DATABASE_URL,
+    waitForConnections: true,
+    connectionLimit: 10,
+    maxIdle: 5,
+    idleTimeout: 60000,       // Close idle connections after 60s
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 10000, // Send keepAlive every 10s
+    supportBigNumbers: true,
+  });
+  console.log("[Database] Connection pool created with keepAlive enabled");
+  return pool;
+}
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      _db = drizzle(process.env.DATABASE_URL);
+      _pool = createPool();
+      _db = drizzle(_pool);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
+      _pool = null;
     }
   }
   return _db;
+}
+
+// Force-recreate the DB connection if it becomes stale.
+// Called by error handlers when they detect "Connection is closed" errors.
+export async function resetDbConnection() {
+  console.log("[Database] Resetting connection pool...");
+  if (_pool) {
+    try { _pool.end(); } catch { /* ignore */ }
+  }
+  _db = null;
+  _pool = null;
+  return getDb();
 }
 
 export async function upsertUser(user: InsertUser) {

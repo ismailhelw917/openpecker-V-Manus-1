@@ -9,6 +9,7 @@ import { registerStripeRoutes } from "./stripeHandler";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { resetDbConnection } from "../db";
 import { trackVisitor, getVisitorStats } from "../visitor-tracking";
 import { registerHeartbeatRoutes } from "./heartbeat";
 
@@ -81,6 +82,13 @@ async function startServer() {
     createExpressMiddleware({
       router: appRouter,
       createContext,
+      onError({ error }) {
+        const msg = error.message || "";
+        if (msg.includes("Connection is closed") || msg.includes("ECONNRESET") || msg.includes("PROTOCOL_CONNECTION_LOST")) {
+          console.log("[tRPC] DB connection error detected, resetting pool...");
+          resetDbConnection().catch(() => {});
+        }
+      },
     })
   );
   // development mode uses Vite, production mode uses static files
