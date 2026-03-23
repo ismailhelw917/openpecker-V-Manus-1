@@ -14,6 +14,7 @@ import Auth from "./pages/Auth";
 import { Leaderboard } from "./pages/Leaderboard";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
+import ResetPassword from "./pages/ResetPassword";
 import NameSelectionDialog from "./components/NameSelectionDialog";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 
@@ -40,6 +41,7 @@ function Router() {
       <Route path={"/session/:id"} component={Session} />
       <Route path={"/auth"} component={Auth} />
       <Route path={"/register"} component={Register} />
+      <Route path={"/reset-password"} component={ResetPassword} />
       <Route path={"/play/:id"} component={Session} />
 
       <Route path={"/404"} component={NotFound} />

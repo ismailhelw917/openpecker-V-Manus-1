@@ -467,3 +467,20 @@ export const statsExports = mysqlTable("stats_exports", {
 
 export type StatsExport = typeof statsExports.$inferSelect;
 export type InsertStatsExport = typeof statsExports.$inferInsert;
+
+/**
+ * Password Reset Tokens - for email-based password reset flow
+ */
+export const passwordResetTokens = mysqlTable("password_reset_tokens", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  token: varchar("token", { length: 128 }).notNull().unique(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  usedAt: timestamp("usedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  tokenIdx: index("idx_prt_token").on(table.token),
+  userIdIdx: index("idx_prt_userId").on(table.userId),
+}));
+export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
+export type InsertPasswordResetToken = typeof passwordResetTokens.$inferInsert;

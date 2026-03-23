@@ -51,7 +51,12 @@ import { getDb,
   getOpeningHierarchy,
   getPuzzlesByOpeningHierarchy,
   getPuzzleCountByOpeningHierarchy,
+  createPasswordResetToken,
+  getValidPasswordResetToken,
+  markPasswordResetTokenUsed,
+  deletePasswordResetTokensByUser,
 } from "./db";
+import { sendPasswordResetEmail, sendWelcomeEmail } from "./_core/email";
 import {
   getOnlineCount,
   getOnlineCountByPageActivity,
@@ -252,6 +257,197 @@ export const appRouter = router({
             name: input.name,
           },
         };
+      }),
+
+    /**
+     * Register with email and password
+     */
+    register: publicProcedure
+      .input(
+        z.object({
+          email: z.string().email().toLowerCase(),
+          password: z.string().min(8).max(128),
+          name: z.string().min(2).max(50),
+          origin: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const { email, password, name } = input;
+
+        // Check if email is already taken
+        const existing = await getUserByEmail(email);
+        if (existing) {
+          throw new Error('An account with this email already exists.');
+        }
+
+        // Hash password
+        const passwordHash = await bcrypt.hash(password, 12);
+
+        // Create user with synthetic openId
+        const openId = `email:${email}`;
+        const user = await upsertUser({
+          openId,
+          email,
+          name,
+          passwordHash,
+          loginMethod: 'email',
+          hasRegistered: 1,
+        });
+
+        if (!user) {
+          throw new Error('Failed to create account. Please try again.');
+        }
+
+        // Ensure player row exists in leaderboard
+        try {
+          const { getOrCreatePlayer } = await import('./players');
+          await getOrCreatePlayer(user.id, null, name, email, 0);
+        } catch (err) {
+          console.warn('[Register] Failed to create player row:', err);
+        }
+
+        // Create JWT session
+        const sessionToken = await sdk.createSessionToken(openId, { name });
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie(COOKIE_NAME, sessionToken, {
+          ...cookieOptions,
+          maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        });
+
+        // Send welcome email (non-blocking)
+        sendWelcomeEmail(email, name).catch(err =>
+          console.warn('[Register] Failed to send welcome email:', err)
+        );
+
+        return { success: true, user };
+      }),
+
+    /**
+     * Login with email and password
+     */
+    login: publicProcedure
+      .input(
+        z.object({
+          email: z.string().email().toLowerCase(),
+          password: z.string().min(1).max(128),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const { email, password } = input;
+
+        const user = await getUserByEmail(email);
+        if (!user) {
+          throw new Error('Invalid email or password.');
+        }
+
+        if (!user.passwordHash) {
+          throw new Error('This account uses a different sign-in method.');
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.passwordHash);
+        if (!passwordMatch) {
+          throw new Error('Invalid email or password.');
+        }
+
+        // Update last signed in
+        await upsertUser({ openId: user.openId, lastSignedIn: new Date() });
+
+        // Create JWT session
+        const sessionToken = await sdk.createSessionToken(user.openId, { name: user.name || '' });
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie(COOKIE_NAME, sessionToken, {
+          ...cookieOptions,
+          maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        });
+
+        return { success: true, user };
+      }),
+
+    /**
+     * Request a password reset email
+     */
+    forgotPassword: publicProcedure
+      .input(
+        z.object({
+          email: z.string().email().toLowerCase(),
+          origin: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const { email } = input;
+        const origin = input.origin || 'https://openpecker.com';
+
+        const user = await getUserByEmail(email);
+        // Always return success to prevent email enumeration
+        if (!user) {
+          return { success: true };
+        }
+
+        if (!user.passwordHash) {
+          // User exists but signed up via OAuth — still return success silently
+          return { success: true };
+        }
+
+        // Generate secure random token
+        const { randomBytes } = await import('crypto');
+        const token = randomBytes(32).toString('hex');
+        const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+        await createPasswordResetToken(user.id, token, expiresAt);
+
+        const resetUrl = `${origin}/reset-password?token=${token}`;
+        await sendPasswordResetEmail(email, resetUrl);
+
+        return { success: true };
+      }),
+
+    /**
+     * Reset password using a valid token
+     */
+    resetPassword: publicProcedure
+      .input(
+        z.object({
+          token: z.string().min(1),
+          password: z.string().min(8).max(128),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const { token, password } = input;
+
+        const resetToken = await getValidPasswordResetToken(token);
+        if (!resetToken) {
+          throw new Error('This reset link is invalid or has expired.');
+        }
+
+        // Hash new password
+        const passwordHash = await bcrypt.hash(password, 12);
+
+        // Update password
+        await updateUserPasswordHash(resetToken.userId, passwordHash);
+
+        // Mark token as used and clean up all tokens for this user
+        await markPasswordResetTokenUsed(resetToken.id);
+        await deletePasswordResetTokensByUser(resetToken.userId);
+
+        // Auto-login the user after reset
+        const user = await getUserByOpenId(`email:${resetToken.userId}`);
+        // Get user by ID directly
+        const db = await getDb();
+        if (db) {
+          const { users: usersTable } = await import('../drizzle/schema');
+          const result = await db.select().from(usersTable).where(eq(usersTable.id, resetToken.userId)).limit(1);
+          const freshUser = result[0];
+          if (freshUser) {
+            const sessionToken = await sdk.createSessionToken(freshUser.openId, { name: freshUser.name || '' });
+            const cookieOptions = getSessionCookieOptions(ctx.req);
+            ctx.res.cookie(COOKIE_NAME, sessionToken, {
+              ...cookieOptions,
+              maxAge: 30 * 24 * 60 * 60 * 1000,
+            });
+          }
+        }
+
+        return { success: true };
       }),
 
     /**

@@ -21,6 +21,7 @@ import {
   InsertPromoRedemption,
   onlineSessions,
   players,
+  passwordResetTokens,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 import { eq, ne, and, or, gte, lte, lt, asc, desc, count, sum, inArray, sql, like } from 'drizzle-orm';
@@ -1749,4 +1750,57 @@ export async function getPuzzlesBySuccessRate(
     console.error("Error getting puzzles by success rate:", error);
     return [];
   }
+}
+
+// ==================== PASSWORD RESET TOKENS ====================
+
+/**
+ * Create a password reset token for a user
+ */
+export async function createPasswordResetToken(userId: number, token: string, expiresAt: Date) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(passwordResetTokens).values({ userId, token, expiresAt });
+}
+
+/**
+ * Get a valid (unused, non-expired) password reset token
+ */
+export async function getValidPasswordResetToken(token: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const now = new Date();
+  const result = await db
+    .select()
+    .from(passwordResetTokens)
+    .where(
+      and(
+        eq(passwordResetTokens.token, token),
+        sql`${passwordResetTokens.expiresAt} > ${now}`,
+        sql`${passwordResetTokens.usedAt} IS NULL`
+      )
+    )
+    .limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+/**
+ * Mark a password reset token as used
+ */
+export async function markPasswordResetTokenUsed(tokenId: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db
+    .update(passwordResetTokens)
+    .set({ usedAt: new Date() })
+    .where(eq(passwordResetTokens.id, tokenId));
+}
+
+/**
+ * Delete all password reset tokens for a user (cleanup after reset)
+ */
+export async function deletePasswordResetTokensByUser(userId: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, userId));
 }

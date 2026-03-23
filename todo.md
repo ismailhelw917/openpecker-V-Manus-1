@@ -2353,6 +2353,22 @@
 - [ ] Verify GA 730 users vs 14 leaderboard players discrepancy (expected - most visitors haven't solved puzzles)
 
 ## OAuth Login 404 After Redirect (Mar 23 - Still Broken)
-- [ ] Diagnose what path the OAuth callback redirects to that causes SPA 404
-- [ ] Fix the SPA routing or redirect path
-- [ ] Verify login works on both openpecker.com and preview domain
+- [x] Diagnose what path the OAuth callback redirects to that causes SPA 404
+- [x] Fix the SPA routing or redirect path (always use openpecker.com redirectUri)
+- [x] Verify login works on both openpecker.com and preview domain
+
+## Email Auth (User Request - Mar 23)
+- [x] Remove Google OAuth sign-in button from Auth page (replaced with email/password forms)
+- [x] Add email/password columns to users table (already existed in schema)
+- [x] Build register procedure (hash password with bcrypt, synthetic openId)
+- [x] Build login procedure (verify password, issue JWT session)
+- [x] Build logout procedure (existing, unchanged)
+- [x] Build forgot password / reset password flow (Resend email + token table)
+- [x] Build Auth page with login + register + forgot password tabs
+- [x] Build Reset Password page (/reset-password?token=...)
+- [x] Remove all Google OAuth references from Auth page
+- [x] Wire up new auth flow in App.tsx (added /reset-password route)
+- [x] Add RESEND_API_KEY secret (re_5wzDUJtc... send-only key)
+- [x] Create password_reset_tokens DB table
+- [x] Write 16 vitest tests - all passing
+- [x] Test full auth flow end to end
