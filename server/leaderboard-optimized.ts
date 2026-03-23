@@ -53,7 +53,7 @@ export async function getTopPlayersByMetricOptimized(
     const registeredQuery = sql`
       SELECT
         u.id                                                   AS playerId,
-        u.name                                                 AS playerName,
+        COALESCE(u.name, CONCAT('Player-', u.id))              AS playerName,
         COUNT(pa.id)                                           AS totalPuzzles,
         CASE
           WHEN COUNT(pa.id) = 0 THEN 0
@@ -66,7 +66,6 @@ export async function getTopPlayersByMetricOptimized(
       LEFT JOIN puzzle_attempts pa ON u.id = pa.userId
       LEFT JOIN cycle_history   ch ON u.id = ch.userId
       GROUP BY u.id, u.name, u.createdAt
-      HAVING COUNT(pa.id) > 0
     `;
 
     const regResult = await db.execute(registeredQuery);
@@ -148,12 +147,8 @@ export async function getPlayerRank(userId: number): Promise<number | null> {
         COUNT(pa.id)          AS totalPuzzles,
         u.createdAt           AS joinDate
       FROM users u
-      LEFT JOIN puzzle_attempts pa ON u.id = pa.userId
-      GROUP BY u.id, u.createdAt
-      HAVING COUNT(pa.id) > 0
-    `;
-
-    const result = await db.execute(query);
+      LEFT JOIN puzzle_attempts pa ON u.id = pa.use      GROUP BY u.id, u.name, u.createdAt
+    `;  const result = await db.execute(query);
     const rows: any[] = Array.isArray(result)
       ? Array.isArray(result[0]) ? result[0] : result
       : [];

@@ -1,35 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { trpc } from "@/lib/trpc";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Trophy, Medal } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export function Leaderboard() {
+  const { t } = useLanguage();
   const [sortBy, setSortBy] = useState<'accuracy' | 'speed' | 'rating'>('accuracy');
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // Fetch leaderboard data - always sorted by puzzles solved
-  const { data: leaderboardData, isLoading, error, refetch } = trpc.stats.getLeaderboard.useQuery({
-    limit: 100,
-    sortBy: 'accuracy',
-  });
-
-  // Listen for real-time leaderboard updates
-  useEffect(() => {
-    // Simulate listening for leaderboard updates
-    // In a real Nakama setup, this would connect to Nakama's notification system
-    const handleLeaderboardUpdate = () => {
-      console.log('[Leaderboard] Received update notification, refreshing...');
-      refetch();
-    };
-
-    // Check for updates every 3 seconds (fallback polling)
-    const interval = setInterval(() => {
-      handleLeaderboardUpdate();
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [refetch]);
+  // Fetch leaderboard data — staleTime:0 ensures every refetch hits the server,
+  // and refetchInterval keeps it live without a manual setInterval.
+  const { data: leaderboardData, isLoading, error, refetch } = trpc.stats.getLeaderboard.useQuery(
+    { limit: 100, sortBy: 'accuracy' },
+    { staleTime: 0, refetchInterval: 10_000, refetchOnWindowFocus: true }
+  );
 
   // Handle response data
   const players = leaderboardData?.players || [];
@@ -42,13 +26,6 @@ export function Leaderboard() {
     averageRating: 1200,
     totalPuzzlesSolvedGlobally: 0,
   };
-
-  // Trigger refresh when refreshTrigger changes
-  useEffect(() => {
-    if (refreshTrigger > 0) {
-      refetch();
-    }
-  }, [refreshTrigger, refetch]);
 
   const getMedalColor = (rank: number) => {
     if (rank === 1) return 'text-yellow-500';
@@ -64,7 +41,7 @@ export function Leaderboard() {
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center gap-2 sm:gap-3 mb-2">
             <Trophy className="w-6 sm:w-8 h-6 sm:h-8 text-teal-600" />
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">Leaderboard</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">{t.leaderboard.title}</h1>
           </div>
           <p className="text-sm sm:text-base text-slate-300">Master the Woodpecker method with the best trainers</p>
         </div>
@@ -87,7 +64,7 @@ export function Leaderboard() {
           <Card className="bg-white border border-slate-200 p-8 sm:p-12">
             <div className="text-center text-slate-600">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto mb-4"></div>
-              Loading leaderboard...
+              {t.leaderboard.loading}
             </div>
           </Card>
         )}
@@ -108,10 +85,10 @@ export function Leaderboard() {
               <table className="w-full text-xs sm:text-sm">
                 <thead className="bg-teal-600 border-b border-teal-700">
                   <tr>
-                    <th className="text-left py-2 sm:py-3 px-2 sm:px-4 font-semibold text-white text-xs sm:text-sm whitespace-nowrap w-10 sm:w-12">Rank</th>
-                    <th className="text-left py-2 sm:py-3 px-2 sm:px-4 font-semibold text-white text-xs sm:text-sm whitespace-nowrap flex-1">Player</th>
-                    <th className="text-right py-2 sm:py-3 px-2 sm:px-4 font-semibold text-white text-xs sm:text-sm whitespace-nowrap w-16 sm:w-20">Puzzles</th>
-                    <th className="hidden sm:table-cell text-right py-2 sm:py-3 px-2 sm:px-4 font-semibold text-white text-xs sm:text-sm whitespace-nowrap w-16 sm:w-20">Accuracy</th>
+                    <th className="text-left py-2 sm:py-3 px-2 sm:px-4 font-semibold text-white text-xs sm:text-sm whitespace-nowrap w-10 sm:w-12">{t.leaderboard.rank}</th>
+                    <th className="text-left py-2 sm:py-3 px-2 sm:px-4 font-semibold text-white text-xs sm:text-sm whitespace-nowrap flex-1">{t.leaderboard.player}</th>
+                    <th className="text-right py-2 sm:py-3 px-2 sm:px-4 font-semibold text-white text-xs sm:text-sm whitespace-nowrap w-16 sm:w-20">{t.leaderboard.puzzlesSolved}</th>
+                    <th className="hidden sm:table-cell text-right py-2 sm:py-3 px-2 sm:px-4 font-semibold text-white text-xs sm:text-sm whitespace-nowrap w-16 sm:w-20">{t.leaderboard.accuracy}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -152,8 +129,7 @@ export function Leaderboard() {
           <Card className="bg-white border border-slate-200 p-8 sm:p-12">
             <div className="text-center">
               <Trophy className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-4 text-slate-400" />
-              <p className="text-slate-600 font-medium text-sm sm:text-base">No players yet</p>
-              <p className="text-slate-500 text-xs sm:text-sm">Start training to appear on the leaderboard!</p>
+              <p className="text-slate-600 font-medium text-sm sm:text-base">{t.leaderboard.noPlayers}</p>
             </div>
           </Card>
         )}

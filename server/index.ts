@@ -6,6 +6,7 @@ import { createContext } from "./_core/context";
 import { registerOAuthRoutes } from "./_core/oauth";
 import { registerStripeRoutes } from "./_core/stripeHandler";
 import { trackVisitor, getVisitorStats } from "./visitor-tracking";
+import { registerHeartbeatRoutes } from "./_core/heartbeat";
 
 const app = express();
 
@@ -18,6 +19,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // OAuth routes
 registerOAuthRoutes(app);
+
+// Heartbeat routes (active session tracking)
+registerHeartbeatRoutes(app);
 
 // Visitor tracking endpoint - lightweight, fire-and-forget
 app.post("/api/track", async (req, res) => {

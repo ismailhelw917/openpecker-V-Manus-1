@@ -1,16 +1,18 @@
 import { Home, Play, BookOpen, Trophy, BarChart3, Settings } from "lucide-react";
 import { useLocation } from "wouter";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function BottomNav() {
   const [location, setLocation] = useLocation();
+  const { t } = useLanguage();
 
   const navItems = [
-    { icon: Home, label: "HOME", path: "/" },
-    { icon: Play, label: "TRAIN", path: "/train" },
-    { icon: BookOpen, label: "SETS", path: "/sets" },
-    { icon: Trophy, label: "RANK", path: "/leaderboard" },
-    { icon: BarChart3, label: "STATS", path: "/stats" },
-    { icon: Settings, label: "MORE", path: "/settings" },
+    { icon: Home, label: t.nav.home, path: "/" },
+    { icon: Play, label: t.nav.train, path: "/train" },
+    { icon: BookOpen, label: t.nav.sets, path: "/sets" },
+    { icon: Trophy, label: t.nav.rank, path: "/leaderboard" },
+    { icon: BarChart3, label: t.nav.stats, path: "/stats" },
+    { icon: Settings, label: t.nav.more, path: "/settings" },
   ];
 
   return (

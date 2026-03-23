@@ -1,0 +1,136 @@
+{
+  "query": "\n-- Recent active sessions\nSELECT userId, name, isGuest, currentPath, lastActive \nFROM active_sessions \nORDER BY lastActive DESC \nLIMIT 20;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \n-- Recent active sessions\nSELECT userId, name, isGuest, currentPath, lastActive \nFROM active_sessions \nORDER BY lastActive DESC \nLIMIT 20;\n",
+  "rows": [
+    {
+      "userId": "NULL",
+      "name": "Registered User",
+      "isGuest": "0",
+      "currentPath": "/leaderboard",
+      "lastActive": "2026-03-23 06:47:32"
+    },
+    {
+      "userId": "NULL",
+      "name": "Guest Player",
+      "isGuest": "1",
+      "currentPath": "/train",
+      "lastActive": "2026-03-23 06:47:32"
+    },
+    {
+      "userId": "NULL",
+      "name": "Active Player",
+      "isGuest": "0",
+      "currentPath": "/leaderboard",
+      "lastActive": "2026-03-23 06:47:31"
+    },
+    {
+      "userId": "NULL",
+      "name": "Player 2",
+      "isGuest": "0",
+      "currentPath": "/leaderboard",
+      "lastActive": "2026-03-23 06:47:30"
+    },
+    {
+      "userId": "NULL",
+      "name": "Test Player",
+      "isGuest": "0",
+      "currentPath": "/leaderboard",
+      "lastActive": "2026-03-23 06:47:29"
+    },
+    {
+      "userId": "NULL",
+      "name": "Inactive Player",
+      "isGuest": "0",
+      "currentPath": "/train",
+      "lastActive": "2026-03-23 06:45:31"
+    },
+    {
+      "userId": "NULL",
+      "name": "Registered User",
+      "isGuest": "0",
+      "currentPath": "/leaderboard",
+      "lastActive": "2026-03-22 20:40:02"
+    },
+    {
+      "userId": "NULL",
+      "name": "Guest Player",
+      "isGuest": "1",
+      "currentPath": "/train",
+      "lastActive": "2026-03-22 20:40:01"
+    },
+    {
+      "userId": "NULL",
+      "name": "Player 2",
+      "isGuest": "0",
+      "currentPath": "/leaderboard",
+      "lastActive": "2026-03-22 20:40:00"
+    },
+    {
+      "userId": "NULL",
+      "name": "Active Player",
+      "isGuest": "0",
+      "currentPath": "/leaderboard",
+      "lastActive": "2026-03-22 20:40:00"
+    },
+    {
+      "userId": "NULL",
+      "name": "Test Player",
+      "isGuest": "0",
+      "currentPath": "/leaderboard",
+      "lastActive": "2026-03-22 20:39:59"
+    },
+    {
+      "userId": "NULL",
+      "name": "Inactive Player",
+      "isGuest": "0",
+      "currentPath": "/train",
+      "lastActive": "2026-03-22 20:38:01"
+    },
+    {
+      "userId": "NULL",
+      "name": "Registered User",
+      "isGuest": "0",
+      "currentPath": "/leaderboard",
+      "lastActive": "2026-03-22 12:23:33"
+    },
+    {
+      "userId": "NULL",
+      "name": "Guest Player",
+      "isGuest": "1",
+      "currentPath": "/train",
+      "lastActive": "2026-03-22 12:23:32"
+    },
+    {
+      "userId": "NULL",
+      "name": "Active Player",
+      "isGuest": "0",
+      "currentPath": "/leaderboard",
+      "lastActive": "2026-03-22 12:23:32"
+    },
+    {
+      "userId": "NULL",
+      "name": "Player 2",
+      "isGuest": "0",
+      "currentPath": "/leaderboard",
+      "lastActive": "2026-03-22 12:23:31"
+    },
+    {
+      "userId": "NULL",
+      "name": "Test Player",
+      "isGuest": "0",
+      "currentPath": "/leaderboard",
+      "lastActive": "2026-03-22 12:23:30"
+    },
+    {
+      "userId": "NULL",
+      "name": "Inactive Player",
+      "isGuest": "0",
+      "currentPath": "/train",
+      "lastActive": "2026-03-22 12:21:32"
+    }
+  ],
+  "messages": [],
+  "stdout": "userId\tname\tisGuest\tcurrentPath\tlastActive\nNULL\tRegistered User\t0\t/leaderboard\t2026-03-23 06:47:32\nNULL\tGuest Player\t1\t/train\t2026-03-23 06:47:32\nNULL\tActive Player\t0\t/leaderboard\t2026-03-23 06:47:31\nNULL\tPlayer 2\t0\t/leaderboard\t2026-03-23 06:47:30\nNULL\tTest Player\t0\t/leaderboard\t2026-03-23 06:47:29\nNULL\tInactive Player\t0\t/train\t2026-03-23 06:45:31\nNULL\tRegistered User\t0\t/leaderboard\t2026-03-22 20:40:02\nNULL\tGuest Player\t1\t/train\t2026-03-22 20:40:01\nNULL\tPlayer 2\t0\t/leaderboard\t2026-03-22 20:40:00\nNULL\tActive Player\t0\t/leaderboard\t2026-03-22 20:40:00\nNULL\tTest Player\t0\t/leaderboard\t2026-03-22 20:39:59\nNULL\tInactive Player\t0\t/train\t2026-03-22 20:38:01\nNULL\tRegistered User\t0\t/leaderboard\t2026-03-22 12:23:33\nNULL\tGuest Player\t1\t/train\t2026-03-22 12:23:32\nNULL\tActive Player\t0\t/leaderboard\t2026-03-22 12:23:32\nNULL\tPlayer 2\t0\t/leaderboard\t2026-03-22 12:23:31\nNULL\tTest Player\t0\t/leaderboard\t2026-03-22 12:23:30\nNULL\tInactive Player\t0\t/train\t2026-03-22 12:21:32\n",
+  "stderr": "",
+  "execution_time_ms": 1612
+}

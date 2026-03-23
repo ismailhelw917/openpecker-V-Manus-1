@@ -10,6 +10,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { trackVisitor, getVisitorStats } from "../visitor-tracking";
+import { registerHeartbeatRoutes } from "./heartbeat";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -43,6 +44,9 @@ async function startServer() {
   app.use(cookieParser());
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+
+  // Heartbeat routes (active session tracking)
+  registerHeartbeatRoutes(app);
 
   // Visitor tracking endpoints
   app.post("/api/track", async (req, res) => {

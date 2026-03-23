@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Home() {
   const [, setLocation] = useLocation();
   const { user, isAuthenticated, loading } = useAuth();
   const [premiumNotified, setPremiumNotified] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
 
   useEffect(() => {
     if (isAuthenticated && user && !premiumNotified && user.isPremium) {
@@ -24,7 +26,7 @@ export default function Home() {
       <div className="h-[calc(100dvh-5rem)] bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading...</p>
+          <p className="text-slate-600">{t.general.loading}</p>
         </div>
       </div>
     );
@@ -32,6 +34,30 @@ export default function Home() {
 
   return (
     <div className="h-[calc(100dvh-5rem)] overflow-hidden bg-white flex flex-col items-center justify-center px-4">
+      {/* Language selector — top right */}
+      <div className="absolute top-4 right-4 flex items-center gap-1 bg-slate-100 rounded-full px-1 py-1 shadow-sm border border-slate-200">
+        <button
+          onClick={() => setLanguage('en')}
+          className={`px-3 py-1 rounded-full text-sm font-semibold transition-all ${
+            language === 'en'
+              ? 'bg-teal-600 text-white shadow'
+              : 'text-slate-600 hover:text-teal-600'
+          }`}
+        >
+          EN
+        </button>
+        <button
+          onClick={() => setLanguage('hi')}
+          className={`px-3 py-1 rounded-full text-sm font-semibold transition-all ${
+            language === 'hi'
+              ? 'bg-teal-600 text-white shadow'
+              : 'text-slate-600 hover:text-teal-600'
+          }`}
+        >
+          हिं
+        </button>
+      </div>
+
       {/* Logo */}
       <div className="mb-5 flex justify-center">
         <img
@@ -48,7 +74,7 @@ export default function Home() {
 
       {/* Subtitle */}
       <p className="text-sm sm:text-base text-slate-600 mb-7 text-center max-w-xs">
-        Master opening tactics through deliberate repetition.
+        {t.appTagline}
       </p>
 
       {/* CTA */}
@@ -58,12 +84,12 @@ export default function Home() {
           className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold text-lg py-6 rounded-lg"
           style={{ touchAction: "manipulation" }}
         >
-          START TRAINING &rarr;
+          {t.home.startTraining}
         </Button>
 
         {isAuthenticated ? (
           <p className="text-center text-slate-600 text-sm">
-            Welcome,{" "}
+            {t.home.welcome}{" "}
             <span className="text-teal-600 font-semibold">
               {user?.name || user?.email}
             </span>
@@ -81,7 +107,7 @@ export default function Home() {
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              Register with Google
+              {language === 'hi' ? 'Google से रजिस्टर करें' : 'Register with Google'}
             </a>
             <a
               href="/register"
@@ -92,7 +118,7 @@ export default function Home() {
                 <rect x="2" y="4" width="20" height="16" rx="2" />
                 <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
               </svg>
-              Register with Email
+              {language === 'hi' ? 'ईमेल से रजिस्टर करें' : 'Register with Email'}
             </a>
           </>
         )}

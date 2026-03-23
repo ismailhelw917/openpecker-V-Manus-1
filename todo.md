@@ -2219,3 +2219,20 @@
 ## Board Theme Glitch Fix
 - [x] Dark squares rendering as solid blocks (glitchy) with custom SVG approach
 - [x] Board size slightly too large, getting overshadowed at edges
+
+## Leaderboard Fix
+- [x] Leaderboard not updating with latest puzzle solve data
+- [x] Heartbeat endpoint not registered — active sessions never saved to DB
+- [x] Leaderboard query only showed users with puzzle_attempts (excluded 4000+ registered users)
+
+## Hindi Language Support
+- [ ] Create i18n context with English and Hindi translations
+- [ ] Add language selector on home page
+- [ ] Translate Home page
+- [ ] Translate Session page
+- [ ] Translate Leaderboard page
+- [ ] Translate Sets page
+- [ ] Translate Stats page
+- [ ] Translate Settings page
+- [ ] Translate BottomNav and all shared components
+- [ ] Persist language preference to localStorage
