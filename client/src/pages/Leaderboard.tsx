@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 
-const LB_INPUT = { limit: 100, sortBy: "accuracy" as const };
+type Period = "all" | "week" | "today";
 
 const MEDAL: Record<number, string> = { 1: "🥇", 2: "🥈", 3: "🥉" };
 
@@ -28,20 +28,45 @@ function AccuracyBar({ value }: { value: number }) {
 
 export default function Leaderboard() {
   const { user } = useAuth();
-  const [tab, setTab] = useState<"all" | "online">("all");
+  const [period, setPeriod] = useState<Period>("all");
 
-  const { data, isLoading } = trpc.stats.getLeaderboard.useQuery(LB_INPUT, {
-    staleTime: 30_000,
-    refetchInterval: 60_000,
-    refetchOnWindowFocus: true,
+  // All-time leaderboard (Redis)
+  const { data: allTimeData, isLoading: allTimeLoading } = trpc.stats.getLeaderboard.useQuery(
+    { limit: 100, sortBy: "accuracy" },
+    { staleTime: 30_000, refetchInterval: 60_000 }
+  );
+
+  // Timed leaderboard (DB)
+  const { data: timedData, isLoading: timedLoading } = trpc.stats.getTimedLeaderboard.useQuery(
+    { period, limit: 100 },
+    { staleTime: 30_000, refetchInterval: 60_000, enabled: period !== "all" }
+  );
+
+  // Today's top solver
+  const { data: topSolver } = trpc.stats.getTodayTopSolver.useQuery(undefined, {
+    staleTime: 60_000,
+    refetchInterval: 120_000,
   });
 
-  const players = data?.players ?? [];
-  const onlineCount = data?.summary?.activePlayers ?? 0;
-  const totalPuzzles = data?.summary?.totalPuzzlesSolvedGlobally ?? 0;
+  const isLoading = period === "all" ? allTimeLoading : timedLoading;
+  const activeData = period === "all" ? allTimeData : timedData;
+  const players = activeData?.players ?? [];
+  const onlineCount = period === "all"
+    ? (allTimeData?.summary?.activePlayers ?? 0)
+    : (timedData?.onlineNow ?? 0);
+  const totalPuzzles = allTimeData?.summary?.totalPuzzlesSolvedGlobally ?? 0;
 
   const myName = user?.name || user?.email || null;
-  const myRank = myName ? players.find(p => p.playerName === myName)?.rank ?? null : null;
+  const myEntry = useMemo(
+    () => myName ? players.find(p => p.playerName === myName) ?? null : null,
+    [players, myName]
+  );
+
+  const PERIODS: { key: Period; label: string }[] = [
+    { key: "all", label: "All Time" },
+    { key: "week", label: "This Week" },
+    { key: "today", label: "Today" },
+  ];
 
   return (
     <div className="min-h-[calc(100dvh-5rem)] bg-slate-950 flex flex-col">
@@ -64,10 +89,24 @@ export default function Leaderboard() {
           {totalPuzzles.toLocaleString()} puzzles solved globally
         </p>
 
-        {/* My rank callout */}
-        {myRank && (
-          <div className="mt-3 bg-teal-900/30 border border-teal-700/50 rounded-xl px-4 py-2.5 flex items-center gap-3">
-            <span className="text-teal-400 text-lg font-black">#{myRank}</span>
+        {/* Today's top solver card */}
+        {topSolver && (
+          <div className="mt-3 bg-amber-900/25 border border-amber-600/40 rounded-xl px-4 py-3 flex items-center gap-3">
+            <span className="text-2xl leading-none">🔥</span>
+            <div className="min-w-0 flex-1">
+              <p className="text-[11px] font-bold text-amber-400 uppercase tracking-wide mb-0.5">Today's Top Solver</p>
+              <p className="text-sm font-bold text-white truncate">{topSolver.playerName}</p>
+              <p className="text-xs text-slate-400">
+                {topSolver.puzzlesSolved} puzzles · {Math.round(topSolver.accuracy)}% accuracy
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* My rank callout (all-time) */}
+        {myEntry && period === "all" && (
+          <div className="mt-2 bg-teal-900/30 border border-teal-700/50 rounded-xl px-4 py-2.5 flex items-center gap-3">
+            <span className="text-teal-400 text-lg font-black">#{myEntry.rank}</span>
             <div className="min-w-0">
               <p className="text-xs text-teal-300 font-semibold truncate">Your rank</p>
               <p className="text-[11px] text-slate-400 truncate">{myName}</p>
@@ -76,19 +115,19 @@ export default function Leaderboard() {
         )}
       </div>
 
-      {/* Tab bar */}
+      {/* Period filter tabs */}
       <div className="flex gap-1 px-4 mb-3">
-        {(["all", "online"] as const).map(t => (
+        {PERIODS.map(({ key, label }) => (
           <button
-            key={t}
-            onClick={() => setTab(t)}
+            key={key}
+            onClick={() => setPeriod(key)}
             className={`flex-1 py-2 rounded-lg text-xs font-bold transition-colors ${
-              tab === t
+              period === key
                 ? "bg-teal-600 text-white"
                 : "bg-slate-800 text-slate-400 hover:text-slate-200"
             }`}
           >
-            {t === "all" ? `All Players (${players.length})` : `Online Now (${onlineCount})`}
+            {label}
           </button>
         ))}
       </div>
@@ -110,20 +149,19 @@ export default function Leaderboard() {
         ) : players.length === 0 ? (
           <div className="flex flex-col items-center justify-center pt-16 gap-3">
             <span className="text-4xl">♟</span>
-            <p className="text-slate-400 text-sm">No players yet. Be the first!</p>
+            <p className="text-slate-400 text-sm">No activity yet for this period.</p>
           </div>
         ) : (
           players.map((p) => {
-            const isMe = myName && p.playerName === myName;
+            const isMe = !!(myName && p.playerName === myName);
             const medal = MEDAL[p.rank];
             return (
               <div
-                key={p.rank}
+                key={`${p.rank}-${p.playerName}`}
                 className={`grid grid-cols-[2rem_1fr_3.5rem_5.5rem] gap-x-3 items-center py-2.5 border-b border-slate-800/60 ${
-                  isMe ? "bg-teal-900/20 -mx-4 px-4 rounded-none" : ""
+                  isMe ? "bg-teal-900/20 -mx-4 px-4" : ""
                 }`}
               >
-                {/* Rank */}
                 <div className="flex justify-center">
                   {medal ? (
                     <span className="text-base leading-none">{medal}</span>
@@ -131,8 +169,6 @@ export default function Leaderboard() {
                     <span className="text-xs font-bold text-slate-500">{p.rank}</span>
                   )}
                 </div>
-
-                {/* Player name + rating */}
                 <div className="min-w-0">
                   <p className={`text-sm font-semibold truncate ${isMe ? "text-teal-300" : "text-slate-200"}`}>
                     {p.playerName}
@@ -142,17 +178,24 @@ export default function Leaderboard() {
                     {p.rating} elo
                   </p>
                 </div>
-
-                {/* Puzzles solved */}
                 <p className="text-sm font-bold text-slate-300 text-right">{p.puzzlesSolved.toLocaleString()}</p>
-
-                {/* Accuracy bar */}
                 <AccuracyBar value={p.accuracy} />
               </div>
             );
           })
         )}
       </div>
+
+      {/* Sticky footer: show user's rank if they're outside the visible list */}
+      {myName && !isLoading && players.length > 0 && !myEntry && (
+        <div className="sticky bottom-0 bg-slate-900 border-t border-slate-700 px-4 py-3 flex items-center gap-3">
+          <span className="text-slate-400 text-sm font-bold">You</span>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm text-slate-300 truncate">{myName}</p>
+          </div>
+          <span className="text-xs text-slate-500">Not ranked yet</span>
+        </div>
+      )}
     </div>
   );
 }
