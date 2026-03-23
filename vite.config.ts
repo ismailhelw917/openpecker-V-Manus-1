@@ -172,13 +172,13 @@ const plugins = [
       start_url: "/",
       icons: [
         {
-          src: "https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/icon-192x192_e08cd5dd.png",
+          src: "https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/bird-icon-192x192_8d535281.png",
           sizes: "192x192",
           type: "image/png",
           purpose: "any maskable",
         },
         {
-          src: "https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/icon-512x512_35458014.png",
+          src: "https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/bird-icon-512x512_20d27f2e.png",
           sizes: "512x512",
           type: "image/png",
           purpose: "any maskable",

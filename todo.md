@@ -2160,3 +2160,9 @@
 - [x] Add "Add to Home Screen" install prompt banner in the app
 - [x] Test PWA installability on Android and iOS
 - [ ] Save checkpoint
+
+## PWA Banner Fix (User Report)
+- [x] Fix text breaking into single characters in install banner (word-break/overflow CSS)
+- [x] Replace icon in banner with correct OpenPecker bird logo (not the coin logo)
+- [x] Regenerate PWA icons (192x192, 512x512) using the bird logo
+- [ ] Save checkpoint
