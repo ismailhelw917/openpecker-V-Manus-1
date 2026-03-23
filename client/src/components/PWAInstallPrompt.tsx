@@ -9,14 +9,22 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-export function PWAInstallPrompt() {
+interface PWAInstallPromptProps {
+  /** When true the banner becomes eligible to show (e.g. user visited Rank/Stats) */
+  triggered?: boolean;
+}
+
+export function PWAInstallPrompt({ triggered = false }: PWAInstallPromptProps) {
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [showBanner, setShowBanner] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [showIOSInstructions, setShowIOSInstructions] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  // Track whether the native install event has fired
+  const [nativeReady, setNativeReady] = useState(false);
 
+  // Capture the native beforeinstallprompt event early (before trigger)
   useEffect(() => {
     const isStandalone =
       window.matchMedia("(display-mode: standalone)").matches ||
@@ -26,20 +34,32 @@ export function PWAInstallPrompt() {
 
     const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
     setIsIOS(ios);
-
-    if (ios) {
-      const timer = setTimeout(() => setShowBanner(true), 3000);
-      return () => clearTimeout(timer);
-    }
+    if (ios) setNativeReady(true); // iOS is always "ready" (manual flow)
 
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setShowBanner(true);
+      setNativeReady(true);
     };
     window.addEventListener("beforeinstallprompt", handler);
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
+
+  // Show banner when the page trigger fires AND we have a prompt ready
+  useEffect(() => {
+    if (!triggered) return;
+    if (dismissed) return;
+    if (sessionStorage.getItem("pwa-install-dismissed")) return;
+    const isStandalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as any).standalone === true;
+    if (isStandalone) return;
+    if (nativeReady) {
+      // Small delay so the page content renders first
+      const t = setTimeout(() => setShowBanner(true), 800);
+      return () => clearTimeout(t);
+    }
+  }, [triggered, nativeReady, dismissed]);
 
   const handleInstall = async () => {
     if (isIOS) {

@@ -21,6 +21,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "./_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "./_core/deviceId";
 import { trpc } from "./lib/trpc";
+import { useLocation } from "wouter";
 
 import { usePageTracking } from "./hooks/usePageTracking";
 import { useSessionTracking } from "./hooks/useSessionTracking";
@@ -60,6 +61,15 @@ function App() {
   const [showPremiumWatermark, setShowPremiumWatermark] = useState(true);
   const [showNameDialog, setShowNameDialog] = useState(false);
   const [hasSeenNameDialog, setHasSeenNameDialog] = useState(false);
+  const [pwaTriggered, setPwaTriggered] = useState(false);
+  const [location] = useLocation();
+
+  // Trigger PWA banner when user visits Rank or Stats
+  useEffect(() => {
+    if (location === "/leaderboard" || location === "/stats") {
+      setPwaTriggered(true);
+    }
+  }, [location]);
   const { isAuthenticated, loading, user, refresh: refreshAuth } = useAuth();
   const updateNameMutation = trpc.auth.updateName.useMutation();
 
@@ -126,8 +136,8 @@ function App() {
               <Router />
             </div>
 
-            {/* PWA Install Prompt */}
-            <PWAInstallPrompt />
+            {/* PWA Install Prompt — shows after user visits Rank or Stats */}
+            <PWAInstallPrompt triggered={pwaTriggered} />
 
             {/* Bottom Navigation */}
             <BottomNav />

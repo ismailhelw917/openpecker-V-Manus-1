@@ -2166,3 +2166,12 @@
 - [x] Replace icon in banner with correct OpenPecker bird logo (not the coin logo)
 - [x] Regenerate PWA icons (192x192, 512x512) using the bird logo
 - [ ] Save checkpoint
+
+## PWA Banner Trigger Change
+- [ ] Show install banner when user visits /rank or /stats (not on a timer)
+- [ ] Save checkpoint
+
+## Home Page Cleanup
+- [x] Remove feature cards (5.8M Puzzles, Advanced Stats, Customizable, Woodpecker Method)
+- [x] Make home page non-scrollable (fits one screen)
+- [x] PWA banner trigger on Rank/Stats visit
