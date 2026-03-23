@@ -1,4 +1,4 @@
-# OpenPecker Recreated - Project TODO
+# OpenPecker Chess - Project TODO
 
 ## Phase 1: Database Schema & Setup
 - [x] Define database schema for puzzles, training sessions, and progress tracking
