@@ -1,9 +1,0 @@
-{
-  "query": "UPDATE training_sets ts, (SELECT trainingSetId, MAX(cycleNumber) as maxCycle, MAX(accuracy) as maxAccuracy, MAX(completedAt) as lastPlayed, SUM(totalPuzzles) as totalPuzz FROM cycle_history GROUP BY trainingSetId) ch SET ts.cyclesCompleted = ch.maxCycle, ts.bestAccuracy = ch.maxAccuracy, ts.lastPlayedAt = ch.lastPlayed, ts.totalAttempts = ch.totalPuzz WHERE ts.id = ch.trainingSetId;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute UPDATE training_sets ts, (SELECT trainingSetId, MAX(cycleNumber) as maxCycle, MAX(accuracy) as maxAccuracy, MAX(completedAt) as lastPlayed, SUM(totalPuzzles) as totalPuzz FROM cycle_history GROUP BY trainingSetId) ch SET ts.cyclesCompleted = ch.maxCycle, ts.bestAccuracy = ch.maxAccuracy, ts.lastPlayedAt = ch.lastPlayed, ts.totalAttempts = ch.totalPuzz WHERE ts.id = ch.trainingSetId;",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 1572
-}

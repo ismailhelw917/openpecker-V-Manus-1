@@ -1,8 +1,0 @@
-{
-  "query": "\n-- Check the current leaderboard data\nSELECT \n  device_id,\n  user_id,\n  COUNT(*) as total_cycles,\n  SUM(puzzles_count) as total_puzzles,\n  MAX(created_at) as last_completed\nFROM cycle_history\nGROUP BY device_id, user_id\nORDER BY total_puzzles DESC\nLIMIT 20;\n",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \n-- Check the current leaderboard data\nSELECT \n  device_id,\n  user_id,\n  COUNT(*) as total_cycles,\n  SUM(puzzles_count) as total_puzzles,\n  MAX(created_at) as last_completed\nFROM cycle_history\nGROUP BY device_id, user_id\nORDER BY total_puzzles DESC\nLIMIT 20;\n",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1054 (42S22) at line 3: Unknown column 'device_id' in 'group statement'"
-  ]
-}

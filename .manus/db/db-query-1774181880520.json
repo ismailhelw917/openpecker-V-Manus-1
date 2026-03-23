@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE `active_sessions` (\n\t`id` varchar(64) NOT NULL,\n\t`userId` int,\n\t`deviceId` varchar(64),\n\t`name` varchar(255) NOT NULL,\n\t`email` varchar(320),\n\t`isGuest` int NOT NULL DEFAULT 1,\n\t`currentPath` varchar(255),\n\t`lastActive` timestamp NOT NULL DEFAULT (now()),\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\tCONSTRAINT `active_sessions_id` PRIMARY KEY(`id`)\n);\nCREATE INDEX `idx_activeSessions_userId` ON `active_sessions` (`userId`);\nCREATE INDEX `idx_activeSessions_deviceId` ON `active_sessions` (`deviceId`);\nCREATE INDEX `idx_activeSessions_lastActive` ON `active_sessions` (`lastActive`);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute CREATE TABLE `active_sessions` (\n\t`id` varchar(64) NOT NULL,\n\t`userId` int,\n\t`deviceId` varchar(64),\n\t`name` varchar(255) NOT NULL,\n\t`email` varchar(320),\n\t`isGuest` int NOT NULL DEFAULT 1,\n\t`currentPath` varchar(255),\n\t`lastActive` timestamp NOT NULL DEFAULT (now()),\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\tCONSTRAINT `active_sessions_id` PRIMARY KEY(`id`)\n);\nCREATE INDEX `idx_activeSessions_userId` ON `active_sessions` (`userId`);\nCREATE INDEX `idx_activeSessions_deviceId` ON `active_sessions` (`deviceId`);\nCREATE INDEX `idx_activeSessions_lastActive` ON `active_sessions` (`lastActive`);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 5716
-}

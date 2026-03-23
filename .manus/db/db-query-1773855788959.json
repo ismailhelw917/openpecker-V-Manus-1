@@ -1,9 +1,0 @@
-{
-  "query": "SELECT u.id, u.name, u.isPremium, COUNT(DISTINCT ts.id) as sets_count, COUNT(DISTINCT pa.id) as attempts_count, SUM(pa.isCorrect) as correct, SUM(pa.timeMs) as totalTimeMs FROM users u LEFT JOIN training_sets ts ON (ts.userId = u.id) LEFT JOIN puzzle_attempts pa ON (pa.trainingSetId = ts.id) GROUP BY u.id, u.name, u.isPremium HAVING attempts_count > 0 ORDER BY attempts_count DESC LIMIT 20;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT u.id, u.name, u.isPremium, COUNT(DISTINCT ts.id) as sets_count, COUNT(DISTINCT pa.id) as attempts_count, SUM(pa.isCorrect) as correct, SUM(pa.timeMs) as totalTimeMs FROM users u LEFT JOIN training_sets ts ON (ts.userId = u.id) LEFT JOIN puzzle_attempts pa ON (pa.trainingSetId = ts.id) GROUP BY u.id, u.name, u.isPremium HAVING attempts_count > 0 ORDER BY attempts_count DESC LIMIT 20;",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 1574
-}

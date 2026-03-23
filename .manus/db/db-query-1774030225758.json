@@ -1,9 +1,0 @@
-{
-  "query": "INSERT INTO promo_codes (code, description, benefitType, discountPercent, maxUses, currentUses, isActive, createdAt)\nVALUES \n  ('openpecker50', 'Get instant premium access for free', 'lifetime_premium', 100, 100, 0, 1, NOW()),\n  ('openpecker80', 'Get 80% off premium access - limited to first 400 users', 'discount', 80, 400, 0, 1, NOW());",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute INSERT INTO promo_codes (code, description, benefitType, discountPercent, maxUses, currentUses, isActive, createdAt)\nVALUES \n  ('openpecker50', 'Get instant premium access for free', 'lifetime_premium', 100, 100, 0, 1, NOW()),\n  ('openpecker80', 'Get 80% off premium access - limited to first 400 users', 'discount', 80, 400, 0, 1, NOW());",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 1650
-}

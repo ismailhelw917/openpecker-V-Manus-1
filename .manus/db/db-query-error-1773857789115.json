@@ -1,8 +1,0 @@
-{
-  "query": "SELECT \n  COALESCE(ts.userId, 0) as userId,\n  ts.deviceId,\n  COUNT(*) as totalSets,\n  SUM(ts.totalAttempts) as totalAttempts,\n  MAX(ts.bestAccuracy) as bestAccuracy\nFROM training_sets ts\nWHERE ts.deviceId IS NOT NULL AND ts.userId IS NULL\nGROUP BY ts.deviceId\nORDER BY totalAttempts DESC\nLIMIT 20;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT \n  COALESCE(ts.userId, 0) as userId,\n  ts.deviceId,\n  COUNT(*) as totalSets,\n  SUM(ts.totalAttempts) as totalAttempts,\n  MAX(ts.bestAccuracy) as bestAccuracy\nFROM training_sets ts\nWHERE ts.deviceId IS NOT NULL AND ts.userId IS NULL\nGROUP BY ts.deviceId\nORDER BY totalAttempts DESC\nLIMIT 20;",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1055 (42000) at line 1: Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'EorxrxCPNFVtGo7gjBVrJr.ts.userId' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by"
-  ]
-}

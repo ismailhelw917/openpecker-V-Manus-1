@@ -1,9 +1,0 @@
-{
-  "query": "DELETE FROM cycle_history WHERE userId IN (\n  SELECT id FROM users WHERE name IN ('N.Balaji', 'Ayush', 'BR')\n);\n\nDELETE FROM users WHERE name IN ('N.Balaji', 'Ayush', 'BR');",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute DELETE FROM cycle_history WHERE userId IN (\n  SELECT id FROM users WHERE name IN ('N.Balaji', 'Ayush', 'BR')\n);\n\nDELETE FROM users WHERE name IN ('N.Balaji', 'Ayush', 'BR');",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 1691
-}

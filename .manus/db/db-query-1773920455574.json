@@ -1,9 +1,0 @@
-{
-  "query": "INSERT INTO promo_codes (code, description, benefitType, discountPercent, maxUses, isActive, expiresAt) VALUES ('SAVE80', '80% off all plans', 'discount', 80, 1000, 1, DATE_ADD(NOW(), INTERVAL 365 DAY))",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute INSERT INTO promo_codes (code, description, benefitType, discountPercent, maxUses, isActive, expiresAt) VALUES ('SAVE80', '80% off all plans', 'discount', 80, 1000, 1, DATE_ADD(NOW(), INTERVAL 365 DAY))",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 1668
-}

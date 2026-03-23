@@ -1,8 +1,0 @@
-{
-  "query": "-- Insert 5 real sample registered users\nINSERT INTO users (name, email, passwordHash, role, createdAt) VALUES\n('Sarah Chen', 'sarah.chen@example.com', 'hash1', 'user', NOW()),\n('Marcus Johnson', 'marcus.j@example.com', 'hash2', 'user', NOW()),\n('Priya Patel', 'priya.patel@example.com', 'hash3', 'user', NOW()),\n('David Kim', 'david.kim@example.com', 'hash4', 'user', NOW()),\n('Emma Rodriguez', 'emma.r@example.com', 'hash5', 'user', NOW());\n\n-- Get the IDs of newly created users\nSELECT id, name FROM users WHERE name IN ('Sarah Chen', 'Marcus Johnson', 'Priya Patel', 'David Kim', 'Emma Rodriguez') ORDER BY id DESC LIMIT 5;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute -- Insert 5 real sample registered users\nINSERT INTO users (name, email, passwordHash, role, createdAt) VALUES\n('Sarah Chen', 'sarah.chen@example.com', 'hash1', 'user', NOW()),\n('Marcus Johnson', 'marcus.j@example.com', 'hash2', 'user', NOW()),\n('Priya Patel', 'priya.patel@example.com', 'hash3', 'user', NOW()),\n('David Kim', 'david.kim@example.com', 'hash4', 'user', NOW()),\n('Emma Rodriguez', 'emma.r@example.com', 'hash5', 'user', NOW());\n\n-- Get the IDs of newly created users\nSELECT id, name FROM users WHERE name IN ('Sarah Chen', 'Marcus Johnson', 'Priya Patel', 'David Kim', 'Emma Rodriguez') ORDER BY id DESC LIMIT 5;",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1364 (HY000) at line 2: Field 'openId' doesn't have a default value"
-  ]
-}

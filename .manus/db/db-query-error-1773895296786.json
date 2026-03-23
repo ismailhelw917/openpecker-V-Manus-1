@@ -1,8 +1,0 @@
-{
-  "query": "SELECT COUNT(*) as total_puzzles, COUNT(DISTINCT opening_name) as unique_openings, COUNT(DISTINCT opening_variation) as unique_variations, MIN(rating) as min_rating, MAX(rating) as max_rating, COUNT(CASE WHEN opening_name IS NOT NULL AND opening_name != '' THEN 1 END) as with_opening FROM puzzles;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT COUNT(*) as total_puzzles, COUNT(DISTINCT opening_name) as unique_openings, COUNT(DISTINCT opening_variation) as unique_variations, MIN(rating) as min_rating, MAX(rating) as max_rating, COUNT(CASE WHEN opening_name IS NOT NULL AND opening_name != '' THEN 1 END) as with_opening FROM puzzles;",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1054 (42S22) at line 1: Unknown column 'opening_name' in ''"
-  ]
-}

@@ -1,9 +1,0 @@
-{
-  "query": "SELECT \n  u.id, \n  u.name, \n  COALESCE(SUM(ch.totalPuzzles), 0) as total_puzzles,\n  CASE WHEN SUM(ch.totalPuzzles) = 0 THEN 0 ELSE ROUND(SUM(ch.correctCount) * 100.0 / SUM(ch.totalPuzzles), 2) END as accuracy\nFROM users u\nLEFT JOIN cycle_history ch ON u.id = ch.userId\nWHERE u.id IS NOT NULL\nGROUP BY u.id, u.name\nHAVING total_puzzles > 0\nORDER BY total_puzzles DESC;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT \n  u.id, \n  u.name, \n  COALESCE(SUM(ch.totalPuzzles), 0) as total_puzzles,\n  CASE WHEN SUM(ch.totalPuzzles) = 0 THEN 0 ELSE ROUND(SUM(ch.correctCount) * 100.0 / SUM(ch.totalPuzzles), 2) END as accuracy\nFROM users u\nLEFT JOIN cycle_history ch ON u.id = ch.userId\nWHERE u.id IS NOT NULL\nGROUP BY u.id, u.name\nHAVING total_puzzles > 0\nORDER BY total_puzzles DESC;",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 1631
-}

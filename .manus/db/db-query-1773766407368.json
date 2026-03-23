@@ -1,9 +1,0 @@
-{
-  "query": "SELECT id, fen, moves FROM puzzles WHERE fen IS NULL OR fen = '' OR moves IS NULL OR moves = '' LIMIT 10;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute SELECT id, fen, moves FROM puzzles WHERE fen IS NULL OR fen = '' OR moves IS NULL OR moves = '' LIMIT 10;",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 3433
-}

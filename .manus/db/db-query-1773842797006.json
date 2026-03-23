@@ -1,9 +1,0 @@
-{
-  "query": "UPDATE puzzles SET ecoCode = 'B03' WHERE openingName = 'Alekhine Defense'; UPDATE puzzles SET ecoCode = 'A56' WHERE openingName = 'Benko Gambit'; UPDATE puzzles SET ecoCode = 'A57' WHERE openingName = 'Benko Gambit Accepted'; UPDATE puzzles SET ecoCode = 'A43' WHERE openingName = 'Benoni Defense'; UPDATE puzzles SET ecoCode = 'A03' WHERE openingName = 'Bird Opening'; UPDATE puzzles SET ecoCode = 'C23' WHERE openingName = 'Bishops Opening'; UPDATE puzzles SET ecoCode = 'D00' WHERE openingName = 'Blackmar-Diemer Gambit'; UPDATE puzzles SET ecoCode = 'E11' WHERE openingName = 'Bogo-Indian Defense'; UPDATE puzzles SET ecoCode = 'A51' WHERE openingName = 'Budapest Defense'; UPDATE puzzles SET ecoCode = 'B10' WHERE openingName = 'Caro-Kann Defense';",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute UPDATE puzzles SET ecoCode = 'B03' WHERE openingName = 'Alekhine Defense'; UPDATE puzzles SET ecoCode = 'A56' WHERE openingName = 'Benko Gambit'; UPDATE puzzles SET ecoCode = 'A57' WHERE openingName = 'Benko Gambit Accepted'; UPDATE puzzles SET ecoCode = 'A43' WHERE openingName = 'Benoni Defense'; UPDATE puzzles SET ecoCode = 'A03' WHERE openingName = 'Bird Opening'; UPDATE puzzles SET ecoCode = 'C23' WHERE openingName = 'Bishops Opening'; UPDATE puzzles SET ecoCode = 'D00' WHERE openingName = 'Blackmar-Diemer Gambit'; UPDATE puzzles SET ecoCode = 'E11' WHERE openingName = 'Bogo-Indian Defense'; UPDATE puzzles SET ecoCode = 'A51' WHERE openingName = 'Budapest Defense'; UPDATE puzzles SET ecoCode = 'B10' WHERE openingName = 'Caro-Kann Defense';",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 4014
-}

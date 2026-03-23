@@ -1,8 +1,0 @@
-{
-  "query": "\nSELECT u.id, u.name, u.isPremium, u.role,\n  (SELECT COUNT(*) FROM puzzle_attempts pa WHERE pa.userId = u.id) as attempts,\n  (SELECT COUNT(*) FROM puzzle_attempts pa WHERE pa.userId = u.id AND pa.correct = 1) as correct\nFROM users u \nWHERE u.name NOT LIKE 'Guest-%'\nORDER BY attempts DESC;\n",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \nSELECT u.id, u.name, u.isPremium, u.role,\n  (SELECT COUNT(*) FROM puzzle_attempts pa WHERE pa.userId = u.id) as attempts,\n  (SELECT COUNT(*) FROM puzzle_attempts pa WHERE pa.userId = u.id AND pa.correct = 1) as correct\nFROM users u \nWHERE u.name NOT LIKE 'Guest-%'\nORDER BY attempts DESC;\n",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1054 (42S22) at line 2: Unknown column 'pa.correct' in 'where clause'"
-  ]
-}

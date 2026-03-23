@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE `puzzles` (\n  `id` varchar(64) PRIMARY KEY,\n  `fen` text NOT NULL,\n  `moves` text NOT NULL,\n  `rating` int,\n  `themes` text NOT NULL,\n  `color` varchar(10),\n  `openingName` varchar(255),\n  `openingVariation` varchar(255),\n  `puzzleData` text,\n  `createdAt` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  INDEX `idx_rating` (`rating`),\n  INDEX `idx_color` (`color`),\n  INDEX `idx_opening` (`openingName`)\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute CREATE TABLE `puzzles` (\n  `id` varchar(64) PRIMARY KEY,\n  `fen` text NOT NULL,\n  `moves` text NOT NULL,\n  `rating` int,\n  `themes` text NOT NULL,\n  `color` varchar(10),\n  `openingName` varchar(255),\n  `openingVariation` varchar(255),\n  `puzzleData` text,\n  `createdAt` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  INDEX `idx_rating` (`rating`),\n  INDEX `idx_color` (`color`),\n  INDEX `idx_opening` (`openingName`)\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 1711
-}

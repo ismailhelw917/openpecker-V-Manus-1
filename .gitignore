@@ -115,3 +115,8 @@ temp/
 broken-puzzles*.json
 puzzles-sample*
 .manus-logs/
+*.mjs
+client/public/__debug__/
+classify-*.mjs
+import-*.mjs
+seed-*.mjs
