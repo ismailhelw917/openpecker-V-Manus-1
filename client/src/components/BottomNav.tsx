@@ -1,4 +1,4 @@
-import { Home, Play, BookOpen, Trophy, BarChart3, Settings } from "lucide-react";
+import { Home, Play, BookOpen, BarChart3, Settings } from "lucide-react";
 import { useLocation } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -10,7 +10,6 @@ export default function BottomNav() {
     { icon: Home, label: t.nav.home, path: "/" },
     { icon: Play, label: t.nav.train, path: "/train" },
     { icon: BookOpen, label: t.nav.sets, path: "/sets" },
-    { icon: Trophy, label: t.nav.rank, path: "/leaderboard" },
     { icon: BarChart3, label: t.nav.stats, path: "/stats" },
     { icon: Settings, label: t.nav.more, path: "/settings" },
   ];

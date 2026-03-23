@@ -2392,3 +2392,6 @@
   - Fallback 1: retry without rating filter (keeps variation + color)
   - Fallback 2: retry without variation filter (keeps rating + color)
   - Fallback 3: opening name only (guarantees results for any valid opening)
+
+## Rank Tab Removal (User Request - Mar 23)
+- [x] Remove Trophy/Rank tab from bottom navigation (permanently)
