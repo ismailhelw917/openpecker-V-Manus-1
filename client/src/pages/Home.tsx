@@ -188,15 +188,6 @@ export default function Home() {
         </button>
       </div>
 
-      {/* Logo */}
-      <div className="mb-3 flex justify-center relative z-10">
-        <img
-          src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/openpecker-new-logo_6f9fcd4c.jpg"
-          alt="OpenPecker Logo"
-          className="w-40 sm:w-52 object-contain rounded-xl shadow-2xl"
-        />
-      </div>
-
       {/* Title */}
       <h1 className="text-3xl sm:text-4xl font-black text-white mb-1 text-center relative z-10">
         OpenPecker
@@ -220,12 +211,14 @@ export default function Home() {
           <span className="text-teal-400 text-sm">♟</span>
           <span className="text-xs font-semibold text-slate-200">4,800,000+ puzzles</span>
         </div>
-        <div className="flex items-center gap-1.5 bg-slate-800/80 border border-slate-700 rounded-full px-3 py-1.5">
-          <span className="text-teal-400 text-sm">👥</span>
-          <span className="text-xs font-semibold text-slate-200">
-            {totalPlayers > 0 ? `${totalPlayers.toLocaleString()} players` : "4,125+ players"}
-          </span>
-        </div>
+        {totalPlayers > 10 && (
+          <div className="flex items-center gap-1.5 bg-slate-800/80 border border-slate-700 rounded-full px-3 py-1.5">
+            <span className="text-teal-400 text-sm">👥</span>
+            <span className="text-xs font-semibold text-slate-200">
+              {totalPlayers.toLocaleString()} players
+            </span>
+          </div>
+        )}
         {topPlayer && (
           <div className="flex items-center gap-1.5 bg-yellow-500/10 border border-yellow-500/30 rounded-full px-3 py-1.5">
             <span className="text-sm">🥇</span>
