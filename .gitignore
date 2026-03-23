@@ -109,6 +109,12 @@ temp/
 # Webdev artifacts (checkpoint zips, migrations, etc.)
 .webdev/
 
+# Drizzle migration snapshots (large, not needed for deployment)
+drizzle/meta/*.json
+
+# Dev-only showcase pages
+client/src/pages/ComponentShowcase.tsx
+
 # Large data files (should not be in repo)
 .manus/db/
 *.csv
