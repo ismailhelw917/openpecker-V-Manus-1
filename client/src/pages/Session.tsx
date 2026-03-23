@@ -51,6 +51,7 @@ export default function Session() {
   const gameRef = useRef(new Chess());
   const puzzleGenRef = useRef(0);
   const activeTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const boardContainerRef = useRef<HTMLDivElement>(null);
 
   // ===== ALL useCallback HOOKS =====
   const safePuzzleTimeout = useCallback((fn: () => void, delay: number) => {
@@ -356,17 +357,26 @@ export default function Session() {
     }
   }, [getTrainingSet.data?.id]); // Only depend on training set ID to prevent re-initialization
 
-  // Responsive board sizing
+  // Responsive board sizing — measure the actual container so nothing gets clipped
   useEffect(() => {
-    const handleResize = () => {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      // Reserve: ~64px header + ~56px bottom nav spacer + 16px padding = 136px
-      setBoardSize(Math.min(w - 32, h - 136, 500));
+    const measure = () => {
+      const el = boardContainerRef.current;
+      if (el) {
+        const { width, height } = el.getBoundingClientRect();
+        // Use the smaller of width/height minus 16px padding on each side
+        setBoardSize(Math.min(width - 16, height - 16, 600));
+      } else {
+        // Fallback before ref is attached
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        setBoardSize(Math.min(w - 32, h - 136, 600));
+      }
     };
-    window.addEventListener('resize', handleResize);
-    handleResize();
-    return () => window.removeEventListener('resize', handleResize);
+    const ro = new ResizeObserver(measure);
+    if (boardContainerRef.current) ro.observe(boardContainerRef.current);
+    window.addEventListener('resize', measure);
+    measure();
+    return () => { ro.disconnect(); window.removeEventListener('resize', measure); };
   }, []);
 
   // Advance to next puzzle
@@ -757,7 +767,7 @@ export default function Session() {
       </div>
 
       {/* Board Container - Centered */}
-      <div className="flex-1 flex items-center justify-center p-2 sm:p-4 overflow-hidden">
+      <div ref={boardContainerRef} className="flex-1 flex items-center justify-center overflow-hidden">
         <div style={{ width: boardSize, height: boardSize }} className="relative">
           <ChessgroundBoard
             fen={gameFen}

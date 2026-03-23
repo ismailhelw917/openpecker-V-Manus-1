@@ -2211,3 +2211,7 @@
 
 ## Board Theme Fix
 - [x] Board theme selection in Settings not applying to session board
+
+## Board Theme + Size Fix (Round 2)
+- [x] Board theme CSS injection not working — board still shows classic brown
+- [x] Board still cut off at bottom (rank 1 missing)

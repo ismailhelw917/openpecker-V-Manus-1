@@ -1,0 +1,58 @@
+{
+  "query": "\nSELECT \n  COUNT(*) as active_last_5min\nFROM active_sessions\nWHERE lastActive > DATE_SUB(NOW(), INTERVAL 5 MINUTE);\n\nSELECT \n  COUNT(*) as active_last_30min,\n  SUM(CASE WHEN isGuest = 0 THEN 1 ELSE 0 END) as registered,\n  SUM(CASE WHEN isGuest = 1 THEN 1 ELSE 0 END) as guests\nFROM active_sessions\nWHERE lastActive > DATE_SUB(NOW(), INTERVAL 30 MINUTE);\n\nSELECT COUNT(*) as total_sessions FROM active_sessions;\n\nDESCRIBE puzzle_attempts;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \nSELECT \n  COUNT(*) as active_last_5min\nFROM active_sessions\nWHERE lastActive > DATE_SUB(NOW(), INTERVAL 5 MINUTE);\n\nSELECT \n  COUNT(*) as active_last_30min,\n  SUM(CASE WHEN isGuest = 0 THEN 1 ELSE 0 END) as registered,\n  SUM(CASE WHEN isGuest = 1 THEN 1 ELSE 0 END) as guests\nFROM active_sessions\nWHERE lastActive > DATE_SUB(NOW(), INTERVAL 30 MINUTE);\n\nSELECT COUNT(*) as total_sessions FROM active_sessions;\n\nDESCRIBE puzzle_attempts;\n",
+  "rows": [
+    {
+      "active_last_5min": "0"
+    },
+    {
+      "active_last_5min": "active_last_30min\tregistered\tguests"
+    },
+    {
+      "active_last_5min": "0\tNULL\tNULL"
+    },
+    {
+      "active_last_5min": "total_sessions"
+    },
+    {
+      "active_last_5min": "18"
+    },
+    {
+      "active_last_5min": "Field\tType\tNull\tKey\tDefault\tExtra"
+    },
+    {
+      "active_last_5min": "id\tint\tNO\tPRI\tNULL\tauto_increment"
+    },
+    {
+      "active_last_5min": "userId\tint\tYES\t\tNULL\t"
+    },
+    {
+      "active_last_5min": "deviceId\tvarchar(64)\tYES\t\tNULL\t"
+    },
+    {
+      "active_last_5min": "trainingSetId\tvarchar(64)\tNO\tMUL\tNULL\t"
+    },
+    {
+      "active_last_5min": "cycleNumber\tint\tNO\t\tNULL\t"
+    },
+    {
+      "active_last_5min": "puzzleId\tvarchar(64)\tNO\tMUL\tNULL\t"
+    },
+    {
+      "active_last_5min": "isCorrect\tint\tNO\t\tNULL\t"
+    },
+    {
+      "active_last_5min": "timeMs\tint\tYES\t\tNULL\t"
+    },
+    {
+      "active_last_5min": "attemptNumber\tint\tYES\t\t1\t"
+    },
+    {
+      "active_last_5min": "completedAt\ttimestamp\tNO\t\tCURRENT_TIMESTAMP\t"
+    }
+  ],
+  "messages": [],
+  "stdout": "active_last_5min\n0\nactive_last_30min\tregistered\tguests\n0\tNULL\tNULL\ntotal_sessions\n18\nField\tType\tNull\tKey\tDefault\tExtra\nid\tint\tNO\tPRI\tNULL\tauto_increment\nuserId\tint\tYES\t\tNULL\t\ndeviceId\tvarchar(64)\tYES\t\tNULL\t\ntrainingSetId\tvarchar(64)\tNO\tMUL\tNULL\t\ncycleNumber\tint\tNO\t\tNULL\t\npuzzleId\tvarchar(64)\tNO\tMUL\tNULL\t\nisCorrect\tint\tNO\t\tNULL\t\ntimeMs\tint\tYES\t\tNULL\t\nattemptNumber\tint\tYES\t\t1\t\ncompletedAt\ttimestamp\tNO\t\tCURRENT_TIMESTAMP\t\n",
+  "stderr": "",
+  "execution_time_ms": 2293
+}
