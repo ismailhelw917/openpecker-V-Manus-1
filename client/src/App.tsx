@@ -17,7 +17,7 @@ import Register from "./pages/Register";
 import NameSelectionDialog from "./components/NameSelectionDialog";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "./_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "./_core/deviceId";
 import { trpc } from "./lib/trpc";
@@ -63,6 +63,7 @@ function App() {
   const [hasSeenNameDialog, setHasSeenNameDialog] = useState(false);
   const [pwaTriggered, setPwaTriggered] = useState(false);
   const [location] = useLocation();
+  const isSessionPage = location.startsWith('/session/') || location.startsWith('/play/');
 
   // Trigger PWA banner when user visits Rank or Stats
   useEffect(() => {
@@ -122,7 +123,7 @@ function App() {
     <ThemeProvider>
       <TooltipProvider>
         <ErrorBoundary>
-          <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-20 sm:pb-24">
+          <div className={isSessionPage ? "" : "min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-20 sm:pb-24"}>
             {/* Premium Watermark for online users */}
             {showPremiumWatermark && user?.isPremium && (
               <div className="fixed top-4 right-4 bg-amber-500/20 border border-amber-400 rounded-lg px-4 py-2 text-sm text-amber-300 z-50 flex items-center gap-2">

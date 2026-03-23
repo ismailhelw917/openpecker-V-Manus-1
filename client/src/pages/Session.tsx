@@ -25,7 +25,7 @@ export default function Session() {
   const [boardSize, setBoardSize] = useState(() => {
     const w = typeof window !== 'undefined' ? window.innerWidth : 400;
     const h = typeof window !== 'undefined' ? window.innerHeight : 600;
-    return Math.min(w - 32, h - 200, 500);
+    return Math.min(w - 32, h - 136, 500);
   });
   const [gameFen, setGameFen] = useState(() => new Chess().fen());
   const [boardOrientation, setBoardOrientation] = useState<'white' | 'black'>('white');
@@ -705,7 +705,7 @@ export default function Session() {
   };
 
   return (
-    <div className="w-screen h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex flex-col overflow-hidden">
+    <div className="fixed inset-0 bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex flex-col overflow-hidden" style={{ zIndex: 40 }}>
       {/* Header */}
       <div className="flex items-center justify-between p-2 sm:p-3 border-b border-teal-900/30 flex-shrink-0 bg-slate-900/50 min-h-[4rem] sm:h-20">
         <button
