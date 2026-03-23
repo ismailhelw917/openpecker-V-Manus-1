@@ -2195,3 +2195,8 @@
 
 ## Bug Fix: training_sets insert failure
 - [x] Migrate puzzlesJson column from TEXT to LONGTEXT to support 300+ puzzle sets
+
+## Opening Lock Feature
+- [x] Lock all openings except Sicilian Defence and Queen's Gambit
+- [x] Show locked state (lock icon, greyed out) on restricted openings in Train UI
+- [x] Prevent starting a session with a locked opening

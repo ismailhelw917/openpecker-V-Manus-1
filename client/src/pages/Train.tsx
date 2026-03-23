@@ -102,15 +102,15 @@ export default function Train() {
   }, [uniqueOpenings, searchQuery]);
 
   // Determine which openings are free vs premium
-  // Lock 6 more openings behind premium (reduced from ~13% to ~7%)
-  const freeOpeningLimit = useMemo(() => {
-    return Math.max(Math.ceil(uniqueOpenings.length * 0.07), 5); // At least 5 free, lock 6 more
-  }, [uniqueOpenings]);
+  // Only Sicilian Defence and Queen's Gambit are free; all others require premium
+  const FREE_OPENINGS = ["Sicilian Defence", "Queen's Gambit"];
 
   const isOpeningLocked = (openingName: string): boolean => {
     if (user?.isPremium) return false;
-    const index = uniqueOpenings.findIndex(o => o.opening === openingName);
-    return index >= freeOpeningLimit;
+    return !FREE_OPENINGS.some(free =>
+      openingName.toLowerCase().includes(free.toLowerCase()) ||
+      free.toLowerCase().includes(openingName.toLowerCase())
+    );
   };
 
   // Filter variations by search query
