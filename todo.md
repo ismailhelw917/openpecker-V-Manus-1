@@ -198,3 +198,15 @@
 
 ## Rank Tab Removal (User Request - Mar 23)
 - [x] Remove Trophy/Rank tab from bottom navigation (permanently)
+
+## New # Leaderboard Tab (User Request - Mar 23)
+- [ ] Build brand new Leaderboard.tsx page from scratch
+- [ ] Add # tab to bottom nav
+- [ ] Save checkpoint and publish
+
+## Home Page Redesign (User Request - Mar 23)
+- [x] Dark background (match rest of app)
+- [x] Social proof stats bar (total puzzles, total players, top player name)
+- [x] How-it-works 3-step explainer
+- [x] Clearer CTA hierarchy (Start Training primary, Sign In secondary/smaller)
+- [x] "No sign-up required" note under Start Training button
