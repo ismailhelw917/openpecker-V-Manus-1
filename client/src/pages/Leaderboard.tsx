@@ -1,17 +1,17 @@
-import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Card } from "@/components/ui/card";
 import { Trophy, Medal } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+// Stable query input — defined outside the component so the reference never changes
+const LEADERBOARD_QUERY_INPUT = { limit: 100, sortBy: 'accuracy' as const };
+
 export function Leaderboard() {
   const { t } = useLanguage();
-  const [sortBy, setSortBy] = useState<'accuracy' | 'speed' | 'rating'>('accuracy');
 
-  // Fetch leaderboard data — staleTime:0 ensures every refetch hits the server,
-  // and refetchInterval keeps it live without a manual setInterval.
-  const { data: leaderboardData, isLoading, error, refetch } = trpc.stats.getLeaderboard.useQuery(
-    { limit: 100, sortBy: 'accuracy' },
+  // Stable input reference prevents infinite re-fetching loop
+  const { data: leaderboardData, isLoading, error } = trpc.stats.getLeaderboard.useQuery(
+    LEADERBOARD_QUERY_INPUT,
     { staleTime: 0, refetchInterval: 10_000, refetchOnWindowFocus: true }
   );
 

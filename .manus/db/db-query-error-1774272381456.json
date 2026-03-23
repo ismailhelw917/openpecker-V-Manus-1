@@ -1,0 +1,8 @@
+{
+  "query": "\nSELECT DISTINCT name, variation, puzzleCount FROM training_sets WHERE name LIKE '%Sicilian%' OR name LIKE '%Queen%Gambit%' LIMIT 20;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \nSELECT DISTINCT name, variation, puzzleCount FROM training_sets WHERE name LIKE '%Sicilian%' OR name LIKE '%Queen%Gambit%' LIMIT 20;\n",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 2: Unknown column 'name' in 'where clause'"
+  ]
+}

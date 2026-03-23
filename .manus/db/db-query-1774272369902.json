@@ -1,0 +1,55 @@
+{
+  "query": "\nSELECT DISTINCT openingName, opening, COUNT(*) as cnt\nFROM puzzles\nWHERE openingName LIKE '%Sicilian%' OR openingName LIKE '%Queen%Gambit%' OR opening LIKE '%Sicilian%' OR opening LIKE '%Queen%Gambit%'\nGROUP BY openingName, opening\nORDER BY cnt DESC\nLIMIT 30;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \nSELECT DISTINCT openingName, opening, COUNT(*) as cnt\nFROM puzzles\nWHERE openingName LIKE '%Sicilian%' OR openingName LIKE '%Queen%Gambit%' OR opening LIKE '%Sicilian%' OR opening LIKE '%Queen%Gambit%'\nGROUP BY openingName, opening\nORDER BY cnt DESC\nLIMIT 30;\n",
+  "rows": [
+    {
+      "openingName": "Sicilian",
+      "opening": "Sicilian",
+      "cnt": "157851"
+    },
+    {
+      "openingName": "NULL",
+      "opening": "Sicilian Defense",
+      "cnt": "2393"
+    },
+    {
+      "openingName": "Sicilian Defense",
+      "opening": "Opening",
+      "cnt": "1436"
+    },
+    {
+      "openingName": "Sicilian Defense",
+      "opening": "Unclassified",
+      "cnt": "481"
+    },
+    {
+      "openingName": "Sicilian Defense",
+      "opening": "Sicilian Defense",
+      "cnt": "260"
+    },
+    {
+      "openingName": "Sicilian Accelerated Dragon",
+      "opening": "Sicilian Defense",
+      "cnt": "1"
+    },
+    {
+      "openingName": "Sicilian Closed",
+      "opening": "Sicilian Defense",
+      "cnt": "1"
+    },
+    {
+      "openingName": "Sicilian Najdorf",
+      "opening": "Sicilian Defense",
+      "cnt": "1"
+    },
+    {
+      "openingName": "Sicilian Najdorf",
+      "opening": "Unclassified",
+      "cnt": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "openingName\topening\tcnt\nSicilian\tSicilian\t157851\nNULL\tSicilian Defense\t2393\nSicilian Defense\tOpening\t1436\nSicilian Defense\tUnclassified\t481\nSicilian Defense\tSicilian Defense\t260\nSicilian Accelerated Dragon\tSicilian Defense\t1\nSicilian Closed\tSicilian Defense\t1\nSicilian Najdorf\tSicilian Defense\t1\nSicilian Najdorf\tUnclassified\t1\n",
+  "stderr": "",
+  "execution_time_ms": 4297
+}

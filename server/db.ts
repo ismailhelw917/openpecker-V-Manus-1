@@ -1473,8 +1473,11 @@ export async function getPuzzleCountByOpeningHierarchy(
 
   try {
     let whereConditions = [];
-    // Use openingName for the main opening filter
-    if (opening) whereConditions.push(eq(puzzles.openingName, opening));
+    // Resolve display name to DB short name (e.g. "Sicilian Defence" → "Sicilian")
+    if (opening) {
+      const dbName = DISPLAY_TO_DB_OPENING[opening as keyof typeof DISPLAY_TO_DB_OPENING] ?? opening;
+      whereConditions.push(eq(puzzles.openingName, dbName));
+    }
     if (subset) whereConditions.push(eq(puzzles.subset, subset));
     if (variation) whereConditions.push(eq(puzzles.openingVariation, variation));
 
@@ -1510,8 +1513,11 @@ export async function getPuzzlesByOpeningHierarchy(
     whereConditions.push(gte(puzzles.rating, minRating));
     whereConditions.push(lte(puzzles.rating, maxRating));
 
-    // Use openingName for the main opening filter
-    if (opening) whereConditions.push(eq(puzzles.openingName, opening));
+    // Resolve display name to DB short name (e.g. "Sicilian Defence" → "Sicilian", "Queen's Gambit" → "Queens")
+    if (opening) {
+      const dbName = DISPLAY_TO_DB_OPENING[opening as keyof typeof DISPLAY_TO_DB_OPENING] ?? opening;
+      whereConditions.push(eq(puzzles.openingName, dbName));
+    }
     if (subset) whereConditions.push(eq(puzzles.subset, subset));
     if (variation) whereConditions.push(eq(puzzles.openingVariation, variation));
 

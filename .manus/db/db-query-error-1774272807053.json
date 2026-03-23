@@ -1,0 +1,8 @@
+{
+  "query": "\nSELECT o.name, o.ecoCode, o.isPremium,\n  (SELECT COUNT(*) FROM puzzles p WHERE p.openingName = \n    CASE o.name\n      WHEN 'Sicilian Defense' THEN 'Sicilian'\n      WHEN \"Queen's Gambit\" THEN 'Queens'\n      WHEN 'French Defense' THEN 'French'\n      WHEN 'Italian Game' THEN 'Italian'\n      WHEN 'Scandinavian Defense' THEN 'Scandinavian'\n      ELSE o.name\n    END\n  ) as puzzleCount\nFROM openings o\nORDER BY puzzleCount DESC\nLIMIT 20;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \nSELECT o.name, o.ecoCode, o.isPremium,\n  (SELECT COUNT(*) FROM puzzles p WHERE p.openingName = \n    CASE o.name\n      WHEN 'Sicilian Defense' THEN 'Sicilian'\n      WHEN \"Queen's Gambit\" THEN 'Queens'\n      WHEN 'French Defense' THEN 'French'\n      WHEN 'Italian Game' THEN 'Italian'\n      WHEN 'Scandinavian Defense' THEN 'Scandinavian'\n      ELSE o.name\n    END\n  ) as puzzleCount\nFROM openings o\nORDER BY puzzleCount DESC\nLIMIT 20;\n",
+  "returncode": 1,
+  "logs": [
+    "ERROR 2013 (HY000) at line 2: Lost connection to MySQL server during query"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "query": "\nSELECT DISTINCT o.displayName, o.openingName, o.variation,\n  (SELECT COUNT(*) FROM puzzles p WHERE p.openingName = o.openingName) as puzzleCount\nFROM openings o\nWHERE o.displayName LIKE '%Sicilian%' OR o.displayName LIKE '%Queen%Gambit%' OR o.openingName LIKE '%Sicilian%' OR o.openingName LIKE '%Queen%'\nORDER BY puzzleCount DESC\nLIMIT 20;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \nSELECT DISTINCT o.displayName, o.openingName, o.variation,\n  (SELECT COUNT(*) FROM puzzles p WHERE p.openingName = o.openingName) as puzzleCount\nFROM openings o\nWHERE o.displayName LIKE '%Sicilian%' OR o.displayName LIKE '%Queen%Gambit%' OR o.openingName LIKE '%Sicilian%' OR o.openingName LIKE '%Queen%'\nORDER BY puzzleCount DESC\nLIMIT 20;\n",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 2: Unknown column 'o.displayname' in 'where clause'"
+  ]
+}

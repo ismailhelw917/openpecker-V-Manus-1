@@ -2264,3 +2264,14 @@
 - [x] Redis heartbeat: user:online:[ID] key with 45s TTL
 - [x] Online Now = KEYS user:online:* count
 - [x] Seeded all existing puzzle_attempts into Redis (22 players)
+
+## URGENT FIXES
+- [ ] Leaderboard still stuck on loading screen — deep troubleshoot
+- [ ] Fix Sicilian Defense puzzle name formats so all puzzles are playable
+- [ ] Fix Queen's Gambit puzzle name formats so all puzzles are playable
+
+## Sicilian + Queen's Gambit Variation Fix
+- [ ] Audit all Sicilian Defence variations in DB vs app queries
+- [ ] Audit all Queen's Gambit variations in DB vs app queries
+- [ ] Fix name mappings so all variations return puzzles
+- [ ] Add Queen's Gambit to openings table if missing
