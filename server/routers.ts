@@ -1207,12 +1207,38 @@ export const appRouter = router({
           isCorrect: input.isCorrect ? 1 : 0,
           timeMs: input.timeMs,
         });
-        // Invalidate leaderboard cache so the next fetch reflects this attempt
+        // Update denormalized leaderboard score
         try {
-          const { invalidateLeaderboardCache } = await import('./leaderboard-optimized');
+          const { updateLeaderboardScore, invalidateLeaderboardCache } = await import('./leaderboard-optimized');
+          // Get updated totals for this user/device
+          const db = await getDb();
+          if (db) {
+            let totalRow: any;
+            if (input.userId) {
+              const r = await db.execute(sql`SELECT COUNT(*) as total, SUM(isCorrect) as correct FROM puzzle_attempts WHERE userId = ${input.userId}`);
+              totalRow = Array.isArray(r) ? (Array.isArray(r[0]) ? r[0][0] : r[0]) : null;
+              const user = await db.execute(sql`SELECT name FROM users WHERE id = ${input.userId}`);
+              const userRows: any[] = Array.isArray(user) ? (Array.isArray(user[0]) ? user[0] : user) : [];
+              await updateLeaderboardScore({
+                userId: input.userId,
+                playerName: userRows[0]?.name || `Player-${input.userId}`,
+                puzzlesSolved: Number(totalRow?.total || 0),
+                correctPuzzles: Number(totalRow?.correct || 0),
+              });
+            } else if (input.deviceId) {
+              const r = await db.execute(sql`SELECT COUNT(*) as total, SUM(isCorrect) as correct FROM puzzle_attempts WHERE deviceId = ${input.deviceId} AND userId IS NULL`);
+              totalRow = Array.isArray(r) ? (Array.isArray(r[0]) ? r[0][0] : r[0]) : null;
+              await updateLeaderboardScore({
+                deviceId: input.deviceId,
+                playerName: `Guest-${input.deviceId.substring(0, 8)}`,
+                puzzlesSolved: Number(totalRow?.total || 0),
+                correctPuzzles: Number(totalRow?.correct || 0),
+              });
+            }
+          }
           invalidateLeaderboardCache();
         } catch (e) {
-          console.warn('[record] Failed to invalidate leaderboard cache:', e);
+          console.warn('[record] Failed to update leaderboard score:', e);
         }
         return result;
       }),

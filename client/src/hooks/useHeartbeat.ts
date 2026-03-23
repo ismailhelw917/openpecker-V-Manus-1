@@ -2,30 +2,22 @@ import { useEffect, useRef } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 
 /**
- * Hook to send heartbeat to server every 30 seconds
- * Tracks active user sessions with real names from Google Sign-In
+ * Hook to send heartbeat to server every 30 seconds.
+ * Uses user_heartbeats table with 45s expiry window.
+ * Tracks both authenticated users (by userId) and guests (by deviceId).
  */
 export function useHeartbeat() {
   const { user } = useAuth();
-  const sessionIdRef = useRef<string>(
-    sessionStorage.getItem("sessionId") ||
-    (() => {
-      const newId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      sessionStorage.setItem("sessionId", newId);
-      return newId;
-    })()
-  );
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     const sendHeartbeat = async () => {
       try {
-        const name = user?.name || "Guest Player";
-        const email = user?.email || null;
-        const isGuest = !user;
-        const currentPath = window.location.pathname;
-        const deviceId = localStorage.getItem("deviceId") || `device-${Date.now()}`;
-
-        if (!localStorage.getItem("deviceId")) {
+        let deviceId = localStorage.getItem("deviceId");
+        if (!deviceId) {
+          deviceId = typeof crypto.randomUUID === 'function'
+            ? crypto.randomUUID()
+            : Math.random().toString(36).substring(2) + Date.now().toString(36);
           localStorage.setItem("deviceId", deviceId);
         }
 
@@ -33,39 +25,47 @@ export function useHeartbeat() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            sessionId: sessionIdRef.current,
-            name,
-            email,
-            isGuest,
-            currentPath,
+            userId: user?.id || null,
             deviceId,
+            name: user?.name || `Guest-${deviceId.substring(0, 8)}`,
           }),
         });
       } catch (error) {
-        console.debug("[Heartbeat] Failed to send", error);
+        // Silent fail — heartbeat is non-critical
       }
     };
 
-    // Send heartbeat immediately
     sendHeartbeat();
+    intervalRef.current = setInterval(sendHeartbeat, 30_000);
 
-    // Then send every 30 seconds
-    const interval = setInterval(sendHeartbeat, 30000);
+    const handleVisibility = () => {
+      if (document.hidden) {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+      } else {
+        sendHeartbeat();
+        intervalRef.current = setInterval(sendHeartbeat, 30_000);
+      }
+    };
 
-    return () => clearInterval(interval);
-  }, [user]);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibility);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [user?.id, user?.name]);
 }
 
 /**
- * Hook to get currently active sessions
+ * Get current online user count.
  */
-export async function getActiveSessions(): Promise<any[]> {
+export async function getOnlineCount(): Promise<number> {
   try {
     const response = await fetch("/api/heartbeat/active");
     const data = await response.json();
-    return data.sessions || [];
+    return data.onlineCount || 0;
   } catch (error) {
-    console.error("[Active Sessions] Failed to fetch", error);
-    return [];
+    console.error("[Online Count] Failed to fetch", error);
+    return 0;
   }
 }

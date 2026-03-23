@@ -2236,3 +2236,20 @@
 - [ ] Translate Settings page
 - [ ] Translate BottomNav and all shared components
 - [ ] Persist language preference to localStorage
+
+## Extensive Investigation (Mar 23)
+- [ ] Deep leaderboard verification: data integrity, deduplication, all players showing
+- [ ] Test login/account creation flow end-to-end
+- [ ] Verify all unlocked openings return puzzles from database
+
+## Leaderboard Architecture Overhaul
+- [x] Create leaderboard_scores denormalized table (userId, playerName, totalPuzzles, accuracy, rating, totalMinutes, lastUpdated)
+- [x] Create user_heartbeats table (userId/deviceId, lastPing)
+- [x] Migrate existing puzzle_attempts data into leaderboard_scores
+- [x] Rewrite leaderboard backend to read from leaderboard_scores (single indexed read, no JOINs)
+- [x] Update score in leaderboard_scores when training session ends
+- [x] Implement frontend heartbeat ping every 30s
+- [x] Backend heartbeat upsert with 45s expiry window
+- [x] Online Now count = active heartbeats within 45s window
+- [ ] Test login flow end-to-end
+- [ ] Fix 129 placeholder openings with no puzzles (Opening Variation XXX stubs)

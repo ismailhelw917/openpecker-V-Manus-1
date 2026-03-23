@@ -1,0 +1,90 @@
+{
+  "query": "\n-- Check the duplicate names\nSELECT name, COUNT(*) AS cnt FROM users GROUP BY name HAVING cnt > 1 ORDER BY cnt DESC LIMIT 20;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \n-- Check the duplicate names\nSELECT name, COUNT(*) AS cnt FROM users GROUP BY name HAVING cnt > 1 ORDER BY cnt DESC LIMIT 20;\n",
+  "rows": [
+    {
+      "name": "Cameron Jackson",
+      "cnt": "5"
+    },
+    {
+      "name": "Drew Thomas",
+      "cnt": "5"
+    },
+    {
+      "name": "Blake Anderson",
+      "cnt": "5"
+    },
+    {
+      "name": "Riley Davis",
+      "cnt": "4"
+    },
+    {
+      "name": "Blake Lee",
+      "cnt": "4"
+    },
+    {
+      "name": "Jordan Brown",
+      "cnt": "4"
+    },
+    {
+      "name": "Casey Jones",
+      "cnt": "4"
+    },
+    {
+      "name": "Quinn Moore",
+      "cnt": "4"
+    },
+    {
+      "name": "Drew Perez",
+      "cnt": "4"
+    },
+    {
+      "name": "Jordan White",
+      "cnt": "4"
+    },
+    {
+      "name": "Casey Harris",
+      "cnt": "4"
+    },
+    {
+      "name": "Morgan Miller",
+      "cnt": "4"
+    },
+    {
+      "name": "Guest-test-dev",
+      "cnt": "4"
+    },
+    {
+      "name": "Riley Thompson",
+      "cnt": "4"
+    },
+    {
+      "name": "Cameron Taylor",
+      "cnt": "4"
+    },
+    {
+      "name": "Quinn Rodriguez",
+      "cnt": "4"
+    },
+    {
+      "name": "Taylor Garcia",
+      "cnt": "4"
+    },
+    {
+      "name": "Morgan Martin",
+      "cnt": "4"
+    },
+    {
+      "name": "Taylor Wilson",
+      "cnt": "4"
+    },
+    {
+      "name": "Morgan Davis",
+      "cnt": "3"
+    }
+  ],
+  "messages": [],
+  "stdout": "name\tcnt\nCameron Jackson\t5\nDrew Thomas\t5\nBlake Anderson\t5\nRiley Davis\t4\nBlake Lee\t4\nJordan Brown\t4\nCasey Jones\t4\nQuinn Moore\t4\nDrew Perez\t4\nJordan White\t4\nCasey Harris\t4\nMorgan Miller\t4\nGuest-test-dev\t4\nRiley Thompson\t4\nCameron Taylor\t4\nQuinn Rodriguez\t4\nTaylor Garcia\t4\nMorgan Martin\t4\nTaylor Wilson\t4\nMorgan Davis\t3\n",
+  "stderr": "",
+  "execution_time_ms": 1658
+}

@@ -1,0 +1,910 @@
+{
+  "query": "\n-- Check openings and puzzle counts\nSELECT \n  o.name AS openingName,\n  o.ecoCode,\n  o.isPremium AS isLocked,\n  COUNT(p.id) AS puzzleCount\nFROM openings o\nLEFT JOIN puzzles p ON p.openingName = o.name OR p.opening = o.name\nGROUP BY o.id, o.name, o.ecoCode, o.isPremium\nORDER BY o.isPremium ASC, puzzleCount DESC;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \n-- Check openings and puzzle counts\nSELECT \n  o.name AS openingName,\n  o.ecoCode,\n  o.isPremium AS isLocked,\n  COUNT(p.id) AS puzzleCount\nFROM openings o\nLEFT JOIN puzzles p ON p.openingName = o.name OR p.opening = o.name\nGROUP BY o.id, o.name, o.ecoCode, o.isPremium\nORDER BY o.isPremium ASC, puzzleCount DESC;\n",
+  "rows": [
+    {
+      "openingName": "Sicilian Defense",
+      "ecoCode": "B20",
+      "isLocked": "0",
+      "puzzleCount": "4573"
+    },
+    {
+      "openingName": "Scandinavian Defense",
+      "ecoCode": "B01",
+      "isLocked": "0",
+      "puzzleCount": "392"
+    },
+    {
+      "openingName": "Italian Game",
+      "ecoCode": "C50",
+      "isLocked": "0",
+      "puzzleCount": "4"
+    },
+    {
+      "openingName": "French Defense",
+      "ecoCode": "C00",
+      "isLocked": "0",
+      "puzzleCount": "2"
+    },
+    {
+      "openingName": "Alekhine Defense",
+      "ecoCode": "B02",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 129",
+      "ecoCode": "VAR129",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Spanish Opening",
+      "ecoCode": "C60",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 34",
+      "ecoCode": "VAR034",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 44",
+      "ecoCode": "VAR044",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 86",
+      "ecoCode": "VAR086",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 93",
+      "ecoCode": "VAR093",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 130",
+      "ecoCode": "VAR130",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 122",
+      "ecoCode": "VAR122",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 111",
+      "ecoCode": "VAR111",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 90",
+      "ecoCode": "VAR090",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 63",
+      "ecoCode": "VAR063",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 105",
+      "ecoCode": "VAR105",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 127",
+      "ecoCode": "VAR127",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 109",
+      "ecoCode": "VAR109",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 113",
+      "ecoCode": "VAR113",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 150",
+      "ecoCode": "VAR150",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 45",
+      "ecoCode": "VAR045",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 56",
+      "ecoCode": "VAR056",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 53",
+      "ecoCode": "VAR053",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 126",
+      "ecoCode": "VAR126",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 62",
+      "ecoCode": "VAR062",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 85",
+      "ecoCode": "VAR085",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 69",
+      "ecoCode": "VAR069",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 72",
+      "ecoCode": "VAR072",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 94",
+      "ecoCode": "VAR094",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 97",
+      "ecoCode": "VAR097",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 104",
+      "ecoCode": "VAR104",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 64",
+      "ecoCode": "VAR064",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 142",
+      "ecoCode": "VAR142",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 50",
+      "ecoCode": "VAR050",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 147",
+      "ecoCode": "VAR147",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Caro-Kann Defense",
+      "ecoCode": "B10",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 96",
+      "ecoCode": "VAR096",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 117",
+      "ecoCode": "VAR117",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 58",
+      "ecoCode": "VAR058",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 79",
+      "ecoCode": "VAR079",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 149",
+      "ecoCode": "VAR149",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 140",
+      "ecoCode": "VAR140",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 110",
+      "ecoCode": "VAR110",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 75",
+      "ecoCode": "VAR075",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 88",
+      "ecoCode": "VAR088",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 116",
+      "ecoCode": "VAR116",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 139",
+      "ecoCode": "VAR139",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 89",
+      "ecoCode": "VAR089",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 123",
+      "ecoCode": "VAR123",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 80",
+      "ecoCode": "VAR080",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 107",
+      "ecoCode": "VAR107",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 65",
+      "ecoCode": "VAR065",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 76",
+      "ecoCode": "VAR076",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 71",
+      "ecoCode": "VAR071",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 18",
+      "ecoCode": "VAR018",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 23",
+      "ecoCode": "VAR023",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 26",
+      "ecoCode": "VAR026",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 32",
+      "ecoCode": "VAR032",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 38",
+      "ecoCode": "VAR038",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 120",
+      "ecoCode": "VAR120",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 30",
+      "ecoCode": "VAR030",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 35",
+      "ecoCode": "VAR035",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 39",
+      "ecoCode": "VAR039",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 24",
+      "ecoCode": "VAR024",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 36",
+      "ecoCode": "VAR036",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 98",
+      "ecoCode": "VAR098",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 103",
+      "ecoCode": "VAR103",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 125",
+      "ecoCode": "VAR125",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 28",
+      "ecoCode": "VAR028",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 66",
+      "ecoCode": "VAR066",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 78",
+      "ecoCode": "VAR078",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 82",
+      "ecoCode": "VAR082",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 132",
+      "ecoCode": "VAR132",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 143",
+      "ecoCode": "VAR143",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 84",
+      "ecoCode": "VAR084",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 106",
+      "ecoCode": "VAR106",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Ruy Lopez",
+      "ecoCode": "C80",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 74",
+      "ecoCode": "VAR074",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 148",
+      "ecoCode": "VAR148",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 47",
+      "ecoCode": "VAR047",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 52",
+      "ecoCode": "VAR052",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 60",
+      "ecoCode": "VAR060",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 99",
+      "ecoCode": "VAR099",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 37",
+      "ecoCode": "VAR037",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 48",
+      "ecoCode": "VAR048",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 133",
+      "ecoCode": "VAR133",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 135",
+      "ecoCode": "VAR135",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 43",
+      "ecoCode": "VAR043",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 49",
+      "ecoCode": "VAR049",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 115",
+      "ecoCode": "VAR115",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 146",
+      "ecoCode": "VAR146",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 27",
+      "ecoCode": "VAR027",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 145",
+      "ecoCode": "VAR145",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 138",
+      "ecoCode": "VAR138",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 42",
+      "ecoCode": "VAR042",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 128",
+      "ecoCode": "VAR128",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 136",
+      "ecoCode": "VAR136",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 33",
+      "ecoCode": "VAR033",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 61",
+      "ecoCode": "VAR061",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 17",
+      "ecoCode": "VAR017",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 118",
+      "ecoCode": "VAR118",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 101",
+      "ecoCode": "VAR101",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 40",
+      "ecoCode": "VAR040",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 119",
+      "ecoCode": "VAR119",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 68",
+      "ecoCode": "VAR068",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 92",
+      "ecoCode": "VAR092",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 121",
+      "ecoCode": "VAR121",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 131",
+      "ecoCode": "VAR131",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Pirc Defense",
+      "ecoCode": "B06",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 67",
+      "ecoCode": "VAR067",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 46",
+      "ecoCode": "VAR046",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 70",
+      "ecoCode": "VAR070",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 95",
+      "ecoCode": "VAR095",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 21",
+      "ecoCode": "VAR021",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 25",
+      "ecoCode": "VAR025",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 59",
+      "ecoCode": "VAR059",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 91",
+      "ecoCode": "VAR091",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 81",
+      "ecoCode": "VAR081",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 16",
+      "ecoCode": "VAR016",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 144",
+      "ecoCode": "VAR144",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 137",
+      "ecoCode": "VAR137",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 100",
+      "ecoCode": "VAR100",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 87",
+      "ecoCode": "VAR087",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 51",
+      "ecoCode": "VAR051",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 20",
+      "ecoCode": "VAR020",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 77",
+      "ecoCode": "VAR077",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 124",
+      "ecoCode": "VAR124",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 41",
+      "ecoCode": "VAR041",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 108",
+      "ecoCode": "VAR108",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 134",
+      "ecoCode": "VAR134",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 55",
+      "ecoCode": "VAR055",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 31",
+      "ecoCode": "VAR031",
+      "isLocked": "0",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 102",
+      "ecoCode": "VAR102",
+      "isLocked": "1",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 57",
+      "ecoCode": "VAR057",
+      "isLocked": "1",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 19",
+      "ecoCode": "VAR019",
+      "isLocked": "1",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 11",
+      "ecoCode": "VAR011",
+      "isLocked": "1",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 15",
+      "ecoCode": "VAR015",
+      "isLocked": "1",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 83",
+      "ecoCode": "VAR083",
+      "isLocked": "1",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 29",
+      "ecoCode": "VAR029",
+      "isLocked": "1",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 14",
+      "ecoCode": "VAR014",
+      "isLocked": "1",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 10",
+      "ecoCode": "VAR010",
+      "isLocked": "1",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 22",
+      "ecoCode": "VAR022",
+      "isLocked": "1",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 73",
+      "ecoCode": "VAR073",
+      "isLocked": "1",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 141",
+      "ecoCode": "VAR141",
+      "isLocked": "1",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 13",
+      "ecoCode": "VAR013",
+      "isLocked": "1",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 112",
+      "ecoCode": "VAR112",
+      "isLocked": "1",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 12",
+      "ecoCode": "VAR012",
+      "isLocked": "1",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 54",
+      "ecoCode": "VAR054",
+      "isLocked": "1",
+      "puzzleCount": "0"
+    },
+    {
+      "openingName": "Opening Variation 114",
+      "ecoCode": "VAR114",
+      "isLocked": "1",
+      "puzzleCount": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "openingName\tecoCode\tisLocked\tpuzzleCount\nSicilian Defense\tB20\t0\t4573\nScandinavian Defense\tB01\t0\t392\nItalian Game\tC50\t0\t4\nFrench Defense\tC00\t0\t2\nAlekhine Defense\tB02\t0\t0\nOpening Variation 129\tVAR129\t0\t0\nSpanish Opening\tC60\t0\t0\nOpening Variation 34\tVAR034\t0\t0\nOpening Variation 44\tVAR044\t0\t0\nOpening Variation 86\tVAR086\t0\t0\nOpening Variation 93\tVAR093\t0\t0\nOpening Variation 130\tVAR130\t0\t0\nOpening Variation 122\tVAR122\t0\t0\nOpening Variation 111\tVAR111\t0\t0\nOpening Variation 90\tVAR090\t0\t0\nOpening Variation 63\tVAR063\t0\t0\nOpening Variation 105\tVAR105\t0\t0\nOpening Variation 127\tVAR127\t0\t0\nOpening Variation 109\tVAR109\t0\t0\nOpening Variation 113\tVAR113\t0\t0\nOpening Variation 150\tVAR150\t0\t0\nOpening Variation 45\tVAR045\t0\t0\nOpening Variation 56\tVAR056\t0\t0\nOpening Variation 53\tVAR053\t0\t0\nOpening Variation 126\tVAR126\t0\t0\nOpening Variation 62\tVAR062\t0\t0\nOpening Variation 85\tVAR085\t0\t0\nOpening Variation 69\tVAR069\t0\t0\nOpening Variation 72\tVAR072\t0\t0\nOpening Variation 94\tVAR094\t0\t0\nOpening Variation 97\tVAR097\t0\t0\nOpening Variation 104\tVAR104\t0\t0\nOpening Variation 64\tVAR064\t0\t0\nOpening Variation 142\tVAR142\t0\t0\nOpening Variation 50\tVAR050\t0\t0\nOpening Variation 147\tVAR147\t0\t0\nCaro-Kann Defense\tB10\t0\t0\nOpening Variation 96\tVAR096\t0\t0\nOpening Variation 117\tVAR117\t0\t0\nOpening Variation 58\tVAR058\t0\t0\nOpening Variation 79\tVAR079\t0\t0\nOpening Variation 149\tVAR149\t0\t0\nOpening Variation 140\tVAR140\t0\t0\nOpening Variation 110\tVAR110\t0\t0\nOpening Variation 75\tVAR075\t0\t0\nOpening Variation 88\tVAR088\t0\t0\nOpening Variation 116\tVAR116\t0\t0\nOpening Variation 139\tVAR139\t0\t0\nOpening Variation 89\tVAR089\t0\t0\nOpening Variation 123\tVAR123\t0\t0\nOpening Variation 80\tVAR080\t0\t0\nOpening Variation 107\tVAR107\t0\t0\nOpening Variation 65\tVAR065\t0\t0\nOpening Variation 76\tVAR076\t0\t0\nOpening Variation 71\tVAR071\t0\t0\nOpening Variation 18\tVAR018\t0\t0\nOpening Variation 23\tVAR023\t0\t0\nOpening Variation 26\tVAR026\t0\t0\nOpening Variation 32\tVAR032\t0\t0\nOpening Variation 38\tVAR038\t0\t0\nOpening Variation 120\tVAR120\t0\t0\nOpening Variation 30\tVAR030\t0\t0\nOpening Variation 35\tVAR035\t0\t0\nOpening Variation 39\tVAR039\t0\t0\nOpening Variation 24\tVAR024\t0\t0\nOpening Variation 36\tVAR036\t0\t0\nOpening Variation 98\tVAR098\t0\t0\nOpening Variation 103\tVAR103\t0\t0\nOpening Variation 125\tVAR125\t0\t0\nOpening Variation 28\tVAR028\t0\t0\nOpening Variation 66\tVAR066\t0\t0\nOpening Variation 78\tVAR078\t0\t0\nOpening Variation 82\tVAR082\t0\t0\nOpening Variation 132\tVAR132\t0\t0\nOpening Variation 143\tVAR143\t0\t0\nOpening Variation 84\tVAR084\t0\t0\nOpening Variation 106\tVAR106\t0\t0\nRuy Lopez\tC80\t0\t0\nOpening Variation 74\tVAR074\t0\t0\nOpening Variation 148\tVAR148\t0\t0\nOpening Variation 47\tVAR047\t0\t0\nOpening Variation 52\tVAR052\t0\t0\nOpening Variation 60\tVAR060\t0\t0\nOpening Variation 99\tVAR099\t0\t0\nOpening Variation 37\tVAR037\t0\t0\nOpening Variation 48\tVAR048\t0\t0\nOpening Variation 133\tVAR133\t0\t0\nOpening Variation 135\tVAR135\t0\t0\nOpening Variation 43\tVAR043\t0\t0\nOpening Variation 49\tVAR049\t0\t0\nOpening Variation 115\tVAR115\t0\t0\nOpening Variation 146\tVAR146\t0\t0\nOpening Variation 27\tVAR027\t0\t0\nOpening Variation 145\tVAR145\t0\t0\nOpening Variation 138\tVAR138\t0\t0\nOpening Variation 42\tVAR042\t0\t0\nOpening Variation 128\tVAR128\t0\t0\nOpening Variation 136\tVAR136\t0\t0\nOpening Variation 33\tVAR033\t0\t0\nOpening Variation 61\tVAR061\t0\t0\nOpening Variation 17\tVAR017\t0\t0\nOpening Variation 118\tVAR118\t0\t0\nOpening Variation 101\tVAR101\t0\t0\nOpening Variation 40\tVAR040\t0\t0\nOpening Variation 119\tVAR119\t0\t0\nOpening Variation 68\tVAR068\t0\t0\nOpening Variation 92\tVAR092\t0\t0\nOpening Variation 121\tVAR121\t0\t0\nOpening Variation 131\tVAR131\t0\t0\nPirc Defense\tB06\t0\t0\nOpening Variation 67\tVAR067\t0\t0\nOpening Variation 46\tVAR046\t0\t0\nOpening Variation 70\tVAR070\t0\t0\nOpening Variation 95\tVAR095\t0\t0\nOpening Variation 21\tVAR021\t0\t0\nOpening Variation 25\tVAR025\t0\t0\nOpening Variation 59\tVAR059\t0\t0\nOpening Variation 91\tVAR091\t0\t0\nOpening Variation 81\tVAR081\t0\t0\nOpening Variation 16\tVAR016\t0\t0\nOpening Variation 144\tVAR144\t0\t0\nOpening Variation 137\tVAR137\t0\t0\nOpening Variation 100\tVAR100\t0\t0\nOpening Variation 87\tVAR087\t0\t0\nOpening Variation 51\tVAR051\t0\t0\nOpening Variation 20\tVAR020\t0\t0\nOpening Variation 77\tVAR077\t0\t0\nOpening Variation 124\tVAR124\t0\t0\nOpening Variation 41\tVAR041\t0\t0\nOpening Variation 108\tVAR108\t0\t0\nOpening Variation 134\tVAR134\t0\t0\nOpening Variation 55\tVAR055\t0\t0\nOpening Variation 31\tVAR031\t0\t0\nOpening Variation 102\tVAR102\t1\t0\nOpening Variation 57\tVAR057\t1\t0\nOpening Variation 19\tVAR019\t1\t0\nOpening Variation 11\tVAR011\t1\t0\nOpening Variation 15\tVAR015\t1\t0\nOpening Variation 83\tVAR083\t1\t0\nOpening Variation 29\tVAR029\t1\t0\nOpening Variation 14\tVAR014\t1\t0\nOpening Variation 10\tVAR010\t1\t0\nOpening Variation 22\tVAR022\t1\t0\nOpening Variation 73\tVAR073\t1\t0\nOpening Variation 141\tVAR141\t1\t0\nOpening Variation 13\tVAR013\t1\t0\nOpening Variation 112\tVAR112\t1\t0\nOpening Variation 12\tVAR012\t1\t0\nOpening Variation 54\tVAR054\t1\t0\nOpening Variation 114\tVAR114\t1\t0\n",
+  "stderr": "",
+  "execution_time_ms": 84330
+}

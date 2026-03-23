@@ -1,0 +1,26 @@
+{
+  "query": "\nSELECT \n  CASE \n    WHEN email LIKE '%@example.com' THEN 'seed_fake'\n    WHEN email LIKE '%@ga-import.local' THEN 'ga_import'\n    WHEN email LIKE '%@anonymous.local' THEN 'device_guest_registered'\n    WHEN openId LIKE 'device-%' THEN 'device_guest_registered'\n    ELSE 'real_oauth_user'\n  END AS user_type,\n  COUNT(*) AS cnt\nFROM users\nGROUP BY user_type\nORDER BY cnt DESC;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \nSELECT \n  CASE \n    WHEN email LIKE '%@example.com' THEN 'seed_fake'\n    WHEN email LIKE '%@ga-import.local' THEN 'ga_import'\n    WHEN email LIKE '%@anonymous.local' THEN 'device_guest_registered'\n    WHEN openId LIKE 'device-%' THEN 'device_guest_registered'\n    ELSE 'real_oauth_user'\n  END AS user_type,\n  COUNT(*) AS cnt\nFROM users\nGROUP BY user_type\nORDER BY cnt DESC;\n",
+  "rows": [
+    {
+      "user_type": "device_guest_registered",
+      "cnt": "4010"
+    },
+    {
+      "user_type": "seed_fake",
+      "cnt": "100"
+    },
+    {
+      "user_type": "ga_import",
+      "cnt": "10"
+    },
+    {
+      "user_type": "real_oauth_user",
+      "cnt": "5"
+    }
+  ],
+  "messages": [],
+  "stdout": "user_type\tcnt\ndevice_guest_registered\t4010\nseed_fake\t100\nga_import\t10\nreal_oauth_user\t5\n",
+  "stderr": "",
+  "execution_time_ms": 1618
+}

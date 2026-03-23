@@ -1,0 +1,22 @@
+{
+  "query": "\n-- Separate real users from seed/test data\nSELECT \n  CASE \n    WHEN name LIKE 'Guest-%' AND name REGEXP '^Guest-[0-9]{5,}$' THEN 'seed_guest'\n    WHEN name IN ('Cameron Jackson','Drew Thomas','Blake Anderson','Riley Davis','Blake Lee','Jordan Brown','Casey Jones','Quinn Moore','Drew Perez','Jordan White','Casey Harris','Morgan Miller','Riley Thompson','Cameron Taylor','Quinn Rodriguez','Taylor Garcia','Morgan Martin','Taylor Wilson','Morgan Davis') THEN 'seed_named'\n    ELSE 'real_user'\n  END AS user_type,\n  COUNT(*) AS cnt\nFROM users\nGROUP BY user_type;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \n-- Separate real users from seed/test data\nSELECT \n  CASE \n    WHEN name LIKE 'Guest-%' AND name REGEXP '^Guest-[0-9]{5,}$' THEN 'seed_guest'\n    WHEN name IN ('Cameron Jackson','Drew Thomas','Blake Anderson','Riley Davis','Blake Lee','Jordan Brown','Casey Jones','Quinn Moore','Drew Perez','Jordan White','Casey Harris','Morgan Miller','Riley Thompson','Cameron Taylor','Quinn Rodriguez','Taylor Garcia','Morgan Martin','Taylor Wilson','Morgan Davis') THEN 'seed_named'\n    ELSE 'real_user'\n  END AS user_type,\n  COUNT(*) AS cnt\nFROM users\nGROUP BY user_type;\n",
+  "rows": [
+    {
+      "user_type": "real_user",
+      "cnt": "3951"
+    },
+    {
+      "user_type": "seed_named",
+      "cnt": "78"
+    },
+    {
+      "user_type": "seed_guest",
+      "cnt": "96"
+    }
+  ],
+  "messages": [],
+  "stdout": "user_type\tcnt\nreal_user\t3951\nseed_named\t78\nseed_guest\t96\n",
+  "stderr": "",
+  "execution_time_ms": 1606
+}

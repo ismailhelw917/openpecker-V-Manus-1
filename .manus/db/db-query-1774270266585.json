@@ -1,0 +1,115 @@
+{
+  "query": "\n-- Check real users created on Mar 22 (most recent real activity day)\nSELECT id, name, email, openId, createdAt \nFROM users \nWHERE createdAt >= '2026-03-22' \nORDER BY createdAt DESC \nLIMIT 15;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \n-- Check real users created on Mar 22 (most recent real activity day)\nSELECT id, name, email, openId, createdAt \nFROM users \nWHERE createdAt >= '2026-03-22' \nORDER BY createdAt DESC \nLIMIT 15;\n",
+  "rows": [
+    {
+      "id": "1264247",
+      "name": "Zorez Shabkhez",
+      "email": "zorezshabkhez2@gmail.com",
+      "openId": "o8BJvdAdjzqFpJXCqNzSKb",
+      "createdAt": "2026-03-22 20:37:49"
+    },
+    {
+      "id": "1261093",
+      "name": "Mansoor KP",
+      "email": "1000@ga-import.local",
+      "openId": "ga-1000",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1261101",
+      "name": "Blake Thomas",
+      "email": "1008@ga-import.local",
+      "openId": "ga-1008",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1261102",
+      "name": "Drew Jackson",
+      "email": "1009@ga-import.local",
+      "openId": "ga-1009",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1261099",
+      "name": "Taylor Anderson",
+      "email": "1006@ga-import.local",
+      "openId": "ga-1006",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1261098",
+      "name": "Riley Martinez",
+      "email": "1005@ga-import.local",
+      "openId": "ga-1005",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1261097",
+      "name": "Morgan Davis",
+      "email": "1004@ga-import.local",
+      "openId": "ga-1004",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1261100",
+      "name": "Quinn Taylor",
+      "email": "1007@ga-import.local",
+      "openId": "ga-1007",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1261096",
+      "name": "Casey Wilson",
+      "email": "1003@ga-import.local",
+      "openId": "ga-1003",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1261095",
+      "name": "Jordan Smith",
+      "email": "1002@ga-import.local",
+      "openId": "ga-1002",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1261094",
+      "name": "Alex Thompson",
+      "email": "1001@ga-import.local",
+      "openId": "ga-1001",
+      "createdAt": "2026-03-22 17:01:43"
+    },
+    {
+      "id": "1200477",
+      "name": "Blake Anderson",
+      "email": "blake.anderson5@example.com",
+      "openId": "open_user_098",
+      "createdAt": "2026-03-22 11:47:07"
+    },
+    {
+      "id": "1200478",
+      "name": "Drew Thomas",
+      "email": "drew.thomas5@example.com",
+      "openId": "open_user_099",
+      "createdAt": "2026-03-22 11:47:07"
+    },
+    {
+      "id": "1200473",
+      "name": "Morgan Miller",
+      "email": "morgan.miller4@example.com",
+      "openId": "open_user_094",
+      "createdAt": "2026-03-22 11:47:07"
+    },
+    {
+      "id": "1200479",
+      "name": "Cameron Jackson",
+      "email": "cameron.jackson5@example.com",
+      "openId": "open_user_100",
+      "createdAt": "2026-03-22 11:47:07"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\topenId\tcreatedAt\n1264247\tZorez Shabkhez\tzorezshabkhez2@gmail.com\to8BJvdAdjzqFpJXCqNzSKb\t2026-03-22 20:37:49\n1261093\tMansoor KP\t1000@ga-import.local\tga-1000\t2026-03-22 17:01:43\n1261101\tBlake Thomas\t1008@ga-import.local\tga-1008\t2026-03-22 17:01:43\n1261102\tDrew Jackson\t1009@ga-import.local\tga-1009\t2026-03-22 17:01:43\n1261099\tTaylor Anderson\t1006@ga-import.local\tga-1006\t2026-03-22 17:01:43\n1261098\tRiley Martinez\t1005@ga-import.local\tga-1005\t2026-03-22 17:01:43\n1261097\tMorgan Davis\t1004@ga-import.local\tga-1004\t2026-03-22 17:01:43\n1261100\tQuinn Taylor\t1007@ga-import.local\tga-1007\t2026-03-22 17:01:43\n1261096\tCasey Wilson\t1003@ga-import.local\tga-1003\t2026-03-22 17:01:43\n1261095\tJordan Smith\t1002@ga-import.local\tga-1002\t2026-03-22 17:01:43\n1261094\tAlex Thompson\t1001@ga-import.local\tga-1001\t2026-03-22 17:01:43\n1200477\tBlake Anderson\tblake.anderson5@example.com\topen_user_098\t2026-03-22 11:47:07\n1200478\tDrew Thomas\tdrew.thomas5@example.com\topen_user_099\t2026-03-22 11:47:07\n1200473\tMorgan Miller\tmorgan.miller4@example.com\topen_user_094\t2026-03-22 11:47:07\n1200479\tCameron Jackson\tcameron.jackson5@example.com\topen_user_100\t2026-03-22 11:47:07\n",
+  "stderr": "",
+  "execution_time_ms": 1645
+}

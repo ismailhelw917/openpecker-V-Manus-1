@@ -1,0 +1,80 @@
+{
+  "query": "\nSELECT playerName, totalPuzzles, correctPuzzles, accuracy, totalMinutes \nFROM leaderboard_scores \nORDER BY totalPuzzles DESC \nLIMIT 10;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \nSELECT playerName, totalPuzzles, correctPuzzles, accuracy, totalMinutes \nFROM leaderboard_scores \nORDER BY totalPuzzles DESC \nLIMIT 10;\n",
+  "rows": [
+    {
+      "playerName": "Mansoor KP",
+      "totalPuzzles": "149",
+      "correctPuzzles": "126",
+      "accuracy": "84.56",
+      "totalMinutes": "36.70"
+    },
+    {
+      "playerName": "Guest-1eeac2ef",
+      "totalPuzzles": "63",
+      "correctPuzzles": "43",
+      "accuracy": "68.25",
+      "totalMinutes": "9.30"
+    },
+    {
+      "playerName": "Ismail",
+      "totalPuzzles": "59",
+      "correctPuzzles": "29",
+      "accuracy": "49.15",
+      "totalMinutes": "0.00"
+    },
+    {
+      "playerName": "Guest-70ee90a4",
+      "totalPuzzles": "25",
+      "correctPuzzles": "5",
+      "accuracy": "20.00",
+      "totalMinutes": "0.00"
+    },
+    {
+      "playerName": "Guest-UzNp9qOl",
+      "totalPuzzles": "21",
+      "correctPuzzles": "17",
+      "accuracy": "80.95",
+      "totalMinutes": "0.00"
+    },
+    {
+      "playerName": "Guest-c2651c39",
+      "totalPuzzles": "16",
+      "correctPuzzles": "14",
+      "accuracy": "87.50",
+      "totalMinutes": "0.00"
+    },
+    {
+      "playerName": "Guest-1b287aa7",
+      "totalPuzzles": "9",
+      "correctPuzzles": "5",
+      "accuracy": "55.56",
+      "totalMinutes": "0.00"
+    },
+    {
+      "playerName": "Guest-429771ff",
+      "totalPuzzles": "8",
+      "correctPuzzles": "6",
+      "accuracy": "75.00",
+      "totalMinutes": "0.00"
+    },
+    {
+      "playerName": "Guest-495fc1da",
+      "totalPuzzles": "6",
+      "correctPuzzles": "0",
+      "accuracy": "0.00",
+      "totalMinutes": "0.00"
+    },
+    {
+      "playerName": "Guest-36PN_RgY",
+      "totalPuzzles": "6",
+      "correctPuzzles": "5",
+      "accuracy": "83.33",
+      "totalMinutes": "0.00"
+    }
+  ],
+  "messages": [],
+  "stdout": "playerName\ttotalPuzzles\tcorrectPuzzles\taccuracy\ttotalMinutes\nMansoor KP\t149\t126\t84.56\t36.70\nGuest-1eeac2ef\t63\t43\t68.25\t9.30\nIsmail\t59\t29\t49.15\t0.00\nGuest-70ee90a4\t25\t5\t20.00\t0.00\nGuest-UzNp9qOl\t21\t17\t80.95\t0.00\nGuest-c2651c39\t16\t14\t87.50\t0.00\nGuest-1b287aa7\t9\t5\t55.56\t0.00\nGuest-429771ff\t8\t6\t75.00\t0.00\nGuest-495fc1da\t6\t0\t0.00\t0.00\nGuest-36PN_RgY\t6\t5\t83.33\t0.00\n",
+  "stderr": "",
+  "execution_time_ms": 1588
+}

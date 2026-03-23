@@ -1,0 +1,40 @@
+{
+  "query": "\n-- Real OAuth users\nSELECT id, name, email, createdAt FROM users \nWHERE email NOT LIKE '%@example.com' \n  AND email NOT LIKE '%@ga-import.local'\n  AND email NOT LIKE '%@anonymous.local'\n  AND openId NOT LIKE 'device-%'\nORDER BY createdAt DESC;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway04.us-east-1.prod.aws.tidbcloud.com --port 4000 --user p1iERkZxRv8XeMu.root --database EorxrxCPNFVtGo7gjBVrJr --execute \n-- Real OAuth users\nSELECT id, name, email, createdAt FROM users \nWHERE email NOT LIKE '%@example.com' \n  AND email NOT LIKE '%@ga-import.local'\n  AND email NOT LIKE '%@anonymous.local'\n  AND openId NOT LIKE 'device-%'\nORDER BY createdAt DESC;\n",
+  "rows": [
+    {
+      "id": "1264247",
+      "name": "Zorez Shabkhez",
+      "email": "zorezshabkhez2@gmail.com",
+      "createdAt": "2026-03-22 20:37:49"
+    },
+    {
+      "id": "1141733",
+      "name": "Mansoor KP",
+      "email": "mansoorkp2002@gmail.com",
+      "createdAt": "2026-03-21 16:39:48"
+    },
+    {
+      "id": "1098140",
+      "name": "salem el sayed",
+      "email": "salem.t.elsayed@gmail.com",
+      "createdAt": "2026-03-21 13:53:28"
+    },
+    {
+      "id": "1040530",
+      "name": "Ismail El Helw",
+      "email": "ismail.helw@gmail.com",
+      "createdAt": "2026-03-21 10:17:11"
+    },
+    {
+      "id": "750572",
+      "name": "Ismail",
+      "email": "happychesspenguin@gmail.com",
+      "createdAt": "2026-03-18 14:11:23"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\tcreatedAt\n1264247\tZorez Shabkhez\tzorezshabkhez2@gmail.com\t2026-03-22 20:37:49\n1141733\tMansoor KP\tmansoorkp2002@gmail.com\t2026-03-21 16:39:48\n1098140\tsalem el sayed\tsalem.t.elsayed@gmail.com\t2026-03-21 13:53:28\n1040530\tIsmail El Helw\tismail.helw@gmail.com\t2026-03-21 10:17:11\n750572\tIsmail\thappychesspenguin@gmail.com\t2026-03-18 14:11:23\n",
+  "stderr": "",
+  "execution_time_ms": 1633
+}

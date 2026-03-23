@@ -1,38 +1,33 @@
 import type { Express, Request, Response } from "express";
-import { getDb } from "../db";
-import { sql } from "drizzle-orm";
+import { recordHeartbeat, getOnlineCount } from "../leaderboard-optimized";
 
 /**
- * Heartbeat endpoint - tracks active users with real-time data
- * Called every 30 seconds from the frontend to keep user active
+ * Heartbeat system v2
+ * 
+ * Frontend sends a ping every 30 seconds.
+ * Backend upserts into user_heartbeats with current timestamp.
+ * "Online Now" = COUNT(*) WHERE lastPing > NOW() - 45 seconds.
+ * 
+ * No cleanup cron needed — stale entries are simply excluded by the 45s window.
  */
 export function registerHeartbeatRoutes(app: Express) {
+  /**
+   * POST /api/heartbeat — record a user ping
+   */
   app.post("/api/heartbeat", async (req: Request, res: Response) => {
     try {
-      const { sessionId, name, email, isGuest, currentPath, deviceId } = req.body;
+      const { userId, deviceId, name } = req.body;
 
-      if (!sessionId || !name) {
-        res.status(400).json({ error: "sessionId and name are required" });
+      if (!userId && !deviceId) {
+        res.status(400).json({ error: "userId or deviceId required" });
         return;
       }
 
-      const db = await getDb();
-      if (!db) {
-        res.status(500).json({ error: "Database unavailable" });
-        return;
-      }
-
-      // Upsert active session using raw SQL
-      await db.execute(sql`
-        INSERT INTO active_sessions (id, name, email, isGuest, currentPath, deviceId, lastActive, createdAt)
-        VALUES (${sessionId}, ${name}, ${email}, ${isGuest ? 1 : 0}, ${currentPath}, ${deviceId}, NOW(), NOW())
-        ON DUPLICATE KEY UPDATE
-        name = VALUES(name),
-        email = VALUES(email),
-        isGuest = VALUES(isGuest),
-        currentPath = VALUES(currentPath),
-        lastActive = NOW()
-      `);
+      await recordHeartbeat({
+        userId: userId ? Number(userId) : null,
+        deviceId: deviceId || null,
+        playerName: name || undefined,
+      });
 
       res.json({ success: true });
     } catch (error) {
@@ -42,50 +37,15 @@ export function registerHeartbeatRoutes(app: Express) {
   });
 
   /**
-   * Cleanup endpoint - remove inactive sessions older than 60 seconds
+   * GET /api/heartbeat/active — get online user count
    */
-  app.post("/api/heartbeat/cleanup", async (req: Request, res: Response) => {
+  app.get("/api/heartbeat/active", async (_req: Request, res: Response) => {
     try {
-      const db = await getDb();
-      if (!db) {
-        res.status(500).json({ error: "Database unavailable" });
-        return;
-      }
-
-      await db.execute(sql`
-        DELETE FROM active_sessions 
-        WHERE lastActive < DATE_SUB(NOW(), INTERVAL 60 SECOND)
-      `);
-
-      res.json({ success: true });
-    } catch (error) {
-      console.error("[Heartbeat Cleanup] Failed", error);
-      res.status(500).json({ error: "Cleanup failed" });
-    }
-  });
-
-  /**
-   * Get active sessions - returns currently active players
-   */
-  app.get("/api/heartbeat/active", async (req: Request, res: Response) => {
-    try {
-      const db = await getDb();
-      if (!db) {
-        res.status(500).json({ error: "Database unavailable" });
-        return;
-      }
-
-      const sessions = await db.execute(sql`
-        SELECT id, name, email, isGuest, currentPath, lastActive
-        FROM active_sessions
-        WHERE lastActive > DATE_SUB(NOW(), INTERVAL 60 SECOND)
-        ORDER BY lastActive DESC
-      `);
-
-      res.json({ sessions });
+      const count = await getOnlineCount();
+      res.json({ onlineCount: count });
     } catch (error) {
       console.error("[Heartbeat Active] Failed", error);
-      res.status(500).json({ error: "Failed to fetch active sessions" });
+      res.status(500).json({ error: "Failed to fetch online count" });
     }
   });
 }
