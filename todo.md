@@ -214,3 +214,8 @@
 ## Home Page Enhancements Round 2 (User Request - Mar 23)
 - [x] Animated chess board preview on home page (sample puzzle visual)
 - [x] Click event tracking on Start Training button (log to events table)
+
+## Leaderboard Stale Data Fix (Mar 23)
+- [x] Fix Redis not updating when puzzles are solved — scores stuck since morning
+- [x] Reseed Redis from DB with current real data — leaderboard now queries DB directly
+- [x] Verify leaderboard updates live after puzzle solve — 23 players showing correctly

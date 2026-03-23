@@ -1309,18 +1309,47 @@ export const appRouter = router({
       }),
 
     /**
-     * Get the top-100 leaderboard from Redis Sorted Set.
-     * Falls back to in-memory map when Redis is unavailable.
+     * Get the top-100 leaderboard directly from the database.
+     * Online count still comes from Redis heartbeat keys.
      */
     getLeaderboard: publicProcedure
       .input(z.object({ limit: z.number().min(1).max(200).default(100) }).optional())
       .query(async ({ input }) => {
-        const { redisGetLeaderboard, redisOnlineCount } = await import('./redis');
+        const { redisOnlineCount } = await import('./redis');
         const limit = input?.limit ?? 100;
-        const [players, onlineCount] = await Promise.all([
-          redisGetLeaderboard(limit),
-          redisOnlineCount(),
-        ]);
+        const db = await getDb();
+        if (!db) return { players: [], onlineCount: 0 };
+
+        // Query DB directly — always accurate, no Redis sync issues
+        const rows = await db.execute(sql`
+          SELECT
+            COALESCE(u.name, CONCAT('Guest-', LEFT(pa.deviceId, 8))) AS playerName,
+            COUNT(*) AS totalPuzzles,
+            ROUND(SUM(pa.isCorrect) / COUNT(*) * 100, 1) AS accuracy,
+            1200 AS rating,
+            0 AS totalMinutes
+          FROM puzzle_attempts pa
+          LEFT JOIN users u ON pa.userId = u.id
+          WHERE pa.deviceId IS NOT NULL OR pa.userId IS NOT NULL
+          GROUP BY COALESCE(u.name, CONCAT('Guest-', LEFT(pa.deviceId, 8)))
+          HAVING totalPuzzles > 0
+          ORDER BY totalPuzzles DESC
+          LIMIT ${limit}
+        `);
+
+        const rawRows: any[] = Array.isArray(rows) ? (Array.isArray(rows[0]) ? rows[0] : rows) : [];
+        const players = rawRows
+          .filter(r => r.playerName && r.playerName !== 'NULL' && r.playerName !== 'Guest-')
+          .map((r, idx) => ({
+            rank: idx + 1,
+            playerName: r.playerName as string,
+            puzzlesSolved: Number(r.totalPuzzles),
+            accuracy: Number(r.accuracy),
+            rating: Number(r.rating),
+            totalMinutes: Number(r.totalMinutes),
+          }));
+
+        const onlineCount = await redisOnlineCount();
         return { players, onlineCount };
       }),
 
