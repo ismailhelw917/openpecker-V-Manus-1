@@ -8,43 +8,51 @@ import { trpc } from "@/lib/trpc";
 // Stable query input
 const LB_INPUT = { limit: 1, sortBy: "accuracy" as const };
 
-// ── Tiny chess board preview ──────────────────────────────────────────────────
-// A static SVG board showing a mid-game position that animates a piece move
-const LIGHT = "#f0d9b5";
-const DARK = "#b58863";
+// ── cburnett piece URLs (same set used by the main board via chessground) ─────
+const CDN = "https://cdn.jsdelivr.net/gh/lichess-org/lila@master/public/piece/cburnett";
+// Map from our piece key → cburnett filename: {color}{TYPE}.svg
+// color: 'b' | 'w'   TYPE: P|N|B|R|Q|K
+function pieceUrl(color: "w" | "b", type: "P" | "N" | "B" | "R" | "Q" | "K") {
+  return `${CDN}/${color}${type}.svg`;
+}
 
-// 8x8 board: piece characters at positions (row 0 = rank 8)
-// Showing a Sicilian-style position
-const INITIAL_PIECES: Record<string, string> = {
-  "0,0": "♜", "0,2": "♝", "0,3": "♛", "0,4": "♚", "0,5": "♝", "0,7": "♜",
-  "1,0": "♟", "1,1": "♟", "1,2": "♟", "1,4": "♟", "1,5": "♟", "1,6": "♟", "1,7": "♟",
-  "2,2": "♞", "2,5": "♞",
-  "3,3": "♟",
-  "4,3": "♙", "4,4": "♙",
-  "5,2": "♘", "5,5": "♘",
-  "6,0": "♙", "6,1": "♙", "6,2": "♙", "6,5": "♙", "6,6": "♙", "6,7": "♙",
-  "7,0": "♖", "7,2": "♗", "7,3": "♕", "7,4": "♔", "7,5": "♗", "7,7": "♖",
+// ── Board position ─────────────────────────────────────────────────────────────
+// Each value: [color, type]
+type PieceData = ["w" | "b", "P" | "N" | "B" | "R" | "Q" | "K"];
+const INITIAL_PIECES: Record<string, PieceData> = {
+  // Black pieces (rank 8 = row 0)
+  "0,0": ["b","R"], "0,2": ["b","B"], "0,3": ["b","Q"], "0,4": ["b","K"], "0,5": ["b","B"], "0,7": ["b","R"],
+  "1,0": ["b","P"], "1,1": ["b","P"], "1,2": ["b","P"], "1,4": ["b","P"], "1,5": ["b","P"], "1,6": ["b","P"], "1,7": ["b","P"],
+  "2,2": ["b","N"], "2,5": ["b","N"],
+  "3,3": ["b","P"],
+  // White pieces
+  "4,3": ["w","P"], "4,4": ["w","P"],
+  "5,2": ["w","N"], "5,5": ["w","N"],
+  "6,0": ["w","P"], "6,1": ["w","P"], "6,2": ["w","P"], "6,5": ["w","P"], "6,6": ["w","P"], "6,7": ["w","P"],
+  "7,0": ["w","R"], "7,2": ["w","B"], "7,3": ["w","Q"], "7,4": ["w","K"], "7,5": ["w","B"], "7,7": ["w","R"],
 };
 
-// Sequence of moves to animate: [fromRow, fromCol, toRow, toCol]
-const MOVE_SEQUENCE = [
-  [5, 5, 3, 4], // Knight f3-e5
-  [2, 5, 4, 4], // Black knight f6-e4
-  [3, 4, 1, 5], // Knight e5xf7 (sacrifice!)
-  [0, 4, 1, 5], // Black king takes
+// Sequence of moves: [fromRow, fromCol, toRow, toCol]
+const MOVE_SEQUENCE: [number, number, number, number][] = [
+  [5, 5, 3, 4], // Nf3-e5
+  [2, 5, 4, 4], // Nf6-e4
+  [3, 4, 1, 5], // Ne5xf7 sacrifice
+  [0, 4, 1, 5], // Kxf7
   [4, 3, 4, 4], // d5
 ];
 
+const LIGHT = "#f0d9b5";
+const DARK  = "#b58863";
+
 function ChessPreview() {
-  const [pieces, setPieces] = useState<Record<string, string>>(INITIAL_PIECES);
-  const [highlighted, setHighlighted] = useState<[number, number] | null>(null);
-  const [fromHighlight, setFromHighlight] = useState<[number, number] | null>(null);
+  const [pieces, setPieces] = useState<Record<string, PieceData>>(() => ({ ...INITIAL_PIECES }));
+  const [toSq,   setToSq]   = useState<[number,number] | null>(null);
+  const [fromSq, setFromSq] = useState<[number,number] | null>(null);
   const moveIdx = useRef(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const move = MOVE_SEQUENCE[moveIdx.current % MOVE_SEQUENCE.length];
-      const [fr, fc, tr, tc] = move;
+      const [fr, fc, tr, tc] = MOVE_SEQUENCE[moveIdx.current % MOVE_SEQUENCE.length];
       setPieces(prev => {
         const next = { ...prev };
         const piece = next[`${fr},${fc}`];
@@ -54,15 +62,14 @@ function ChessPreview() {
         }
         return next;
       });
-      setFromHighlight([fr, fc]);
-      setHighlighted([tr, tc]);
+      setFromSq([fr, fc]);
+      setToSq([tr, tc]);
       moveIdx.current++;
-      // Reset board after full sequence
       if (moveIdx.current >= MOVE_SEQUENCE.length) {
         setTimeout(() => {
-          setPieces(INITIAL_PIECES);
-          setHighlighted(null);
-          setFromHighlight(null);
+          setPieces({ ...INITIAL_PIECES });
+          setToSq(null);
+          setFromSq(null);
           moveIdx.current = 0;
         }, 1800);
       }
@@ -70,58 +77,57 @@ function ChessPreview() {
     return () => clearInterval(interval);
   }, []);
 
-  const size = 32; // px per square
-  const boardSize = size * 8;
+  const SQ = 32;
+  const BOARD = SQ * 8;
 
   return (
     <div className="flex flex-col items-center gap-1.5">
       <div
         className="rounded-lg overflow-hidden shadow-2xl border border-slate-700"
-        style={{ width: boardSize, height: boardSize }}
+        style={{ position: "relative", width: BOARD, height: BOARD }}
       >
         {Array.from({ length: 8 }, (_, row) =>
           Array.from({ length: 8 }, (_, col) => {
             const isLight = (row + col) % 2 === 0;
-            const isTo = highlighted && highlighted[0] === row && highlighted[1] === col;
-            const isFrom = fromHighlight && fromHighlight[0] === row && fromHighlight[1] === col;
-            const piece = pieces[`${row},${col}`];
+            const isTo   = toSq   && toSq[0]   === row && toSq[1]   === col;
+            const isFrom = fromSq && fromSq[0] === row && fromSq[1] === col;
+            const piece  = pieces[`${row},${col}`];
             return (
               <div
                 key={`${row}-${col}`}
                 style={{
                   position: "absolute",
-                  left: col * size,
-                  top: row * size,
-                  width: size,
-                  height: size,
+                  left: col * SQ,
+                  top:  row * SQ,
+                  width:  SQ,
+                  height: SQ,
                   backgroundColor: isTo
                     ? "rgba(20,200,120,0.55)"
                     : isFrom
                     ? "rgba(20,200,120,0.3)"
                     : isLight ? LIGHT : DARK,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: size * 0.72,
-                  lineHeight: 1,
                   transition: "background-color 0.3s",
-                  userSelect: "none",
                 }}
               >
-                {piece}
+                {piece && (
+                  <img
+                    src={pieceUrl(piece[0], piece[1])}
+                    alt=""
+                    style={{ width: SQ, height: SQ, display: "block", userSelect: "none", pointerEvents: "none" }}
+                    draggable={false}
+                  />
+                )}
               </div>
             );
           })
         )}
-        {/* Need relative positioning on parent */}
-        <style>{`.chess-board-inner { position: relative; }`}</style>
       </div>
       <p className="text-[10px] text-slate-500 tracking-wide uppercase">Sicilian Defence · Najdorf</p>
     </div>
   );
 }
 
-// ── Click tracking helper ─────────────────────────────────────────────────────
+// ── Click tracking ─────────────────────────────────────────────────────────────
 function trackClick(eventName: string, page: string) {
   try {
     const deviceId = localStorage.getItem("openpecker-device-id") || undefined;
@@ -134,7 +140,7 @@ function trackClick(eventName: string, page: string) {
   } catch { /* never break the app */ }
 }
 
-// ── Home page ─────────────────────────────────────────────────────────────────
+// ── Home page ──────────────────────────────────────────────────────────────────
 export default function Home() {
   const [, setLocation] = useLocation();
   const { user, isAuthenticated, loading } = useAuth();
@@ -146,8 +152,8 @@ export default function Home() {
     refetchOnWindowFocus: false,
   });
 
-  const topPlayer = lbData?.players?.[0]?.playerName ?? null;
-  const totalPlayers = lbData?.summary?.totalPlayers ?? 0;
+  // We still fetch but no longer display topPlayer
+  void lbData;
 
   useEffect(() => {
     if (isAuthenticated && user && !premiumNotified && user.isPremium) {
@@ -188,8 +194,11 @@ export default function Home() {
         </button>
       </div>
 
-      {/* Title */}
-      <h1 className="text-3xl sm:text-4xl font-black text-white mb-1 text-center relative z-10">
+      {/* Title — Playfair Display for a classic chess feel */}
+      <h1
+        className="text-4xl sm:text-5xl font-black text-white mb-1 text-center relative z-10"
+        style={{ fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: "-0.01em" }}
+      >
         OpenPecker
       </h1>
 
@@ -198,29 +207,20 @@ export default function Home() {
         {t.appTagline}
       </p>
 
-      {/* ── Animated chess board ── */}
-      <div className="mb-4 relative z-10" style={{ position: "relative" }}>
-        <div style={{ position: "relative", width: 256, height: 256 }}>
-          <ChessPreview />
-        </div>
+      {/* Animated chess board */}
+      <div className="mb-4 relative z-10">
+        <ChessPreview />
       </div>
 
-      {/* ── Social proof stats ── */}
+      {/* Social proof — puzzles only */}
       <div className="flex items-center gap-2 mb-4 flex-wrap justify-center relative z-10">
         <div className="flex items-center gap-1.5 bg-slate-800/80 border border-slate-700 rounded-full px-3 py-1.5">
           <span className="text-teal-400 text-sm">♟</span>
           <span className="text-xs font-semibold text-slate-200">4,800,000+ puzzles</span>
         </div>
-
-        {topPlayer && (
-          <div className="flex items-center gap-1.5 bg-yellow-500/10 border border-yellow-500/30 rounded-full px-3 py-1.5">
-            <span className="text-sm">🥇</span>
-            <span className="text-xs font-semibold text-yellow-300">{topPlayer}</span>
-          </div>
-        )}
       </div>
 
-      {/* ── How it works ── */}
+      {/* How it works */}
       <div className="flex items-center gap-2 mb-5 relative z-10">
         {[
           { icon: "📂", label: language === 'hi' ? "ओपनिंग चुनें" : "Pick an opening" },
@@ -242,7 +242,7 @@ export default function Home() {
         )}
       </div>
 
-      {/* ── CTAs ── */}
+      {/* CTAs */}
       <div className="w-full max-w-xs space-y-3 relative z-10">
         <button
           onClick={() => {
