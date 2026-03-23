@@ -158,6 +158,11 @@ export async function redisGetLeaderboard(limit = 100): Promise<
     }
   }
 
+  // Seed from DB on first read if not yet seeded
+  if (!fallbackSeeded) {
+    await seedFallbackFromDB();
+  }
+
   // In-memory fallback: sort Map by score descending
   const sorted = Array.from(fallbackLeaderboard.entries())
     .sort((a, b) => b[1] - a[1])
@@ -267,6 +272,48 @@ export async function redisOnlineCount(): Promise<number> {
   return count;
 }
 
+// ─── Seed in-memory fallback from DB ─────────────────────────────────────────
+// When Redis is unavailable (production), the in-memory Maps start empty.
+// This seeds them from the database so the leaderboard always has data.
+let fallbackSeeded = false;
+
+async function seedFallbackFromDB(): Promise<void> {
+  if (fallbackSeeded) return;
+  fallbackSeeded = true; // Prevent re-entry
+  try {
+    const { getLeaderboardPlayers } = await import('./players');
+    const players = await getLeaderboardPlayers(100, 'accuracy');
+    console.log(`[Redis fallback] Seeding in-memory leaderboard from DB: ${players.length} players`);
+    for (const p of players as any[]) {
+      const memberId = p.userId ? `user:${p.userId}` : `device:${p.deviceId}`;
+      const totalPuzzles = Number(p.totalPuzzles || 0);
+      const totalCorrect = Number(p.totalCorrect || 0);
+      const accuracy = totalPuzzles > 0 ? (totalCorrect / totalPuzzles) * 100 : 0;
+      fallbackLeaderboard.set(memberId, totalPuzzles);
+      fallbackMeta.set(memberId, {
+        playerName: p.name || (p.deviceId ? `Guest-${String(p.deviceId).slice(0, 8)}` : 'Unknown'),
+        accuracy: Math.round(accuracy * 100) / 100,
+        rating: Number(p.rating || 1200),
+        totalMinutes: Math.round(Number(p.totalTimeMs || 0) / 60000 * 10) / 10,
+        totalPuzzles,
+        correctPuzzles: totalCorrect,
+      });
+    }
+    console.log(`[Redis fallback] Seeded ${fallbackLeaderboard.size} players into in-memory leaderboard`);
+  } catch (err) {
+    console.error('[Redis fallback] Failed to seed from DB:', err);
+    fallbackSeeded = false; // Allow retry on next call
+  }
+}
+
 // ─── Initialise Redis connection eagerly ─────────────────────────────────────
 // This ensures the connection is attempted at startup, not on first use.
 getRedis();
+
+// Seed fallback after a short delay (gives Redis time to connect first)
+setTimeout(() => {
+  if (!redisAvailable) {
+    console.log('[Redis] Not available — seeding in-memory fallback from DB');
+    seedFallbackFromDB();
+  }
+}, 3000);

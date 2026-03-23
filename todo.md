@@ -2305,3 +2305,16 @@
 - [x] Add live online count pill and total players pill to leaderboard header
 - [x] Color-coded accuracy (green ≥80%, yellow ≥60%, red <60%)
 - [x] Medal icons for top 3 with highlighted row backgrounds
+
+## URGENT: Leaderboard Hacked + Sign-in Error (Mar 23)
+- [ ] Investigate leaderboard tampering — check Redis data for suspicious entries
+- [ ] Audit all public write endpoints that can modify leaderboard/puzzle data
+- [ ] Lock down public mutation endpoints (record, trainingSets.update, etc.)
+- [ ] Fix sign-in notification error on openpecker.com
+
+## Leaderboard Text + Size Fix (Mar 23)
+- [x] Fix "Leaderboard" title wrapping to "Leaderboa rd" — use nowrap + smaller text
+- [x] Fix player names truncating ("Manso...") — wider name column, smaller rank/number cols
+- [x] Fix "PUZZLES SOLVED" and "ACCURACY" column headers wrapping
+- [x] Use shorter column labels on mobile ("Solved" and "Acc")
+- [x] Ensure production leaderboard loads from DB when Redis unavailable (auto-seed fallback)
