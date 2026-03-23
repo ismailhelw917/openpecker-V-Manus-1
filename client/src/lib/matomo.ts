@@ -1,47 +1,30 @@
-// Simple analytics tracking using window.gtag or custom events
-// This avoids Node.js dependencies and works in the browser
-
-interface AnalyticsEvent {
-  category: string;
-  action: string;
-  label?: string;
-  value?: number;
-}
-
-let analyticsEnabled = false;
+// Analytics tracking via Google Analytics (gtag loaded in index.html)
+// The analyticsEnabled flag was previously blocking all events because
+// VITE_ANALYTICS_ENDPOINT (Matomo) was never configured.
+// GA is always available via window.gtag — use it directly.
 
 export function initializeMatomo() {
-  // Check if analytics endpoint is configured
-  const endpoint = import.meta.env.VITE_ANALYTICS_ENDPOINT;
-  const siteId = import.meta.env.VITE_ANALYTICS_WEBSITE_ID;
-  
-  if (endpoint && siteId) {
-    analyticsEnabled = true;
-    console.log('[Analytics] Initialized with endpoint:', endpoint);
-  } else {
-    console.log('[Analytics] No analytics endpoint configured');
-  }
+  // No-op: GA is initialized via the gtag script in index.html
+  console.log('[Analytics] GA ready via window.gtag');
 }
 
 export function setMatomoUserId(userId: number | string) {
-  if (analyticsEnabled && window.gtag) {
-    window.gtag('config', { 'user_id': String(userId) });
-    console.log('[Analytics] User ID set:', userId);
+  if (window.gtag) {
+    window.gtag('config', 'G-7LXNZ8ZS5D', { user_id: String(userId) });
   }
 }
 
 export function trackPageView(title: string, path: string) {
-  if (analyticsEnabled && window.gtag) {
-    window.gtag('pageview', {
+  if (window.gtag) {
+    window.gtag('event', 'page_view', {
       page_title: title,
       page_path: path,
     });
-    console.log('[Analytics] Page view tracked:', title, path);
   }
 }
 
 export function trackEvent(category: string, action: string, name?: string, value?: number) {
-  if (analyticsEnabled && window.gtag) {
+  if (window.gtag) {
     window.gtag('event', action, {
       event_category: category,
       event_label: name,

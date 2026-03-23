@@ -219,3 +219,12 @@
 - [x] Fix Redis not updating when puzzles are solved — scores stuck since morning
 - [x] Reseed Redis from DB with current real data — leaderboard now queries DB directly
 - [x] Verify leaderboard updates live after puzzle solve — 23 players showing correctly
+
+## Session Drop-off Investigation (Mar 23)
+- [ ] Diagnose why 8 Start events but only 2 Solved events in GA today
+- [ ] Check if puzzle loading fails for new visitors / guests
+- [ ] Fix the failure causing users to drop off before solving
+
+## GA Event Tracking Fix (Mar 23)
+- [x] Fix "Solved" GA event — analyticsEnabled flag was blocking all events; now fires directly via window.gtag
+- [x] Fix "Start" GA event — same fix, all events now fire reliably
