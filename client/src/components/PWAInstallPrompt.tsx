@@ -18,13 +18,10 @@ export function PWAInstallPrompt() {
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    // Don't show if already installed (running in standalone mode)
     const isStandalone =
       window.matchMedia("(display-mode: standalone)").matches ||
       (window.navigator as any).standalone === true;
     if (isStandalone) return;
-
-    // Don't show if dismissed in this session
     if (sessionStorage.getItem("pwa-install-dismissed")) return;
 
     const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -68,9 +65,9 @@ export function PWAInstallPrompt() {
     <>
       {/* ── Install Banner ── */}
       <div className="fixed bottom-20 left-3 right-3 z-50 animate-in slide-in-from-bottom-4 duration-300">
-        <div className="bg-slate-900 border border-teal-500/40 rounded-2xl shadow-2xl shadow-teal-900/40 p-3 flex items-center gap-3">
-          {/* Icon */}
-          <div className="flex-shrink-0 w-12 h-12 rounded-xl overflow-hidden border border-slate-700">
+        <div className="bg-slate-900 border border-teal-500/40 rounded-xl shadow-2xl shadow-teal-900/40 px-3 py-2.5 flex items-center gap-2">
+          {/* Icon — small so text has room */}
+          <div className="flex-shrink-0 w-9 h-9 rounded-lg overflow-hidden border border-slate-700">
             <img
               src={BIRD_ICON_192}
               alt="OpenPecker"
@@ -78,31 +75,31 @@ export function PWAInstallPrompt() {
             />
           </div>
 
-          {/* Text — min-w-0 + overflow-hidden prevent word-break */}
-          <div className="flex-1 min-w-0 overflow-hidden">
-            <p className="text-white text-sm font-semibold truncate">
+          {/* Text block — grows, clips gracefully */}
+          <div className="flex-1 min-w-0">
+            <p className="text-white text-xs font-semibold leading-tight">
               Install OpenPecker
             </p>
-            <p className="text-slate-400 text-xs mt-0.5 leading-snug line-clamp-2">
+            <p className="text-slate-400 text-[11px] leading-tight mt-0.5">
               {isIOS
                 ? "Add to Home Screen for the best experience"
-                : "Install the app for faster access"}
+                : "Install for faster access & offline use"}
             </p>
           </div>
 
-          {/* Install button */}
+          {/* Install button — fixed width */}
           <button
             onClick={handleInstall}
-            className="flex-shrink-0 flex items-center gap-1.5 bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold px-3 py-2 rounded-xl transition-colors whitespace-nowrap"
+            className="flex-shrink-0 flex items-center gap-1 bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors"
           >
-            <Download className="w-3.5 h-3.5" />
+            <Download className="w-3 h-3" />
             Install
           </button>
 
           {/* Dismiss */}
           <button
             onClick={handleDismiss}
-            className="flex-shrink-0 text-slate-500 hover:text-slate-300 transition-colors p-1"
+            className="flex-shrink-0 text-slate-500 hover:text-slate-300 transition-colors"
             aria-label="Dismiss"
           >
             <X className="w-4 h-4" />
