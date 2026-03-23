@@ -210,3 +210,7 @@
 - [x] How-it-works 3-step explainer
 - [x] Clearer CTA hierarchy (Start Training primary, Sign In secondary/smaller)
 - [x] "No sign-up required" note under Start Training button
+
+## Home Page Enhancements Round 2 (User Request - Mar 23)
+- [x] Animated chess board preview on home page (sample puzzle visual)
+- [x] Click event tracking on Start Training button (log to events table)

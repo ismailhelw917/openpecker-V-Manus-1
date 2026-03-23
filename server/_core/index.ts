@@ -67,6 +67,26 @@ async function startServer() {
     }
   });
 
+  // Custom event tracking (button clicks, conversions)
+  app.post("/api/track-event", async (req, res) => {
+    try {
+      const { eventName, eventCategory, eventValue, page, deviceId } = req.body;
+      if (!eventName) return res.status(400).json({ error: "Missing eventName" });
+      const { getDb } = await import("../db");
+      const { sql } = await import("drizzle-orm");
+      const db = await getDb();
+      if (db) {
+        await db.execute(sql`
+          INSERT INTO events (eventName, eventCategory, eventValue, page, deviceId, timestamp)
+          VALUES (${eventName}, ${eventCategory || null}, ${eventValue || null}, ${page || null}, ${deviceId || null}, NOW())
+        `);
+      }
+      res.json({ ok: true });
+    } catch {
+      res.status(500).json({ error: "Event tracking failed" });
+    }
+  });
+
   app.get("/api/visitor-stats", async (_req, res) => {
     try {
       const stats = await getVisitorStats();
