@@ -1330,7 +1330,7 @@ export const appRouter = router({
             AND playerName != ''
             AND playerName != 'Guest-'
             AND (userId IS NULL OR userId NOT IN (999, 999999))
-            AND (deviceId IS NULL OR (
+            AND (userId IS NOT NULL OR (
               deviceId NOT LIKE 'test-%'
               AND deviceId NOT LIKE '%-test-%'
               AND deviceId NOT LIKE '%test-dev%'
