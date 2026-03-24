@@ -2,9 +2,9 @@ import { trpc } from "@/lib/trpc";
 import { Trophy } from "lucide-react";
 
 function RankIcon({ rank }: { rank: number }) {
-  if (rank === 1) return <span className="text-xl leading-none" title="1st">♔</span>;
-  if (rank === 2) return <span className="text-xl leading-none" title="2nd">♕</span>;
-  if (rank === 3) return <span className="text-xl leading-none" title="3rd">♗</span>;
+  if (rank === 1) return <span className="text-4xl leading-none text-yellow-400" title="1st">♔</span>;
+  if (rank === 2) return <span className="text-3xl leading-none text-yellow-400" title="2nd">♕</span>;
+  if (rank === 3) return <span className="text-3xl leading-none text-yellow-400" title="3rd">♗</span>;
   return <span className="text-slate-400 font-semibold text-sm">{rank}</span>;
 }
 
