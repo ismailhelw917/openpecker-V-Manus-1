@@ -19,6 +19,7 @@ const Profile = lazy(() => import("./pages/Profile"));
 const Register = lazy(() => import("./pages/Register"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 import { useAuth } from "./_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "./_core/deviceId";
 import { trpc } from "./lib/trpc";
@@ -44,6 +45,7 @@ function Router() {
         <Route path={"/reset-password"} component={ResetPassword} />
         <Route path={"/play/:id"} component={Session} />
 
+        <Route path={"/leaderboard"} component={Leaderboard} />
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
       </Switch>

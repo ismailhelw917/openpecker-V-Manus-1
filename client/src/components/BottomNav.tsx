@@ -10,6 +10,7 @@ export default function BottomNav() {
     { icon: Home, label: t.nav.home, path: "/" },
     { icon: Play, label: t.nav.train, path: "/train" },
     { icon: BookOpen, label: t.nav.sets, path: "/sets" },
+    { icon: null, label: "#", path: "/leaderboard" },
     { icon: BarChart3, label: t.nav.stats, path: "/stats" },
     { icon: Settings, label: t.nav.more, path: "/settings" },
   ];

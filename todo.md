@@ -261,3 +261,9 @@
 
 ## Leaderboard Removal (Mar 24)
 - [x] Remove leaderboard page, route, nav link, and related backend code
+
+## Leaderboard Recreation (Mar 24)
+- [x] Recreate ChessPecker leaderboard design (chesspecker.org/leaderboard)
+- [x] Add # tab back to bottom nav pointing to /leaderboard
+- [x] Fix deduplication: group by userId for registered, deviceId for guests
+- [x] Exclude test data from leaderboard
