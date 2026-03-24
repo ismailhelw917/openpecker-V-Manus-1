@@ -267,3 +267,8 @@
 - [x] Add # tab back to bottom nav pointing to /leaderboard
 - [x] Fix deduplication: group by userId for registered, deviceId for guests
 - [x] Exclude test data from leaderboard
+
+## Leaderboard Root Fix (Mar 24)
+- [x] Diagnose why Ismail appears 7+ times despite previous fixes
+- [x] Fix leaderboard query to permanently deduplicate by real identity
+- [x] Verify fix against actual production DB data

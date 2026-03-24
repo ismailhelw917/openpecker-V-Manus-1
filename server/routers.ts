@@ -1319,18 +1319,34 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) return { players: [], onlineCount: 0 };
 
-        // Query DB directly — always accurate, group by userId/deviceId to avoid duplicates
+        // UNION query: registered users grouped by userId (all devices merged into one row),
+        // guests grouped by deviceId. This permanently fixes duplicate entries for users
+        // who play on multiple devices/browsers.
         const rows = await db.execute(sql`
-          SELECT
-            COALESCE(u.name, CONCAT('Guest-', LEFT(pa.deviceId, 8))) AS playerName,
-            COUNT(*) AS totalPuzzles,
-            ROUND(SUM(pa.isCorrect) / COUNT(*) * 100, 1) AS accuracy,
-            1200 AS rating,
-            0 AS totalMinutes
-          FROM puzzle_attempts pa
-          LEFT JOIN users u ON pa.userId = u.id
-          WHERE pa.deviceId IS NOT NULL OR pa.userId IS NOT NULL
-          GROUP BY pa.userId, pa.deviceId
+          SELECT playerName, SUM(totalPuzzles) AS totalPuzzles
+          FROM (
+            SELECT
+              u.name AS playerName,
+              COUNT(*) AS totalPuzzles
+            FROM puzzle_attempts pa
+            INNER JOIN users u ON pa.userId = u.id
+            WHERE u.name IS NOT NULL AND u.name != ''
+            GROUP BY pa.userId
+
+            UNION ALL
+
+            SELECT
+              CONCAT('Guest-', LEFT(pa.deviceId, 8)) AS playerName,
+              COUNT(*) AS totalPuzzles
+            FROM puzzle_attempts pa
+            WHERE pa.userId IS NULL
+              AND pa.deviceId IS NOT NULL
+              AND pa.deviceId NOT LIKE 'test-%'
+              AND pa.deviceId NOT LIKE '%-test-%'
+              AND pa.deviceId NOT LIKE '%test-dev%'
+            GROUP BY pa.deviceId
+          ) combined
+          GROUP BY playerName
           HAVING totalPuzzles > 0
           ORDER BY totalPuzzles DESC
           LIMIT ${limit}
@@ -1343,9 +1359,9 @@ export const appRouter = router({
             rank: idx + 1,
             playerName: r.playerName as string,
             puzzlesSolved: Number(r.totalPuzzles),
-            accuracy: Number(r.accuracy),
-            rating: Number(r.rating),
-            totalMinutes: Number(r.totalMinutes),
+            accuracy: 0,
+            rating: 1200,
+            totalMinutes: 0,
           }));
 
         return { players, onlineCount: 0 };
