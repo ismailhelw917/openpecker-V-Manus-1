@@ -258,3 +258,6 @@
 ## Bottom Nav + Leaderboard Fixes (Mar 24)
 - [x] Remove "5 online" badge from # (leaderboard) tab in bottom nav
 - [x] Fix leaderboard page info (data accuracy, display issues)
+
+## Leaderboard Removal (Mar 24)
+- [x] Remove leaderboard page, route, nav link, and related backend code

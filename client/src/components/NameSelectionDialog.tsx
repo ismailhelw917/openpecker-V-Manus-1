@@ -67,7 +67,7 @@ export default function NameSelectionDialog({
         <DialogHeader>
           <DialogTitle>Choose Your Name</DialogTitle>
           <DialogDescription>
-            This is how you'll appear on the leaderboard and in your profile.
+            This is how you'll appear in your profile and stats.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
