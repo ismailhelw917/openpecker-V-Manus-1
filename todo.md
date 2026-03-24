@@ -304,3 +304,14 @@
 - [x] Confirmed: database only has 149 puzzle_attempts for Mansoor (userId 1141733)
 - [x] The ~400 missing puzzles are not in the database - historical data loss event
 - [x] This is a database-level issue, not a code issue
+
+## Board Layout Bug (Mar 24 - User Report)
+- [ ] Chess board doesn't fit to screen on mobile - board cut off at edges and bottom
+- [ ] Rank/file labels (1-8, A-H) visible outside board boundaries
+- [ ] Fix board sizing to fit within viewport
+
+## Leaderboard Frozen After Solve (Mar 24 - User Report)
+- [ ] User solved puzzles but leaderboard didn't update (still shows Mansoor 149, Ismail 59)
+- [ ] Investigate why leaderboard_scores not syncing after puzzle solve
+- [ ] Check if updateLeaderboardScore is being called after session ends
+- [ ] Verify leaderboard query is reading fresh data (not cached)

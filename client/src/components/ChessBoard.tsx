@@ -133,9 +133,9 @@ export function ChessBoard({ puzzle, onComplete }: ChessBoardProps) {
   return (
     <div className="space-y-6">
       {/* Chessboard */}
-      <Card className="bg-slate-800/50 border-slate-700 p-6">
-        <div className="flex justify-center">
-          <div className="w-full max-w-md">
+      <Card className="bg-slate-800/50 border-slate-700 p-4">
+        <div className="flex justify-center items-center w-full">
+          <div className="w-full aspect-square max-w-[90vw] max-h-[60vh]">
             {/* @ts-ignore - react-chessboard prop types */}
             <Chessboard
               position={game.fen()}
@@ -143,6 +143,7 @@ export function ChessBoard({ puzzle, onComplete }: ChessBoardProps) {
               arePiecesDraggable={!solved}
               customDarkSquareStyle={{ backgroundColor: "#4a5568" }}
               customLightSquareStyle={{ backgroundColor: "#e2e8f0" }}
+              boardWidth={Math.min(window.innerWidth * 0.9, window.innerHeight * 0.6)}
             />
           </div>
         </div>
