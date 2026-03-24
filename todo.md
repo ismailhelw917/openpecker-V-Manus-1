@@ -254,3 +254,7 @@
 - [x] Fix leaderboard-cache.test.ts — add cacheSize and entries to getLeaderboardCacheStatus return type
 - [x] Fix db.ts — replace JSON_CONTAINS with LIKE for theme search (handles both JSON arrays and space-separated themes)
 - [x] All 355 tests passing across 37 test files
+
+## Bottom Nav + Leaderboard Fixes (Mar 24)
+- [x] Remove "5 online" badge from # (leaderboard) tab in bottom nav
+- [x] Fix leaderboard page info (data accuracy, display issues)

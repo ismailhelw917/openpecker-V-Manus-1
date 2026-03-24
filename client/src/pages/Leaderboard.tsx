@@ -49,7 +49,6 @@ export default function Leaderboard() {
   );
 
   const players = data?.players ?? [];
-  const onlineCount = data?.onlineCount ?? 0;
 
   const myName = user?.name || user?.email || null;
   const myEntry = myName ? players.find(p => p.playerName === myName) ?? null : null;
@@ -67,8 +66,7 @@ export default function Leaderboard() {
             # Leaderboard
           </h1>
           <div className="flex items-center gap-1.5 bg-slate-800 border border-slate-700 rounded-full px-3 py-1">
-            <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
-            <span className="text-xs font-semibold text-teal-300">{onlineCount} online</span>
+            <span className="text-xs font-semibold text-slate-400">{players.length} players</span>
           </div>
         </div>
 

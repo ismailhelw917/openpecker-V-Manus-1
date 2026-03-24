@@ -1315,12 +1315,11 @@ export const appRouter = router({
     getLeaderboard: publicProcedure
       .input(z.object({ limit: z.number().min(1).max(200).default(100) }).optional())
       .query(async ({ input }) => {
-        const { redisOnlineCount } = await import('./redis');
         const limit = input?.limit ?? 100;
         const db = await getDb();
         if (!db) return { players: [], onlineCount: 0 };
 
-        // Query DB directly — always accurate, no Redis sync issues
+        // Query DB directly — always accurate, group by userId/deviceId to avoid duplicates
         const rows = await db.execute(sql`
           SELECT
             COALESCE(u.name, CONCAT('Guest-', LEFT(pa.deviceId, 8))) AS playerName,
@@ -1331,7 +1330,7 @@ export const appRouter = router({
           FROM puzzle_attempts pa
           LEFT JOIN users u ON pa.userId = u.id
           WHERE pa.deviceId IS NOT NULL OR pa.userId IS NOT NULL
-          GROUP BY COALESCE(u.name, CONCAT('Guest-', LEFT(pa.deviceId, 8)))
+          GROUP BY pa.userId, pa.deviceId
           HAVING totalPuzzles > 0
           ORDER BY totalPuzzles DESC
           LIMIT ${limit}
@@ -1349,8 +1348,7 @@ export const appRouter = router({
             totalMinutes: Number(r.totalMinutes),
           }));
 
-        const onlineCount = await redisOnlineCount();
-        return { players, onlineCount };
+        return { players, onlineCount: 0 };
       }),
 
     /**
