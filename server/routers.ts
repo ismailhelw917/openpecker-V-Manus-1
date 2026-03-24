@@ -1319,49 +1319,34 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) return { players: [], onlineCount: 0 };
 
-        // UNION query: registered users grouped by userId (all devices merged into one row),
-        // guests grouped by deviceId. This permanently fixes duplicate entries for users
-        // who play on multiple devices/browsers.
+        // Read from leaderboard_scores which has real accuracy, correctPuzzles, totalMinutes.
+        // This table is resynced from puzzle_attempts on server startup and after each session.
+        // Registered users are deduplicated by userId; guests by deviceId.
         const rows = await db.execute(sql`
-          SELECT playerName, SUM(totalPuzzles) AS totalPuzzles
-          FROM (
-            SELECT
-              u.name AS playerName,
-              COUNT(*) AS totalPuzzles
-            FROM puzzle_attempts pa
-            INNER JOIN users u ON pa.userId = u.id
-            WHERE u.name IS NOT NULL AND u.name != ''
-            GROUP BY pa.userId
-
-            UNION ALL
-
-            SELECT
-              CONCAT('Guest-', LEFT(pa.deviceId, 8)) AS playerName,
-              COUNT(*) AS totalPuzzles
-            FROM puzzle_attempts pa
-            WHERE pa.userId IS NULL
-              AND pa.deviceId IS NOT NULL
-              AND pa.deviceId NOT LIKE 'test-%'
-              AND pa.deviceId NOT LIKE '%-test-%'
-              AND pa.deviceId NOT LIKE '%test-dev%'
-            GROUP BY pa.deviceId
-          ) combined
-          GROUP BY playerName
-          HAVING totalPuzzles > 0
+          SELECT playerName, totalPuzzles, correctPuzzles, accuracy, totalMinutes
+          FROM leaderboard_scores
+          WHERE totalPuzzles > 0
+            AND playerName IS NOT NULL
+            AND playerName != ''
+            AND playerName != 'Guest-'
+            AND (deviceId IS NULL OR (
+              deviceId NOT LIKE 'test-%'
+              AND deviceId NOT LIKE '%-test-%'
+              AND deviceId NOT LIKE '%test-dev%'
+            ))
           ORDER BY totalPuzzles DESC
           LIMIT ${limit}
         `);
 
         const rawRows: any[] = Array.isArray(rows) ? (Array.isArray(rows[0]) ? rows[0] : rows) : [];
         const players = rawRows
-          .filter(r => r.playerName && r.playerName !== 'NULL' && r.playerName !== 'Guest-')
           .map((r, idx) => ({
             rank: idx + 1,
             playerName: r.playerName as string,
             puzzlesSolved: Number(r.totalPuzzles),
-            accuracy: 0,
+            accuracy: Number(r.accuracy),
             rating: 1200,
-            totalMinutes: 0,
+            totalMinutes: Number(r.totalMinutes),
           }));
 
         return { players, onlineCount: 0 };
@@ -1427,43 +1412,54 @@ export const appRouter = router({
           isCorrect: input.isCorrect ? 1 : 0,
           timeMs: input.timeMs,
         });
-        // Update Redis leaderboard score
+        // Update leaderboard_scores table with fresh stats for this player
         try {
-          const { redisUpdateScore } = await import('./redis');
           const db = await getDb();
           if (db) {
             if (input.userId) {
-              const r = await db.execute(sql`SELECT COUNT(*) as total, SUM(isCorrect) as correct FROM puzzle_attempts WHERE userId = ${input.userId}`);
+              const r = await db.execute(sql`SELECT COUNT(*) as total, SUM(isCorrect) as correct, ROUND(SUM(timeMs)/60000,2) as minutes FROM puzzle_attempts WHERE userId = ${input.userId}`);
               const totalRow: any = Array.isArray(r) ? (Array.isArray(r[0]) ? r[0][0] : r[0]) : null;
               const user = await db.execute(sql`SELECT name FROM users WHERE id = ${input.userId}`);
               const userRows: any[] = Array.isArray(user) ? (Array.isArray(user[0]) ? user[0] : user) : [];
               const total = Number(totalRow?.total || 0);
               const correct = Number(totalRow?.correct || 0);
-              await redisUpdateScore(`user:${input.userId}`, {
-                playerName: userRows[0]?.name || `Player-${input.userId}`,
-                totalPuzzles: total,
-                correctPuzzles: correct,
-                accuracy: total > 0 ? Math.round((correct / total) * 100 * 100) / 100 : 0,
-                rating: 1200,
-                totalMinutes: 0,
-              });
+              const minutes = Number(totalRow?.minutes || 0);
+              const accuracy = total > 0 ? Math.round((correct / total) * 10000) / 100 : 0;
+              const playerName = userRows[0]?.name || `Player-${input.userId}`;
+              await db.execute(sql`
+                INSERT INTO leaderboard_scores (userId, deviceId, playerName, totalPuzzles, correctPuzzles, accuracy, rating, totalMinutes, lastUpdated, createdAt)
+                VALUES (${input.userId}, NULL, ${playerName}, ${total}, ${correct}, ${accuracy}, 1200, ${minutes}, ${Date.now()}, ${Date.now()})
+                ON DUPLICATE KEY UPDATE
+                  totalPuzzles = ${total},
+                  correctPuzzles = ${correct},
+                  accuracy = ${accuracy},
+                  totalMinutes = ${minutes},
+                  lastUpdated = ${Date.now()},
+                  playerName = ${playerName}
+              `);
             } else if (input.deviceId) {
-              const r = await db.execute(sql`SELECT COUNT(*) as total, SUM(isCorrect) as correct FROM puzzle_attempts WHERE deviceId = ${input.deviceId} AND userId IS NULL`);
+              const r = await db.execute(sql`SELECT COUNT(*) as total, SUM(isCorrect) as correct, ROUND(SUM(timeMs)/60000,2) as minutes FROM puzzle_attempts WHERE deviceId = ${input.deviceId} AND userId IS NULL`);
               const totalRow: any = Array.isArray(r) ? (Array.isArray(r[0]) ? r[0][0] : r[0]) : null;
               const total = Number(totalRow?.total || 0);
               const correct = Number(totalRow?.correct || 0);
-              await redisUpdateScore(`device:${input.deviceId}`, {
-                playerName: `Guest-${input.deviceId.substring(0, 8)}`,
-                totalPuzzles: total,
-                correctPuzzles: correct,
-                accuracy: total > 0 ? Math.round((correct / total) * 100 * 100) / 100 : 0,
-                rating: 1200,
-                totalMinutes: 0,
-              });
+              const minutes = Number(totalRow?.minutes || 0);
+              const accuracy = total > 0 ? Math.round((correct / total) * 10000) / 100 : 0;
+              const playerName = `Guest-${input.deviceId.substring(0, 8)}`;
+              await db.execute(sql`
+                INSERT INTO leaderboard_scores (userId, deviceId, playerName, totalPuzzles, correctPuzzles, accuracy, rating, totalMinutes, lastUpdated, createdAt)
+                VALUES (NULL, ${input.deviceId}, ${playerName}, ${total}, ${correct}, ${accuracy}, 1200, ${minutes}, ${Date.now()}, ${Date.now()})
+                ON DUPLICATE KEY UPDATE
+                  totalPuzzles = ${total},
+                  correctPuzzles = ${correct},
+                  accuracy = ${accuracy},
+                  totalMinutes = ${minutes},
+                  lastUpdated = ${Date.now()},
+                  playerName = ${playerName}
+              `);
             }
           }
         } catch (e) {
-          console.warn('[record] Failed to update Redis leaderboard:', e);
+          console.warn('[record] Failed to update leaderboard_scores:', e);
         }
         return result;
       }),

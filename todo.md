@@ -276,3 +276,8 @@
 ## Leaderboard UI Fixes (Mar 24)
 - [x] Fix font readability — player names and column headers truncated/unreadable
 - [x] Fix avatar initials — guests showing wrong letters (G1, G7 instead of first letter of name)
+
+## Leaderboard Corruption Investigation (Mar 24)
+- [x] Find corrupted input data point in leaderboard pipeline
+- [x] Find corrupted middleware in leaderboard pipeline
+- [x] Fix both corruption sources
