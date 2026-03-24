@@ -258,3 +258,7 @@
 ## Bottom Nav + Leaderboard Fixes (Mar 24)
 - [x] Remove "5 online" badge from # (leaderboard) tab in bottom nav
 - [x] Fix leaderboard page info (data accuracy, display issues)
+
+## Leaderboard Deduplication Fix (Mar 24)
+- [x] Fix duplicate player rows (Ismail x7, Guest-test-dev x7) — group by userId for registered users, deviceId for guests
+- [x] Exclude test data (userId 999/999999, deviceId starting with 'test-')

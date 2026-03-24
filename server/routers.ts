@@ -1319,20 +1319,31 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) return { players: [], onlineCount: 0 };
 
-        // Query DB directly — always accurate, group by userId/deviceId to avoid duplicates
+        // Deduplicate: registered users grouped by userId (merges all devices),
+        // guests grouped by deviceId. Test data excluded.
         const rows = await db.execute(sql`
           SELECT
-            COALESCE(u.name, CONCAT('Guest-', LEFT(pa.deviceId, 8))) AS playerName,
-            COUNT(*) AS totalPuzzles,
-            ROUND(SUM(pa.isCorrect) / COUNT(*) * 100, 1) AS accuracy,
+            COALESCE(u.name, CONCAT('Guest-', LEFT(agg.groupKey, 8))) AS playerName,
+            agg.totalPuzzles,
+            agg.accuracy,
             1200 AS rating,
             0 AS totalMinutes
-          FROM puzzle_attempts pa
-          LEFT JOIN users u ON pa.userId = u.id
-          WHERE pa.deviceId IS NOT NULL OR pa.userId IS NOT NULL
-          GROUP BY pa.userId, pa.deviceId
-          HAVING totalPuzzles > 0
-          ORDER BY totalPuzzles DESC
+          FROM (
+            SELECT
+              CASE WHEN pa.userId IS NOT NULL THEN CAST(pa.userId AS CHAR) ELSE pa.deviceId END AS groupKey,
+              COUNT(*) AS totalPuzzles,
+              ROUND(SUM(pa.isCorrect) / COUNT(*) * 100, 1) AS accuracy,
+              MAX(pa.userId) AS userId
+            FROM puzzle_attempts pa
+            WHERE
+              (pa.userId IS NOT NULL OR pa.deviceId IS NOT NULL)
+              AND (pa.userId IS NULL OR pa.userId NOT IN (999, 999999))
+              AND (pa.deviceId IS NULL OR pa.deviceId NOT LIKE 'test-%')
+            GROUP BY CASE WHEN pa.userId IS NOT NULL THEN CAST(pa.userId AS CHAR) ELSE pa.deviceId END
+            HAVING totalPuzzles > 0
+          ) agg
+          LEFT JOIN users u ON u.id = agg.userId
+          ORDER BY agg.totalPuzzles DESC
           LIMIT ${limit}
         `);
 
