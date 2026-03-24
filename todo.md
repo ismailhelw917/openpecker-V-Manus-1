@@ -281,3 +281,26 @@
 - [x] Find corrupted input data point in leaderboard pipeline
 - [x] Find corrupted middleware in leaderboard pipeline
 - [x] Fix both corruption sources
+
+## Leaderboard Sync Test (Mar 24)
+- [x] Test end-to-end: record puzzle attempt → verify leaderboard_scores updates
+- [x] Fix any sync issues found
+
+## Mansoor Puzzle Count Investigation (Mar 24)
+- [ ] Find why Mansoor shows 149 instead of ~560 puzzles
+- [ ] Fix leaderboard to show correct total for all players
+
+## Leaderboard Static Bug (Mar 24)
+- [ ] Find why leaderboard hasn't updated in 3 days despite thousands of users
+- [ ] Fix the broken pipeline link
+
+## Leaderboard Static Bug Root Cause Found (Mar 24)
+- [x] Root cause: production site running OLD code version that queries puzzle_attempts directly (not leaderboard_scores), causing Ismail duplicates and test data leaks
+- [x] Dev server (current code) returns correct deduplicated data from leaderboard_scores
+- [x] Added userId NOT IN (999, 999999) filter to leaderboard query for extra safety
+- [ ] Publish to production via Publish button
+
+## Mansoor 560→149 Puzzle Drop Investigation (Mar 24)
+- [x] Confirmed: database only has 149 puzzle_attempts for Mansoor (userId 1141733)
+- [x] The ~400 missing puzzles are not in the database - historical data loss event
+- [x] This is a database-level issue, not a code issue
