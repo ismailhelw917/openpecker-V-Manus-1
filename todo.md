@@ -272,3 +272,7 @@
 - [x] Diagnose why Ismail appears 7+ times despite previous fixes
 - [x] Fix leaderboard query to permanently deduplicate by real identity
 - [x] Verify fix against actual production DB data
+
+## Leaderboard UI Fixes (Mar 24)
+- [x] Fix font readability — player names and column headers truncated/unreadable
+- [x] Fix avatar initials — guests showing wrong letters (G1, G7 instead of first letter of name)
