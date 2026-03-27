@@ -9,7 +9,7 @@ export const translations = {
   en: {
     // ── App-wide ──────────────────────────────────────────────────────────────
     appName: 'OpenPecker Chess',
-    appTagline: 'Master opening tactics through deliberate repetition.',
+    appTagline: 'Chess Opening Tactics',
 
     // ── BottomNav ─────────────────────────────────────────────────────────────
     nav: {
@@ -165,7 +165,7 @@ export const translations = {
 
     // ── PWA Install ───────────────────────────────────────────────────────────
     pwa: {
-      installTitle: 'Install OpenPecker Chess',
+      installTitle: 'Install OpenPecker',
       installDesc: 'Add to your home screen for the best experience.',
       install: 'Install',
       dismiss: 'Not now',
@@ -209,7 +209,7 @@ export const translations = {
   hi: {
     // ── App-wide ──────────────────────────────────────────────────────────────
     appName: 'OpenPecker Chess',
-    appTagline: 'जानबूझकर दोहराव के माध्यम से शुरुआती रणनीति में महारत हासिल करें।',
+    appTagline: 'शतरंज ओपनिंग रणनीति',
 
     // ── BottomNav ─────────────────────────────────────────────────────────────
     nav: {
@@ -365,7 +365,7 @@ export const translations = {
 
     // ── PWA Install ───────────────────────────────────────────────────────────
     pwa: {
-      installTitle: 'OpenPecker Chess इंस्टॉल करें',
+      installTitle: 'OpenPecker इंस्टॉल करें',
       installDesc: 'सर्वोत्तम अनुभव के लिए अपनी होम स्क्रीन पर जोड़ें।',
       install: 'इंस्टॉल करें',
       dismiss: 'अभी नहीं',
