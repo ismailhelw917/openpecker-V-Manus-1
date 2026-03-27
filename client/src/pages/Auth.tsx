@@ -6,9 +6,16 @@ import { trpc } from "@/lib/trpc";
 type AuthMode = "login" | "register" | "forgot";
 
 export default function Auth() {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const { isAuthenticated, loading, user, refresh } = useAuth();
   const [mode, setMode] = useState<AuthMode>("login");
+  
+  // Get redirect URL from query params, default to /train
+  const getRedirectUrl = () => {
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get('redirect');
+    return redirect && redirect.startsWith('/') ? redirect : '/train';
+  };
 
   // Form state
   const [email, setEmail] = useState("");
@@ -27,7 +34,7 @@ export default function Auth() {
   // Redirect if already authenticated
   useEffect(() => {
     if (!loading && isAuthenticated && user) {
-      setLocation("/");
+      setLocation(getRedirectUrl());
     }
   }, [isAuthenticated, loading, user, setLocation]);
 
@@ -38,7 +45,7 @@ export default function Auth() {
       await loginMutation.mutateAsync({ email, password });
       await utils.auth.me.invalidate();
       await refresh();
-      setLocation("/");
+      setLocation(getRedirectUrl());
     } catch (err: any) {
       setError(err?.message || "Login failed. Please try again.");
     }
@@ -64,7 +71,7 @@ export default function Auth() {
       });
       await utils.auth.me.invalidate();
       await refresh();
-      setLocation("/");
+      setLocation(getRedirectUrl());
     } catch (err: any) {
       setError(err?.message || "Registration failed. Please try again.");
     }
@@ -327,7 +334,7 @@ export default function Auth() {
         <div className="text-center mt-4">
           <button
             type="button"
-            onClick={() => setLocation("/")}
+            onClick={() => setLocation("/train")}
             className="text-slate-500 hover:text-slate-300 text-sm transition"
           >
             Continue as Guest
