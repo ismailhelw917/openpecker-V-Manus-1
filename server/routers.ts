@@ -1319,22 +1319,27 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) return { players: [], onlineCount: 0 };
 
-        // Read from leaderboard_scores which has real accuracy, correctPuzzles, totalMinutes.
-        // This table is resynced from puzzle_attempts on server startup and after each session.
-        // Registered users are deduplicated by userId; guests by deviceId.
+        // Calculate scores in real-time from puzzle_attempts
+        // Aggregate by userId for registered users, deviceId for guests
         const rows = await db.execute(sql`
-          SELECT playerName, totalPuzzles, correctPuzzles, accuracy, totalMinutes
-          FROM leaderboard_scores
-          WHERE totalPuzzles > 0
-            AND playerName IS NOT NULL
-            AND playerName != ''
-            AND playerName != 'Guest-'
-            AND (userId IS NULL OR userId NOT IN (999, 999999))
-            AND (userId IS NOT NULL OR (
-              deviceId NOT LIKE 'test-%'
-              AND deviceId NOT LIKE '%-test-%'
-              AND deviceId NOT LIKE '%test-dev%'
-            ))
+          SELECT 
+            COALESCE(u.name, CONCAT('Guest-', SUBSTRING(pa.deviceId, 1, 8))) as playerName,
+            COUNT(pa.id) as totalPuzzles,
+            SUM(CASE WHEN pa.isCorrect = 1 THEN 1 ELSE 0 END) as correctPuzzles,
+            ROUND(100 * SUM(CASE WHEN pa.isCorrect = 1 THEN 1 ELSE 0 END) / COUNT(pa.id), 1) as accuracy,
+            ROUND(SUM(COALESCE(pa.timeSpent, 0)) / 60) as totalMinutes
+          FROM puzzle_attempts pa
+          LEFT JOIN users u ON pa.userId = u.id
+          WHERE pa.deviceId NOT LIKE 'test-%'
+            AND pa.deviceId NOT LIKE '%-test-%'
+            AND pa.deviceId NOT LIKE '%test-dev%'
+            AND (pa.userId IS NULL OR pa.userId NOT IN (999, 999999))
+            AND (pa.userId IS NOT NULL OR pa.deviceId IS NOT NULL)
+          GROUP BY CASE 
+            WHEN pa.userId IS NOT NULL THEN CONCAT('user_', pa.userId)
+            ELSE CONCAT('device_', pa.deviceId)
+          END
+          HAVING COUNT(pa.id) > 0
           ORDER BY totalPuzzles DESC
           LIMIT ${limit}
         `);
