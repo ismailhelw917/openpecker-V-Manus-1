@@ -686,25 +686,30 @@ export const appRouter = router({
             userId: ctx.user.id,
           });
           
-          const puzzleList = await getPuzzlesByOpeningHierarchy(
+          // Fetch ALL puzzles from the variation (use large limit to get full pool)
+          // Then randomize and select the requested count
+          const allPuzzles = await getPuzzlesByOpeningHierarchy(
             input.opening,
             input.subset,
             input.variation,
-            input.puzzleCount,
+            10000, // Fetch up to 10k puzzles from the variation pool
             input.minRating,
             input.maxRating
           );
           
-          console.log(`[trainingSets.create] Found ${puzzleList.length} puzzles`);
-          
-          // Randomize puzzle order using Fisher-Yates shuffle for better randomization
-          const shuffledPuzzles = [...puzzleList];
-          for (let i = shuffledPuzzles.length - 1; i > 0; i--) {
+          // Randomize the full pool using Fisher-Yates
+          const randomizedPool = [...allPuzzles];
+          for (let i = randomizedPool.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [shuffledPuzzles[i], shuffledPuzzles[j]] = [shuffledPuzzles[j], shuffledPuzzles[i]];
+            [randomizedPool[i], randomizedPool[j]] = [randomizedPool[j], randomizedPool[i]];
           }
           
-          const puzzlesForSession = shuffledPuzzles.map(p => ({
+          // Take the requested count from the randomized pool
+          const puzzleList = randomizedPool.slice(0, input.puzzleCount);
+          
+          console.log(`[trainingSets.create] Found ${puzzleList.length} puzzles from ${allPuzzles.length} total in variation`);
+          
+          const puzzlesForSession = puzzleList.map(p => ({
             id: p.id,
             fen: p.fen,
             moves: p.moves,
