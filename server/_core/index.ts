@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cookieParser from "cookie-parser";
+import compression from "compression";
 import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
@@ -38,6 +39,10 @@ async function startServer() {
   // and secure cookies are set correctly on the live domain (openpecker.com).
   app.set("trust proxy", 1);
   const server = createServer(app);
+  
+  // Enable gzip compression for all responses (reduces payload by 60-80%)
+  app.use(compression({ level: 6, threshold: 1024 }));
+  
   // IMPORTANT: Register Stripe webhook BEFORE express.json() so it receives raw body
   // for signature verification. The stripeHandler uses express.raw() on the webhook route.
   registerStripeRoutes(app);
@@ -46,6 +51,18 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   // Parse cookies - REQUIRED for session authentication
   app.use(cookieParser());
+  
+  // Add cache headers for static assets and HTML
+  app.use((req, res, next) => {
+    if (req.path.match(/\.(js|css|woff2|png|jpg|jpeg|gif|svg|ico)$/)) {
+      // Cache static assets for 1 year (immutable)
+      res.set('Cache-Control', 'public, max-age=31536000, immutable');
+    } else if (req.path === '/' || req.path.match(/\.html$/)) {
+      // Cache HTML for 1 hour with revalidation
+      res.set('Cache-Control', 'public, max-age=3600, must-revalidate');
+    }
+    next();
+  });
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
 

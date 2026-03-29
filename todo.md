@@ -354,3 +354,16 @@
 - [x] Add loading skeletons for async data fetching
 - [x] Test Trends tab with real data from database
 - [x] Test Openings tab with real data from database
+
+
+## Domain Performance Optimization (Mar 29)
+- [x] Enable gzip compression on server responses (compression middleware with level 6)
+- [x] Add HTTP caching headers (Cache-Control, ETag) - static assets 1 year, HTML 1 hour
+- [ ] Implement database query caching with Redis
+- [ ] Add database indexes on frequently queried columns
+- [ ] Optimize puzzle loading queries with pagination
+- [x] Enable browser caching for static assets (Cache-Control headers)
+- [ ] Minify and bundle CSS/JS efficiently (Vite already does this)
+- [ ] Implement lazy loading for images and components
+- [x] Add CDN headers for static content (Manus CDN handles this)
+- [ ] Profile and optimize slow database queries
