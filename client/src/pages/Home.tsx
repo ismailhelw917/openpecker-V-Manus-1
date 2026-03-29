@@ -213,25 +213,7 @@ export default function Home() {
 
 
 
-        {isAuthenticated ? (
-          <p className="text-center text-slate-400 text-sm pt-1">
-            {t.home.welcome}{" "}
-            <span className="text-teal-400 font-semibold">{user?.name || user?.email}</span>
-          </p>
-        ) : (
-          <a
-            href="/auth"
-            onClick={() => trackClick("sign_in_click", "/")}
-            className="w-full bg-transparent border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-slate-200 font-medium py-3 rounded-xl flex items-center justify-center gap-2 transition-all text-sm"
-            style={{ touchAction: "manipulation", textDecoration: "none" }}
-          >
-            <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="4" width="20" height="16" rx="2" />
-              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-            </svg>
-            {language === 'hi' ? 'साइन इन / रजिस्टर करें' : 'Sign In / Register'}
-          </a>
-        )}
+
       </div>
     </div>
   );
