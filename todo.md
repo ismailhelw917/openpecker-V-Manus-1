@@ -339,3 +339,18 @@
 - [x] Fix stats page showing skeleton loading states instead of actual data
 - [x] Verify tRPC stats queries are returning correct data shape
 - [x] Test stats display with authenticated user
+
+## Stats Page Trends & Openings Tabs (Mar 29)
+- [ ] Replace mock data in Trends tab with real user data
+- [ ] Replace mock data in Openings tab with real user data
+- [ ] Add tRPC queries to fetch trend and opening statistics
+
+
+## Stats Page Real Data Implementation (Mar 29)
+- [x] Add getTrendData procedure to fetch accuracy, time, and cycles trends from database
+- [x] Add getOpeningStats procedure to fetch opening performance statistics
+- [x] Replace mock data in Trends tab with real getTrendData queries
+- [x] Replace mock data in Openings tab with real getOpeningStats queries
+- [x] Add loading skeletons for async data fetching
+- [x] Test Trends tab with real data from database
+- [x] Test Openings tab with real data from database

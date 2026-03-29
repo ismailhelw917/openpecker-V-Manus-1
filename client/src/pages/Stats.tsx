@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,36 +25,6 @@ const PREMIUM_FEATURES = [
 ];
 
 // Rating trend is built dynamically from real stats in the component below
-
-const MOCK_ACCURACY_TREND = [
-  { date: "Mon", accuracy: 65 },
-  { date: "Tue", accuracy: 70 },
-  { date: "Wed", accuracy: 68 },
-  { date: "Thu", accuracy: 75 },
-  { date: "Fri", accuracy: 78 },
-  { date: "Sat", accuracy: 72 },
-  { date: "Sun", accuracy: 73 },
-];
-
-const MOCK_TIME_PER_PUZZLE = [
-  { day: "Mon", time: 15 },
-  { day: "Tue", time: 14 },
-  { day: "Wed", time: 13 },
-  { day: "Thu", time: 12 },
-  { day: "Fri", time: 11 },
-  { day: "Sat", time: 12 },
-  { day: "Sun", time: 13 },
-];
-
-const MOCK_CYCLES_PER_DAY = [
-  { day: "Mon", cycles: 3 },
-  { day: "Tue", cycles: 4 },
-  { day: "Wed", cycles: 3 },
-  { day: "Thu", cycles: 5 },
-  { day: "Fri", cycles: 4 },
-  { day: "Sat", cycles: 2 },
-  { day: "Sun", cycles: 3 },
-];
 
 export default function Stats() {
   const [location] = useLocation();
@@ -86,6 +56,18 @@ export default function Stats() {
 
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
+  // Fetch real trend data
+  const { data: trendData, isLoading: trendLoading } = trpc.stats.getTrendData.useQuery(
+    { days: timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 365 },
+    { enabled: isAuthenticated && activeTab === 'trends' }
+  );
+
+  // Fetch real opening stats
+  const { data: openingStats, isLoading: openingLoading } = trpc.stats.getOpeningStats.useQuery(
+    undefined,
+    { enabled: isAuthenticated && activeTab === 'openings' }
+  );
+
   const handleCheckout = async (priceId: string, planName: string) => {
     if (authLoading) {
       toast.info("Please wait, loading your account...");
@@ -99,205 +81,91 @@ export default function Stats() {
     
     console.log('[Stats Checkout] Proceeding with checkout for user:', user.id);
     setLoading(true);
-    setCheckoutPlan(planName);
+    setCheckoutPlan(priceId);
+
     try {
-      let token = recaptchaToken;
-      if (!token && typeof window !== 'undefined' && (window as any).grecaptcha) {
-        try {
-          token = await (window as any).grecaptcha.execute(
-            import.meta.env.VITE_RECAPTCHA_SITE_KEY,
-            { action: 'checkout' }
-          );
-          setRecaptchaToken(token);
-        } catch (error) {
-          console.warn('reCAPTCHA execution failed, continuing');
-        }
-      }
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
-      
-      const response = await fetch("/api/create-checkout-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId, planName, userId: user.id, email: user.email, recaptchaToken: token }),
-        signal: controller.signal,
+      const response = await fetch('/api/stripe/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          priceId,
+          planName,
+          userId: user.id,
+          userEmail: user.email,
+          userName: user.name,
+        }),
       });
-      
-      clearTimeout(timeoutId);
-      
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `Failed to create checkout session: ${response.status}`);
+        const error = await response.json();
+        toast.error(error.message || 'Failed to create checkout session');
+        setLoading(false);
+        return;
       }
-      const data = await response.json();
-      if (data?.url) {
-        window.location.href = `${data.url}?return_url=${encodeURIComponent(window.location.origin)}?checkout=success`;
-      } else {
-        throw new Error("No checkout URL received from server");
-      }
+
+      const { url } = await response.json();
+      window.open(url, '_blank');
+      toast.success(`Redirecting to ${planName} checkout...`);
     } catch (error) {
-      let errorMsg = error instanceof Error ? error.message : "Failed to start checkout";
-      
-      // Handle specific error cases
-      if (error instanceof Error && error.message.includes('AbortError')) {
-        errorMsg = "Checkout request timed out. Please check your connection and try again.";
-      } else if (errorMsg.includes('503')) {
-        errorMsg = "Payment system is temporarily unavailable. Please try again later.";
-      }
-      
-      console.error('[Stats Checkout] Error:', errorMsg);
-      toast.error(errorMsg);
+      console.error('Checkout error:', error);
+      toast.error('Failed to create checkout session');
     } finally {
       setLoading(false);
       setCheckoutPlan(null);
     }
   };
-  const utils = trpc.useUtils();
 
-  const trackOnlineMutation = trpc.system.trackUserOnline.useMutation({
-    retry: 1,
+  // Fetch user stats
+  const { data: userStats, isLoading: isLoading } = trpc.stats.getUserStats.useQuery(undefined, {
+    enabled: isAuthenticated,
   });
 
-
-
-  // Fetch real user stats using tRPC
-  const { data: stats, isLoading: statsLoading, refetch: refetchStats } = trpc.stats.getUserStats.useQuery(undefined, {
-    enabled: Boolean(user),
-    retry: 1,
-    retryDelay: 1000,
-  });
-
-  // Fetch stats for anonymous users by device ID
-  // Also used as fallback for logged-in users to include pre-login data
-  const { data: anonStats, isLoading: anonStatsLoading } = trpc.stats.getSummary.useQuery(
-    { userId: user?.id, deviceId: deviceId || undefined },
-    { enabled: !!deviceId || !!user, retry: 1, retryDelay: 1000 }
-  );
-
-  // Fetch online count and total players (Nakama-based)
-  const { data: onlineData } = trpc.system.getOnlineCount.useQuery(undefined, {
-    retry: 1,
-    retryDelay: 1000,
-  });
-  const { data: totalPlayersData } = trpc.system.getTotalPlayerCount.useQuery(undefined, {
-    retry: 1,
-    retryDelay: 1000,
-  });
-
-  // Track user online status - debounced
-  useEffect(() => {
-    if (user?.id || deviceId) {
-      const timer = setTimeout(() => {
-        trackOnlineMutation.mutate(
-          {
-            userId: user?.id,
-            userName: user?.name ?? undefined,
-            sessionId: deviceId || 'anonymous',
-          },
-          {
-            onError: (error) => {
-              console.error('[Stats] trackUserOnline error:', error);
-            },
-            onSuccess: () => {
-              console.log('[Stats] trackUserOnline success');
-            },
-          }
-        );
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [user?.id, deviceId]);
-
-  // Auto-refresh stats every 5 seconds
-  useEffect(() => {
-    if (!user) return;
-    const interval = setInterval(() => {
-      refetchStats();
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [user, refetchStats]);
-
-  // Show loading state - wait for auth to finish before deciding which stats to use
-  const isLoading = authLoading || (user ? statsLoading : anonStatsLoading);
-  const finalStats = user ? stats : anonStats;
-
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400 mx-auto mb-4"></div>
-          <p className="text-slate-400">Loading stats...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Stats page is now free for all users - no sign-in required
-
-  // Stats page is now free for all users
+  const finalStats = userStats;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-teal-950 to-slate-950 pb-20">
-      {/* Checkout Loading Overlay */}
-      {checkoutPlan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/95 backdrop-blur-sm">
-          <div className="text-center space-y-6 px-8">
-            <div className="relative mx-auto w-16 h-16">
-              <div className="absolute inset-0 rounded-full border-4 border-amber-400/20"></div>
-              <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-amber-400 animate-spin"></div>
-              <CreditCard className="absolute inset-0 m-auto w-6 h-6 text-amber-400" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-white mb-2">Redirecting to Checkout</h2>
-              <p className="text-slate-400 text-sm">Preparing your {checkoutPlan} plan...</p>
-              <p className="text-slate-500 text-xs mt-2">Secure payment powered by Stripe</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Premium Modal */}
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+      {/* Premium Paywall Modal */}
       {showPremiumPaywall && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4" onClick={() => setShowPremiumPaywall(false)}>
-          <div onClick={(e) => e.stopPropagation()}>
-          <Card className="bg-gradient-to-b from-amber-950 via-slate-900 to-slate-950 border-amber-400/30 max-w-lg w-full max-h-[90vh] overflow-y-auto relative">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <Card className="bg-slate-900 border-teal-900/30 max-w-2xl w-full p-6 sm:p-8 relative">
             <button
               onClick={() => setShowPremiumPaywall(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
+              className="absolute top-4 right-4 text-slate-400 hover:text-white"
             >
               ✕
             </button>
 
-            <div className="text-center pt-12 pb-8 px-6 bg-gradient-to-b from-amber-900/20 to-transparent">
-              <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663447100726/EorxrxCPNFVtGo7gjBVrJr/openpecker-premium-logo-LPhYmaC6iM2uaYuZkpHQpR.webp" alt="OpenPecker Premium" className="w-16 sm:w-20 md:w-24 h-16 sm:h-20 md:h-24 mx-auto mb-4 object-contain" />
-              <h2 className="text-3xl font-bold text-amber-100 mb-2">OpenPecker Premium</h2>
-              <p className="text-amber-200/70">Master every opening. No limits.</p>
-            </div>
-
-            <div className="px-6 py-8 border-t border-b border-amber-400/20">
-              <div className="space-y-4">
-                {PREMIUM_FEATURES.map((feature, idx) => (
-                  <div key={idx} className="flex items-start gap-3">
-                    <span className="text-teal-400 mt-1">✓</span>
-                    <span className="text-white">{feature}</span>
-                  </div>
-                ))}
+            <div className="text-center mb-6 sm:mb-8">
+              <div className="inline-block bg-amber-400/10 border border-amber-400/30 rounded-full p-3 mb-4">
+                <Zap className="w-6 h-6 text-amber-400" />
               </div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Unlock Premium</h2>
+              <p className="text-slate-400">Get unlimited access to all features</p>
             </div>
 
-            <div className="px-6 py-8 space-y-4">
+            <div className="space-y-3 mb-6 sm:mb-8">
+              {PREMIUM_FEATURES.map((feature, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-5 h-5 rounded-full bg-teal-400/20 flex items-center justify-center flex-shrink-0">
+                    <div className="w-2 h-2 rounded-full bg-teal-400" />
+                  </div>
+                  <span className="text-white text-sm">{feature}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-3">
               <button
                 onClick={() => handleCheckout("price_monthly", "Monthly")}
                 disabled={loading || authLoading}
-                className="w-full p-4 rounded-lg border-2 border-slate-700 bg-slate-800/50 hover:border-amber-400 hover:bg-amber-400/5 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full p-4 rounded-lg border-2 border-teal-400/40 bg-teal-400/10 hover:border-teal-400 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-slate-400 text-sm">MONTHLY</p>
-                    <p className="text-white font-bold text-xl">€4.99 <span className="text-sm text-slate-400">/month</span></p>
+                    <p className="text-teal-400 font-semibold text-sm">MONTHLY</p>
+                    <p className="text-white font-bold text-xl">€9.99 <span className="text-sm text-slate-400">/month</span></p>
                   </div>
-                  {loading ? <Loader className="w-6 h-6 text-amber-400 animate-spin" /> : <Zap className="w-6 h-6 text-amber-400" />}
+                  {loading && checkoutPlan === "price_monthly" ? <Loader className="w-6 h-6 text-teal-400 animate-spin" /> : <CreditCard className="w-6 h-6 text-teal-400" />}
                 </div>
               </button>
 
@@ -323,7 +191,6 @@ export default function Stats() {
             </div>
           </Card>
           </div>
-        </div>
       )}
 
       {/* Header */}
@@ -469,9 +336,12 @@ export default function Stats() {
           <div className="space-y-8 relative">
             {/* Accuracy Trend */}
             <Card className="bg-slate-900/50 border-teal-900/30 p-2.5 sm:p-6">
-              <h3 className="text-sm sm:text-xl font-bold text-white mb-3 sm:mb-6">Accuracy Trend (7 Days)</h3>
+              <h3 className="text-sm sm:text-xl font-bold text-white mb-3 sm:mb-6">Accuracy Trend ({timeRange === '7d' ? '7 Days' : timeRange === '30d' ? '30 Days' : 'All Time'})</h3>
+              {trendLoading ? (
+                <div className="h-64 bg-slate-800/50 rounded animate-pulse"></div>
+              ) : (
               <ResponsiveContainer width="100%" height={window.innerWidth < 640 ? 200 : 250}>
-                <BarChart data={MOCK_ACCURACY_TREND}>
+                <BarChart data={trendData?.accuracy || []}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                   <XAxis dataKey="date" stroke="#94a3b8" />
                   <YAxis stroke="#94a3b8" />
@@ -486,13 +356,17 @@ export default function Stats() {
                   <Bar dataKey="accuracy" fill="#14b8a6" radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
+              )}
             </Card>
 
             {/* Time per Puzzle */}
             <Card className="bg-slate-900/50 border-teal-900/30 p-2.5 sm:p-6">
-              <h3 className="text-sm sm:text-xl font-bold text-white mb-3 sm:mb-6">Avg Time Per Puzzle (7 Days)</h3>
+              <h3 className="text-sm sm:text-xl font-bold text-white mb-3 sm:mb-6">Avg Time Per Puzzle ({timeRange === '7d' ? '7 Days' : timeRange === '30d' ? '30 Days' : 'All Time'})</h3>
+              {trendLoading ? (
+                <div className="h-64 bg-slate-800/50 rounded animate-pulse"></div>
+              ) : (
               <ResponsiveContainer width="100%" height={window.innerWidth < 640 ? 200 : 250}>
-                <LineChart data={MOCK_TIME_PER_PUZZLE}>
+                <LineChart data={trendData?.timePerPuzzle || []}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                   <XAxis dataKey="day" stroke="#94a3b8" />
                   <YAxis stroke="#94a3b8" />
@@ -504,16 +378,20 @@ export default function Stats() {
                     }}
                     labelStyle={{ color: "#fbbf24" }}
                   />
-                  <Line type="monotone" dataKey="time" stroke="#06b6d4" strokeWidth={3} dot={{ fill: "#06b6d4" }} />
+                  <Line type="monotone" dataKey="time" stroke="#06b6d4" strokeWidth={2} dot={{ fill: "#06b6d4" }} />
                 </LineChart>
               </ResponsiveContainer>
+              )}
             </Card>
 
-            {/* Cycles Per Day */}
+            {/* Training Cycles */}
             <Card className="bg-slate-900/50 border-teal-900/30 p-2.5 sm:p-6">
-              <h3 className="text-sm sm:text-xl font-bold text-white mb-3 sm:mb-6">Training Cycles Per Day</h3>
+              <h3 className="text-sm sm:text-xl font-bold text-white mb-3 sm:mb-6">Training Cycles Per Day ({timeRange === '7d' ? '7 Days' : timeRange === '30d' ? '30 Days' : 'All Time'})</h3>
+              {trendLoading ? (
+                <div className="h-64 bg-slate-800/50 rounded animate-pulse"></div>
+              ) : (
               <ResponsiveContainer width="100%" height={window.innerWidth < 640 ? 200 : 250}>
-                <BarChart data={MOCK_CYCLES_PER_DAY}>
+                <BarChart data={trendData?.cyclesPerDay || []}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                   <XAxis dataKey="day" stroke="#94a3b8" />
                   <YAxis stroke="#94a3b8" />
@@ -528,6 +406,7 @@ export default function Stats() {
                   <Bar dataKey="cycles" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
+              )}
             </Card>
           </div>
         )}
@@ -537,26 +416,55 @@ export default function Stats() {
           <div className="space-y-8 relative">
             <Card className="bg-slate-900/50 border-teal-900/30 p-3 sm:p-6">
               <h3 className="text-base sm:text-xl font-bold text-white mb-4 sm:mb-6">Opening Mastery</h3>
+              {openingLoading ? (
+                <div className="space-y-3 sm:space-y-4">
+                  {[...Array(5)].map((_, i) => (
+                    <div key={i} className="h-12 bg-slate-800/50 rounded-lg animate-pulse"></div>
+                  ))}
+                </div>
+              ) : openingStats && openingStats.length > 0 ? (
               <div className="space-y-3 sm:space-y-4">
-                <div className="flex items-center justify-between p-3 sm:p-4 bg-slate-800/50 rounded-lg gap-3">
-                  <span className="text-white text-sm sm:text-base truncate">Italian Game</span>
-                  <div className="flex items-center gap-2 sm:gap-4 shrink-0">
-                    <div className="w-16 sm:w-32 bg-slate-700 rounded-full h-2">
-                      <div className="bg-amber-400 h-2 rounded-full" style={{ width: "85%" }}></div>
+                {openingStats.map((opening: any, idx: number) => {
+                  const colors = ['amber', 'teal', 'cyan', 'emerald', 'blue', 'purple', 'pink', 'orange'];
+                  const colorClass = colors[idx % colors.length];
+                  const colorMap: any = {
+                    amber: 'amber-400',
+                    teal: 'teal-400',
+                    cyan: 'cyan-400',
+                    emerald: 'emerald-400',
+                    blue: 'blue-400',
+                    purple: 'purple-400',
+                    pink: 'pink-400',
+                    orange: 'orange-400',
+                  };
+                  const bgColorMap: any = {
+                    amber: 'bg-amber-400',
+                    teal: 'bg-teal-400',
+                    cyan: 'bg-cyan-400',
+                    emerald: 'bg-emerald-400',
+                    blue: 'bg-blue-400',
+                    purple: 'bg-purple-400',
+                    pink: 'bg-pink-400',
+                    orange: 'bg-orange-400',
+                  };
+                  return (
+                    <div key={opening.name} className="flex items-center justify-between p-3 sm:p-4 bg-slate-800/50 rounded-lg gap-3">
+                      <span className="text-white text-sm sm:text-base truncate">{opening.name}</span>
+                      <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+                        <div className="w-16 sm:w-32 bg-slate-700 rounded-full h-2">
+                          <div className={bgColorMap[colorClass] + ' h-2 rounded-full'} style={{ width: `${opening.accuracy}%` }}></div>
+                        </div>
+                        <span className={`text-${colorMap[colorClass]} font-bold text-sm sm:text-base`}>{opening.accuracy}%</span>
+                      </div>
                     </div>
-                    <span className="text-amber-400 font-bold text-sm sm:text-base">85%</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between p-3 sm:p-4 bg-slate-800/50 rounded-lg gap-3">
-                  <span className="text-white text-sm sm:text-base truncate">Sicilian Defense</span>
-                  <div className="flex items-center gap-2 sm:gap-4 shrink-0">
-                    <div className="w-16 sm:w-32 bg-slate-700 rounded-full h-2">
-                      <div className="bg-teal-400 h-2 rounded-full" style={{ width: "72%" }}></div>
-                    </div>
-                    <span className="text-teal-400 font-bold text-sm sm:text-base">72%</span>
-                  </div>
-                </div>
+                  );
+                })}
               </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-slate-400">No opening data yet. Complete more training sessions to see your opening statistics.</p>
+                </div>
+              )}
             </Card>
           </div>
         )}

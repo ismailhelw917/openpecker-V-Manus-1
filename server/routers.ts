@@ -1272,6 +1272,137 @@ export const appRouter = router({
       }),
 
     /**
+     * Get trend data for charts (accuracy, time per puzzle, cycles per day)
+     */
+    getTrendData: protectedProcedure
+      .input(
+        z.object({
+          days: z.number().default(7),
+        }).nullish()
+      )
+      .query(async ({ ctx, input }) => {
+        const db = await getDb();
+        const daysBack = input?.days || 7;
+        
+        if (!db) {
+          return {
+            accuracy: [],
+            timePerPuzzle: [],
+            cyclesPerDay: [],
+          };
+        }
+
+        try {
+          // Get daily accuracy trend
+          const accuracyData = await db.execute(
+            sql`SELECT 
+                  DATE(pa.completedAt) as date,
+                  COUNT(*) as total,
+                  SUM(pa.isCorrect) as correct
+                FROM puzzle_attempts pa
+                JOIN training_sets ts ON pa.trainingSetId = ts.id
+                WHERE ts.userId = ${ctx.user.id} 
+                  AND pa.completedAt >= DATE_SUB(NOW(), INTERVAL ${daysBack} DAY)
+                GROUP BY DATE(pa.completedAt)
+                ORDER BY date ASC`
+          );
+          
+          const accuracy = (Array.isArray(accuracyData) ? accuracyData : []).map((row: any) => ({
+            date: new Date(row.date).toLocaleDateString('en-US', { weekday: 'short' }),
+            accuracy: row.total > 0 ? Math.round((row.correct / row.total) * 100) : 0,
+          }));
+
+          // Get daily time per puzzle trend
+          const timeData = await db.execute(
+            sql`SELECT 
+                  DATE(pa.completedAt) as date,
+                  AVG(CAST(pa.timeMs AS DECIMAL(10,2))) as avgTime
+                FROM puzzle_attempts pa
+                JOIN training_sets ts ON pa.trainingSetId = ts.id
+                WHERE ts.userId = ${ctx.user.id} 
+                  AND pa.completedAt >= DATE_SUB(NOW(), INTERVAL ${daysBack} DAY)
+                GROUP BY DATE(pa.completedAt)
+                ORDER BY date ASC`
+          );
+          
+          const timePerPuzzle = (Array.isArray(timeData) ? timeData : []).map((row: any) => ({
+            day: new Date(row.date).toLocaleDateString('en-US', { weekday: 'short' }),
+            time: Math.round(Number(row.avgTime || 0) / 1000),
+          }));
+
+          // Get daily cycles trend
+          const cyclesData = await db.execute(
+            sql`SELECT 
+                  DATE(completedAt) as date,
+                  COUNT(*) as cycles
+                FROM cycle_history
+                WHERE userId = ${ctx.user.id} 
+                  AND completedAt >= DATE_SUB(NOW(), INTERVAL ${daysBack} DAY)
+                GROUP BY DATE(completedAt)
+                ORDER BY date ASC`
+          );
+          
+          const cyclesPerDay = (Array.isArray(cyclesData) ? cyclesData : []).map((row: any) => ({
+            day: new Date(row.date).toLocaleDateString('en-US', { weekday: 'short' }),
+            cycles: Number(row.cycles || 0),
+          }));
+
+          return {
+            accuracy,
+            timePerPuzzle,
+            cyclesPerDay,
+          };
+        } catch (error) {
+          console.error('[getTrendData] Error fetching trend data:', error);
+          return {
+            accuracy: [],
+            timePerPuzzle: [],
+            cyclesPerDay: [],
+          };
+        }
+      }),
+
+    /**
+     * Get opening performance statistics
+     */
+    getOpeningStats: protectedProcedure
+      .input(
+        z.object({}).nullish()
+      )
+      .query(async ({ ctx }) => {
+        const db = await getDb();
+        
+        if (!db) {
+          return [];
+        }
+
+        try {
+          const openingStats = await db.execute(
+            sql`SELECT 
+                  ts.openingName,
+                  COUNT(*) as attempts,
+                  SUM(pa.isCorrect) as correct
+                FROM puzzle_attempts pa
+                JOIN training_sets ts ON pa.trainingSetId = ts.id
+                WHERE ts.userId = ${ctx.user.id} AND ts.openingName IS NOT NULL
+                GROUP BY ts.openingName
+                HAVING attempts >= 1
+                ORDER BY (correct / attempts) DESC
+                LIMIT 20`
+          );
+          
+          return (Array.isArray(openingStats) ? openingStats : []).map((row: any) => ({
+            name: row.openingName,
+            accuracy: row.attempts > 0 ? Math.round((row.correct / row.attempts) * 100) : 0,
+            attempts: Number(row.attempts || 0),
+          }));
+        } catch (error) {
+          console.error('[getOpeningStats] Error fetching opening stats:', error);
+          return [];
+        }
+      }),
+
+    /**
      * Aggregate stats after cycle completion
      */
     aggregateAfterCycle: publicProcedure
