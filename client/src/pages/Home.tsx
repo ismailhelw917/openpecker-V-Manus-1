@@ -43,6 +43,8 @@ function ChessPreview() {
   const [pieces, setPieces] = useState<Record<string, PieceData>>(() => ({ ...INITIAL_PIECES }));
   const [toSq,   setToSq]   = useState<[number,number] | null>(null);
   const [fromSq, setFromSq] = useState<[number,number] | null>(null);
+  const [selectedSq, setSelectedSq] = useState<[number,number] | null>(null);
+  const [draggedPiece, setDraggedPiece] = useState<PieceData | null>(null);
   const moveIdx = useRef(0);
 
   useEffect(() => {
@@ -75,10 +77,41 @@ function ChessPreview() {
   const SQ = 32;
   const BOARD = SQ * 8;
 
+  const handleSquareClick = (row: number, col: number) => {
+    const piece = pieces[`${row},${col}`];
+    
+    if (!selectedSq) {
+      // Select a piece
+      if (piece) {
+        setSelectedSq([row, col]);
+        setDraggedPiece(piece);
+      }
+    } else {
+      // Move the piece
+      const [fromRow, fromCol] = selectedSq;
+      
+      if (fromRow === row && fromCol === col) {
+        // Deselect
+        setSelectedSq(null);
+        setDraggedPiece(null);
+      } else {
+        // Move piece
+        setPieces(prev => {
+          const next = { ...prev };
+          delete next[`${fromRow},${fromCol}`];
+          next[`${row},${col}`] = draggedPiece!;
+          return next;
+        });
+        setSelectedSq(null);
+        setDraggedPiece(null);
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col items-center gap-1.5">
       <div
-        className="rounded-lg overflow-hidden shadow-2xl border border-slate-700"
+        className="rounded-lg overflow-hidden shadow-2xl border border-slate-700 cursor-pointer"
         style={{ position: "relative", width: BOARD, height: BOARD }}
       >
         {Array.from({ length: 8 }, (_, row) =>
@@ -87,28 +120,33 @@ function ChessPreview() {
             const isTo   = toSq   && toSq[0]   === row && toSq[1]   === col;
             const isFrom = fromSq && fromSq[0] === row && fromSq[1] === col;
             const piece  = pieces[`${row},${col}`];
+            const isSelected = selectedSq && selectedSq[0] === row && selectedSq[1] === col;
             return (
               <div
                 key={`${row}-${col}`}
+                onClick={() => handleSquareClick(row, col)}
                 style={{
                   position: "absolute",
                   left: col * SQ,
                   top:  row * SQ,
                   width:  SQ,
                   height: SQ,
-                  backgroundColor: isTo
+                  backgroundColor: isSelected
+                    ? "rgba(100,150,255,0.6)"
+                    : isTo
                     ? "rgba(20,200,120,0.55)"
                     : isFrom
                     ? "rgba(20,200,120,0.3)"
                     : isLight ? LIGHT : DARK,
                   transition: "background-color 0.3s",
+                  cursor: piece ? "pointer" : "default",
                 }}
               >
                 {piece && (
                   <img
                     src={pieceUrl(piece[0], piece[1])}
                     alt=""
-                    style={{ width: SQ, height: SQ, display: "block", userSelect: "none", pointerEvents: "none" }}
+                    style={{ width: SQ, height: SQ, display: "block", userSelect: "none", pointerEvents: "auto" }}
                     draggable={false}
                   />
                 )}

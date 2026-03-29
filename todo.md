@@ -325,3 +325,8 @@
 ## Home Page Section Removal (Mar 29)
 - [x] Remove "4,800,000+ puzzles" stat section from home page
 - [x] Remove "Pick an opening → Solve puzzles → Track accuracy" flow diagram from home page
+
+## Home Page Interactive Board (Mar 29)
+- [x] Enable piece picking/dragging on animated chess board before animation starts
+- [x] Add visual feedback when pieces are selected (blue highlight)
+- [x] Allow users to interact with board while animation plays
