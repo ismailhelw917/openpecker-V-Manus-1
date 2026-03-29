@@ -1309,8 +1309,8 @@ export const appRouter = router({
       }),
 
     /**
-     * Get the top-100 leaderboard directly from the database.
-     * Online count still comes from Redis heartbeat keys.
+     * Get the top-100 leaderboard using stats data.
+     * Queries all users/devices with puzzle attempts, gets their stats, and sorts by puzzle count.
      */
     getLeaderboard: publicProcedure
       .input(z.object({ limit: z.number().min(1).max(200).default(100) }).optional())
@@ -1319,43 +1319,53 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) return { players: [], onlineCount: 0 };
 
-        // Calculate scores in real-time from puzzle_attempts
-        // Aggregate by userId for registered users, deviceId for guests
-        const rows = await db.execute(sql`
-          SELECT 
-            COALESCE(u.name, CONCAT('Guest-', SUBSTRING(pa.deviceId, 1, 8))) as playerName,
-            COUNT(pa.id) as totalPuzzles,
-            SUM(CASE WHEN pa.isCorrect = 1 THEN 1 ELSE 0 END) as correctPuzzles,
-            ROUND(100 * SUM(CASE WHEN pa.isCorrect = 1 THEN 1 ELSE 0 END) / COUNT(pa.id), 1) as accuracy,
-            ROUND(SUM(COALESCE(pa.timeSpent, 0)) / 60) as totalMinutes
-          FROM puzzle_attempts pa
-          LEFT JOIN users u ON pa.userId = u.id
-          WHERE pa.deviceId NOT LIKE 'test-%'
-            AND pa.deviceId NOT LIKE '%-test-%'
-            AND pa.deviceId NOT LIKE '%test-dev%'
-            AND (pa.userId IS NULL OR pa.userId NOT IN (999, 999999))
-            AND (pa.userId IS NOT NULL OR pa.deviceId IS NOT NULL)
-          GROUP BY CASE 
-            WHEN pa.userId IS NOT NULL THEN CONCAT('user_', pa.userId)
-            ELSE CONCAT('device_', pa.deviceId)
-          END
-          HAVING COUNT(pa.id) > 0
-          ORDER BY totalPuzzles DESC
-          LIMIT ${limit}
-        `);
+        try {
+          // Get all unique userId/deviceId combinations that have puzzle attempts
+          const playerIds = await db.execute(sql`
+            SELECT DISTINCT 
+              pa.userId,
+              pa.deviceId,
+              COALESCE(u.name, CONCAT('Guest-', SUBSTRING(pa.deviceId, 1, 8))) as playerName
+            FROM puzzle_attempts pa
+            LEFT JOIN users u ON pa.userId = u.id
+            WHERE pa.deviceId NOT LIKE 'test-%'
+              AND pa.deviceId NOT LIKE '%-test-%'
+              AND pa.deviceId NOT LIKE '%test-dev%'
+              AND (pa.userId IS NULL OR pa.userId NOT IN (999, 999999))
+              AND (pa.userId IS NOT NULL OR pa.deviceId IS NOT NULL)
+            ORDER BY (SELECT COUNT(*) FROM puzzle_attempts WHERE 
+              (userId = pa.userId OR deviceId = pa.deviceId) AND 
+              deviceId NOT LIKE 'test-%' AND deviceId NOT LIKE '%-test-%' AND deviceId NOT LIKE '%test-dev%'
+            ) DESC
+            LIMIT ${limit}
+          `);
 
-        const rawRows: any[] = Array.isArray(rows) ? (Array.isArray(rows[0]) ? rows[0] : rows) : [];
-        const players = rawRows
-          .map((r, idx) => ({
-            rank: idx + 1,
-            playerName: r.playerName as string,
-            puzzlesSolved: Number(r.totalPuzzles),
-            accuracy: Number(r.accuracy),
-            rating: 1200,
-            totalMinutes: Number(r.totalMinutes),
-          }));
+          const playerList: any[] = Array.isArray(playerIds) ? (Array.isArray(playerIds[0]) ? playerIds[0] : playerIds) : [];
+          
+          // Get stats for each player using getPuzzleAttemptStats
+          const players = [];
+          for (let i = 0; i < playerList.length; i++) {
+            const p = playerList[i];
+            const stats = await getPuzzleAttemptStats(p.userId || null, p.deviceId || null);
+            if (stats.totalPuzzles > 0) {
+              const accuracy = Math.round((stats.totalCorrect / stats.totalPuzzles) * 100);
+              players.push({
+                rank: i + 1,
+                playerName: p.playerName as string,
+                puzzlesSolved: stats.totalPuzzles,
+                accuracy: accuracy,
+                rating: 1200,
+                totalMinutes: Math.round((stats.totalTimeMs || 0) / 60000),
+              });
+            }
+          }
 
-        return { players, onlineCount: 0 };
+          return { players, onlineCount: 0 };
+        } catch (err) {
+          console.error('[getLeaderboard] Error:', err);
+          return { players: [], onlineCount: 0 };
+        }
+
       }),
 
     /**
