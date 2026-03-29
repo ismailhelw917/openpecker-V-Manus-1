@@ -1570,12 +1570,11 @@ export async function getPuzzlesByOpeningHierarchy(
     if (subset) whereConditions.push(eq(puzzles.subset, subset));
     if (variation) whereConditions.push(eq(puzzles.openingVariation, variation));
 
-    // Fetch all matching puzzles without RAND() - we'll randomize in JavaScript
+    // Fetch ALL matching puzzles (no limit) - caller will randomize and select count
     const result = await db
       .select()
       .from(puzzles)
-      .where(and(...whereConditions))
-      .limit(count);
+      .where(and(...whereConditions));
 
     console.log(`[getPuzzlesByOpeningHierarchy] Found ${result.length} puzzles for:`, { opening, subset, variation });
     return result;
