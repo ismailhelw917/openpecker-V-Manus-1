@@ -315,3 +315,9 @@
 - [ ] Investigate why leaderboard_scores not syncing after puzzle solve
 - [ ] Check if updateLeaderboardScore is being called after session ends
 - [ ] Verify leaderboard query is reading fresh data (not cached)
+
+## Puzzle Randomization Fix (Mar 29)
+- [x] Identified root cause: puzzleSession.create calls getRandomPuzzlesByOpeningAndRating which was returning first 50 puzzles in DB order
+- [x] Fixed getRandomPuzzlesByOpeningAndRating to fetch ALL matching puzzles, then randomize with Fisher-Yates shuffle
+- [x] Verified randomization works: each session now gets different random puzzles from full variation pool
+- [x] Removed debug logging from randomization code

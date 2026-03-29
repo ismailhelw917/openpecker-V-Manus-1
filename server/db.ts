@@ -470,14 +470,14 @@ export async function getRandomPuzzlesByOpeningAndRating(
       puzzleCount
     });
 
-    // Use Drizzle ORM query builder
+    // Fetch ALL matching puzzles (not just the requested count)
+    // Then randomize and select the requested count
     let result = await db
       .select()
       .from(puzzles)
-      .where(whereConditions)
-      .limit(puzzleCount);
+      .where(whereConditions);
     
-    console.log('[getRandomPuzzlesByOpeningAndRating] Found:', result?.length || 0, 'puzzles');
+    console.log('[getRandomPuzzlesByOpeningAndRating] Found:', result?.length || 0, 'puzzles (before randomization)');
     
     // Fallback 1: no rating filter (keeps variation + color)
     if (!result || result.length === 0) {
@@ -485,7 +485,7 @@ export async function getRandomPuzzlesByOpeningAndRating(
       let fb1: any = eq(puzzles.openingName, dbOpeningName);
       if (variation && variation.trim()) fb1 = and(fb1, like(puzzles.openingVariation, `%${variation}%`));
       if (color && color !== 'both') fb1 = and(fb1, eq(puzzles.color, color));
-      result = await db.select().from(puzzles).where(fb1).limit(puzzleCount);
+      result = await db.select().from(puzzles).where(fb1);
       console.log('[getRandomPuzzlesByOpeningAndRating] Fallback-1 found:', result?.length || 0, 'puzzles');
     }
 
@@ -494,18 +494,32 @@ export async function getRandomPuzzlesByOpeningAndRating(
       console.warn('[getRandomPuzzlesByOpeningAndRating] 0 results — retrying without variation filter');
       let fb2: any = and(eq(puzzles.openingName, dbOpeningName), gte(puzzles.rating, minRating), lte(puzzles.rating, maxRating));
       if (color && color !== 'both') fb2 = and(fb2, eq(puzzles.color, color));
-      result = await db.select().from(puzzles).where(fb2).limit(puzzleCount);
+      result = await db.select().from(puzzles).where(fb2);
       console.log('[getRandomPuzzlesByOpeningAndRating] Fallback-2 found:', result?.length || 0, 'puzzles');
     }
 
     // Fallback 3: opening only (no rating, no variation, no color)
     if (!result || result.length === 0) {
       console.warn('[getRandomPuzzlesByOpeningAndRating] Final fallback: opening name only');
-      result = await db.select().from(puzzles).where(eq(puzzles.openingName, dbOpeningName)).limit(puzzleCount);
+      result = await db.select().from(puzzles).where(eq(puzzles.openingName, dbOpeningName));
       console.log('[getRandomPuzzlesByOpeningAndRating] Fallback-3 found:', result?.length || 0, 'puzzles');
     }
     
-    return result || [];
+    if (!result || result.length === 0) {
+      return [];
+    }
+    
+    // Randomize using Fisher-Yates shuffle
+    const randomizedPool = [...result];
+    for (let i = randomizedPool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [randomizedPool[i], randomizedPool[j]] = [randomizedPool[j], randomizedPool[i]];
+    }
+    
+    // Return only the requested count from randomized pool
+    const selectedPuzzles = randomizedPool.slice(0, puzzleCount);
+    
+    return selectedPuzzles;
   } catch (error) {
     console.error('[getRandomPuzzlesByOpeningAndRating] Error:', error);
     console.error('[getRandomPuzzlesByOpeningAndRating] Stack:', (error as Error).stack);
