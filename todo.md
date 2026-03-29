@@ -331,3 +331,11 @@
 - [x] Add visual feedback when pieces are selected (blue highlight)
 - [x] Allow users to interact with board while animation plays
 - [x] Re-add Sign In / Register button to home page
+
+## Page Title Update (Mar 29)
+- [ ] Change page title from "OpenPecker Recreated" to "OpenPecker Chess Opening Tactics"
+
+## Stats Page Fix (Mar 29)
+- [x] Fix stats page showing skeleton loading states instead of actual data
+- [x] Verify tRPC stats queries are returning correct data shape
+- [x] Test stats display with authenticated user
