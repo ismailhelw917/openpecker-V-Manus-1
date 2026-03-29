@@ -1309,8 +1309,8 @@ export const appRouter = router({
       }),
 
     /**
-     * Get the top-100 leaderboard using stats data.
-     * Queries all users/devices with puzzle attempts, gets their stats, and sorts by puzzle count.
+     * Get the top-100 leaderboard directly from the database.
+     * Online count still comes from Redis heartbeat keys.
      */
     getLeaderboard: publicProcedure
       .input(z.object({ limit: z.number().min(1).max(200).default(100) }).optional())
@@ -1319,53 +1319,38 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) return { players: [], onlineCount: 0 };
 
-        try {
-          // Get all unique userId/deviceId combinations that have puzzle attempts
-          const playerIds = await db.execute(sql`
-            SELECT DISTINCT 
-              pa.userId,
-              pa.deviceId,
-              COALESCE(u.name, CONCAT('Guest-', SUBSTRING(pa.deviceId, 1, 8))) as playerName
-            FROM puzzle_attempts pa
-            LEFT JOIN users u ON pa.userId = u.id
-            WHERE pa.deviceId NOT LIKE 'test-%'
-              AND pa.deviceId NOT LIKE '%-test-%'
-              AND pa.deviceId NOT LIKE '%test-dev%'
-              AND (pa.userId IS NULL OR pa.userId NOT IN (999, 999999))
-              AND (pa.userId IS NOT NULL OR pa.deviceId IS NOT NULL)
-            ORDER BY (SELECT COUNT(*) FROM puzzle_attempts WHERE 
-              (userId = pa.userId OR deviceId = pa.deviceId) AND 
-              deviceId NOT LIKE 'test-%' AND deviceId NOT LIKE '%-test-%' AND deviceId NOT LIKE '%test-dev%'
-            ) DESC
-            LIMIT ${limit}
-          `);
+        // Read from leaderboard_scores which has real accuracy, correctPuzzles, totalMinutes.
+        // This table is resynced from puzzle_attempts on server startup and after each session.
+        // Registered users are deduplicated by userId; guests by deviceId.
+        const rows = await db.execute(sql`
+          SELECT playerName, totalPuzzles, correctPuzzles, accuracy, totalMinutes
+          FROM leaderboard_scores
+          WHERE totalPuzzles > 0
+            AND playerName IS NOT NULL
+            AND playerName != ''
+            AND playerName != 'Guest-'
+            AND (userId IS NULL OR userId NOT IN (999, 999999))
+            AND (userId IS NOT NULL OR (
+              deviceId NOT LIKE 'test-%'
+              AND deviceId NOT LIKE '%-test-%'
+              AND deviceId NOT LIKE '%test-dev%'
+            ))
+          ORDER BY totalPuzzles DESC
+          LIMIT ${limit}
+        `);
 
-          const playerList: any[] = Array.isArray(playerIds) ? (Array.isArray(playerIds[0]) ? playerIds[0] : playerIds) : [];
-          
-          // Get stats for each player using getPuzzleAttemptStats
-          const players = [];
-          for (let i = 0; i < playerList.length; i++) {
-            const p = playerList[i];
-            const stats = await getPuzzleAttemptStats(p.userId || null, p.deviceId || null);
-            if (stats.totalPuzzles > 0) {
-              const accuracy = Math.round((stats.totalCorrect / stats.totalPuzzles) * 100);
-              players.push({
-                rank: i + 1,
-                playerName: p.playerName as string,
-                puzzlesSolved: stats.totalPuzzles,
-                accuracy: accuracy,
-                rating: 1200,
-                totalMinutes: Math.round((stats.totalTimeMs || 0) / 60000),
-              });
-            }
-          }
+        const rawRows: any[] = Array.isArray(rows) ? (Array.isArray(rows[0]) ? rows[0] : rows) : [];
+        const players = rawRows
+          .map((r, idx) => ({
+            rank: idx + 1,
+            playerName: r.playerName as string,
+            puzzlesSolved: Number(r.totalPuzzles),
+            accuracy: Number(r.accuracy),
+            rating: 1200,
+            totalMinutes: Number(r.totalMinutes),
+          }));
 
-          return { players, onlineCount: 0 };
-        } catch (err) {
-          console.error('[getLeaderboard] Error:', err);
-          return { players: [], onlineCount: 0 };
-        }
-
+        return { players, onlineCount: 0 };
       }),
 
     /**
