@@ -697,7 +697,10 @@ export const appRouter = router({
           
           console.log(`[trainingSets.create] Found ${puzzleList.length} puzzles`);
           
-          const puzzlesForSession = puzzleList.map(p => ({
+          // Randomize puzzle order so users get different puzzles each session
+          const shuffledPuzzles = [...puzzleList].sort(() => Math.random() - 0.5);
+          
+          const puzzlesForSession = shuffledPuzzles.map(p => ({
             id: p.id,
             fen: p.fen,
             moves: p.moves,
