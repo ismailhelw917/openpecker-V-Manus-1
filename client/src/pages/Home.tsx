@@ -189,10 +189,7 @@ export default function Home() {
         OpenPecker
       </h1>
 
-      {/* Subtitle */}
-      <p className="text-sm text-slate-400 mb-4 text-center max-w-xs relative z-10">
-        {t.appTagline}
-      </p>
+
 
       {/* Animated chess board */}
       <div className="mb-4 relative z-10">
@@ -214,9 +211,7 @@ export default function Home() {
           {t.home.startTraining}
         </button>
 
-        <p className="text-center text-slate-500 text-xs">
-          {language === 'hi' ? 'शुरू करने के लिए साइन अप की जरूरत नहीं' : 'No sign-up required to start'}
-        </p>
+
 
         {isAuthenticated ? (
           <p className="text-center text-slate-400 text-sm pt-1">
