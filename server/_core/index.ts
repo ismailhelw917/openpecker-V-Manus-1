@@ -13,6 +13,7 @@ import { serveStatic, setupVite } from "./vite";
 import { resetDbConnection } from "../db";
 import { trackVisitor, getVisitorStats } from "../visitor-tracking";
 import { registerHeartbeatRoutes } from "./heartbeat";
+import rateLimit from "express-rate-limit";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -51,6 +52,25 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   // Parse cookies - REQUIRED for session authentication
   app.use(cookieParser());
+  
+  // Add rate limiting to prevent abuse and traffic spikes
+  const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 1000,
+    message: 'Too many requests from this IP, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: (req: express.Request) => req.path.startsWith('/api/track'),
+  });
+  
+  const strictLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 30,
+    message: 'Too many requests, please try again later.',
+  });
+  
+  app.use('/api/trpc', apiLimiter);
+  app.use('/api/oauth', strictLimiter);
   
   // Add cache headers for static assets and HTML
   app.use((req, res, next) => {
@@ -113,7 +133,7 @@ async function startServer() {
     }
   });
 
-  // tRPC API
+  // tRPC API with error handling and connection recovery
   app.use(
     "/api/trpc",
     createExpressMiddleware({
@@ -128,6 +148,11 @@ async function startServer() {
       },
     })
   );
+  
+  // Health check endpoint for monitoring
+  app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
   // development mode uses Vite, production mode uses static files
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
@@ -146,7 +171,10 @@ async function startServer() {
   // }
 
   server.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}/`);
+    console.log(`[Server] Running on http://localhost:${port}/`);
+    console.log(`[Server] Rate limiting enabled: 1000 req/15min for API, 30 req/min for OAuth`);
+    console.log(`[Server] Gzip compression: enabled (level 6)`);
+    console.log(`[Server] Health check: GET /api/health`);
   });
 }
 

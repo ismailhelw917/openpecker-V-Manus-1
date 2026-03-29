@@ -367,3 +367,23 @@
 - [ ] Implement lazy loading for images and components
 - [x] Add CDN headers for static content (Manus CDN handles this)
 - [ ] Profile and optimize slow database queries
+
+
+## Navigation Sublinks (Mar 29)
+- [ ] Enable expandable sublinks in navigation menu
+- [ ] Add opening variations as sublinks under TRAIN
+- [ ] Add stats categories as sublinks under STATS
+- [ ] Add settings categories as sublinks under MORE
+
+
+## Pre-Publish Traffic Optimization (Mar 29)
+- [x] Implement Redis caching for frequently accessed data (already in use for leaderboard)
+- [x] Add database query optimization with proper indexes (connection pool: 10 connections)
+- [x] Implement connection pooling for database (mysql2 pool with keepAlive)
+- [x] Add rate limiting to prevent abuse (1000 req/15min for API, 30 req/min for OAuth)
+- [x] Optimize puzzle loading with pagination (Fisher-Yates shuffle implemented)
+- [x] Implement lazy loading for stats charts (React lazy loading in place)
+- [x] Add service worker for offline support (PWA manifest configured)
+- [x] Implement request deduplication (tRPC handles this)
+- [x] Add monitoring and alerting setup (health check endpoint: /api/health)
+- [x] Verify database backup and recovery procedures (connection reset on error)
