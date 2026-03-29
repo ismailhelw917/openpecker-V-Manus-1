@@ -321,3 +321,7 @@
 - [x] Fixed getRandomPuzzlesByOpeningAndRating to fetch ALL matching puzzles, then randomize with Fisher-Yates shuffle
 - [x] Verified randomization works: each session now gets different random puzzles from full variation pool
 - [x] Removed debug logging from randomization code
+
+## Home Page Section Removal (Mar 29)
+- [x] Remove "4,800,000+ puzzles" stat section from home page
+- [x] Remove "Pick an opening → Solve puzzles → Track accuracy" flow diagram from home page

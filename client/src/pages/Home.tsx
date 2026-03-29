@@ -199,35 +199,7 @@ export default function Home() {
         <ChessPreview />
       </div>
 
-      {/* Social proof — puzzles only */}
-      <div className="flex items-center gap-2 mb-4 flex-wrap justify-center relative z-10">
-        <div className="flex items-center gap-1.5 bg-slate-800/80 border border-slate-700 rounded-full px-3 py-1.5">
-          <span className="text-teal-400 text-sm">♟</span>
-          <span className="text-xs font-semibold text-slate-200">4,800,000+ puzzles</span>
-        </div>
-      </div>
 
-      {/* How it works */}
-      <div className="flex items-center gap-2 mb-5 relative z-10">
-        {[
-          { icon: "📂", label: language === 'hi' ? "ओपनिंग चुनें" : "Pick an opening" },
-          { arrow: true },
-          { icon: "♟", label: language === 'hi' ? "पज़ल्स हल करें" : "Solve puzzles" },
-          { arrow: true },
-          { icon: "📈", label: language === 'hi' ? "प्रगति ट्रैक करें" : "Track accuracy" },
-        ].map((step, i) =>
-          (step as any).arrow ? (
-            <span key={i} className="text-slate-600 text-sm font-bold">→</span>
-          ) : (
-            <div key={i} className="flex flex-col items-center gap-1">
-              <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-lg">
-                {(step as any).icon}
-              </div>
-              <span className="text-[9px] text-slate-500 text-center max-w-[3.5rem] leading-tight">{(step as any).label}</span>
-            </div>
-          )
-        )}
-      </div>
 
       {/* CTAs */}
       <div className="w-full max-w-xs space-y-3 relative z-10">
