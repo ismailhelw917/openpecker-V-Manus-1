@@ -387,3 +387,19 @@
 - [x] Implement request deduplication (tRPC handles this)
 - [x] Add monitoring and alerting setup (health check endpoint: /api/health)
 - [x] Verify database backup and recovery procedures (connection reset on error)
+
+
+## Puzzle Configuration to Session Optimization (Mar 29)
+- [ ] Implement prefetching of puzzle data during configuration
+- [ ] Add loading skeleton/progress indicator during session creation
+- [ ] Optimize database query for fetching puzzles by opening
+- [ ] Implement client-side caching of puzzle selections
+- [ ] Add parallel processing for puzzle randomization
+- [ ] Reduce session creation response time to <500ms
+
+
+## Session Creation Optimization (Mar 29)
+- [x] Move database save to background (don't await createTrainingSet)
+- [x] Return immediately after puzzle fetch
+- [x] Add timing metrics to console logs
+- [x] Verify instant session loading (tested and working)

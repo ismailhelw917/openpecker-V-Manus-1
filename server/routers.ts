@@ -913,7 +913,8 @@ export const appRouter = router({
               openingName: p.openingName,
             };
           }));
-          const trainingSet = await createTrainingSet({
+          // Save to database asynchronously (don't wait for completion)
+          createTrainingSet({
             id: trainingSetId,
             userId: ctx.user?.id || null,
             deviceId: input.deviceId || null,
@@ -926,7 +927,9 @@ export const appRouter = router({
             targetCycles: input.targetCycles,
             colorFilter: input.colorFilter,
             puzzlesJson: puzzlesJson,
-          });
+          }).catch(err => console.error('[puzzleSession.create] Background save failed:', err));
+          
+          // Return immediately with session ID and puzzles
           return {
             id: trainingSetId,
             puzzles: fetchedPuzzles,
