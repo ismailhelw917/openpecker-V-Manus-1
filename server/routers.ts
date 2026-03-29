@@ -697,8 +697,12 @@ export const appRouter = router({
           
           console.log(`[trainingSets.create] Found ${puzzleList.length} puzzles`);
           
-          // Randomize puzzle order so users get different puzzles each session
-          const shuffledPuzzles = [...puzzleList].sort(() => Math.random() - 0.5);
+          // Randomize puzzle order using Fisher-Yates shuffle for better randomization
+          const shuffledPuzzles = [...puzzleList];
+          for (let i = shuffledPuzzles.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledPuzzles[i], shuffledPuzzles[j]] = [shuffledPuzzles[j], shuffledPuzzles[i]];
+          }
           
           const puzzlesForSession = shuffledPuzzles.map(p => ({
             id: p.id,
