@@ -330,3 +330,4 @@
 - [x] Enable piece picking/dragging on animated chess board before animation starts
 - [x] Add visual feedback when pieces are selected (blue highlight)
 - [x] Allow users to interact with board while animation plays
+- [x] Re-add Sign In / Register button to home page
