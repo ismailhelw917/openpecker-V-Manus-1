@@ -448,7 +448,7 @@ export default function Stats() {
                     orange: 'bg-orange-400',
                   };
                   return (
-                    <div key={opening.name} className="flex items-center justify-between p-3 sm:p-4 bg-slate-800/50 rounded-lg gap-3">
+                    <div key={`opening-${idx}-${opening.name}`} className="flex items-center justify-between p-3 sm:p-4 bg-slate-800/50 rounded-lg gap-3">
                       <span className="text-white text-sm sm:text-base truncate">{opening.name}</span>
                       <div className="flex items-center gap-2 sm:gap-4 shrink-0">
                         <div className="w-16 sm:w-32 bg-slate-700 rounded-full h-2">

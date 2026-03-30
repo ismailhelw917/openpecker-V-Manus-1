@@ -403,3 +403,11 @@
 - [x] Return immediately after puzzle fetch
 - [x] Add timing metrics to console logs
 - [x] Verify instant session loading (tested and working)
+
+
+## Stats Page Loading Issue (Mar 30)
+- [x] Debug why stats page Overview tab stuck on loading skeletons (found missing key prop in openingStats.map)
+- [x] Check server logs for tRPC query errors (found React warning about missing keys)
+- [x] Verify database connection is working (confirmed working)
+- [x] Test getTrendData and getOpeningStats procedures (both working)
+- [x] Fix data fetching and display (added unique key prop to opening stats list items)
