@@ -7,6 +7,7 @@ import { ChessgroundBoard } from "@/components/ChessgroundBoard";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getOrCreateDeviceId } from "@/_core/deviceId";
 import { trackPuzzleSolved, trackCycleComplete, trackSessionStart, trackSessionEnd } from "@/lib/matomo";
+import { useGoogleAdsTracking } from "@/hooks/useGoogleAdsTracking";
 
 export default function Session() {
   const [match, params] = useRoute("/session/:id");
@@ -45,6 +46,7 @@ export default function Session() {
     to: string;
   } | null>(null);
   const [puzzleStartTime, setPuzzleStartTime] = useState<number>(Date.now());
+  const { trackSessionStart: trackGoogleAdsSessionStart, trackSessionComplete } = useGoogleAdsTracking();
 
 
   // ===== ALL useRef HOOKS =====
@@ -139,8 +141,20 @@ export default function Session() {
     if (getTrainingSet.data) {
       totalAttemptsRef.current = getTrainingSet.data.totalAttempts || 0;
       totalTimeMsRef.current = getTrainingSet.data.totalTimeMs || 0;
+      // Track session start in Google Ads
+      const openingName = getTrainingSet.data.openingName || 'Unknown Opening';
+      trackGoogleAdsSessionStart(openingName);
     }
-  }, [getTrainingSet.data?.id]);
+  }, [getTrainingSet.data?.id, trackGoogleAdsSessionStart]);
+
+  // Track session completion when all cycles are done
+  useEffect(() => {
+    if (currentCycle > targetCycles && puzzles.length > 0) {
+      const accuracy = (correctCount / (puzzles.length * targetCycles)) * 100;
+      const openingName = getTrainingSet.data?.openingName || 'Unknown Opening';
+      trackSessionComplete(openingName, accuracy);
+    }
+  }, [currentCycle, targetCycles, correctCount, puzzles.length, getTrainingSet.data?.openingName, trackSessionComplete]);
 
   const recordPuzzleAttempt = useCallback((isCorrect: boolean, timeMs: number) => {
     const deviceId = getOrCreateDeviceId();

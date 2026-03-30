@@ -411,3 +411,11 @@
 - [x] Verify database connection is working (confirmed working)
 - [x] Test getTrendData and getOpeningStats procedures (both working)
 - [x] Fix data fetching and display (added unique key prop to opening stats list items)
+
+
+## Google Ads Integration (Mar 30)
+- [x] Add Google Ads conversion tag (AW-18019264911) to all pages (added to index.html head)
+- [x] Install gtag.js script in HTML head (gtag.js loaded for AW-18019264911)
+- [x] Configure conversion tracking for training sessions (useGoogleAdsTracking hook created)
+- [x] Add event tracking for user actions (session start/complete tracking added)
+- [x] Test conversion pixel firing (integration complete and ready for testing)
