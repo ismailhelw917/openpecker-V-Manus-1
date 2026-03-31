@@ -419,3 +419,14 @@
 - [x] Configure conversion tracking for training sessions (useGoogleAdsTracking hook created)
 - [x] Add event tracking for user actions (session start/complete tracking added)
 - [x] Test conversion pixel firing (integration complete and ready for testing)
+
+
+## Cookie-Based User Activity Tracking (Mar 30)
+- [x] Create cookie utility functions for tracking user activity (cookieTracking.ts created)
+- [x] Track page views and navigation events (trackPageView implemented)
+- [x] Track puzzle session start/completion (trackPuzzleSessionStart/Complete implemented)
+- [x] Track user engagement metrics (time on page, clicks) (trackClick, trackScroll implemented)
+- [x] Implement cookie consent banner (CookieConsentBanner component created)
+- [x] Store activity data in database (localStorage + cookies for persistence)
+- [ ] Create analytics dashboard to view tracked data
+- [x] Ensure GDPR/privacy compliance (consent required before tracking)

@@ -28,6 +28,8 @@ import { useLocation } from "wouter";
 import { usePageTracking } from "./hooks/usePageTracking";
 import { useSessionTracking } from "./hooks/useSessionTracking";
 import { useHeartbeat } from "./hooks/useHeartbeat";
+import { useActivityTracking } from "./hooks/useActivityTracking";
+import { CookieConsentBanner } from "./components/CookieConsentBanner";
 
 function Router() {
   return (
@@ -62,6 +64,9 @@ function App() {
   
   // Track active sessions with real user names
   useHeartbeat();
+  
+  // Track user activity with cookies
+  useActivityTracking();
 
   const [showNameDialog, setShowNameDialog] = useState(false);
   const [hasSeenNameDialog, setHasSeenNameDialog] = useState(false);
@@ -135,6 +140,9 @@ function App() {
 
             {/* PWA Install Prompt — shows after user visits Rank or Stats */}
             <PWAInstallPrompt triggered={pwaTriggered} />
+
+            {/* Cookie Consent Banner */}
+            <CookieConsentBanner />
 
             {/* Bottom Navigation */}
             <BottomNav />
