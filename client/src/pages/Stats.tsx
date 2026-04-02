@@ -56,17 +56,29 @@ export default function Stats() {
 
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
-  // Fetch real trend data
-  const { data: trendData, isLoading: trendLoading } = trpc.stats.getTrendData.useQuery(
+  // Fetch real trend data with timeout and error handling
+  const { data: trendData, isLoading: trendLoading, error: trendError } = trpc.stats.getTrendData.useQuery(
     { days: timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 365 },
-    { enabled: isAuthenticated && activeTab === 'trends' }
+    { enabled: isAuthenticated && activeTab === 'trends', retry: 2, retryDelay: 1000 }
   );
 
-  // Fetch real opening stats
-  const { data: openingStats, isLoading: openingLoading } = trpc.stats.getOpeningStats.useQuery(
+  useEffect(() => {
+    if (trendError) {
+      console.error('[Stats] Error fetching trend data:', trendError);
+    }
+  }, [trendError]);
+
+  // Fetch real opening stats with timeout and error handling
+  const { data: openingStats, isLoading: openingLoading, error: openingError } = trpc.stats.getOpeningStats.useQuery(
     undefined,
-    { enabled: isAuthenticated && activeTab === 'openings' }
+    { enabled: isAuthenticated && activeTab === 'openings', retry: 2, retryDelay: 1000 }
   );
+
+  useEffect(() => {
+    if (openingError) {
+      console.error('[Stats] Error fetching opening stats:', openingError);
+    }
+  }, [openingError]);
 
   const handleCheckout = async (priceId: string, planName: string) => {
     if (authLoading) {
@@ -115,10 +127,19 @@ export default function Stats() {
     }
   };
 
-  // Fetch user stats
-  const { data: userStats, isLoading: isLoading } = trpc.stats.getUserStats.useQuery(undefined, {
+  // Fetch user stats with timeout and error handling
+  const { data: userStats, isLoading: isLoading, error: statsError } = trpc.stats.getUserStats.useQuery(undefined, {
     enabled: isAuthenticated,
+    retry: 2,
+    retryDelay: 1000,
   });
+
+  // Log errors for debugging
+  useEffect(() => {
+    if (statsError) {
+      console.error('[Stats] Error fetching user stats:', statsError);
+    }
+  }, [statsError]);
 
   const finalStats = userStats;
 

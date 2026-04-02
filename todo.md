@@ -430,3 +430,8 @@
 - [x] Store activity data in database (localStorage + cookies for persistence)
 - [ ] Create analytics dashboard to view tracked data
 - [x] Ensure GDPR/privacy compliance (consent required before tracking)
+
+
+## Parallel Tasks (Mar 31)
+- [ ] Fix stats page not loading (data queries timeout)
+- [ ] Grant premium access to cupfuls_recall_7k@icloud.com

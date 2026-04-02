@@ -1095,6 +1095,7 @@ export const appRouter = router({
             }
           } catch (error) {
             console.error('[getUserStats] Error fetching player rating:', error);
+            // Don't fail the whole query if player stats update fails
           }
         }
 

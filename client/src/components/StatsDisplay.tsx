@@ -13,7 +13,8 @@ interface MetricItem {
 }
 
 export function StatsDisplay({ stats, isLoading }: StatsDisplayProps) {
-  if (isLoading || !stats) {
+  // Show skeleton only if loading AND no stats yet
+  if (isLoading && !stats) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
         {[...Array(16)].map((_, i) => (
@@ -26,16 +27,11 @@ export function StatsDisplay({ stats, isLoading }: StatsDisplayProps) {
     );
   }
 
-  // Handle both authenticated and anonymous stats formats
+  // If no stats and not loading, show empty state
   if (!stats) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
-        {[...Array(16)].map((_, i) => (
-          <Card key={i} className="bg-slate-900/50 border-slate-700 p-3 sm:p-4 animate-pulse">
-            <div className="h-6 sm:h-8 bg-slate-700 rounded mb-2"></div>
-            <div className="h-4 sm:h-6 bg-slate-700 rounded w-3/4"></div>
-          </Card>
-        ))}
+      <div className="text-center py-8">
+        <p className="text-slate-400">No stats available yet. Start training to see your progress!</p>
       </div>
     );
   }
